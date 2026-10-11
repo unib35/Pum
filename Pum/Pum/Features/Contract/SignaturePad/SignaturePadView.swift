@@ -10,7 +10,8 @@ struct SignaturePadView: View {
     @State private var sheetOpen: Bool
     @State private var drawing: SignatureDrawing
 
-    init(drawing: SignatureDrawing = .sample, sheetOpen: Bool = true,
+    /// 실제 진입은 빈 서명 — 예시 획(`.sample`)은 비교 캡처 · 프리뷰에서만
+    init(drawing: SignatureDrawing = SignatureDrawing(), sheetOpen: Bool = true,
          onBack: @escaping () -> Void = {},
          onComplete: @escaping ([SignatureStroke]) -> Void = { _ in },
          onDismissSheet: @escaping () -> Void = {}) {
@@ -73,11 +74,16 @@ struct SignaturePadView: View {
     }
 
     private func rowValue(_ s: String) -> some View {
-        Text(s).pumText(.body, weight: .semibold).foregroundStyle(PumColor.textPrimary)
-            .lineLimit(1).minimumScaleFactor(0.8) // 기간은 한 줄(원문)
+        // 기간은 한 줄(원문), 큰 글자에서 넘치면 줄바꿈(잘리지 않게)
+        ViewThatFits(in: .horizontal) {
+            Text(s).lineLimit(1).fixedSize()
+            Text(s)
+        }
+        .pumText(.body, weight: .semibold).foregroundStyle(PumColor.textPrimary)
+        .multilineTextAlignment(.trailing)
     }
 }
 
-#Preview("1aa") { SignaturePadView() }
+#Preview("1aa") { SignaturePadView(drawing: .sample) }
 #Preview("1aa · 빈 상태") { SignaturePadView(drawing: SignatureDrawing()) }
 #Preview("1aa · 큰 글자") { SignaturePadView().dynamicTypeSize(.xxxLarge) }

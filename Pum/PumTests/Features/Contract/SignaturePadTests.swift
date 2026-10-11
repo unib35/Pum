@@ -51,4 +51,27 @@ struct SignaturePadTests {
         #expect(C.placeholder == "여기에 서명하세요")
         #expect([C.clear, C.complete, C.padLabel, C.padHint, C.padSigned] == ["지우기", "서명 완료", "서명 칸", "손가락으로 서명해요", "서명됨"])
     }
+
+    @Test func 최소_길이_경계() {
+        var d = SignatureDrawing()
+        d.move(to: .zero); d.move(to: CGPoint(x: SignatureStroke.minLength, y: 0)); d.end()
+        #expect(d.hasSignature) // 정확히 기준 = 서명
+        var e = SignatureDrawing()
+        e.move(to: .zero); e.move(to: CGPoint(x: SignatureStroke.minLength - 1, y: 0)); e.end()
+        #expect(!e.hasSignature)
+    }
+
+    @Test func 지운_뒤_다시_쓰기() {
+        var d = SignatureDrawing.sample
+        d.clear()
+        #expect(!d.hasSignature)
+        d.move(to: .zero); d.move(to: CGPoint(x: 40, y: 10)); d.end()
+        #expect(d.hasSignature && d.validStrokes.count == 1)
+    }
+
+    @Test func 그리는_중에는_아직_서명_아님() {
+        var d = SignatureDrawing()
+        d.move(to: .zero); d.move(to: CGPoint(x: 40, y: 10))
+        #expect(!d.hasSignature)
+    }
 }
