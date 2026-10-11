@@ -111,7 +111,7 @@ nonisolated struct RecordReviewState: Equatable, Sendable {
 
     static let sample = RecordReviewState(
         workplaceName: "종민김밥 본점", ownerName: "박민수", month: 10, deadlineText: "10월 31일까지",
-        ownerMessage: "\u{201C}11월 10일 급여 확정 전에 한 번 봐주세요. 다른 부분 있으면 수정 요청 남겨주시면 됩니다.\u{201D}",
+        ownerMessage: "\"11월 10일 급여 확정 전에 한 번 봐주세요. 다른 부분 있으면 수정 요청 남겨주시면 됩니다.\"",
         workDays: 17, recognizedMinutes: 82 * 60 + 30, expectedPay: 1_188_000,
         totalCount: 17, normalCount: 16, attentionCount: 1,
         rows: [

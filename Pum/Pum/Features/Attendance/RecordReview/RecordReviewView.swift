@@ -105,7 +105,8 @@ struct RecordReviewView: View {
                     }
                 }
                 .padding(PumTokens.Space.s16)
-                Rectangle().fill(PumColor.borderHairline).frame(height: 1) // 안쪽 hairline(전폭)
+                Rectangle().fill(PumColor.borderHairline).frame(height: 1) // 원문: 양쪽 들여씀
+                    .padding(.horizontal, PumTokens.Size.rowPadX)
                 countsLine
                     .padding(.horizontal, PumTokens.Size.rowPadX)
                     .padding(.vertical, PumTokens.Space.s12)

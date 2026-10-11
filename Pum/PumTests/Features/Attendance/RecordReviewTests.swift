@@ -16,7 +16,7 @@ struct RecordReviewTests {
     }
 
     @Test func 메시지_카드_읽기() {
-        #expect(s.messageAccessibilityText.hasPrefix("사장님 메시지, \u{201C}11월 10일 급여 확정 전에"))
+        #expect(s.messageAccessibilityText.hasPrefix("사장님 메시지, \"11월 10일 급여 확정 전에"))
     }
 
     @Test func 요약_문구는_서버_값_그대로() {
