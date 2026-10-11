@@ -1,0 +1,14 @@
+:root {
+  /* Duration */
+  --dur-press: 100ms;    /* 누름 피드백 */
+  --dur-fast: 160ms;     /* 토글 · 세그먼트 · 라벨 교체 */
+  --dur-base: 240ms;     /* 토스트 등장 · 행 사라짐 */
+  --dur-sheet: 320ms;    /* 바텀시트 · 딤 */
+  --dur-progress: 400ms; /* 진행 막대 채움 */
+  --toast-hold: 3000ms;
+
+  /* Easing */
+  --ease-standard: cubic-bezier(.2, 0, 0, 1); /* 들어오는 것 · 상태 전환 */
+  --ease-exit: cubic-bezier(.4, 0, 1, 1);     /* 나가는 것 */
+  --ease-sheet: cubic-bezier(.32, .72, 0, 1); /* iOS 시트 곡선 */
+}

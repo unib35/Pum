@@ -1,0 +1,12 @@
+{
+  "name": "@pum/design-tokens",
+  "private": true,
+  "type": "module",
+  "description": "Claude Design 토큰(src/*.css)에서 플랫폼별 토큰 생성",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "build": "node build.mjs",
+    "check": "node build.mjs --check",
+    "test": "node --test \"test/*.test.mjs\""
+  }
+}

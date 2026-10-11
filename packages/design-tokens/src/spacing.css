@@ -1,0 +1,32 @@
+:root {
+  --space-2: 2px;
+  --space-4: 4px;
+  --space-6: 6px;
+  --space-8: 8px;
+  --space-10: 10px;
+  --space-12: 12px;
+  --space-14: 14px;
+  --space-16: 16px;
+  --space-18: 18px;
+  --space-20: 20px;
+  --space-24: 24px;
+
+  --screen-pad: 20px;
+  --tap-min: 44px;
+  --button-h: 54px;
+  --button-h-sm: 44px;
+  --row-pad-y: 13px;
+  --row-pad-x: 16px;
+
+  --radius-xs: 6px;   /* inline tag */
+  --radius-sm: 8px;   /* status badge */
+  --radius-md: 12px;  /* button, tile, input */
+  --radius-lg: 14px;  /* card */
+  --radius-xl: 16px;  /* bottom sheet */
+  --radius-pill: 999px; /* chip, toggle, segmented */
+
+  --shadow-hairline: 0 0 0 1px rgba(15, 23, 42, 0.06);
+  --shadow-outline: 0 0 0 1.5px #171B26;
+  --shadow-attention: 0 0 0 1.5px #E8B98F;
+  --shadow-float: 0 10px 30px rgba(15, 23, 42, 0.18); /* alert, toast only */
+}
