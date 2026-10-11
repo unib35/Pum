@@ -192,8 +192,11 @@ struct RecordReviewView: View {
             }
         }
         .buttonStyle(.plain)
+        // 원문은 살펴볼 행에만 「확인 ›」 — 확정 행은 누를 곳이 없어 버튼으로 두지 않는다(QA)
+        .allowsHitTesting(row.isAttention)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(row.accessibilityText))
+        .accessibilityRemoveTraits(row.isAttention ? [] : .isButton)
     }
 
     private func dateColumn(_ row: ReviewRow) -> some View {
