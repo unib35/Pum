@@ -43,4 +43,12 @@ struct NoticeComposeTests {
         s.recruitment = nil
         #expect(s.sendTitle == NoticeComposeState.sendOnlyTitle)
     }
+
+    @Test func 보내기는_한_번만_실패하면_다시() {
+        var s = NoticeComposeState.sample
+        #expect(s.beginSend())
+        #expect(!s.beginSend())
+        s.failSend()
+        #expect(s.beginSend())
+    }
 }

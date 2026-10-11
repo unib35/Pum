@@ -63,6 +63,16 @@ nonisolated struct NoticeComposeState: Equatable, Sendable {
     /// 비활성 이유 문구는 디자인 없음(README 충돌 #30과 같은 처리 — 회색 비활성만)
     var canSend: Bool { hasContent && !isSending }
 
+    /// 보내기 시작 — 이미 처리 중이거나 내용이 없으면 false(두 번 보내지 않는다, 1ad와 같은 방식)
+    mutating func beginSend() -> Bool {
+        guard canSend else { return false }
+        isSending = true
+        return true
+    }
+
+    /// 보내기 실패 — 처리 중을 풀어 다시 보낼 수 있게(실패 안내 문구는 디자인 없음, 연결 때)
+    mutating func failSend() { isSending = false }
+
     /// 원문 값(3c)
     static let sample = NoticeComposeState(
         category: .businessHours,

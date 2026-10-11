@@ -5,7 +5,8 @@ import SwiftUI
 struct NoticeComposeView: View {
     @State private var state: NoticeComposeState
     var onClose: () -> Void
-    var onSend: (NoticeComposeState) -> Void
+    /// 보낼 내용과 끝 알림 — 실패면 done(false)로 처리 중을 풀고, 성공이면 부르는 쪽이 화면을 닫는다
+    var onSend: (NoticeComposeState, _ done: @escaping (_ succeeded: Bool) -> Void) -> Void
     var onAttachPhoto: () -> Void
     var onAttachFile: () -> Void
     /// 「선택」 — 받는 사람을 직접 고르는 화면으로
@@ -26,7 +27,7 @@ struct NoticeComposeView: View {
 
     init(state: NoticeComposeState = .sample,
          onClose: @escaping () -> Void = {},
-         onSend: @escaping (NoticeComposeState) -> Void = { _ in },
+         onSend: @escaping (NoticeComposeState, _ done: @escaping (_ succeeded: Bool) -> Void) -> Void = { _, _ in },
          onAttachPhoto: @escaping () -> Void = {},
          onAttachFile: @escaping () -> Void = {},
          onPickRecipients: @escaping () -> Void = {},
@@ -57,11 +58,19 @@ struct NoticeComposeView: View {
         }
         .background(PumColor.bgApp)
         .safeAreaInset(edge: .bottom, spacing: 0) {
-            PumButton(title: state.sendTitle, kind: .primary, isLoading: state.isSending) { onSend(state) }
-                .disabled(!state.canSend)
+            PumButton(title: state.sendTitle, kind: .primary, isLoading: state.isSending, action: send)
+                .disabled(!state.canSend && !state.isSending)
                 .padding(.horizontal, PumTokens.Size.screenPad)
                 .padding(.vertical, PumTokens.Space.s12)
                 .background(PumColor.bgApp)
+        }
+    }
+
+    /// 연속으로 눌러도 한 번만 보낸다
+    private func send() {
+        guard state.beginSend() else { return }
+        onSend(state) { succeeded in
+            if !succeeded { state.failSend() }
         }
     }
 
