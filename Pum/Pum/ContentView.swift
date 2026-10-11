@@ -45,6 +45,7 @@ struct ContentView: View {
             case "1u": OwnerPayrollView()
             case "1v": PayrollConfirmView()
             case "1w": OwnerWorkplacesView()
+            case "1x": StaffInviteView(draft: .sample, showsPhoneFocus: true)
             case "1ac": StaffListView()
             case "gallery": ComponentGalleryView()
             default: DevMenu()
@@ -88,6 +89,7 @@ private struct DevMenu: View {
                     NavigationLink("1u 급여 정산") { OwnerPayrollView().toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("1v 급여 확정 시트") { PayrollConfirmView().toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("1w 전체 사업장") { OwnerWorkplacesView().toolbar(.hidden, for: .navigationBar) }
+                    NavigationLink("1x 직원 초대") { StaffInviteView(draft: .sample, showsPhoneFocus: true).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("1ac 직원 관리") { StaffListView().toolbar(.hidden, for: .navigationBar) }
                 }
                 Section("디자인 시스템") {
