@@ -16,7 +16,8 @@ nonisolated struct ExtraShiftOfferDay: Equatable, Identifiable, Sendable {
     /// 서버 값 — 예: 「5h」 · 이 요청이면 「+5h」. 쉬는 날은 빈 문자열
     var hoursText: String
 
-    var labelText: String { "\(weekday) \(day)" }
+    /// 원문: 근무가 있는 날만 날짜를 붙인다(월 5 · 화 · 수 7 …)
+    var labelText: String { kind == .off ? weekday : "\(weekday) \(day)" }
     /// 쉬는 날은 「–」
     var valueText: String { kind == .off ? "–" : hoursText }
 

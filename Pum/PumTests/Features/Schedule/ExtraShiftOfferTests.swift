@@ -11,6 +11,7 @@ struct ExtraShiftOfferTests {
         #expect(s.weekSummary == "이 주 13.5h → 18h · 금요일 저녁 근무(17–22)는 그대로예요")
         #expect(s.week.map(\.valueText) == ["5h", "–", "5h", "–", "+5h", "–", "–"])
         #expect(s.week[0].labelText == "월 5")
+        #expect(s.week[1].labelText == "화") // 근무 없는 날은 요일만(원문)
     }
 
     @Test func 안내문은_함께_요청된_사람이_있을_때만_앞_문장이_붙는다() {
