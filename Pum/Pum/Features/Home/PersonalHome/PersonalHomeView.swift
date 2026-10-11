@@ -121,7 +121,6 @@ private struct PersonalRecordTag: View {
             .padding(.vertical, PumTokens.Space.s4)
             .padding(.horizontal, 9) // PumBadge와 같은 안쪽 여백
             .modifier(PersonalDash(radius: PumTokens.Radius.sm))
-            .accessibilityLabel(Text("내 기록"))
     }
 }
 
@@ -214,9 +213,12 @@ private struct PersonalMonthCard: View {
                 cell(label: "\(state.monthTitle) 예상 급여", value: PumFormat.amount(state.monthExpectedPay) + "원") {
                     Button(action: onOpenPayBasis) {
                         Text("계산 근거 ›").pumText(.caption, weight: .semibold).foregroundStyle(PumColor.accent)
+                            // 보이는 줄은 그대로, 누름 영역만 위아래로 넓혀 44(줄 높이 약 16 + 28)
+                            .padding(.vertical, PumTokens.Space.s14)
+                            .contentShape(Rectangle())
+                            .padding(.vertical, -PumTokens.Space.s14)
                     }
                     .buttonStyle(.plain)
-                    .contentShape(Rectangle().inset(by: -PumTokens.Space.s12)) // 터치 영역 44pt 이상
                 }
             }
             .fixedSize(horizontal: false, vertical: true)
@@ -248,9 +250,11 @@ private struct PersonalRecentCard: View {
                 Spacer()
                 Button(action: onOpenCalendar) {
                     Text("캘린더").pumText(.caption, weight: .semibold).foregroundStyle(PumColor.accent)
+                        .padding(PumTokens.Space.s14) // 누름 영역만 44로 넓힌다
+                        .contentShape(Rectangle())
+                        .padding(-PumTokens.Space.s14)
                 }
                 .buttonStyle(.plain)
-                .contentShape(Rectangle().inset(by: -PumTokens.Space.s12)) // 터치 영역 44pt 이상
             }
             .padding(.horizontal, PumTokens.Space.s16)
             .padding(.top, PumTokens.Space.s16)
