@@ -74,6 +74,7 @@ struct ContentView: View {
             case "5a": OwnerHomeUnverifiedView(state: .sample)
             case "4c": WorkplaceSettingsView(state: .sample)
             case "5b": VerifyIntroView(state: .sample)
+            case "5c": BusinessVerifyView(state: .sample)
             case "gallery": ComponentGalleryView()
             default: DevMenu()
             }
@@ -145,6 +146,7 @@ private struct DevMenu: View {
                     NavigationLink("5a 미인증 사업장 홈") { OwnerHomeUnverifiedView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("4c 사업장 설정") { WorkplaceSettingsView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("5b 사업장 인증 시트") { VerifyIntroView(state: .sample).toolbar(.hidden, for: .navigationBar) }
+                    NavigationLink("5c 사업자 확인") { BusinessVerifyView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                 }
                 Section("디자인 시스템") {
                     NavigationLink("컴포넌트 갤러리") { ComponentGalleryView() }
