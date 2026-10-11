@@ -21,6 +21,7 @@ nonisolated struct ContractHistoryEntry: Equatable, Sendable, Identifiable {
     let text: String
     var id: Int { order }
     /// 낭독용: 「10/01 14:20, 사업주 서명, 박민수」
+    /// 가운뎃점은 낭독에서 쉼표로(서버 문구 형식 「A · B」를 가정 — 서버가 낭독 문구를 주면 그것으로)
     var accessibilityText: String { "\(timeText), " + text.replacingOccurrences(of: " · ", with: ", ") }
 }
 

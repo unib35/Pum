@@ -27,6 +27,8 @@ struct ContractListView: View {
 
     /// 사업장 네모 약 44 — 큰 글자에서 글자와 함께 커진다(DEC-005: 토큰 밖 값에 이름)
     @ScaledMetric(relativeTo: .body) private var tileSize: CGFloat = 44
+    /// 큰 글자에서 네모가 제목 폭을 잡아먹지 않게 상한(44의 1.5배)
+    static let tileMax: CGFloat = 66
     /// 이력 시각 열 고정 폭: 「10/03 16:41」 13px 기준 약 82
     @ScaledMetric(relativeTo: .footnote) private var timeColumn: CGFloat = 82
 
@@ -114,7 +116,7 @@ struct ContractListView: View {
         Text(item.initial)
             .pumText(.body, weight: .bold) // 15px 700
             .foregroundStyle(.white)
-            .frame(width: tileSize, height: tileSize)
+            .frame(width: min(tileSize, Self.tileMax), height: min(tileSize, Self.tileMax))
             .background(PumAvatarPalette.stores[item.colorIndex % PumAvatarPalette.stores.count],
                         in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
             .accessibilityHidden(true)
@@ -141,10 +143,14 @@ struct ContractListView: View {
     private func historyList(_ item: ContractItem) -> some View {
         VStack(alignment: .leading, spacing: PumTokens.Space.s12) { // 원문 줄 간격 약 31pt
             ForEach(item.history) { h in
-                HStack(alignment: .firstTextBaseline, spacing: PumTokens.Space.s8) {
+                // 접근성 큰 글자에서는 시각 위 · 내용 아래(고정 폭 열이 좁아지지 않게)
+                let layout = typeSize.isAccessibilitySize
+                    ? AnyLayout(VStackLayout(alignment: .leading, spacing: PumTokens.Space.s2))
+                    : AnyLayout(HStackLayout(alignment: .firstTextBaseline, spacing: PumTokens.Space.s8))
+                layout {
                     Text(h.timeText).pumText(.footnote, weight: .regular)
                         .foregroundStyle(PumColor.textTertiary)
-                        .frame(width: timeColumn, alignment: .leading)
+                        .frame(width: typeSize.isAccessibilitySize ? nil : timeColumn, alignment: .leading)
                     Text(h.text).pumText(.footnote, weight: .regular)
                         .foregroundStyle(PumColor.textPrimary)
                         .frame(maxWidth: .infinity, alignment: .leading)
