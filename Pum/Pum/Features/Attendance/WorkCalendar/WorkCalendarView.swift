@@ -1,0 +1,248 @@
+// UI-IOS-1g · REQ-006 · REQ-107 — 근무 캘린더: 월 보기 + 월 요약
+// 선택 · 월 이동 · 상세 이동은 모두 액션 클로저로 넘긴다(화면은 선택 상태를 들고 있지 않음).
+import SwiftUI
+
+struct WorkCalendarView: View {
+    var state: WorkCalendarState = .sample
+    var onWorkplace: () -> Void = {}
+    var onPrevMonth: () -> Void = {}
+    var onNextMonth: () -> Void = {}
+    var onSelectDay: (Int) -> Void = { _ in }
+    var onOpenDetail: () -> Void = {}
+    @State private var tab = "work"
+
+    var body: some View {
+        ScrollView {
+            VStack(spacing: PumTokens.Space.s12) {
+                header
+                calendarCard
+                selectedCard
+                summaryCard
+            }
+            .padding(.horizontal, PumTokens.Size.screenPad)
+            .padding(.bottom, PumTokens.Space.s24)
+        }
+        .background(PumColor.bgApp)
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            PumTabBar(items: PumTabItem.employeeTabs, selection: $tab)
+        }
+    }
+
+    // MARK: 머리
+
+    private var header: some View {
+        HStack {
+            // 목업 28px 700 → title1(28)
+            Text("근무").pumText(.title1).foregroundStyle(PumColor.textPrimary)
+                .accessibilityAddTraits(.isHeader)
+            Spacer(minLength: PumTokens.Space.s8)
+            PumWorkplaceChip(name: state.workplaceName, initial: state.workplaceInitial, action: onWorkplace)
+        }
+        .padding(.top, PumTokens.Space.s8)
+    }
+
+    // MARK: 달력
+
+    private var calendarCard: some View {
+        PumCard {
+            VStack(spacing: PumTokens.Space.s8) {
+                monthBar
+                weekdayHeader
+                grid
+                legend
+            }
+            .padding(PumTokens.Space.s16)
+        }
+    }
+
+    private var monthBar: some View {
+        HStack {
+            chevron("chevron.left", label: "이전 달", action: onPrevMonth)
+            Spacer()
+            // 목업 16px 700 → headline(17) bold
+            Text(state.monthTitle).pumText(.headline, weight: .bold).foregroundStyle(PumColor.textPrimary)
+                .accessibilityAddTraits(.isHeader)
+            Spacer()
+            chevron("chevron.right", label: "다음 달", action: onNextMonth)
+        }
+    }
+
+    /// 원형이 아닌 단순 chevron, 터치 44pt
+    private func chevron(_ name: String, label: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Image(systemName: name)
+                .font(.callout.weight(.semibold))
+                .foregroundStyle(PumColor.textSecondary)
+                .frame(width: PumTokens.Size.tapMin, height: PumTokens.Size.tapMin)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(Text(label))
+    }
+
+    private var weekdayHeader: some View {
+        HStack(spacing: 0) {
+            ForEach(Array(WorkCalendarLayout.weekdayNames.enumerated()), id: \.offset) { i, name in
+                // 목업 11px 400 → caption2(11), 굵기만 regular
+                Text(name).pumText(.caption2, weight: .regular)
+                    .foregroundStyle(i == 0 ? PumColor.statusDanger : PumColor.textTertiary)
+                    .frame(maxWidth: .infinity)
+            }
+        }
+        .accessibilityHidden(true) // 칸마다 요일을 읽어 준다
+    }
+
+    private var grid: some View {
+        let layout = state.layout
+        return VStack(spacing: 0) {
+            ForEach(0..<layout.weekCount, id: \.self) { week in
+                HStack(alignment: .top, spacing: 0) {
+                    ForEach(0..<WorkCalendarLayout.columns, id: \.self) { col in
+                        cell(layout, slot: week * WorkCalendarLayout.columns + col)
+                    }
+                }
+            }
+        }
+    }
+
+    @ViewBuilder private func cell(_ layout: WorkCalendarLayout, slot: Int) -> some View {
+        if let d = layout.day(atSlot: slot) {
+            let isToday = state.today == d
+            WorkCalendarDayCell(
+                day: d, isSunday: layout.isSunday(d), isToday: isToday, mark: state.marks[d],
+                label: layout.accessibilityLabel(day: d, mark: state.marks[d], isToday: isToday),
+                action: { onSelectDay(d) })
+        } else {
+            Color.clear.frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin)
+                .accessibilityHidden(true)
+        }
+    }
+
+    private var legend: some View {
+        ViewThatFits(in: .horizontal) {
+            HStack(spacing: PumTokens.Space.s12) {
+                ForEach(WorkCalendarDot.allCases, id: \.self) { legendItem($0) }
+            }
+            VStack(spacing: PumTokens.Space.s4) {
+                HStack(spacing: PumTokens.Space.s12) { legendItem(.confirmed); legendItem(.planned) }
+                HStack(spacing: PumTokens.Space.s12) { legendItem(.substitute); legendItem(.absent) }
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(Text("범례: " + WorkCalendarDot.allCases.map(\.title).joined(separator: ", ")))
+    }
+
+    private func legendItem(_ dot: WorkCalendarDot) -> some View {
+        HStack(spacing: PumTokens.Space.s4) {
+            WorkCalendarDotView(dot: dot)
+            Text(dot.title).pumText(.caption, weight: .regular).foregroundStyle(PumColor.textSecondary)
+                .fixedSize()
+        }
+    }
+
+    // MARK: 선택한 날
+
+    private var selectedCard: some View {
+        let s = state.selected
+        return PumCard {
+            Button(action: onOpenDetail) {
+                HStack(spacing: PumTokens.Space.s12) {
+                    VStack(spacing: PumTokens.Space.s2) {
+                        Text(s.weekday).pumText(.caption, weight: .regular).foregroundStyle(PumColor.textSecondary)
+                        // 목업 19px 700 → title3(20)
+                        Text("\(s.day)").pumText(.title3).foregroundStyle(PumColor.textPrimary)
+                    }
+                    VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
+                        ViewThatFits(in: .horizontal) {
+                            HStack(alignment: .firstTextBaseline, spacing: PumTokens.Space.s6) {
+                                actual(s); planned(s)
+                            }
+                            VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
+                                actual(s); planned(s)
+                            }
+                        }
+                        Text(s.recognizedText).pumText(.caption, weight: .regular).foregroundStyle(PumColor.textSecondary)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    PumBadge(text: s.statusText, kind: .done)
+                    Image(systemName: "chevron.right")
+                        .font(.footnote.weight(.semibold))
+                        .foregroundStyle(PumColor.textDisabled)
+                }
+                .padding(PumTokens.Space.s16)
+                .frame(minHeight: PumTokens.Size.tapMin)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(Text("\(state.layout.month)월 \(s.day)일 \(s.weekday)요일, \(s.actualRange), \(s.plannedText), \(s.recognizedText), \(s.statusText)"))
+            .accessibilityHint(Text("근무 상세를 열어요"))
+        }
+    }
+
+    private func actual(_ s: WorkCalendarSelectedDay) -> some View {
+        Text(s.actualRange).pumText(.headline).foregroundStyle(PumColor.textPrimary)
+    }
+
+    private func planned(_ s: WorkCalendarSelectedDay) -> some View {
+        Text(s.plannedText).pumText(.caption, weight: .medium).foregroundStyle(PumColor.textSecondary)
+    }
+
+    // MARK: 월 요약
+
+    private var summaryCard: some View {
+        let m = state.summary
+        return PumCard {
+            VStack(spacing: PumTokens.Space.s12) {
+                ViewThatFits(in: .horizontal) {
+                    HStack(alignment: .firstTextBaseline) {
+                        summaryTitle(m.title)
+                        Spacer(minLength: PumTokens.Space.s8)
+                        summaryNote(m.confirmedText)
+                    }
+                    VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
+                        summaryTitle(m.title)
+                        summaryNote(m.confirmedText)
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                HStack(alignment: .top, spacing: PumTokens.Space.s8) {
+                    stat("근무일", m.workDaysText)
+                    stat("총 근무", m.totalText)
+                    stat("연장", m.overtimeText)
+                }
+                Rectangle().fill(PumColor.borderHairline).frame(height: 1)
+                HStack(alignment: .firstTextBaseline) {
+                    Text("예상 급여").pumText(.footnote).foregroundStyle(PumColor.textSecondary)
+                    Spacer(minLength: PumTokens.Space.s8)
+                    // 목업 18px 700 → headline(17) bold: 20(title3)보다 1 차이로 가깝다
+                    Text(m.payText).pumText(.headline, weight: .bold).foregroundStyle(PumColor.statusDone)
+                }
+                .accessibilityElement(children: .combine)
+            }
+            .padding(PumTokens.Space.s16)
+        }
+    }
+
+    private func summaryTitle(_ s: String) -> some View {
+        Text(s).pumText(.callout, weight: .bold).foregroundStyle(PumColor.textPrimary)
+    }
+
+    private func summaryNote(_ s: String) -> some View {
+        Text(s).pumText(.caption, weight: .regular).foregroundStyle(PumColor.textSecondary)
+    }
+
+    private func stat(_ label: String, _ value: String) -> some View {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
+            Text(label).pumText(.caption2, weight: .regular).foregroundStyle(PumColor.textSecondary)
+            // 목업 16px 700 → headline(17) bold
+            Text(value).pumText(.headline, weight: .bold).foregroundStyle(PumColor.textPrimary)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .accessibilityElement(children: .combine)
+    }
+}
+
+#Preview("1g") { WorkCalendarView() }
+#Preview("1g · 큰 글자") { WorkCalendarView().dynamicTypeSize(.xxxLarge) }
