@@ -113,6 +113,7 @@ struct ComponentGalleryView: View {
                 }
 
                 section("C6 · C7 · SMALL") {
+                    PumInverseWorkplaceChip(name: "종민김밥 본점", initial: "종") {}
                     PumNavHeader(title: "근무 상세", onBack: {})
                     PumNavHeader(title: "근무기록 수정 요청", onBack: {}) {
                         Button("편집") {}.pumText(.callout).foregroundStyle(PumColor.accent).frame(minHeight: PumTokens.Size.tapMin)
