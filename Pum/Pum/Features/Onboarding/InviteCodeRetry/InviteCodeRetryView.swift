@@ -52,6 +52,10 @@ struct InviteCodeRetryView: View {
         }
         .scrollDismissesKeyboard(.never)
         .background(PumColor.bgApp)
+        // 확인 결과로 틀림이 새로 뜨면 VoiceOver에 한 번 알린다
+        .onChange(of: state.errorText) { _, new in
+            if let new { AccessibilityNotification.Announcement(new).post() }
+        }
         .safeAreaInset(edge: .bottom, spacing: 0) { actions }
     }
 
