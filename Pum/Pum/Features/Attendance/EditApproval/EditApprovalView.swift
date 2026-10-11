@@ -140,7 +140,7 @@ struct EditApprovalView: View {
         from.font = PumFont.font(size: PumTokens.FontToken.body.size, weight: .semibold, relativeTo: .body)
         var to = AttributedString(change.toText)
         // 원문 900 — 토큰 굵기 중 가장 굵은 bold
-        to.font = PumFont.font(size: PumTokens.FontToken.body.size, weight: .bold, relativeTo: .body)
+        to.font = PumFont.font(size: PumTokens.FontToken.body.size, weight: .heavy, relativeTo: .body) // 원문 15px 900 → Pretendard ExtraBold(heavy)
         return VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
             Text(change.label).pumText(.caption2, weight: .regular).foregroundStyle(PumColor.textSecondary) // 11px
             Text(from + to).pumText(.body, weight: .semibold).foregroundStyle(PumColor.textPrimary) // 15px

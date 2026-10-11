@@ -39,6 +39,7 @@ struct ContentView: View {
             case "1ae": RecordReviewView()
             case "1y": WorkplaceSwitcherView()
             case "1ab": ContractListView()
+            case "1s": EditApprovalView()
             case "gallery": ComponentGalleryView()
             default: DevMenu()
             }
@@ -75,6 +76,7 @@ private struct DevMenu: View {
                     NavigationLink("1ae 근무기록 확인 요청") { RecordReviewView().toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("1y 사업장 전환") { WorkplaceSwitcherView().toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("1ab 계약서 보관함") { ContractListView().toolbar(.hidden, for: .navigationBar) }
+                    NavigationLink("1s 수정 요청 승인") { EditApprovalView().toolbar(.hidden, for: .navigationBar) }
                 }
                 Section("디자인 시스템") {
                     NavigationLink("컴포넌트 갤러리") { ComponentGalleryView() }
