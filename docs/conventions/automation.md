@@ -35,7 +35,7 @@
 | 하지 않는 것 | 머지, `--force`, 커밋 고쳐 쓰기(승인 없이) |
 | 직접 실행 | `sh .claude/skills/finish-feature/scripts/check.sh` · `sh .claude/skills/finish-feature/scripts/verify.sh ios tokens` |
 
-`verify.sh` 영역: `ios`(PumTests, 약 3–4분) · `ios-ui`(UI 테스트 포함) · `tokens`(테스트 + 생성물 최신 확인) · 나머지는 SKIP(테스트 명령 미정). 시뮬레이터는 `PUM_SIM`(기본 `iPhone 17`). 병렬 테스트는 끈다 — 켜면 시뮬레이터 복제 실패(`Failed to clone device`)가 났다(2026-10-12).
+`verify.sh` 영역: `ios`(PumTests, 약 3–4분) · `ios-ui`(UI 테스트 포함) · `tokens`(테스트 + 생성물 최신 확인) · `claude`(`.claude/` 스크립트 문법 · settings.json 형식 · hook 출력, 1초 미만) · 나머지는 SKIP(테스트 명령 미정). 시뮬레이터는 `PUM_SIM`(기본 `iPhone 17`). 병렬 테스트는 끈다 — 켜면 시뮬레이터 복제 실패(`Failed to clone device`)가 났다(2026-10-12).
 
 ## SessionStart hook
 
@@ -91,8 +91,9 @@
 | start.sh 입력 검증 | 잘못된 type · issue 0 · 대문자 slug · 1단어 · 6단어 slug | 모두 종료 1 |
 | start.sh 미커밋 변경 | 실제 저장소(main, 미커밋 변경 있음) | 종료 2, 브랜치 · 작업 트리 변화 없음 |
 | start.sh 정상 · 이슈 오류 · 중복 | scratch clone + 가짜 `gh` | 0(브랜치 생성, refs 추출) · 3(없음 · 닫힘) · 4(중복) |
-| check.sh | scratch clone: 형식 오류 · 마침표 · 영어 요약 · 72자 초과 · `ghp_` 토큰 · `.env.local` · 미커밋 · Refs 누락 · 정상 | 모두 기대대로 FAIL/WARN, 정상은 종료 0 |
+| check.sh | scratch clone: 형식 오류 · 마침표 · 영어 요약 · 72자 초과 · `ghp_` 토큰 · `.env.local` · 미커밋 · Refs 누락 · 정상 | 모두 기대대로 FAIL/WARN, 정상은 종료 0. 미커밋 변경은 처음에 FAIL이었으나 push되는 건 커밋뿐이라 WARN으로 낮춤 |
 | verify.sh | 실제 저장소 `tokens docs payroll ios` | tokens PASS ×2, docs · payroll SKIP, ios는 병렬 테스트 끈 뒤 PASS(3분 20초). 작업 트리 변화 없음 |
 | SessionStart hook | 직접 실행(저장소 · git 밖 · 없는 경로) + `claude -p`(haiku) 실제 세션 | 모두 exit 0, 실제 세션 컨텍스트에 `[pum]` 줄 들어감 |
-| PR 생성 · push | — | 미실행(public 저장소라 실제 이슈 작업 때 승인 후 첫 실행) |
+| verify.sh `claude` | 정상 · settings.json 깨뜨림 · hook 문법 오류(검사 후 원복) | PASS · FAIL · FAIL. 처음 `sh -c` 버전은 settings.json 오류를 놓쳐(마지막 명령 종료 코드만 반영) 함수로 고침 |
+| 실제 흐름(이슈 #1) | 이슈 생성 → `chore/1-claude-code-automation` → 경로 지정 커밋(기존 스테이징 유지) → check · verify → push · PR | 아래 PR 참고. `start.sh`는 main 미커밋 변경 때문에 종료 2로 멈추는 것이 맞아, 사용자 결정(기존 작업은 두고 이 파일만 커밋)대로 브랜치를 직접 만듦 |
 | `disableAllHooks` 끄기 | — | 미실행 |

@@ -56,6 +56,7 @@ git diff --name-only "$base...HEAD" | grep -E '(^|/)\.env($|\.)' | grep -v '\.en
 
 # 5. 바뀐 영역 → verify.sh 인자
 areas=$(git diff --name-only "$base...HEAD" | awk -F/ '
+  /^\.claude\//                { a["claude"]=1; next }
   /^Pum\//                     { a["ios"]=1; next }
   /^packages\/design-tokens\// { a["tokens"]=1; next }
   /^packages\/payroll-engine\//{ a["payroll"]=1; next }
