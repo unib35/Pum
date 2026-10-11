@@ -4,7 +4,7 @@ import SwiftUI
 /// 화면 전용 상수 — 토큰에 없는 값(DEC-005)
 enum PayrollConfirmLocal {
     /// 점 목록 점 지름(목업 약 4) — space-4
-    static let bulletDot: CGFloat = PumTokens.Space.s4
+    static let bulletDot: CGFloat = PumTokens.Space.s6 // 원문 점 약 6
 }
 
 struct PayrollConfirmSheet: View {
@@ -73,7 +73,7 @@ struct PayrollConfirmSheet: View {
     // MARK: 점 목록
 
     private var notes: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s10) { // 원문 줄 간격 약 28pt
             ForEach(Array(state.notes.enumerated()), id: \.offset) { _, n in
                 HStack(alignment: .firstTextBaseline, spacing: PumTokens.Space.s8) {
                     Circle().fill(PumColor.textPrimary).frame(width: dot, height: dot)
