@@ -1,0 +1,113 @@
+// UI-IOS-1j · REQ-042 — 대타 요청 시트(화면 전용 뷰)
+// 공통 C9 바텀시트 컴포넌트가 아직 없어 이 화면 안에 둔다 → 「공통 변경 요청」 후보.
+import SwiftUI
+
+struct SubstituteRequestSheet: View {
+    let request: SubstituteRequest
+    /// 시트가 차지할 수 있는 최대 높이(넘치면 안쪽이 스크롤)
+    var maxHeight: CGFloat = .infinity
+    var bottomInset: CGFloat = 0
+    var onCancelRequest: () -> Void = {}
+
+    @AccessibilityFocusState private var titleFocused: Bool
+
+    // 화면 전용 상수 — 토큰에 없는 값(DEC-005)
+    private enum Local {
+        /// 손잡이: 목업 약 36×5, gray300 계열
+        static let handleWidth: CGFloat = 36
+        static let handleHeight: CGFloat = 5
+    }
+
+    var body: some View {
+        VStack(spacing: 0) {
+            Capsule()
+                .fill(PumTokens.ColorToken.gray300)
+                .frame(width: Local.handleWidth, height: Local.handleHeight)
+                .padding(.top, PumTokens.Space.s8)
+                .padding(.bottom, PumTokens.Space.s12)
+                .accessibilityHidden(true)
+            // 내용이 길면(큰 글자) 스크롤, 짧으면 내용 높이만큼
+            ViewThatFits(in: .vertical) {
+                content
+                ScrollView { content }.scrollBounceBehavior(.basedOnSize)
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .frame(maxHeight: maxHeight, alignment: .top)
+        .padding(.bottom, bottomInset)
+        .background(
+            UnevenRoundedRectangle(topLeadingRadius: PumTokens.Radius.xl, topTrailingRadius: PumTokens.Radius.xl, style: .continuous)
+                .fill(PumColor.bgApp)
+                .ignoresSafeArea(.container, edges: .bottom)
+        )
+        .accessibilityElement(children: .contain)
+        .accessibilityAddTraits(.isModal)
+        .task {
+            // 시트가 열리면 제목에 포커스
+            try? await Task.sleep(for: .milliseconds(400))
+            titleFocused = true
+        }
+    }
+
+    private var content: some View {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+            HStack(alignment: .center, spacing: PumTokens.Space.s8) {
+                Text(SubstituteRequest.heading).pumText(.caption, weight: .medium)
+                    .foregroundStyle(PumColor.textSecondary)
+                Spacer(minLength: PumTokens.Space.s8)
+                PumBadge(text: request.statusText, kind: .attention)
+            }
+            // 목업 22px 700 → title3(20): title2(24)와 2씩 같은 거리, 시트 안 다른 글자와 균형을 위해 작은 쪽
+            Text(request.title).pumText(.title3, weight: .bold)
+                .foregroundStyle(PumColor.textPrimary)
+                .accessibilityLabel(Text(request.titleAccessibility))
+                .accessibilityAddTraits(.isHeader)
+                .accessibilityFocused($titleFocused)
+            applicantsCard
+            HStack(alignment: .firstTextBaseline, spacing: PumTokens.Space.s8) {
+                Text(SubstituteRequest.reasonLabel).pumText(.footnote).foregroundStyle(PumColor.textTertiary)
+                Text(request.reason).pumText(.footnote).foregroundStyle(PumColor.textSecondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .accessibilityElement(children: .combine)
+            Text(request.notice).pumText(.caption).foregroundStyle(PumColor.textSecondary)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            PumButton(title: SubstituteRequest.cancelTitle, kind: .outline, action: onCancelRequest)
+                .padding(.top, PumTokens.Space.s4)
+        }
+        .padding(.horizontal, PumTokens.Size.screenPad)
+        .padding(.bottom, PumTokens.Space.s16)
+    }
+
+    private var applicantsCard: some View {
+        PumCard {
+            VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+                // 목업 13px 700 → footnote bold
+                Text(request.applicantsHeader).pumText(.footnote, weight: .bold)
+                    .foregroundStyle(PumColor.textSecondary)
+                    .accessibilityAddTraits(.isHeader)
+                ForEach(Array(request.applicants.enumerated()), id: \.offset) { _, who in
+                    HStack(spacing: PumTokens.Space.s12) {
+                        PumAvatar(name: who.name, colorIndex: who.colorIndex)
+                        VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
+                            // 목업 15px 600 → body(16) semibold
+                            Text(who.name).pumText(.body, weight: .semibold).foregroundStyle(PumColor.textPrimary)
+                            Text(who.statusLine).pumText(.caption).foregroundStyle(PumColor.textSecondary)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .frame(minHeight: PumTokens.Size.tapMin)
+                    .accessibilityElement(children: .combine)
+                }
+            }
+            .padding(PumTokens.Space.s16)
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+    }
+}
+
+#Preview("1j 시트") {
+    SubstituteRequestSheet(request: MyScheduleState.sample.substitute!)
+        .frame(maxHeight: .infinity, alignment: .bottom)
+        .background(PumColor.surfaceFill)
+}
