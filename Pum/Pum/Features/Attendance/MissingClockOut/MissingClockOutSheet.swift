@@ -50,9 +50,10 @@ struct MissingClockOutSheet: View {
 
     // MARK: 시간 칸 + 한 줄
 
+    /// 원문 1al: 시간 칸만 흰 카드 안, 「예정보다 …」 줄은 카드 아래(4 안쪽)
     private var timeCard: some View {
-        PumCard {
-            VStack(spacing: PumTokens.Space.s12) {
+        VStack(spacing: PumTokens.Space.s12) {
+            PumCard {
                 HStack(spacing: PumTokens.Space.s8) {
                     timeCell(.hour, text: String(format: "%02d", state.hour), label: "시")
                     Text(":").pumText(.display).foregroundStyle(PumTokens.ColorToken.gray400)
@@ -60,12 +61,13 @@ struct MissingClockOutSheet: View {
                     timeCell(.minute, text: String(format: "%02d", state.minute), label: "분")
                 }
                 .frame(maxWidth: .infinity)
-                ViewThatFits(in: .horizontal) {
-                    HStack(alignment: .firstTextBaseline) { offsetLabel; Spacer(minLength: PumTokens.Space.s8); recognizedLabel }
-                    VStack(alignment: .leading, spacing: PumTokens.Space.s2) { offsetLabel; recognizedLabel }
-                }
+                .padding(PumTokens.Space.s16)
             }
-            .padding(PumTokens.Space.s16)
+            ViewThatFits(in: .horizontal) {
+                HStack(alignment: .firstTextBaseline) { offsetLabel; Spacer(minLength: PumTokens.Space.s8); recognizedLabel }
+                VStack(alignment: .leading, spacing: PumTokens.Space.s2) { offsetLabel; recognizedLabel }
+            }
+            .padding(.horizontal, PumTokens.Space.s4)
         }
     }
 
