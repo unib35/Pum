@@ -187,7 +187,7 @@ private struct StepRow<Trailing: View>: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding(.vertical, PumTokens.Size.rowPadY)
+        .padding(.vertical, PumTokens.Space.s10) // 원문 행 높이 약 54
         .padding(.horizontal, PumTokens.Size.rowPadX)
         .frame(minHeight: PumTokens.Size.tapMin)
         .overlay(alignment: .bottom) {
@@ -206,8 +206,10 @@ private struct StepRow<Trailing: View>: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .frame(minHeight: PumTokens.Size.tapMin)
+            // 보이는 높이는 내용만큼, 누름 영역만 행 여백까지 넓힌다(행이 원문보다 높아지지 않게)
+            .padding(.vertical, PumTokens.Space.s10)
             .contentShape(Rectangle())
+            .padding(.vertical, -PumTokens.Space.s10)
         }
         .buttonStyle(.plain)
         .accessibilityElement(children: .ignore)
