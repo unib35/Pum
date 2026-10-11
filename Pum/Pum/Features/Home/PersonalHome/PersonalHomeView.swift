@@ -19,7 +19,7 @@ struct PersonalHomeView: View {
         ScrollView {
             VStack(spacing: PumTokens.Space.s12) {
                 header
-                WeekStripCard(title: state.weekTitle, summary: state.weekSummary, days: state.week)
+                WeekStripCard(title: state.weekTitle, summary: state.weekSummary, days: state.week, dotStyle: .muted) // 원문: 개인 기록 점은 회색
                 PersonalTodayCard(state: state)
                 PersonalMonthCard(state: state, onOpenPayBasis: onOpenPayBasis)
                 if !state.recent.isEmpty {

@@ -59,6 +59,7 @@ struct ContentView: View {
             case "2a": WelcomeView(state: .sample)
             case "2c": StartChoiceView(state: .sample)
             case "2d": InviteCodeView(state: .sample)
+            case "2f": PersonalHomeView(state: .sample)
             case "gallery": ComponentGalleryView()
             default: DevMenu()
             }
@@ -115,6 +116,7 @@ private struct DevMenu: View {
                     NavigationLink("2a 시작") { WelcomeView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("2c 시작 방식") { StartChoiceView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("2d 초대 코드 입력") { InviteCodeView(state: .sample).toolbar(.hidden, for: .navigationBar) }
+                    NavigationLink("2f 개인 모드 홈") { PersonalHomeView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                 }
                 Section("디자인 시스템") {
                     NavigationLink("컴포넌트 갤러리") { ComponentGalleryView() }

@@ -49,9 +49,13 @@ struct EmployeeHomeView: View {
 // MARK: - 주간 스트립
 
 struct WeekStripCard: View {
+    /// 근무 점 색 — 사업장 기록은 파랑(1at), 개인 모드 「내 기록」은 회색(2f)
+    enum DotStyle { case accent, muted }
+
     let title: String
     let summary: String
     let days: [WeekDay]
+    var dotStyle: DotStyle = .accent
 
     var body: some View {
         PumCard {
@@ -62,7 +66,7 @@ struct WeekStripCard: View {
                     Text(summary).pumText(.caption).foregroundStyle(PumColor.textSecondary)
                 }
                 HStack(spacing: PumTokens.Space.s4) {
-                    ForEach(days) { DayCell(day: $0) }
+                    ForEach(days) { DayCell(day: $0, dotStyle: dotStyle) }
                 }
             }
             .padding(PumTokens.Space.s16)
@@ -72,13 +76,14 @@ struct WeekStripCard: View {
 
 private struct DayCell: View {
     let day: WeekDay
+    let dotStyle: WeekStripCard.DotStyle
 
     var body: some View {
         VStack(spacing: PumTokens.Space.s4) {
             Text(day.label).pumText(.caption2, weight: .regular).foregroundStyle(labelColor)
             Text("\(day.day)").pumText(.headline, weight: day.isToday ? .bold : .semibold).foregroundStyle(numberColor)
             Circle()
-                .fill(day.hasShift ? (day.isToday ? PumColor.accentOnInverse : PumColor.accent) : .clear)
+                .fill(day.hasShift ? dotColor : .clear)
                 .frame(width: PumLayout.dayDot, height: PumLayout.dayDot)
         }
         .frame(maxWidth: .infinity)
@@ -87,6 +92,13 @@ private struct DayCell: View {
                     in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text("\(day.label)요일 \(day.day)일\(day.hasShift ? ", 근무 있음" : "")\(day.isToday ? ", 오늘" : "")"))
+    }
+
+    private var dotColor: Color {
+        switch dotStyle {
+        case .accent: day.isToday ? PumColor.accentOnInverse : PumColor.accent
+        case .muted: PumColor.textTertiary // 2f 원문: 오늘 칸에서도 회색 점
+        }
     }
 
     private var labelColor: Color {
