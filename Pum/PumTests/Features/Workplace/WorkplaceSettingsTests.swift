@@ -53,4 +53,12 @@ struct WorkplaceSettingsTests {
         #expect(s.workplaceInitial == "종")
         #expect(s.workplaceColorIndex == 0)
     }
+
+    @Test func 폐업은_대표만() {
+        var s = WorkplaceSettingsState.sample
+        #expect(s.isMeRepresentative)
+        s.admins = s.admins.map { WorkplaceAdmin(id: $0.id, name: $0.name, initial: $0.initial, colorIndex: $0.colorIndex,
+                                                 isMe: $0.id == "a2", roleLabel: $0.roleLabel) }
+        #expect(!s.isMeRepresentative) // 매니저가 보면 숨김
+    }
 }

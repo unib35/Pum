@@ -75,7 +75,7 @@ struct WorkplaceSettingsView: View {
                         SettingsRow(title: WorkplaceSettingsState.addAdminTitle, titleIsAccent: true, showsChevron: false,
                                     isLast: true, action: onAddAdmin)
                     }
-                    closeButton
+                    if state.isMeRepresentative { closeButton } // 대표만(REQ-093)
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
                 .padding(.top, PumTokens.Space.s8)

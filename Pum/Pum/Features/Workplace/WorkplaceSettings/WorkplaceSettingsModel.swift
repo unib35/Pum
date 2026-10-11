@@ -48,6 +48,9 @@ struct WorkplaceSettingsState: Equatable {
     var contractTemplate: String
     var admins: [WorkplaceAdmin]
 
+    /// 폐업 · 데이터 내보내기는 대표만(REQ-093) — 본인 역할은 「나」 표시된 관리자의 대표 여부(서버 값)
+    var isMeRepresentative: Bool { admins.contains { $0.isMe && $0.roleLabel == "대표" } }
+
     var infoLine: String { "\(category) · 직원 \(staffCount)명 · \(address)" }
     var infoAccessibilityText: String { "\(workplaceName), \(infoLine)" }
 
