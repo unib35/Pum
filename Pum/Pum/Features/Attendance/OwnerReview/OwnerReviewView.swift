@@ -178,7 +178,8 @@ struct OwnerReviewView: View {
     private func actual(_ item: OwnerReviewItem, accent: Color) -> some View {
         VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
             Text("실제").pumText(.caption2).foregroundStyle(accent)
-            (Text(item.actualLead ?? "").foregroundColor(accent) + Text(item.actualEndText).foregroundColor(accent).fontWeight(.bold))
+            // 원문: 출근 시각은 먹색, 문제가 된 퇴근 쪽만 강조색
+            (Text(item.actualLead ?? "").foregroundColor(PumColor.textPrimary) + Text(item.actualEndText).foregroundColor(accent).fontWeight(.bold))
                 .pumText(.callout, weight: .bold) // 목업 14px 700
         }
     }
