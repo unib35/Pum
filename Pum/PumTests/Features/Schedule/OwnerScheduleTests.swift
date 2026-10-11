@@ -21,7 +21,7 @@ struct OwnerScheduleTests {
         #expect(s.days[3].isShort && s.days[3].countText == "1명")
         #expect(s.days.filter(\.isShort).count == 1)
         #expect(s.days[6].isClosed && s.days[6].isSunday && s.days[6].countText == "휴무")
-        #expect(s.days[0].accessibilityLabel(selected: true) == "10월 5일 월요일, 4명, 선택됨")
+        #expect(s.days[0].accessibilityLabel(selected: true) == "10월 5일 월요일, 4명") // 「선택됨」은 특성
         #expect(s.days[3].accessibilityLabel(selected: false) == "10월 8일 목요일, 1명, 인원 부족")
         #expect(s.days[6].accessibilityLabel(selected: false) == "10월 11일 일요일, 휴무")
     }
@@ -43,6 +43,12 @@ struct OwnerScheduleTests {
         #expect(w.requestedAgo == "어제 21:40")
         #expect(w.whenText == "10월 12일 월 \u{00B7} 17:00 \u{2013} 22:00")
         #expect(w.weekHoursText == "그 주 박서준 23h \u{2192} 28h")
-        #expect(w.accessibilityText == "대타 요청, 10월 12일 월요일 17:00부터 22:00, 이종민에서 박서준으로, 그 주 박서준 23시간에서 28시간")
+        #expect(w.accessibilityText == "대타 요청, 승인 대기, 10월 12일 월요일 17:00부터 22:00, 이종민에서 박서준으로, 그 주 박서준 23시간에서 28시간")
+    }
+
+    @Test func 휴게_낭독() {
+        #expect(OwnerScheduleFormat.spokenDuration("1h") == "1시간")
+        #expect(OwnerScheduleFormat.spokenDuration("30m") == "30분")
+        #expect(OwnerScheduleFormat.spokenDuration("1시간") == "1시간")
     }
 }

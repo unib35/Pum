@@ -1,4 +1,4 @@
-// UI-IOS-1t · REQ-042 — 사업장 스케줄(사장님): 주간 · 일별 근무 · 대타 요청 승인
+// UI-IOS-1t · REQ-042 · REQ-050 — 사업장 스케줄(사장님): 주간 · 일별 근무 · 대타 요청 승인
 // 인원 수 · 시간 · 주간 시간(23h → 28h) · 「부족」 여부는 서버 값 그대로 — 화면에서 계산하지 않는다.
 import Foundation
 
@@ -26,7 +26,7 @@ nonisolated struct ScheduleDay: Identifiable, Equatable, Sendable {
 
     func accessibilityLabel(selected: Bool) -> String {
         var s = "\(spoken), " + (isClosed ? "휴무" : "\(headcount)명")
-        if selected { s += ", 선택됨" }
+        // 「선택됨」은 .isSelected 특성이 읽는다
         if isShort && !isClosed { s += ", 인원 부족" }
         return s
     }
@@ -53,6 +53,8 @@ nonisolated struct SchedulePerson: Identifiable, Equatable, Sendable {
     /// 「1h」 · 「30m」(서버)
     let breakText: String
     var breakLabel: String { "휴게 \(breakText)" }
+    /// 낭독: 「1h」 → 「1시간」, 「30m」 → 「30분」(서버 표기 「Nh」 「Nm」 가정)
+    var breakSpoken: String { "휴게 " + OwnerScheduleFormat.spokenDuration(breakText) }
 }
 
 /// 대타 요청 1건(REQ-042: 승인하면 담당자가 바뀐다)
@@ -77,7 +79,7 @@ nonisolated struct ScheduleSwapRequest: Equatable, Sendable {
     var weekHoursText: String { "그 주 \(toName) \(toWeekHoursBefore)h \u{2192} \(toWeekHoursAfter)h" }
 
     var accessibilityText: String {
-        "대타 요청, \(dateSpoken) \(start)부터 \(end), \(fromName)에서 \(toName)으로, 그 주 \(toName) \(toWeekHoursBefore)시간에서 \(toWeekHoursAfter)시간"
+        "대타 요청, 승인 대기, \(dateSpoken) \(start)부터 \(end), \(fromName)에서 \(toName)으로, 그 주 \(toName) \(toWeekHoursBefore)시간에서 \(toWeekHoursAfter)시간"
     }
 }
 
@@ -130,4 +132,13 @@ struct OwnerScheduleState: Equatable, Sendable {
                         start: "17:00", end: "22:00", fromName: "이종민", fromColorIndex: 0,
                         toName: "박서준", toColorIndex: 3, toWeekHoursBefore: 23, toWeekHoursAfter: 28))
     }()
+}
+
+enum OwnerScheduleFormat {
+    /// 「1h」 → 「1시간」, 「30m」 → 「30분」, 「6h」 → 「6시간」. 형식이 다르면 그대로
+    static func spokenDuration(_ s: String) -> String {
+        if s.hasSuffix("h"), let n = Int(s.dropLast()) { return "\(n)시간" }
+        if s.hasSuffix("m"), let n = Int(s.dropLast()) { return "\(n)분" }
+        return s
+    }
 }

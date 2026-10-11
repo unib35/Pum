@@ -23,6 +23,7 @@ struct OwnerScheduleView: View {
     private let onApprove: () -> Void
     private let onChangeWorkplace: () -> Void
     @State private var tab = "work"
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     init(state: OwnerScheduleState = .sample,
          onPreviousWeek: @escaping () -> Void = {}, onNextWeek: @escaping () -> Void = {},
@@ -98,7 +99,7 @@ struct OwnerScheduleView: View {
                     chevronButton("chevron.right", label: "다음주", action: onNextWeek)
                 }
                 WeekStrip(days: state.days, selectedID: state.selectedID) { id in
-                    withAnimation(PumMotion.fast) { state.select(id) }
+                    withAnimation(PumMotion.respecting(reduceMotion, PumMotion.fast)) { state.select(id) } // M22
                 }
             }
             .padding(.horizontal, PumTokens.Space.s8)
@@ -225,10 +226,11 @@ private struct WeekStrip: View {
         .buttonStyle(.plain)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(day.accessibilityLabel(selected: selected)))
+        .accessibilityAddTraits(selected ? .isSelected : [])
     }
 
     private func countColor(_ day: ScheduleDay, selected: Bool) -> Color {
-        if selected { return PumTokens.ColorToken.blue300 } // #9DB4F7
+        if selected { return PumColor.accentOnInverse } // #9DB4F7 = blue-300
         if day.isShort && !day.isClosed { return PumColor.statusDanger } // 서버가 「부족」으로 표시한 날
         return PumColor.textSecondary
     }
@@ -262,7 +264,7 @@ private struct GroupRow: View {
             Text(group.periodText).pumText(.caption2, weight: .regular).foregroundStyle(PumColor.textSecondary) // 11px
         }
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(Text("\(group.start)부터 \(group.end), \(group.period) \(group.hours.replacingOccurrences(of: "h", with: "시간"))"))
+        .accessibilityLabel(Text("\(group.start)부터 \(group.end), \(group.period) \(OwnerScheduleFormat.spokenDuration(group.hours))"))
     }
 
     private var people: some View {
@@ -288,7 +290,7 @@ private struct PersonCell: View {
         .padding(.horizontal, PumTokens.Space.s10)
         .background(PumColor.surfaceFill, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(Text("\(person.name), \(person.breakLabel)"))
+        .accessibilityLabel(Text("\(person.name), \(person.breakSpoken)"))
     }
 }
 
@@ -365,7 +367,7 @@ private struct SwapRequestCard: View {
 
     private var approveButton: some View {
         PumButton(title: "승인 \u{00B7} 담당자 변경", kind: .primary, size: .small, action: onApprove)
-            .accessibilityLabel(Text("승인, 담당자를 \(swap.toName)으로 변경"))
+            .accessibilityLabel(Text("승인 · 담당자 변경, \(swap.toName)으로"))
     }
 }
 
