@@ -68,7 +68,7 @@ struct VerifyIntroStepRow: View {
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding(.horizontal, PumTokens.Size.rowPadX)
-        .padding(.vertical, PumTokens.Size.rowPadY)
+        .padding(.vertical, PumTokens.Space.s16) // 원문 행 높이 약 62
         .frame(minHeight: PumTokens.Size.tapMin)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(step.accessibilityLabel(number: number)))
