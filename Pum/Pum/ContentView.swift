@@ -27,6 +27,7 @@ struct ContentView: View {
             case "1m": PayslipView()
             case "1e": ClockInView()
             case "1l": ExpectedPayView()
+            case "1i": EditRequestView()
             case "gallery": ComponentGalleryView()
             default: DevMenu()
             }
@@ -51,6 +52,7 @@ private struct DevMenu: View {
                     NavigationLink("1m 급여명세서") { PayslipView().toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("1e 출근 기록") { ClockInView().toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("1l 예상 급여") { ExpectedPayView().toolbar(.hidden, for: .navigationBar) }
+                    NavigationLink("1i 근무기록 수정 요청") { EditRequestView().toolbar(.hidden, for: .navigationBar) }
                 }
                 Section("디자인 시스템") {
                     NavigationLink("컴포넌트 갤러리") { ComponentGalleryView() }
