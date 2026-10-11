@@ -24,11 +24,11 @@ nonisolated struct InviteAcceptRecord: Equatable, Sendable {
     /// 사업장 색 네모의 글자 = 이름 첫 글자(「종」) — 사람 이름 규칙(PumAvatar.initial)은 쓰지 않는다
     var initial: String { workplaceName.first.map(String.init) ?? "" }
 
-    /// 큰 제목 조각: 「박민수 사장님이 」 + 사업장 이름(파랑) + 「에 초대했어요」
-    var titleLead: String { "\(ownerName) 사장님이 " }
-    var titleTail: String { "에 초대했어요" }
-    /// VoiceOver · 테스트용 한 문장
-    var titleText: String { titleLead + workplaceName + titleTail }
+    /// 큰 제목 조각: 「박민수 사장님이⏎」 + 사업장 이름(파랑) + 「에⏎초대했어요」 — 원문은 세 줄로 끊는다
+    var titleLead: String { "\(ownerName) 사장님이\n" }
+    var titleTail: String { "에\n초대했어요" }
+    /// 한 문장(VoiceOver · 테스트) — 줄바꿈은 공백으로
+    var titleText: String { (titleLead + workplaceName + titleTail).replacingOccurrences(of: "\n", with: " ") }
 
     /// 「부산 김해시 장유로 12 · 음식점 · 직원 4명」
     var subtitleText: String { "\(address) · \(category) · 직원 \(employeeCount)명" }
