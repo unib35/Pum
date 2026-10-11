@@ -73,6 +73,11 @@ struct ComponentGalleryView: View {
                             PumRadioRow(title: r, isOn: galleryReason == i, index: i, count: galleryReasons.count) { galleryReason = i }
                         }
                     }
+                    HStack(spacing: PumTokens.Space.s8) {
+                        PumChoicePill(title: "없음", isOn: false) {}
+                        PumChoicePill(title: "30분", isOn: true) {}
+                        PumChoicePill(title: "앱 오류", isOn: false, offStyle: .outlined) {}
+                    }
                     PumCheckboxRow(title: "계약 조건을 모두 확인했고, 전자서명이 서면 서명과 같은 효력을 가진다는 점에 동의합니다.",
                                    isOn: galleryAgreed) { galleryAgreed.toggle() }
                 }

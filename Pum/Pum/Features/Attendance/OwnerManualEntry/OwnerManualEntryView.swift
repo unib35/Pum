@@ -228,25 +228,11 @@ struct OwnerManualEntryView: View {
         }
     }
 
-    /// 선택 알약 — 선택 = 먹색 바탕 · 흰 글자. 선택 안 됨 = 회색 바탕(휴게) 또는 흰 바탕 + hairline(사유)
+    /// 공통 선택 알약(PumChoicePill) — 휴게는 회색, 사유는 흰 바탕 + hairline
     private func pill(_ title: String, selected: Bool, filledWhenOff: Bool, index: Int, count: Int,
                       action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            Text(title).pumText(.footnote, weight: .semibold)
-                .foregroundStyle(selected ? Color.white : PumColor.textPrimary)
-                .padding(.horizontal, PumTokens.Space.s14)
-                .padding(.vertical, PumTokens.Space.s8) // 원문 알약 높이 약 30(C1 SMALL 칩과 같은 방식)
-                .background(selected ? PumColor.surfaceInverse : (filledWhenOff ? PumColor.surfaceFill : PumColor.surfaceCard), in: Capsule())
-                .overlay { if !selected && !filledWhenOff { Capsule().stroke(PumColor.borderHairline, lineWidth: restLine) } }
-                // 누르는 영역은 위아래로만 넓혀 44 이상(옆 알약과 겹치지 않게 좌우는 그대로)
-                .padding(.vertical, PumTokens.Space.s6)
-                .contentShape(Rectangle())
-                .padding(.vertical, -PumTokens.Space.s6)
-        }
-        .buttonStyle(.plain)
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(Text("\(title), \(count)개 중 \(index + 1)번째"))
-        .accessibilityAddTraits(selected ? [.isButton, .isSelected] : .isButton)
+        PumChoicePill(title: title, isOn: selected, offStyle: filledWhenOff ? .filled : .outlined,
+                      position: (index, count), action: action)
     }
 
     // MARK: 3. 미리보기 (서버 값)
