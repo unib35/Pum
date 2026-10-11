@@ -59,7 +59,7 @@ struct ExpectedPayView: View {
                 Text("원").pumText(.title3, weight: .semibold).foregroundStyle(.white)
             }
             .accessibilityElement(children: .ignore)
-            .accessibilityLabel(Text("\(record.titleText) \(record.totalText)원"))
+            .accessibilityLabel(Text("\(record.totalText)원"))
             ExpectedPayBar(record: record)
             ExpectedPayLegend(record: record)
         }
@@ -130,6 +130,7 @@ struct ExpectedPayView: View {
             Text(item.label).pumText(.body, weight: .semibold).foregroundStyle(PumColor.textPrimary)
                 .frame(maxWidth: .infinity, alignment: .leading)
             Text(item.amountText).pumText(.body, weight: .semibold).foregroundStyle(amountColor(item))
+                .lineLimit(1).fixedSize(horizontal: true, vertical: false) // 숫자 중간 줄바꿈 금지
         }
     }
 
@@ -145,14 +146,15 @@ struct ExpectedPayView: View {
         .buttonStyle(.plain)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(item.kind == .deduction
-            ? "\(item.label) \(PumFormat.amount(item.amount))원 공제" : "\(item.label) \(PumFormat.amount(item.amount))원"))
+            ? "\(item.label) 마이너스 \(PumFormat.amount(item.amount))원" : "\(item.label) \(PumFormat.amount(item.amount))원"))
     }
 
     private func expandableRow(_ item: ExpectedPayItem, isLast: Bool) -> some View {
         let open = disclosure.isExpanded
         return VStack(spacing: 0) {
             Button {
-                withAnimation(PumMotion.respecting(reduceMotion, PumMotion.base)) { disclosure.toggle() }
+                // M11 펼침 · 접힘 base, 동작 줄이기면 즉시(M22 「펼침 즉시」)
+                withAnimation(reduceMotion ? nil : PumMotion.base) { disclosure.toggle() }
             } label: {
                 HStack(spacing: PumTokens.Space.s8) {
                     rowLabel(item)
@@ -166,14 +168,14 @@ struct ExpectedPayView: View {
             }
             .buttonStyle(.plain)
             .accessibilityElement(children: .ignore)
-            .accessibilityLabel(Text("\(item.label) \(PumFormat.amount(item.amount))원, \(disclosure.stateText)"))
+            .accessibilityLabel(Text("\(item.label) \(PumFormat.amount(item.amount))원"))
+            .accessibilityValue(Text(disclosure.stateText))
             .accessibilityHint(Text(open ? "계산 과정을 접어요" : "계산 과정을 펼쳐요"))
-            .accessibilityAddTraits(.isButton)
             if open {
                 calcBox(item.calcLines)
                     .padding(.horizontal, PumTokens.Size.rowPadX)
                     .padding(.bottom, PumTokens.Space.s12)
-                    .transition(reduceMotion ? .opacity : .opacity.combined(with: .move(edge: .top)))
+                    .transition(reduceMotion ? .identity : .opacity.combined(with: .move(edge: .top)))
                     .overlay(alignment: .bottom) {
                         if !isLast {
                             Rectangle().fill(PumColor.borderHairline).frame(height: 1)

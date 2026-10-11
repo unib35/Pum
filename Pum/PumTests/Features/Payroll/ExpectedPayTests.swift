@@ -54,4 +54,16 @@ struct ExpectedPayTests {
     @Test func VoiceOver_구성_막대_한_문장() {
         #expect(r.barAccessibilityText == "급여 구성, 기본급 990,000원, 주휴 198,000원, 기타 30,000원, 공제 30,000원")
     }
+
+    @Test func 구성_합_빼기_공제는_예상_급여() {
+        let r = ExpectedPayRecord.sample
+        #expect(r.basePay + r.holidayPay + r.otherPay - r.deductionTotal == r.expectedTotal)
+    }
+
+    @Test func 음수_구성은_막대에서_0() {
+        var r = ExpectedPayRecord.sample
+        r.otherPay = -10
+        #expect(r.barFraction(2) == 0)
+        #expect(r.barFraction(0) + r.barFraction(1) == 1)
+    }
 }

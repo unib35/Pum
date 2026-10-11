@@ -8,8 +8,8 @@ struct ExpectedPayBar: View {
     static let barHeight: CGFloat = 14
     /// 조각 사이 틈(목업 약 2) — space-2
     static let gap: CGFloat = PumTokens.Space.s2
-    /// 조각 색: 기본급 statusDone, 주휴 green-300, 기타 green-50(연한 초록)
-    static let colors: [Color] = [PumColor.statusDone, PumTokens.ColorToken.green300, PumTokens.ColorToken.green50]
+    /// 조각 색: 기본급 statusDone, 주휴 green-300, 기타 statusDoneSoft(green-50)
+    static let colors: [Color] = [PumColor.statusDone, PumTokens.ColorToken.green300, PumColor.statusDoneSoft]
 
     var body: some View {
         GeometryReader { geo in
@@ -35,8 +35,10 @@ struct ExpectedPayLegend: View {
     private let swatch: CGFloat = PumTokens.Space.s8
     /// 공제 네모 테두리 두께
     private let outlineWidth: CGFloat = 1.5
-    /// 먹색 위 공제 글자 — red-50(연한 빨강). 어두운 바탕에서 읽히는 빨강 토큰이 이것뿐
-    static let deductionTint = PumTokens.ColorToken.red50
+    /// 먹색 위 공제 글자 — statusDangerSoft(red-50). 원문은 더 진한 연빨강이나 먹색 위 빨강 토큰이 없음(충돌 #28)
+    static let deductionTint = PumColor.statusDangerSoft
+    /// 범례 네모 모서리(목업 약 2)
+    private let swatchRadius: CGFloat = PumTokens.Space.s2
 
     var body: some View {
         VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
@@ -46,7 +48,7 @@ struct ExpectedPayLegend: View {
                 item(color: ExpectedPayBar.colors[2], "기타 \(PumFormat.amount(record.otherPay))")
             }
             HStack(spacing: PumTokens.Space.s6) {
-                RoundedRectangle(cornerRadius: PumTokens.Space.s2, style: .continuous)
+                RoundedRectangle(cornerRadius: swatchRadius, style: .continuous)
                     .stroke(Self.deductionTint, lineWidth: outlineWidth)
                     .frame(width: swatch, height: swatch)
                 Text("공제 \(record.deductionText)").pumText(.caption, weight: .regular)
@@ -59,7 +61,7 @@ struct ExpectedPayLegend: View {
 
     private func item(color: Color, _ text: String) -> some View {
         HStack(spacing: PumTokens.Space.s6) {
-            RoundedRectangle(cornerRadius: PumTokens.Space.s2, style: .continuous).fill(color)
+            RoundedRectangle(cornerRadius: swatchRadius, style: .continuous).fill(color)
                 .frame(width: swatch, height: swatch)
             Text(text).pumText(.caption, weight: .regular).foregroundStyle(.white)
         }

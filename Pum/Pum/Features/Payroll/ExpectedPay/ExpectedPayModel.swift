@@ -63,7 +63,7 @@ nonisolated struct ExpectedPayRecord: Equatable, Sendable {
     var remainingText: String { PumFormat.amount(remainingAmount) + "원" }
 
     /// 구성 막대 조각(기본급 · 주휴 · 기타). 폭은 이 금액들의 비율.
-    var barParts: [Int] { [basePay, holidayPay, otherPay] }
+    var barParts: [Int] { [basePay, holidayPay, otherPay].map { max(0, $0) } }
     var barTotal: Int { barParts.reduce(0, +) }
     func barFraction(_ index: Int) -> Double {
         barTotal > 0 ? Double(barParts[index]) / Double(barTotal) : 0
