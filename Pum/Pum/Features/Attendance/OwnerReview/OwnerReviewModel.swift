@@ -104,6 +104,11 @@ struct OwnerReviewItem: Identifiable, Equatable, Sendable {
     }
     /// 「16:58 – 」(en dash). 끝 시각은 강조색으로 따로 그린다
     var actualLead: String? { actualStart.map { "\($0) \u{2013} " } }
+    /// 주요 버튼 VoiceOver: 「박서준, 퇴근 15:00으로 기록」처럼 무엇을 하는지까지
+    var primaryAccessibilityTitle: String {
+        if case .missingClockOut = kind, let end = plannedEnd { return "\(name), 퇴근 \(end)으로 기록" }
+        return "\(name) \(primaryTitle)"
+    }
     var actualEndText: String { actualEnd ?? "\u{2014}" }
     /// 금액이 이어 붙으면 구분점을 넣는다
     var explanationText: String { amount == nil ? explanation : explanation + " \u{00B7} " }

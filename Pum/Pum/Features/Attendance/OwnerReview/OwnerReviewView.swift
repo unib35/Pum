@@ -84,7 +84,7 @@ struct OwnerReviewView: View {
                     .contentShape(Capsule())
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel(Text(f == .needsReview ? "확인 필요 \(state.needsReviewCount)건" : title(of: f)))
+                .accessibilityLabel(Text(f == .needsReview ? "확인 필요 \(state.needsReviewCount)건" : f == .processed ? "\(title(of: f))건" : title(of: f)))
                 .accessibilityAddTraits(selected ? .isSelected : [])
             }
         }
@@ -196,6 +196,11 @@ struct OwnerReviewView: View {
                 explanation(item)
                 buttons(item)
             }
+            // 접근성 큰 글자: 버튼도 세로로(카드 폭을 넘지 않게)
+            VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+                explanation(item)
+                buttons(item, stacked: true)
+            }
         }
     }
 
@@ -209,15 +214,17 @@ struct OwnerReviewView: View {
             .accessibilityHidden(true) // 위 카드 문장에 이미 포함
     }
 
-    private func buttons(_ item: OwnerReviewItem) -> some View {
+    private func buttons(_ item: OwnerReviewItem, stacked: Bool = false) -> some View {
         let secondary = item.kind.secondary
-        return HStack(spacing: PumTokens.Space.s8) {
+        let layout = stacked ? AnyLayout(VStackLayout(alignment: .leading, spacing: PumTokens.Space.s8))
+                             : AnyLayout(HStackLayout(spacing: PumTokens.Space.s8))
+        return layout {
             PumButton(title: secondary.title, kind: secondary.kind, size: .small) { onAction(secondary.action, item) }
                 .fixedSize(horizontal: true, vertical: false)
                 .accessibilityLabel(Text("\(item.name) \(secondary.title)"))
             PumButton(title: item.primaryTitle, kind: item.kind.primaryKind, size: .small) { onAction(item.kind.primaryAction, item) }
                 .fixedSize(horizontal: true, vertical: false)
-                .accessibilityLabel(Text("\(item.name) \(item.primaryTitle)"))
+                .accessibilityLabel(Text(item.primaryAccessibilityTitle))
         }
     }
 }
