@@ -22,7 +22,7 @@ struct InviteExpiredView: View {
                     VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
                         Text("초대 기간이 지났어요").pumText(.title2).foregroundStyle(PumColor.textPrimary)
                             .accessibilityAddTraits(.isHeader)
-                        Text(state.expiredLine).pumText(.callout).foregroundStyle(PumTokens.ColorToken.gray700) // 14px 400 #5B6170
+                        Text(state.expiredLine).pumText(.callout, weight: .regular).foregroundStyle(PumTokens.ColorToken.gray700) // 14px 400 #5B6170
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     card
@@ -93,8 +93,7 @@ struct InviteExpiredView: View {
         .frame(minHeight: PumTokens.Size.tapMin)
         .overlay(alignment: .bottom) {
             if !isLast {
-                Rectangle().fill(PumColor.borderHairline).frame(height: 1)
-                    .padding(.horizontal, PumTokens.Size.rowPadX)
+                Rectangle().fill(PumColor.borderHairline).frame(height: 1) // 원문: 카드 끝까지
             }
         }
         .accessibilityElement(children: .ignore)
