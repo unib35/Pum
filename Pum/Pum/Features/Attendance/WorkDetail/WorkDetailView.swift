@@ -59,23 +59,34 @@ struct WorkDetailView: View {
         Text(s).pumText(.headline, weight: .bold).foregroundStyle(color)
     }
 
+    /// 디자인 1h: 제목은 카드 안, 행은 「시각 · 내용」 한 줄(큰 글자에서 넘치면 두 줄)
     private var history: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
-            PumSectionHeader(title: "변경 이력")
-            PumCard {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s10) {
-                    ForEach(record.history) { h in
+        PumCard {
+            VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+                Text("변경 이력").pumText(.footnote, weight: .bold).foregroundStyle(PumColor.textSecondary)
+                    .accessibilityAddTraits(.isHeader)
+                ForEach(record.history) { h in
+                    ViewThatFits(in: .horizontal) {
+                        HStack(alignment: .firstTextBaseline, spacing: PumTokens.Space.s16) {
+                            stamp(h.stamp)
+                            Text(h.text).pumText(.footnote).foregroundStyle(PumColor.textPrimary)
+                            Spacer(minLength: 0)
+                        }
                         VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
-                            Text(h.stamp).pumText(.footnote).foregroundStyle(PumColor.textTertiary)
+                            stamp(h.stamp)
                             Text(h.text).pumText(.footnote).foregroundStyle(PumColor.textPrimary)
                         }
-                        .accessibilityElement(children: .combine)
                     }
+                    .accessibilityElement(children: .combine)
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(PumTokens.Space.s16)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(PumTokens.Space.s16)
         }
+    }
+
+    private func stamp(_ s: String) -> some View {
+        Text(s).pumText(.footnote).foregroundStyle(PumColor.textTertiary).fixedSize()
     }
 }
 

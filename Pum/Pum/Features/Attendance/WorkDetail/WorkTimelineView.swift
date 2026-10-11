@@ -42,7 +42,8 @@ struct WorkTimelineView: View {
                     .frame(width: geo.size.width * sp.length, height: barHeight)
                     .offset(x: geo.size.width * sp.start)
                 if withBreak {
-                    Capsule().fill(PumColor.accentOnInverse)
+                    // 디자인 1h: 휴게는 실제 막대 안을 네모로 끊은 구간
+                    Rectangle().fill(PumColor.accentOnInverse)
                         .frame(width: geo.size.width * b.length, height: barHeight)
                         .offset(x: geo.size.width * b.start)
                 }
@@ -54,15 +55,24 @@ struct WorkTimelineView: View {
     private var ticks: some View {
         // 큰 글자에서 8개가 겹치면 양 끝만 남긴다
         ViewThatFits(in: .horizontal) {
-            HStack(spacing: 0) { ForEach(axis.tickLabels, id: \.self) { tick($0) } }
-            HStack { tick(axis.tickLabels.first ?? ""); Spacer(); tick(axis.tickLabels.last ?? "") }
+            // 디자인 1h: 눈금 라벨은 양 끝 정렬(첫 라벨은 축 시작, 끝 라벨은 축 끝)
+            HStack(spacing: 0) {
+                ForEach(Array(axis.tickLabels.enumerated()), id: \.offset) { i, label in
+                    edgeTick(label)
+                    if i < axis.tickLabels.count - 1 { Spacer(minLength: PumTokens.Space.s2) }
+                }
+            }
+            HStack {
+                edgeTick(axis.tickLabels.first ?? "")
+                Spacer()
+                edgeTick(axis.tickLabels.last ?? "")
+            }
         }
     }
 
-    private func tick(_ s: String) -> some View {
-        Text(s).pumText(.caption2, weight: .regular).foregroundStyle(PumColor.textTertiary)
-            .lineLimit(1)
-            .frame(maxWidth: .infinity)
+    /// 양 끝만 남길 때는 축 끝에 붙인다(가운데 정렬 칸을 쓰지 않음)
+    private func edgeTick(_ s: String) -> some View {
+        Text(s).pumText(.caption2, weight: .regular).foregroundStyle(PumColor.textTertiary).lineLimit(1).fixedSize()
     }
 
     private var legend: some View {

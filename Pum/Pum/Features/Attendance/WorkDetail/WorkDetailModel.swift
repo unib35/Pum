@@ -1,11 +1,11 @@
 // UI-IOS-1h · REQ-006 · REQ-022 · REQ-071 — 근무 상세(확정) 화면 데이터와 계산 근거
 // 사업장 확인 기록이라 화면에서 직접 고치지 않는다 — 「수정 요청」 경로만(REQ-006).
-// 아래 계산은 화면 안내용이다. 실제 급여 계산은 서버(엔진)가 한다.
+// 인정 근무 · 기본급은 서버(급여 엔진)가 계산해 준 값을 그대로 보여 준다 — 화면에서 계산하지 않는다(AGENTS.md · REQ-071).
 import Foundation
 
 nonisolated struct WorkDetailRecord: Equatable, Sendable {
     struct HistoryItem: Equatable, Sendable, Identifiable {
-        var id: String { stamp }
+        let id: Int          // 같은 분에 여러 건이어도 겹치지 않게 순번
         let stamp: String   // 「10/03 16:58」
         let text: String
     }
@@ -18,18 +18,17 @@ nonisolated struct WorkDetailRecord: Equatable, Sendable {
     var plannedStart: Int, plannedEnd: Int
     var actualStart: Int, actualEnd: Int
     var breakStart: Int, breakMinutes: Int
+    /// 엔진이 계산한 인정 근무(분) · 해당 근무 기본급(정수 원) — 계산 근거(Trace)는 서버에 있다
+    var recognizedMinutes: Int
+    var basePay: Int
     var history: [HistoryItem]
-
-    /// 인정 근무(분) = 실제 근무 − 휴게
-    var recognizedMinutes: Int { max(0, actualEnd - actualStart - breakMinutes) }
-    /// 기본급(원) = 시급 × 인정 분 ÷ 60, 정수 원 버림. 안내용 — 실제 계산은 서버
-    var basePay: Int { hourlyWage * recognizedMinutes / 60 }
 
     var subtitle: String { "\(workplaceName) · 시급 \(PumFormat.amount(hourlyWage))원" }
     var plannedRange: String { range(plannedStart, plannedEnd) }
     var actualRange: String { range(actualStart, actualEnd) }
-    var breakText: String { PumFormat.duration(minutes: breakMinutes) }
-    var recognizedText: String { PumFormat.duration(minutes: recognizedMinutes) }
+    /// F4: 「N시간 NN분」, 딱 떨어지면 「N시간」
+    var breakText: String { HomeFormat.hours(breakMinutes) }
+    var recognizedText: String { HomeFormat.hours(recognizedMinutes) }
     var basePayText: String { PumFormat.amount(basePay) + "원" }
 
     var timelineLabel: String {
@@ -47,9 +46,10 @@ nonisolated struct WorkDetailRecord: Equatable, Sendable {
         plannedStart: 17 * 60, plannedEnd: 22 * 60,
         actualStart: 16 * 60 + 58, actualEnd: 22 * 60 + 31,
         breakStart: 19 * 60 + 30, breakMinutes: 30,
+        recognizedMinutes: 303, basePay: 60_600, // 디자인 1h 값(엔진 결과 예시)
         history: [
-            .init(stamp: "10/03 16:58", text: "출근 기록 생성 · 매장 QR"),
-            .init(stamp: "10/03 22:31", text: "퇴근 기록 생성 · 정책에 따라 자동 확정"),
+            .init(id: 0, stamp: "10/03 16:58", text: "출근 기록 생성 · 매장 QR"),
+            .init(id: 1, stamp: "10/03 22:31", text: "퇴근 기록 생성 · 정책에 따라 자동 확정"),
         ]
     )
 }

@@ -6,17 +6,26 @@ import Testing
 struct WorkDetailTests {
     let r = WorkDetailRecord.sample
 
-    @Test func 인정_근무는_실제_근무에서_휴게를_뺀다() {
-        #expect(r.recognizedMinutes == 303) // (22:31 − 16:58) − 30분
+    @Test func 엔진_값을_그대로_표시() {
         #expect(r.recognizedText == "5시간 03분")
+        #expect(r.basePayText == "60,600원")
+        // 샘플 값이 계산 규칙(실제 − 휴게, 시급 × 분 ÷ 60 버림)과 맞는지 — 규칙 자체는 서버 엔진 테스트(TC)에서
+        let expectedMinutes = (r.actualEnd - r.actualStart) - r.breakMinutes
+        #expect(r.recognizedMinutes == expectedMinutes)
+        #expect(r.basePay == r.hourlyWage * expectedMinutes / 60)
     }
 
-    @Test func 기본급은_시급_곱하기_인정_분_나누기_60_정수_원() {
-        #expect(r.basePay == 60_600)
-        #expect(r.basePayText == "60,600원")
-        var odd = r
-        odd.hourlyWage = 10_030 // 10,030 × 303 ÷ 60 = 50,651.5 → 버림
-        #expect(odd.basePay == 50_651)
+    @Test func 딱_떨어지는_시간은_N시간() {
+        var x = r
+        x.breakMinutes = 60
+        x.recognizedMinutes = 300
+        #expect(x.breakText == "1시간")
+        #expect(x.recognizedText == "5시간")
+    }
+
+    @Test func 이력_ID는_같은_시각이어도_겹치지_않는다() {
+        let ids = r.history.map(\.id)
+        #expect(Set(ids).count == ids.count)
     }
 
     @Test func 문구는_원문_그대로() {
