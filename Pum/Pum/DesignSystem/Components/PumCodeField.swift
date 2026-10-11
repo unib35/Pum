@@ -61,6 +61,7 @@ struct PumCodeField: View {
         .onTapGesture { focus.wrappedValue = true }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(Self.accessibilityText(label: label, count: code.count, length: length)))
+        .accessibilityValue(Text(isError ? "코드가 맞지 않음" : "")) // 칸에 머물러도 틀림을 알 수 있게(색만으로 알리지 않기)
         .accessibilityHint(Text("두 번 탭하면 입력해요"))
         .accessibilityAddTraits(.isButton)
         .accessibilityAction { focus.wrappedValue = true }
