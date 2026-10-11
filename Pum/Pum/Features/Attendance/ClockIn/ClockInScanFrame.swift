@@ -4,7 +4,7 @@ import SwiftUI
 nonisolated struct ClockInScanFrame: Shape {
     /// 꺾쇠 한 변 길이 · 모서리 둥글기 — 틀 크기에 대한 비율
     static let armRatio: CGFloat = 0.18
-    static let cornerRatio: CGFloat = 0.08
+    static let cornerRatio: CGFloat = 0.06
 
     func path(in rect: CGRect) -> Path {
         let arm = rect.width * Self.armRatio

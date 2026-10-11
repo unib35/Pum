@@ -19,22 +19,27 @@ struct ClockInView: View {
         static let frameWidthRatio: CGFloat = 0.62
         static let frameStroke: CGFloat = 3
         static let checkCircle: CGFloat = 36
+        /// 체크 표시 크기: 목업 원 36 안 약 13px
+        static let checkGlyph: CGFloat = 14
     }
 
     var body: some View {
         VStack(spacing: 0) {
             header
             GeometryReader { geo in
+                // 시트 바탕을 홈 인디케이터 영역까지 잇기 위해 아래 안전 영역을 무시하고, 그만큼 시트 안쪽 여백을 더한다
+                let bottomInset = geo.safeAreaInsets.bottom
                 ScrollView {
                     VStack(spacing: 0) {
                         Spacer(minLength: PumTokens.Space.s24)
                         scanArea(width: geo.size.width)
                         Spacer(minLength: PumTokens.Space.s24)
-                        sheet
+                        sheet(bottomInset: bottomInset)
                     }
-                    .frame(minHeight: geo.size.height)
+                    .frame(minHeight: geo.size.height + bottomInset)
                 }
                 .scrollBounceBehavior(.basedOnSize)
+                .ignoresSafeArea(.container, edges: .bottom)
             }
         }
         .background(PumColor.surfaceInverse.ignoresSafeArea())
@@ -54,7 +59,7 @@ struct ClockInView: View {
             HStack {
                 circleButton("chevron.left", label: "뒤로", action: onBack)
                 Spacer()
-                circleButton("location", label: "위치 확인", action: onLocation)
+                circleButton("scope", label: "위치 확인", action: onLocation)
             }
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
@@ -95,7 +100,7 @@ struct ClockInView: View {
 
     // MARK: 하단 시트(C9 바텀시트 모양, 고정)
 
-    private var sheet: some View {
+    private func sheet(bottomInset: CGFloat) -> some View {
         VStack(spacing: PumTokens.Space.s12) {
             if state.locationStatus == .confirmed { locationCard } // 다른 상태는 디자인 없음
             scheduleLine
@@ -110,12 +115,11 @@ struct ClockInView: View {
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
         .padding(.top, PumTokens.Space.s20)
-        .padding(.bottom, PumTokens.Space.s8)
+        .padding(.bottom, PumTokens.Space.s8 + bottomInset)
         .frame(maxWidth: .infinity)
         .background(
             UnevenRoundedRectangle(topLeadingRadius: PumTokens.Radius.xl, topTrailingRadius: PumTokens.Radius.xl, style: .continuous)
                 .fill(PumColor.bgApp)
-                .ignoresSafeArea(edges: .bottom)
         )
     }
 
@@ -123,7 +127,7 @@ struct ClockInView: View {
         PumCard {
             HStack(spacing: PumTokens.Space.s12) {
                 Image(systemName: "checkmark")
-                    .font(.system(size: PumLayout.navIcon, weight: .bold))
+                    .font(.system(size: Local.checkGlyph, weight: .bold))
                     .foregroundStyle(PumColor.statusDone) // 「확인됨」 = 상태 표시라 초록(단계 완료의 무채색 규칙과 별개)
                     .frame(width: Local.checkCircle, height: Local.checkCircle)
                     .background(PumColor.statusDoneSoft, in: Circle())
