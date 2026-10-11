@@ -49,6 +49,7 @@ struct ContentView: View {
             case "1ac": StaffListView()
             case "1ad": RecordReviewRequestView()
             case "1af": OwnerManualEntryView(draft: .sample)
+            case "1ah": OwnerRecordActionsView()
             case "1an": AttendancePolicyView()
             case "gallery": ComponentGalleryView()
             default: DevMenu()
@@ -96,6 +97,7 @@ private struct DevMenu: View {
                     NavigationLink("1ac 직원 관리") { StaffListView().toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("1ad 확인 요청 시트") { RecordReviewRequestView().toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("1af 근무기록 직접 추가") { OwnerManualEntryView(draft: .sample).toolbar(.hidden, for: .navigationBar) }
+                    NavigationLink("1ah 근무기록 삭제 시트") { OwnerRecordActionsView().toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("1an 근태 정책") { AttendancePolicyView().toolbar(.hidden, for: .navigationBar) }
                 }
                 Section("디자인 시스템") {
