@@ -60,6 +60,5 @@ struct MultiWorkplaceAllChip: View {
         }
         .buttonStyle(.plain)
         .accessibilityLabel(Text("사업장: \(title)"))
-        .accessibilityHint(Text("사업장을 바꿔요"))
     }
 }

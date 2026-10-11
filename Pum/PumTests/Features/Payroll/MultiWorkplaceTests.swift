@@ -44,7 +44,13 @@ struct MultiWorkplaceTests {
     }
 
     @Test func 음성_안내() {
-        #expect(r.entries[0].accessibilityText == "종민김밥 본점, 1,188,000원 예상, 82시간 30분 · 12,000원/h · 급여일 11/10")
+        #expect(r.entries[0].accessibilityText == "종민김밥 본점, 1,188,000원 예상, 82시간 30분, 시간당 12,000원, 급여일 11/10")
         #expect(r.barAccessibilityText.hasPrefix("사업장별 금액, 종민김밥 본점 1,188,000원"))
+    }
+
+    @Test func 시간_표기() {
+        #expect(MultiWorkplaceRecord.durationText(minutes: 49 * 60) == "49시간")
+        #expect(MultiWorkplaceRecord.durationText(minutes: 82 * 60 + 5) == "82시간 05분")
+        #expect(MultiWorkplaceRecord.durationText(minutes: 45) == "45분")
     }
 }

@@ -104,7 +104,6 @@ struct MultiWorkplacePayView: View {
         .buttonStyle(.plain)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(e.accessibilityText))
-        .accessibilityHint(Text("이 사업장 급여를 봐요"))
     }
 }
 

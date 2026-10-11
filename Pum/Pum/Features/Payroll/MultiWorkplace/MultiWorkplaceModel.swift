@@ -29,7 +29,9 @@ nonisolated struct MultiWorkplaceEntry: Equatable, Sendable, Identifiable {
     var badgeKind: PumBadge.Kind { status == .confirmed ? .done : .waiting }
 
     /// VoiceOver: 카드 한 문장
-    var accessibilityText: String { "\(name), \(amountText)원 \(status.text), \(detailText)" }
+    var accessibilityText: String {
+        "\(name), \(amountText)원 \(status.text), \(durationText), 시간당 \(PumFormat.amount(hourlyWage))원, 급여일 \(payDayText)"
+    }
 }
 
 nonisolated struct MultiWorkplaceRecord: Equatable, Sendable {
@@ -40,11 +42,11 @@ nonisolated struct MultiWorkplaceRecord: Equatable, Sendable {
     var workDays: Int
     var entries: [MultiWorkplaceEntry]
 
-    /// 원문 표기: 딱 떨어지면 「49시간」, 아니면 「82시간 30분」(분만이면 「45분」)
+    /// 원문 1n 표기: 딱 떨어지면 「49시간」(분 생략 — 원문 그대로), 아니면 F4대로 분 두 자리 「82시간 05분」
     static func durationText(minutes: Int) -> String {
         let h = minutes / 60, m = minutes % 60
         if m == 0 { return "\(h)시간" }
-        return h == 0 ? "\(m)분" : "\(h)시간 \(m)분"
+        return h == 0 ? "\(m)분" : PumFormat.duration(minutes: minutes)
     }
 
     var totalText: String { PumFormat.amount(totalAmount) }
