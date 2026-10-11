@@ -95,6 +95,7 @@ struct WorkplaceCreateView: View {
         .buttonStyle(.plain)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text("대표 글자·색, 직원 앱에서 사업장을 구분하는 표시예요"))
+        .accessibilityValue(Text(state.markText.isEmpty ? "입력 안 됨" : state.markText)) // 지금 대표 글자
         .accessibilityAddTraits(.isButton)
     }
 
