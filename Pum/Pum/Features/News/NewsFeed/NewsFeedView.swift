@@ -73,10 +73,12 @@ struct NewsFeedView: View {
     private var requestSection: some View {
         VStack(spacing: PumTokens.Space.s8) {
             PumSectionHeader(title: "결정이 필요해요", attention: true)
-            ForEach(state.requests) { request in
-                switch request {
-                case .extraShift(let r): ExtraShiftCard(request: r, onAccept: { onAccept(r) }, onDecline: { onDecline(r) })
-                case .contractSign(let r): ContractSignCard(request: r) { onOpenContract(r) }
+            VStack(spacing: PumTokens.Space.s12) { // 원문: 요청 카드 사이 약 12
+                ForEach(state.requests) { request in
+                    switch request {
+                    case .extraShift(let r): ExtraShiftCard(request: r, onAccept: { onAccept(r) }, onDecline: { onDecline(r) })
+                    case .contractSign(let r): ContractSignCard(request: r) { onOpenContract(r) }
+                    }
                 }
             }
         }
@@ -183,7 +185,7 @@ private struct ExtraShiftCard: View {
                 }
                 .accessibilityElement(children: .combine)
                 // 원문 버튼 비율 약 1 : 1.4(왼쪽이 좁음) — 공통 PAIR(1 : 1.5)로 근사. 「어려워요」는 먹색 외곽선(원문)
-                PumButtonPair(negative: "어려워요", positive: "근무 가능해요", negativeKind: .outline,
+                PumButtonPair(negative: "어려워요", positive: "근무 가능해요", negativeKind: .outline, size: .small, // 원문 버튼 높이 약 40 · 14px 600 → small(3b와 같음)
                               onNegative: onDecline, onPositive: onAccept)
                     .padding(.top, PumTokens.Space.s4)
             }
