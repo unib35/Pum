@@ -83,7 +83,7 @@ struct OwnerScheduleView: View {
     }
 
     private var chip: some View {
-        ScheduleWorkplaceChip(name: state.workplaceName, initial: state.workplaceInitial, action: onChangeWorkplace)
+        PumInverseWorkplaceChip(name: state.workplaceName, initial: state.workplaceInitial, action: onChangeWorkplace)
     }
 
     // MARK: 주간 카드
@@ -152,31 +152,6 @@ struct OwnerScheduleView: View {
 // MARK: - 먹색 사업장 칩
 
 /// 1t 원문은 먹색 캡슐(DEC-007의 사장님 홈 칩은 흰색) — 공통 PumWorkplaceChip에 먹색 변형이 없어 화면 전용
-private struct ScheduleWorkplaceChip: View {
-    let name: String
-    let initial: String
-    let action: () -> Void
-    @ScaledMetric private var tile = PumLayout.storeTileSmall
-
-    var body: some View {
-        Button(action: action) {
-            HStack(spacing: PumTokens.Space.s8) {
-                Text(initial).pumText(.caption2, weight: .bold).foregroundStyle(.white)
-                    .frame(width: tile, height: tile)
-                    .background(PumColor.accent, in: RoundedRectangle(cornerRadius: tile * PumLayout.storeTileRadiusRatio, style: .continuous))
-                Text(name).pumText(.callout, weight: .semibold).foregroundStyle(.white) // 목업 14px 600
-                Image(systemName: "chevron.down").font(.caption.weight(.semibold)).foregroundStyle(.white)
-            }
-            .padding(.leading, PumTokens.Space.s8)
-            .padding(.trailing, PumTokens.Space.s12)
-            .frame(minHeight: PumTokens.Size.tapMin)
-            .background(PumColor.surfaceInverse, in: Capsule())
-        }
-        .buttonStyle(.plain)
-        .accessibilityLabel(Text("사업장: \(name)"))
-        .accessibilityHint(Text("사업장을 바꿔요"))
-    }
-}
 
 // MARK: - 주간 스트립
 

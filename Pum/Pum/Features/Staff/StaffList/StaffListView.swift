@@ -49,13 +49,13 @@ struct StaffListView: View {
             HStack(spacing: PumTokens.Space.s8) {
                 title
                 Spacer(minLength: PumTokens.Space.s8)
-                StaffWorkplaceChip(name: roster.workplaceName, initial: roster.workplaceInitial)
+                PumInverseWorkplaceChip(name: roster.workplaceName, initial: roster.workplaceInitial)
                 addButton
             }
             VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
                 title
                 HStack(spacing: PumTokens.Space.s8) {
-                    StaffWorkplaceChip(name: roster.workplaceName, initial: roster.workplaceInitial)
+                    PumInverseWorkplaceChip(name: roster.workplaceName, initial: roster.workplaceInitial)
                     Spacer(minLength: PumTokens.Space.s8)
                     addButton
                 }
@@ -244,26 +244,6 @@ struct StaffListView: View {
 // MARK: - 먹색 사업장 칩
 
 /// 1ac 원문은 1t와 같은 먹색 캡슐(꺾쇠 없음). 공통 PumWorkplaceChip에 먹색 변형이 없어 화면 전용 — 공통 후보
-private struct StaffWorkplaceChip: View {
-    let name: String
-    let initial: String
-    @ScaledMetric private var tile = PumLayout.storeTileSmall
-
-    var body: some View {
-        HStack(spacing: PumTokens.Space.s8) {
-            Text(initial).pumText(.caption2, weight: .bold).foregroundStyle(.white)
-                .frame(width: tile, height: tile)
-                .background(PumColor.accent, in: RoundedRectangle(cornerRadius: tile * PumLayout.storeTileRadiusRatio, style: .continuous))
-            Text(name).pumText(.callout, weight: .semibold).foregroundStyle(.white) // 14px 600
-        }
-        .padding(.leading, PumTokens.Space.s8)
-        .padding(.trailing, PumTokens.Space.s12)
-        .frame(minHeight: PumTokens.Size.tapMin)
-        .background(PumColor.surfaceInverse, in: Capsule())
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(Text("사업장: \(name)"))
-    }
-}
 
 #Preview("1ac") { StaffListView() }
 #Preview("1ac · 큰 글자") { StaffListView().dynamicTypeSize(.accessibility2) }
