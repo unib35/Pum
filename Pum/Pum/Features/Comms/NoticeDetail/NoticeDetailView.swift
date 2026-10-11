@@ -1,5 +1,5 @@
 // UI-IOS-3b · REQ-040 — 직원 공지 상세(확정). 탭 바 없음. 공지는 읽으면 끝, 근무 모집은 별도 카드(공지에 수락 버튼 없음).
-// 버튼은 클로저로만(onBack · onApply · onDecline). 처리 중 · 결과 디자인은 없어 만들지 않았다.
+// 버튼은 클로저로만(onBack · onApply · onDecline). 읽음 처리는 화면이 보일 때 onRead(서버 연결은 후속). 처리 중 · 결과 디자인은 없어 만들지 않았다.
 import SwiftUI
 
 struct NoticeDetailView: View {
@@ -7,6 +7,8 @@ struct NoticeDetailView: View {
     var onBack: () -> Void = {}
     var onApply: () -> Void = {}
     var onDecline: () -> Void = {}
+    /// 화면이 보이면 읽음 처리(screen-index 3b 「읽음 처리」) — 읽음 시각은 서버 값으로 다시 받는다
+    var onRead: () -> Void = {}
 
     @Environment(\.dynamicTypeSize) private var typeSize
 
@@ -31,6 +33,7 @@ struct NoticeDetailView: View {
             }
         }
         .background(PumColor.bgApp)
+        .onAppear(perform: onRead)
     }
 
     // 2. 본문 카드

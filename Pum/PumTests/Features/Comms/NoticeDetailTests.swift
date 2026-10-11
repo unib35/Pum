@@ -39,10 +39,4 @@ struct NoticeDetailTests {
     @Test func 작성자_아바타_글자() {
         #expect(PumAvatar.initial(for: s.authorName) == "박")
     }
-
-    @Test func 모집이_없으면_요청_섹션_없음() {
-        var n = s
-        n.recruitment = nil
-        #expect(n.recruitment == nil)
-    }
 }
