@@ -54,7 +54,8 @@ struct MyScheduleView: View {
                         SubstituteRequestSheet(
                             request: request,
                             bottomInset: geo.safeAreaInsets.bottom,
-                            onCancelRequest: onCancelSubstitute)
+                            onCancelRequest: onCancelSubstitute,
+                            onDismiss: dismissSheet)
                     }
                     .ignoresSafeArea(.container, edges: .bottom)
                 }

@@ -7,6 +7,8 @@ struct SubstituteRequestSheet: View {
     /// 홈 인디케이터 영역만큼 아래 여백(바탕은 화면 끝까지)
     var bottomInset: CGFloat = 0
     var onCancelRequest: () -> Void = {}
+    /// 시트 닫기(막 누름 · VoiceOver 두 손가락 문지르기)
+    var onDismiss: () -> Void = {}
 
     @AccessibilityFocusState private var titleFocused: Bool
 
@@ -40,9 +42,11 @@ struct SubstituteRequestSheet: View {
         )
         .accessibilityElement(children: .contain)
         .accessibilityAddTraits(.isModal)
+        // 모달이라 뒤의 막(「닫기」)은 VoiceOver가 닿지 않는다 — 두 손가락 문지르기로 닫는다
+        .accessibilityAction(.escape, onDismiss)
         .task {
-            // 시트가 열리면 제목에 포커스
-            try? await Task.sleep(for: .milliseconds(400))
+            // 시트가 열리면(M3 열림 시간 뒤) 제목에 포커스
+            try? await Task.sleep(for: .seconds(PumTokens.Duration.sheet))
             titleFocused = true
         }
     }
@@ -52,6 +56,7 @@ struct SubstituteRequestSheet: View {
             HStack(alignment: .center, spacing: PumTokens.Space.s8) {
                 Text(SubstituteRequest.heading).pumText(.caption, weight: .medium)
                     .foregroundStyle(PumColor.textSecondary)
+                    .accessibilityHidden(true) // 제목 라벨이 「대타 요청, …」으로 읽는다
                 Spacer(minLength: PumTokens.Space.s8)
                 PumBadge(text: request.statusText, kind: .attention)
             }
