@@ -38,4 +38,8 @@ struct ExtraShiftOfferTests {
         let third = s.beginRespond()
         #expect(third)
     }
+
+    @Test func 음성은_숫자_뒤_h만_시간으로() {
+        #expect(extraShiftSpokenHours("+4.5h · shift") == "+4.5시간 · shift")
+    }
 }

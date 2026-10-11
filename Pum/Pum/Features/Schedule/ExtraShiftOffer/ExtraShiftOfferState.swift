@@ -24,7 +24,7 @@ nonisolated struct ExtraShiftOfferDay: Equatable, Identifiable, Sendable {
     /// 예: 「금요일 9일, 추가 5시간, 이번 요청」
     var accessibilityText: String {
         let head = "\(weekday)요일 \(day)일"
-        let hours = hoursText.replacingOccurrences(of: "h", with: "시간")
+        let hours = extraShiftSpokenHours(hoursText)
         switch kind {
         case .off: return "\(head), 근무 없음"
         case .worked: return "\(head), \(hours)"
@@ -78,7 +78,7 @@ nonisolated struct ExtraShiftOfferState: Equatable, Sendable {
     var dateAccessibilityText: String { "날짜, \(dateText)" + (holidayName.map { ", \($0)" } ?? "") }
     var payAccessibilityText: String {
         "예상 급여, \(expectedPayText), \(payBasisText)\(premiumText ?? "")"
-            .replacingOccurrences(of: "h", with: "시간").replacingOccurrences(of: "×", with: "곱하기")
+            .replacingOccurrences(of: #"(\d)h"#, with: "$1시간", options: .regularExpression).replacingOccurrences(of: "×", with: "곱하기")
     }
 
     /// 수락 · 거절은 한 번만. 이미 처리 중이면 false
@@ -110,4 +110,9 @@ nonisolated struct ExtraShiftOfferState: Equatable, Sendable {
         ],
         weekSummary: "이 주 13.5h → 18h · 금요일 저녁 근무(17–22)는 그대로예요",
         coRequestedNames: ["김하늘"])
+}
+
+/// 음성용 — 숫자 바로 뒤의 h만 「시간」으로(다른 글자의 h는 그대로)
+nonisolated func extraShiftSpokenHours(_ text: String) -> String {
+    text.replacingOccurrences(of: #"(\d)h"#, with: "$1시간", options: .regularExpression)
 }
