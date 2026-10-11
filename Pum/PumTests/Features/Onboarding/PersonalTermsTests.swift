@@ -30,7 +30,7 @@ struct PersonalTermsTests {
     @Test func 금액은_숫자만_정수() {
         #expect(PersonalTermsState.sanitizedAmount("12,000원") == 12_000)
         #expect(PersonalTermsState.sanitizedAmount("") == 0)
-        #expect(PersonalTermsState.sanitizedAmount("1.5") == 15)
+        #expect(PersonalTermsState.sanitizedAmount("1.5") == 1)
         #expect(PersonalTermsState.sanitizedAmount("12345678901234") == 123_456_789)
     }
 
@@ -50,5 +50,16 @@ struct PersonalTermsTests {
     @Test func 급여방식_이름과_예상값_없음() {
         #expect(PersonalTermsState.PayType.allCases.map(\.title) == ["시급", "일급", "월급"])
         #expect(PersonalTermsState.entry.estimateText == nil)
+    }
+
+    @Test func 조건이_바뀌면_옛_예상은_숨김() {
+        var s = PersonalTermsState.sample
+        #expect(s.estimateText == "약 1,184,000원")
+        s.amount = 13_000
+        #expect(s.estimateText == nil)
+        s.amount = 12_000
+        #expect(s.estimateText == "약 1,184,000원")
+        s.workplace = "다른 곳" // 금액에 영향 없는 값은 그대로
+        #expect(s.estimateText != nil)
     }
 }

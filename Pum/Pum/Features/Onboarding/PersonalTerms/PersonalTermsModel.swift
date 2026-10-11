@@ -29,13 +29,38 @@ struct PersonalTermsState: Equatable {
     var breakMinutes: Int = 30
     /// 매월 N일
     var payday: Int = 10
-    /// 엔진(서버)이 계산해 넘긴 한 달 예상(원). 없으면 상자를 숨긴다.
-    var estimatedMonthly: Int?
+    /// 엔진(서버)이 계산해 넘긴 한 달 예상. 지금 조건으로 계산된 값일 때만 보인다(없으면 상자 숨김).
+    var estimate: Estimate?
+
+    /// 예상 월급 계산에 쓰이는 조건(일하는 곳 · 급여일은 금액에 영향 없음)
+    struct Basis: Equatable {
+        var payType: PayType
+        var amount: Int
+        var days: Set<Int>
+        var startMinute: Int
+        var endMinute: Int
+        var breakMinutes: Int
+    }
+
+    /// 어떤 조건으로 계산했는지와 금액(원) — 조건이 바뀌면 옛 값을 보이지 않게
+    struct Estimate: Equatable {
+        var basis: Basis
+        var amount: Int
+    }
+
+    var basis: Basis {
+        Basis(payType: payType, amount: amount, days: days,
+              startMinute: startMinute, endMinute: endMinute, breakMinutes: breakMinutes)
+    }
 
     /// 디자인 원문: 종민김밥 · 시급 12,000원 · 월수금 · 17:00–22:00 · 휴게 30분 · 매월 10일 · 약 1,184,000원
-    static let sample = PersonalTermsState(
-        workplace: "종민김밥", payType: .hourly, amount: 12_000, days: [1, 3, 5],
-        startMinute: 17 * 60, endMinute: 22 * 60, breakMinutes: 30, payday: 10, estimatedMonthly: 1_184_000)
+    static let sample: PersonalTermsState = {
+        var s = PersonalTermsState(
+            workplace: "종민김밥", payType: .hourly, amount: 12_000, days: [1, 3, 5],
+            startMinute: 17 * 60, endMinute: 22 * 60, breakMinutes: 30, payday: 10)
+        s.estimate = Estimate(basis: s.basis, amount: 1_184_000)
+        return s
+    }()
 
     /// 실제 진입: 비어 있는 기본값(금액 0 · 요일 없음)
     static let entry = PersonalTermsState()
@@ -43,9 +68,10 @@ struct PersonalTermsState: Equatable {
     /// 「시작하기」 활성 조건(비활성 이유 문구는 디자인 없음 — 충돌 #30)
     var canStart: Bool { amount > 0 && !days.isEmpty }
 
-    /// 숫자만 · 최대 9자리 정수로 다듬는다(쉼표 · 원 · 붙여넣기 포함)
+    /// 숫자만 · 최대 9자리 정수로 다듬는다(쉼표 · 원 · 붙여넣기 포함). 소수점 아래는 버린다(「1.5」 → 1).
     static func sanitizedAmount(_ raw: String) -> Int {
-        Int(String(raw.filter { $0.isASCII && $0.isNumber }.prefix(maxAmountDigits))) ?? 0
+        let whole = raw.split(separator: ".", maxSplits: 1, omittingEmptySubsequences: false).first.map(String.init) ?? ""
+        return Int(String(whole.filter { $0.isASCII && $0.isNumber }.prefix(maxAmountDigits))) ?? 0
     }
 
     func isSelected(_ day: Int) -> Bool { days.contains(day) }
@@ -63,5 +89,9 @@ struct PersonalTermsState: Equatable {
     var timeRangeText: String { PumFormat.timeRange(Self.clock(startMinute), Self.clock(endMinute)) }
     var breakText: String { "\(breakMinutes)분" }
     var paydayText: String { "매월 \(payday)일" }
-    var estimateText: String? { estimatedMonthly.map { "약 \(PumFormat.amount($0))원" } }
+    /// 지금 조건으로 계산된 예상만 표시
+    var estimateText: String? {
+        guard let e = estimate, e.basis == basis else { return nil }
+        return "약 \(PumFormat.amount(e.amount))원"
+    }
 }

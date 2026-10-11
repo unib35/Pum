@@ -6,6 +6,8 @@ import SwiftUI
 
 struct PersonalTermsView: View {
     @State private var state: PersonalTermsState
+    /// 부모가 엔진 결과를 넘기는 곳 — 조건과 함께 받아 지금 조건일 때만 보인다
+    var estimate: PersonalTermsState.Estimate?
     var onBack: () -> Void
     var onTermsChange: (PersonalTermsState) -> Void
     var onPickTime: () -> Void
@@ -22,6 +24,7 @@ struct PersonalTermsView: View {
     private let cardPadX = PumTokens.Space.s18
 
     init(state: PersonalTermsState = .entry,
+         estimate: PersonalTermsState.Estimate? = nil,
          onBack: @escaping () -> Void = {},
          onTermsChange: @escaping (PersonalTermsState) -> Void = { _ in },
          onPickTime: @escaping () -> Void = {},
@@ -29,7 +32,10 @@ struct PersonalTermsView: View {
          onPickPayday: @escaping () -> Void = {},
          onStart: @escaping (PersonalTermsState) -> Void = { _ in },
          onLater: @escaping () -> Void = {}) {
-        _state = State(initialValue: state)
+        var initial = state
+        if let estimate { initial.estimate = estimate }
+        _state = State(initialValue: initial)
+        self.estimate = estimate
         self.onBack = onBack
         self.onTermsChange = onTermsChange
         self.onPickTime = onPickTime
@@ -58,8 +64,10 @@ struct PersonalTermsView: View {
         .scrollDismissesKeyboard(.interactively)
         .background(PumColor.bgApp)
         .safeAreaInset(edge: .bottom, spacing: 0) { actions }
-        .animation(reduceMotion ? nil : PumMotion.fast, value: state.estimatedMonthly)
-        .onChange(of: state) { _, new in onTermsChange(new) }
+        .animation(reduceMotion ? nil : PumMotion.fast, value: state.estimateText)
+        // 계산 조건이 바뀔 때만 알린다(예상 값이 들어와 바뀐 것은 다시 알리지 않음)
+        .onChange(of: state.basis) { _, _ in onTermsChange(state) }
+        .onChange(of: estimate) { _, new in state.estimate = new }
     }
 
     // 1. 큰 제목 + 안내
@@ -115,6 +123,7 @@ struct PersonalTermsView: View {
         return ViewThatFits(in: .horizontal) {
             HStack(spacing: PumTokens.Space.s12) { k; Spacer(minLength: PumTokens.Space.s8); v }
             VStack(alignment: .leading, spacing: PumTokens.Space.s8) { k; v }
+                .frame(maxWidth: .infinity, alignment: .leading) // 큰 글자에서 접힌 행도 다른 행과 같은 왼쪽 선
         }
     }
 
