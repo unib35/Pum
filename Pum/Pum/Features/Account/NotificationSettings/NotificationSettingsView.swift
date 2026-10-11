@@ -160,10 +160,9 @@ struct NotificationSettingsView: View {
             sub = Text(detail).foregroundStyle(PumColor.textTertiary)
         }
         return Toggle(isOn: .constant(isOn)) {
-            titleBlock(title, sub, titleColor: PumColor.textSecondary)
+            titleBlock(title, sub, titleColor: soft ? PumColor.textTertiary : PumColor.textSecondary) // 근무 요청은 한 단계 더 연한 글자 토큰
         }
         .tint(PumColor.textDisabled) // 원문: 회색 트랙 — 비활성이라 켜진 채 고정
-        .opacity(soft ? 0.6 : 1) // 근무 요청은 더 연한 회색
         .disabled(true)
         .padding(.horizontal, PumTokens.Size.rowPadX)
         .padding(.vertical, PumTokens.Space.s10)
