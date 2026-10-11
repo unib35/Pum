@@ -36,8 +36,9 @@ struct SignaturePadView: View {
                 .foregroundStyle(PumColor.textPrimary)
                 .accessibilityAddTraits(.isHeader)
             PumCard {
-                PumRow(SignaturePadContent.periodLabel, value: SignaturePadContent.period)
-                PumRow(SignaturePadContent.wageLabel, value: SignaturePadContent.wage, isLast: true)
+                // 원문 값 15px 600 — PumRow 기본 값 글자보다 굵다
+                PumRow(title: SignaturePadContent.periodLabel, isKey: true) { rowValue(SignaturePadContent.period) }
+                PumRow(title: SignaturePadContent.wageLabel, isKey: true, isLast: true) { rowValue(SignaturePadContent.wage) }
             }
             Spacer(minLength: 0)
         }
@@ -69,6 +70,11 @@ struct SignaturePadView: View {
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
         .padding(.bottom, PumTokens.Space.s16)
+    }
+
+    private func rowValue(_ s: String) -> some View {
+        Text(s).pumText(.body, weight: .semibold).foregroundStyle(PumColor.textPrimary)
+            .lineLimit(1).minimumScaleFactor(0.8) // 기간은 한 줄(원문)
     }
 }
 

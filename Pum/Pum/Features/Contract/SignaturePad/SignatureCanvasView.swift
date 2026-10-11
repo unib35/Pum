@@ -25,7 +25,14 @@ struct SignatureCanvasView: View {
                         path.move(to: first)
                         path.addLine(to: first)
                     } else {
-                        path.addLines(stroke.points)
+                        // 점 사이를 중점 기준 2차 곡선으로 이어 손글씨처럼 매끄럽게(꺾인 직선 방지)
+                        path.move(to: first)
+                        for i in 1..<stroke.points.count {
+                            let p0 = stroke.points[i - 1], p1 = stroke.points[i]
+                            let mid = CGPoint(x: (p0.x + p1.x) / 2, y: (p0.y + p1.y) / 2)
+                            path.addQuadCurve(to: mid, control: p0)
+                        }
+                        path.addLine(to: stroke.points[stroke.points.count - 1])
                     }
                     context.stroke(path, with: .color(PumColor.textPrimary), style: style)
                 }
@@ -44,7 +51,8 @@ struct SignatureCanvasView: View {
             .accessibilityAddTraits(.allowsDirectInteraction)
 
             // 원문은 서명이 있어도 안내가 보인다
-            VStack(spacing: PumTokens.Space.s6) {
+            // 원문: 안내는 기준선 아래 왼쪽 정렬
+            VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
                 Rectangle().fill(PumColor.borderHairline).frame(height: 1)
                 Text(SignaturePadContent.placeholder).pumText(.caption).foregroundStyle(PumColor.textTertiary)
             }
@@ -75,7 +83,8 @@ struct SignatureCanvasView: View {
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .padding(.top, PumTokens.Space.s2)
-        .padding(.trailing, PumTokens.Space.s2)
+        // 원문: 칩은 칸 위 · 오른쪽에서 약 14–16 안쪽(44 터치 틀 포함해 맞춤)
+        .padding(.top, PumTokens.Space.s8)
+        .padding(.trailing, PumTokens.Space.s16)
     }
 }
