@@ -21,12 +21,22 @@ struct PayrollConfirmView: View {
     var body: some View {
         background
             .background(PumColor.bgApp)
-            .pumBottomSheet(isPresented: $sheetOpen, onDismiss: onCancel) {
+            // 처리 중(M26)에는 막 · VoiceOver 닫기로도 닫히지 않는다
+            .pumBottomSheet(isPresented: sheetBinding, onDismiss: { if !state.isConfirming { onCancel() } }) {
                 PayrollConfirmSheet(
                     state: $state,
-                    onConfirm: { onConfirm(state) }, // 처리 중 표시는 state.isConfirming — 닫는 것은 호출한 쪽
+                    onConfirm: {
+                        // 되돌리기 어려운 행동(C10) — 누르는 즉시 처리 중으로 바꿔 두 번 보내지 않는다
+                        guard !state.isConfirming else { return }
+                        state.isConfirming = true
+                        onConfirm(state)
+                    },
                     onCancel: { sheetOpen = false; onCancel() })
             }
+    }
+
+    private var sheetBinding: Binding<Bool> {
+        Binding(get: { sheetOpen }, set: { if !state.isConfirming { sheetOpen = $0 } })
     }
 
     /// 뒤 화면(시트에 덮여 어둡게): 머리 + 확인 완료 상자 + 총액 카드

@@ -3,8 +3,8 @@ import SwiftUI
 
 /// 화면 전용 상수 — 토큰에 없는 값(DEC-005)
 enum PayrollConfirmLocal {
-    /// 점 목록 점 지름(목업 약 4) — space-4
-    static let bulletDot: CGFloat = PumTokens.Space.s6 // 원문 점 약 6
+    /// 점 목록 점 지름(목업 약 6) — space-6
+    static let bulletDot: CGFloat = PumTokens.Space.s6
 }
 
 struct PayrollConfirmSheet: View {
@@ -115,6 +115,7 @@ struct PayrollConfirmSheet: View {
             }
         }
         .tint(PumColor.accent)
+        .disabled(state.isConfirming) // 처리 중에는 보낸 값과 화면 값이 어긋나지 않게
         .padding(.horizontal, PumTokens.Space.s16)
         .padding(.vertical, PumTokens.Space.s10)
         .frame(minHeight: PumTokens.Size.tapMin)
