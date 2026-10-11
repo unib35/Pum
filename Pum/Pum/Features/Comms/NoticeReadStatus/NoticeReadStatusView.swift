@@ -78,7 +78,7 @@ struct NoticeReadStatusView: View {
                 }
                 bar
             }
-            .padding(PumTokens.Space.s20)
+            .padding(PumTokens.Space.s16) // 원문 카드 안쪽 약 18 → 카드 높이가 원문에 가까운 s16
         }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text("확인 현황, \(state.progressAccessibilityText)"))
@@ -128,8 +128,10 @@ struct NoticeReadStatusView: View {
                         .foregroundStyle(PumColor.textPrimary)
                         .frame(width: PumLayout.avatar, height: PumLayout.avatar)
                         .background(PumColor.surfaceFill, in: Circle())
-                        .frame(width: PumTokens.Size.tapMin, height: PumTokens.Size.tapMin)
+                        // 누름 영역만 44로 넓히고 행 높이는 보이는 36 기준(원문 행 높이 유지)
+                        .padding(PumTokens.Space.s4)
                         .contentShape(Rectangle())
+                        .padding(-PumTokens.Space.s4)
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel(Text("\(p.name)에게 전화"))
