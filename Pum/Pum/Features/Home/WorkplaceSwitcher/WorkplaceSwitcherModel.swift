@@ -82,6 +82,6 @@ nonisolated struct WorkplaceSwitcherState: Equatable, Sendable {
         selectedID: "w1",
         summaryMonth: "10월", summaryAmount: 2_207_300, summaryDays: 32,
         todayTitle: "10월 3일 토요일 · 오늘", shiftStart: "17:00", shiftEnd: "22:00",
-        hasUnreadNotification: true
+        hasUnreadNotification: false // 원문 1y는 알림 점 없음
     )
 }

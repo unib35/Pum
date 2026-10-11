@@ -74,9 +74,10 @@ struct WorkplaceSwitcherView: View {
     /// 「17:00 – 22:00」 — 큰 먹색 700, 가운데 「–」는 400 gray400
     private func shiftRange(spacing: CGFloat) -> some View {
         HStack(spacing: spacing) {
-            Text(state.shiftStart).pumText(.display).foregroundStyle(PumColor.textPrimary)
-            Text("\u{2013}").pumText(.display, weight: .regular).foregroundStyle(PumTokens.ColorToken.gray400)
-            Text(state.shiftEnd).pumText(.display).foregroundStyle(PumColor.textPrimary)
+            // 원문 실측 약 36px → hero 32(DEC-005), 「–」는 24px → title2
+            Text(state.shiftStart).pumText(.hero).foregroundStyle(PumColor.textPrimary)
+            Text("\u{2013}").pumText(.title2, weight: .regular).foregroundStyle(PumTokens.ColorToken.gray400)
+            Text(state.shiftEnd).pumText(.hero).foregroundStyle(PumColor.textPrimary)
         }
         .lineLimit(1)
         .accessibilityElement(children: .ignore)
