@@ -66,7 +66,8 @@ struct ExtraShiftRequestView: View {
 
     private func send() {
         guard state.beginSend() else { return }
-        onSend(state) { _ in state.endSend() } // 성공이면 호출한 쪽이 화면을 닫는다
+        // 실패면 다시 누를 수 있게 풀고, 성공이면 잠근 채 둔다(호출한 쪽이 화면을 닫음 — 두 번 보내지 않기)
+        onSend(state) { ok in if !ok { state.endSend() } }
     }
 
     // MARK: 헤더
