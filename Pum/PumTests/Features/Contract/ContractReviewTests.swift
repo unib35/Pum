@@ -6,8 +6,8 @@ struct ContractReviewTests {
     let r = ContractReviewRecord.sample
 
     @Test func 계약조건_7행_순서_문구() {
-        #expect(r.visibleTerms.map(\.label) == ["계약 기간", "근무 장소", "업무 내용", "근무일·시간", "시급", "임금 지급일", "4대보험"])
-        #expect(r.visibleTerms.map(\.value) == [
+        #expect(r.terms.map(\.label) == ["계약 기간", "근무 장소", "업무 내용", "근무일·시간", "시급", "임금 지급일", "4대보험"])
+        #expect(r.terms.map(\.value) == [
             "2026.10.05 \u{2013} 2027.04.04", "종민김밥 본점", "홀 서빙·마감",
             "월·수·금 17:00 \u{2013} 22:00", "12,000원", "매월 10일 · 계좌이체", "고용·산재 가입"])
     }
@@ -33,9 +33,4 @@ struct ContractReviewTests {
         #expect(r.statusText == "서명 대기")
     }
 
-    @Test func 빈_값_행은_생략() {
-        var x = r
-        x.terms[2] = .init(order: 3, label: "업무 내용", value: " ")
-        #expect(x.visibleTerms.count == 6)
-    }
 }

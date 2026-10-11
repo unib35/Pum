@@ -37,11 +37,6 @@ nonisolated struct ContractReviewRecord: Equatable, Sendable {
     /// 「종민김밥 본점 · 박민수 사장님이 보냄 · 10월 1일」
     var subtitleText: String { "\(workplaceName) · \(ownerName) 사장님이 보냄 · \(sentDateText)" }
 
-    /// 값이 빈 행은 생략(디자인에 빈 값 규칙 없음 — 보고)
-    var visibleTerms: [ContractTerm] {
-        terms.filter { !$0.value.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
-    }
-
     /// 서명하기는 동의 체크 후에만 활성(REQ-060). 서명 전에도 출퇴근은 막지 않는다(REQ-028) — 이 화면과 무관.
     static func canSign(agreed: Bool) -> Bool { agreed }
 

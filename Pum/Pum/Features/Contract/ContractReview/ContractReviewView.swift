@@ -10,8 +10,20 @@ struct ContractReviewView: View {
     var onViewFull: () -> Void = {}
     var onRequestChange: () -> Void = {}
 
-    /// 원문은 체크된 상태로 시작
-    @State private var agreed = true
+    /// 동의는 직원이 직접 체크한다 — 실제 진입은 체크 안 된 상태(미리 체크된 동의는 효력 시비 · 노무 검토).
+    /// 원문 캡처는 체크한 뒤 모습이라 비교 캡처 · 프리뷰만 `startsAgreed: true`.
+    @State private var agreed: Bool
+
+    init(record: ContractReviewRecord = .sample, startsAgreed: Bool = false,
+         onBack: @escaping () -> Void = {}, onSign: @escaping () -> Void = {},
+         onViewFull: @escaping () -> Void = {}, onRequestChange: @escaping () -> Void = {}) {
+        self.record = record
+        self.onBack = onBack
+        self.onSign = onSign
+        self.onViewFull = onViewFull
+        self.onRequestChange = onRequestChange
+        _agreed = State(initialValue: startsAgreed)
+    }
 
     /// 목업 체크 네모 약 22 — 토큰에 없어 이름을 붙임(DEC-005), 큰 글자에서 글자와 함께 커진다
     @ScaledMetric(relativeTo: .footnote) private var checkBox: CGFloat = 22
@@ -79,7 +91,7 @@ struct ContractReviewView: View {
                     .padding(.top, PumTokens.Space.s12)
                     .padding(.bottom, PumTokens.Space.s4)
                     .accessibilityAddTraits(.isHeader)
-                let terms = record.visibleTerms
+                let terms = record.terms
                 ForEach(Array(terms.enumerated()), id: \.element.id) { i, t in
                     termRow(t, isLast: i == terms.count - 1)
                 }
@@ -174,9 +186,9 @@ struct ContractReviewView: View {
         }
         .buttonStyle(.plain)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(Text("동의"))
+        // 무엇에 동의하는지가 핵심이라 문구 전체를 라벨로(힌트는 꺼질 수 있다)
+        .accessibilityLabel(Text(record.consentText))
         .accessibilityValue(Text(agreed ? "선택됨" : "선택 안 됨"))
-        .accessibilityHint(Text(record.consentText))
         .accessibilityAddTraits(.isToggle)
     }
 
@@ -214,5 +226,6 @@ struct ContractReviewView: View {
     }
 }
 
-#Preview("1z") { ContractReviewView() }
-#Preview("1z · 큰 글자") { ContractReviewView().dynamicTypeSize(.xxxLarge) }
+#Preview("1z") { ContractReviewView(startsAgreed: true) }
+#Preview("1z · 동의 전") { ContractReviewView() }
+#Preview("1z · 큰 글자") { ContractReviewView(startsAgreed: true).dynamicTypeSize(.xxxLarge) }
