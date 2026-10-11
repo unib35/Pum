@@ -7,6 +7,8 @@ struct PumWorkplaceChip: View {
     let name: String
     let initial: String
     var tileColor: Color = PumColor.accent
+    /// 역할 배지(예: 「사장님」). 사장님 사업장은 타일도 무채색(DEC-007 · 1az)
+    var role: String? = nil
     let action: () -> Void
 
     var body: some View {
@@ -18,6 +20,14 @@ struct PumWorkplaceChip: View {
                     .frame(width: PumLayout.storeTileSmall, height: PumLayout.storeTileSmall)
                     .background(tileColor, in: RoundedRectangle(cornerRadius: PumLayout.storeTileSmall * PumLayout.storeTileRadiusRatio, style: .continuous))
                 Text(name).pumText(.callout).foregroundStyle(PumColor.textPrimary)
+                if let role {
+                    Text(role)
+                        .pumText(.caption2, weight: .bold)
+                        .foregroundStyle(PumTokens.ColorToken.gray700)
+                        .padding(.horizontal, PumTokens.Space.s6)
+                        .padding(.vertical, PumTokens.Space.s2)
+                        .background(PumColor.surfaceFill, in: RoundedRectangle(cornerRadius: PumTokens.Radius.xs, style: .continuous))
+                }
                 Image(systemName: "chevron.down")
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(PumColor.textSecondary)
@@ -29,7 +39,7 @@ struct PumWorkplaceChip: View {
             .pumRing(.hairline, cornerRadius: PumTokens.Size.tapMin / 2)
         }
         .buttonStyle(.plain)
-        .accessibilityLabel(Text("사업장: \(name)"))
+        .accessibilityLabel(Text("사업장: \(name)\(role.map { ", \($0)" } ?? "")"))
         .accessibilityHint(Text("사업장을 바꿔요"))
     }
 }
@@ -66,6 +76,8 @@ struct PumTabItem: Identifiable, Hashable {
     let id: String
     let title: String
     let systemImage: String
+    /// 처리 필요 개수(0이면 표시 안 함) — 탭 바에서 유일한 원형 배지(C2 · #C8641A)
+    var badge: Int = 0
 }
 
 /// 하단 탭 바 — 디자인 1at 기준 4개(홈 · 근무 · 급여 · 내 정보). 탭 구성은 README 충돌 #9 참고.
@@ -81,6 +93,17 @@ struct PumTabBar: View {
                     VStack(spacing: PumLayout.tabLabelGap) {
                         Image(systemName: item.systemImage).font(.system(size: PumLayout.tabIcon, weight: .regular))
                             .symbolVariant(.none) // F8: 채운 아이콘 없음(선택돼도 외곽선)
+                            .overlay(alignment: .topTrailing) {
+                                if item.badge > 0 {
+                                    Text("\(item.badge)")
+                                        .pumText(.caption2, weight: .bold)
+                                        .foregroundStyle(.white)
+                                        .padding(.horizontal, PumTokens.Space.s4)
+                                        .frame(minWidth: PumLayout.tabBadge, minHeight: PumLayout.tabBadge)
+                                        .background(PumColor.statusAttentionDot, in: Capsule())
+                                        .offset(x: PumTokens.Space.s12, y: -PumTokens.Space.s6)
+                                }
+                            }
                         Text(item.title).pumText(.caption2, weight: .medium)
                     }
                     .foregroundStyle(active ? PumColor.accent : PumColor.textTertiary)
@@ -88,7 +111,7 @@ struct PumTabBar: View {
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel(Text(item.title))
+                .accessibilityLabel(Text(item.badge > 0 ? "\(item.title), 처리할 일 \(item.badge)건" : item.title))
                 .accessibilityHint(Text("탭"))
                 .accessibilityAddTraits(active ? [.isSelected] : [])
             }
@@ -106,4 +129,14 @@ extension PumTabItem {
         .init(id: "pay", title: "급여", systemImage: "wonsign.circle"),
         .init(id: "me", title: "내 정보", systemImage: "person"),
     ]
+
+    /// 사장님 탭 4개(디자인 1az · C6 「사장님 4」)
+    static func ownerTabs(workBadge: Int = 0) -> [PumTabItem] {
+        [
+            .init(id: "home", title: "홈", systemImage: "house"),
+            .init(id: "work", title: "근무", systemImage: "calendar", badge: workBadge),
+            .init(id: "pay", title: "급여", systemImage: "wonsign.circle"),
+            .init(id: "store", title: "사업장", systemImage: "storefront"),
+        ]
+    }
 }

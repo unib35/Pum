@@ -96,3 +96,23 @@ struct FontTests {
         #expect(PumFont.postScriptName(for: .bold) == "Pretendard-Bold")
     }
 }
+
+struct OwnerComponentTests {
+    @Test func 아바타_6색_순환() {
+        #expect(PumAvatarPalette.people.count == 6)
+        #expect(PumAvatarPalette.person(index: 6) == PumAvatarPalette.person(index: 0))
+        #expect(PumAvatarPalette.person(index: -1) == PumAvatarPalette.person(index: 5))
+    }
+
+    @Test func 작은_버튼_색은_의미대로() {
+        #expect(PumChipButton(title: "인정", kind: .accent) {}.colors.bg == PumColor.accentSoft)
+        #expect(PumChipButton(title: "퇴근 확인", kind: .attention) {}.colors.fg == PumColor.statusAttention)
+    }
+
+    @Test func 사장님_탭_4개와_배지() {
+        let tabs = PumTabItem.ownerTabs(workBadge: 4)
+        #expect(tabs.map(\.title) == ["홈", "근무", "급여", "사업장"])
+        #expect(tabs.first { $0.id == "work" }?.badge == 4)
+        #expect(PumTabItem.employeeTabs.allSatisfy { $0.badge == 0 })
+    }
+}
