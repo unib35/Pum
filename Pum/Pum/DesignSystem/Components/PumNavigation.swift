@@ -2,6 +2,45 @@
 // 활성 탭 파랑, 비활성 --gray-500(= textTertiary #8A919E) · 아이콘은 SF Symbols(F8) · 알림 점은 주황(처리 필요)
 import SwiftUI
 
+/// 먹색 사업장 칩 — 사장님 근무 · 사업장 화면 머리(1t 스케줄 · 1ac 직원). 흰 글자 14px 600, 파랑 네모.
+/// `action`이 있으면 버튼(꺾쇠 표시), 없으면 표시만(1ac 원문은 꺾쇠 없음).
+/// DEC-007은 사장님 「홈」 칩을 흰색으로 정했지만 1t · 1ac 원문은 먹색이라 원문대로 따로 둔다.
+struct PumInverseWorkplaceChip: View {
+    let name: String
+    let initial: String
+    var action: (() -> Void)? = nil
+    @ScaledMetric private var tile = PumLayout.storeTileSmall
+
+    var body: some View {
+        if let action {
+            Button(action: action) { label(showsChevron: true) }
+                .buttonStyle(.plain)
+                .accessibilityLabel(Text("사업장: \(name)"))
+                .accessibilityHint(Text("사업장을 바꿔요"))
+        } else {
+            label(showsChevron: false)
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(Text("사업장: \(name)"))
+        }
+    }
+
+    private func label(showsChevron: Bool) -> some View {
+        HStack(spacing: PumTokens.Space.s8) {
+            Text(initial).pumText(.caption2, weight: .bold).foregroundStyle(.white)
+                .frame(width: tile, height: tile)
+                .background(PumColor.accent, in: RoundedRectangle(cornerRadius: tile * PumLayout.storeTileRadiusRatio, style: .continuous))
+            Text(name).pumText(.callout, weight: .semibold).foregroundStyle(.white) // 목업 14px 600
+            if showsChevron {
+                Image(systemName: "chevron.down").font(.caption.weight(.semibold)).foregroundStyle(.white)
+            }
+        }
+        .padding(.leading, PumTokens.Space.s8)
+        .padding(.trailing, PumTokens.Space.s12)
+        .frame(minHeight: PumTokens.Size.tapMin)
+        .background(PumColor.surfaceInverse, in: Capsule())
+    }
+}
+
 /// 상단 사업장 칩 — 누르면 사업장 전환 시트(1y)
 struct PumWorkplaceChip: View {
     let name: String
