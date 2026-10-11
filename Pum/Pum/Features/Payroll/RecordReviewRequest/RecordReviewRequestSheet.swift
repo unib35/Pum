@@ -4,7 +4,7 @@ import SwiftUI
 /// 화면 전용 상수 — 토큰에 없는 값(DEC-005)
 enum RecordReviewRequestLocal {
     /// 메시지 입력칸 최소 높이(목업 약 84 → 세 줄 이상) — space-24 × 4 = 96
-    static let messageMinHeight: CGFloat = PumTokens.Space.s24 * 4
+    static let messageMinHeight: CGFloat = PumTokens.Space.s16 * 5 // 원문 두 줄 + 안쪽 여백(약 80)
 }
 
 struct RecordReviewRequestSheet: View {
@@ -136,7 +136,7 @@ struct RecordReviewRequestSheet: View {
             .scrollContentBackground(.hidden)
             .disabled(state.isSending)
             .padding(PumTokens.Space.s12)
-            .frame(minHeight: messageMinHeight)
+            .frame(height: messageMinHeight) // TextEditor는 세로로 늘어나려 해서 시트를 화면 끝까지 키운다 — 높이를 정해 둔다
             .background(PumColor.surfaceCard, in: RoundedRectangle(cornerRadius: PumTokens.Radius.lg, style: .continuous))
             .pumRing(.hairline, cornerRadius: PumTokens.Radius.lg)
             .accessibilityLabel(Text("직원에게 보낼 메시지"))
