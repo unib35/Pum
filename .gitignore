@@ -1,1 +1,17 @@
 .DS_Store
+
+# 비밀값 — 이름만 .env.example에
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.p8
+*.mobileprovision
+
+# 로컬 도구 설정
+.claude/settings.local.json
+.idea/
+.vscode/*
+!.vscode/extensions.json
