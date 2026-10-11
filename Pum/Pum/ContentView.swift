@@ -32,6 +32,7 @@ struct ContentView: View {
             case "1o": InviteAcceptView()
             case "1j": MyScheduleView()
             case "1z": ContractReviewView(startsAgreed: true) // 원문 캡처는 체크한 뒤 모습
+            case "1aa": SignaturePadView(drawing: .sample) // 원문 캡처는 예시 서명이 그려진 모습
             case "gallery": ComponentGalleryView()
             default: DevMenu()
             }
@@ -61,6 +62,7 @@ private struct DevMenu: View {
                     NavigationLink("1o 초대 수락") { InviteAcceptView().toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("1j 내 스케줄 · 대타 요청") { MyScheduleView().toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("1z 근로계약서 확인") { ContractReviewView(startsAgreed: true).toolbar(.hidden, for: .navigationBar) }
+                    NavigationLink("1aa 서명 패드") { SignaturePadView(drawing: .sample).toolbar(.hidden, for: .navigationBar) }
                 }
                 Section("디자인 시스템") {
                     NavigationLink("컴포넌트 갤러리") { ComponentGalleryView() }
