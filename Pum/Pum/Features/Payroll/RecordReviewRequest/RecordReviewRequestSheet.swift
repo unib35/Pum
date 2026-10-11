@@ -98,7 +98,7 @@ struct RecordReviewRequestSheet: View {
                 .accessibilityLabel(Text("\(RecordReviewRequestState.deadlineTitle), \(state.deadlineText)"))
             RecordReviewRequestFlow(spacing: PumTokens.Space.s8) {
                 ForEach(RecordReviewDeadlineChoice.allCases, id: \.self) { c in
-                    RecordReviewRequestPill(title: c.title, isOn: state.choice == c) {
+                    PumChoicePill(title: c.title, isOn: state.choice == c) {
                         guard !state.isSending else { return }
                         if c == .custom { onPickDate() } else { state.choice = c }
                     }
@@ -146,26 +146,6 @@ struct RecordReviewRequestSheet: View {
 
 /// 선택 알약 — 선택 = 먹색 바탕 + 흰 13px 600, 선택 안 됨 = surfaceFill + 먹색. 터치 44.
 /// 공통에 같은 알약이 없어 화면 전용(공통 후보).
-struct RecordReviewRequestPill: View {
-    let title: String
-    let isOn: Bool
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            Text(title).pumText(.footnote, weight: .semibold)
-                .foregroundStyle(isOn ? Color.white : PumColor.textPrimary)
-                .padding(.horizontal, PumTokens.Space.s14)
-                .padding(.vertical, PumTokens.Space.s8) // 원문 알약 높이 약 31 — 누르는 영역은 아래 contentShape로 44 이상
-                .background(isOn ? PumColor.textPrimary : PumColor.surfaceFill, in: Capsule())
-                .contentShape(Rectangle().inset(by: -PumTokens.Space.s8))
-        }
-        .buttonStyle(.plain)
-        .accessibilityLabel(Text(title))
-        .accessibilityAddTraits(isOn ? [.isButton, .isSelected] : .isButton)
-    }
-}
-
 /// 줄바꿈 배치 — 알약 · 사람 칩이 넘치면 다음 줄로
 struct RecordReviewRequestFlow: Layout {
     var spacing: CGFloat

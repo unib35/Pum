@@ -108,3 +108,39 @@ struct PumCheckboxRow: View {
         .accessibilityAddTraits(.isToggle)
     }
 }
+
+/// 선택 알약 — 여럿 중 하나 고르기(1ad 회신 기한 · 1af 휴게 · 사유 · 1an 자동 인정 기준).
+/// 선택 = 먹색 바탕 · 흰 글자, 선택 안 됨 = 회색 바탕(`.filled`) 또는 흰 바탕 + hairline(`.outlined`). 13px 600.
+/// 보이는 높이는 원문(약 31), 누르는 영역은 위아래로만 넓혀 44 이상(옆 알약과 겹치지 않게).
+struct PumChoicePill: View {
+    enum OffStyle { case filled, outlined }
+
+    let title: String
+    let isOn: Bool
+    var offStyle: OffStyle = .filled
+    /// VoiceOver 「N개 중 M번째」 — 주면 함께 읽는다
+    var position: (index: Int, count: Int)? = nil
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Text(title).pumText(.footnote, weight: .semibold)
+                .foregroundStyle(isOn ? Color.white : PumColor.textPrimary)
+                .padding(.horizontal, PumTokens.Space.s14)
+                .padding(.vertical, PumTokens.Space.s8)
+                .background(isOn ? PumColor.surfaceInverse : (offStyle == .filled ? PumColor.surfaceFill : PumColor.surfaceCard), in: Capsule())
+                .overlay {
+                    if !isOn && offStyle == .outlined {
+                        Capsule().stroke(PumColor.borderHairline, lineWidth: 1)
+                    }
+                }
+                .padding(.vertical, PumTokens.Space.s6)
+                .contentShape(Rectangle())
+                .padding(.vertical, -PumTokens.Space.s6)
+        }
+        .buttonStyle(.plain)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(Text(position.map { "\(title), \($0.count)개 중 \($0.index + 1)번째" } ?? title))
+        .accessibilityAddTraits(isOn ? [.isButton, .isSelected] : .isButton)
+    }
+}
