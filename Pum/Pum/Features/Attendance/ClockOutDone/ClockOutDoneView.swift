@@ -105,19 +105,23 @@ struct ClockOutDoneView: View {
         Text(s).pumText(.headline, weight: .bold).foregroundStyle(color)
     }
 
-    private var notice: some View {
+    @ViewBuilder private var notice: some View {
+        if let text = record.confirmNotice { noticeBox(text) }
+    }
+
+    private func noticeBox(_ text: String) -> some View {
         HStack(alignment: .top, spacing: PumTokens.Space.s10) {
             // 화면 전용: 흰 바탕 배지(공통 PumBadge(.done)는 연초록 바탕)
             Text("확정").pumText(.caption, weight: .bold).foregroundStyle(PumColor.statusDone)
                 .padding(.horizontal, PumTokens.Space.s8).padding(.vertical, PumTokens.Space.s2)
                 .background(PumColor.surfaceCard, in: Capsule())
-            Text(record.confirmNotice).pumText(.footnote).foregroundStyle(PumTokens.ColorToken.green700)
+            Text(text).pumText(.footnote).foregroundStyle(PumTokens.ColorToken.green700)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding(PumTokens.Space.s14)
         .background(PumColor.statusDoneSoft, in: RoundedRectangle(cornerRadius: PumTokens.Radius.lg, style: .continuous))
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(Text("확정. " + record.confirmNotice))
+        .accessibilityLabel(Text("확정. " + text))
     }
 }
 

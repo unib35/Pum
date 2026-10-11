@@ -16,7 +16,7 @@ struct ClockOutDoneTests {
     }
 
     @Test func 안내_문단은_모델_값으로_만든다() {
-        #expect(r.confirmNotice == "조기 출근 2분과 연장 31분은 사업장 정책(\u{00B1}45분 자동 인정)에 따라 바로 확정됐어요. 기록이 다르다면 상세에서 수정 요청할 수 있어요.")
+        #expect(r.confirmNotice! == "조기 출근 2분과 연장 31분은 사업장 정책(\u{00B1}45분 자동 인정)에 따라 바로 확정됐어요. 기록이 다르다면 상세에서 수정 요청할 수 있어요.")
     }
 
     @Test func 자동_인정_기준_안_판정() {
@@ -45,5 +45,20 @@ struct ClockOutDoneTests {
         #expect(r.actualRange == "16:58 \u{2013} 22:31")
         #expect(r.breakText == "30분")
         #expect(r.wageText == " \u{00B7} 시급 12,000원")
+    }
+
+    @Test func 기준_밖이면_확정_안내_없음() {
+        var x = ClockOutDoneRecord.sample
+        x.actualEnd = x.plannedEnd + 46
+        #expect(x.isWithinAutoApprove == false)
+        #expect(x.confirmNotice == nil)
+    }
+
+    @Test func 영분_항목은_문구에서_뺀다() {
+        var x = ClockOutDoneRecord.sample
+        x.actualStart = x.plannedStart // 조기 출근 0분
+        #expect(x.confirmNotice?.hasPrefix("연장 31분은 사업장 정책") == true)
+        x.actualEnd = x.plannedEnd     // 연장도 0분
+        #expect(x.confirmNotice?.hasPrefix("오늘 기록은 사업장 정책") == true)
     }
 }

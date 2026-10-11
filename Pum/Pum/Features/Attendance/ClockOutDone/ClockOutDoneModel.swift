@@ -39,8 +39,15 @@ nonisolated struct ClockOutDoneRecord: Equatable, Sendable {
     var basePayText: String { PumFormat.amount(basePay) + "원" }
     var wageText: String { " \u{00B7} 시급 \(PumFormat.amount(hourlyWage))원" }
 
-    var confirmNotice: String {
-        "조기 출근 \(earlyMinutes)분과 연장 \(overtimeMinutes)분은 사업장 정책(\u{00B1}\(autoApproveMinutes)분 자동 인정)에 따라 바로 확정됐어요. 기록이 다르다면 상세에서 수정 요청할 수 있어요."
+    /// 기준 안일 때만 확정 안내(디자인 1f). 기준 밖 화면은 디자인에 없어 안내를 띄우지 않는다(README 누락 기록).
+    var confirmNotice: String? {
+        guard isWithinAutoApprove else { return nil }
+        var parts: [String] = []
+        if earlyMinutes > 0 { parts.append("조기 출근 \(earlyMinutes)분") }
+        if overtimeMinutes > 0 { parts.append("연장 \(overtimeMinutes)분") }
+        let policy = "사업장 정책(\u{00B1}\(autoApproveMinutes)분 자동 인정)에 따라 바로 확정됐어요. 기록이 다르다면 상세에서 수정 요청할 수 있어요."
+        // 예정과 똑같이 근무했으면 차이 문구 없이 정책 문장만
+        return parts.isEmpty ? "오늘 기록은 " + policy : parts.joined(separator: "과 ") + "은 " + policy
     }
 
     var timelineLabel: String {
