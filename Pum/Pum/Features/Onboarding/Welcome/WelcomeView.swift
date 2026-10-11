@@ -46,20 +46,19 @@ struct WelcomeView: View {
                     .padding(.vertical, PumTokens.Space.s24)
                 }
             } else {
-                // 슬로건은 위 · 아래 여백 사이 가운데, 버튼은 아래 고정. 작은 화면이면 슬로건 쪽만 스크롤.
-                GeometryReader { geo in
-                    ScrollView {
-                        hero
-                            .padding(.vertical, PumTokens.Space.s24)
-                            .frame(minHeight: geo.size.height)
+                // 슬로건은 버튼 위 영역의 가운데(원문), 버튼은 아래 고정. 작은 화면이면 슬로건 쪽만 스크롤.
+                VStack(spacing: 0) {
+                    GeometryReader { geo in
+                        ScrollView {
+                            hero
+                                .padding(.vertical, PumTokens.Space.s24)
+                                .frame(minHeight: geo.size.height)
+                        }
+                        .scrollBounceBehavior(.basedOnSize)
                     }
-                    .scrollBounceBehavior(.basedOnSize)
-                }
-                .safeAreaInset(edge: .bottom, spacing: 0) {
                     VStack(spacing: PumTokens.Space.s16) { buttons; terms }
                         .padding(.top, PumTokens.Space.s12)
                         .padding(.bottom, PumTokens.Space.s16)
-                        .background(PumColor.bgApp)
                 }
             }
         }
@@ -80,6 +79,7 @@ struct WelcomeView: View {
             dots
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, PumTokens.Space.s8) // 원문: 로고 · 슬로건은 버튼보다 약 8 안쪽(28)
     }
 
     private var sloganBlock: some View {
