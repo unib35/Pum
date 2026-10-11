@@ -35,7 +35,13 @@ nonisolated struct EarlyLeaveState: Equatable, Sendable {
     var selected: EarlyLeaveReason?
 
     /// 예정 퇴근 − 지금 (분)
-    var earlyMinutes: Int { max(0, plannedEndMinute - nowMinute) }
+    /// 이 범위(분) 안에서 예정 퇴근이 「앞」에 있으면 일찍 퇴근 — 넘으면 이미 예정 퇴근을 지난 것(0)
+    static let earlyWindowMinutes = 12 * 60
+    /// 예정 퇴근까지 남은 분. 자정을 넘기는 근무(지금 23:30 · 예정 01:00 = 90분)도 이어서 센다
+    var earlyMinutes: Int {
+        let ahead = ((plannedEndMinute - nowMinute) % 1440 + 1440) % 1440
+        return ahead <= Self.earlyWindowMinutes ? ahead : 0
+    }
     /// 45분 = 기준 안, 46분부터 사장님 확인 대상(경계는 기준 안)
     var needsOwnerCheck: Bool { earlyMinutes > autoApproveMinutes }
 

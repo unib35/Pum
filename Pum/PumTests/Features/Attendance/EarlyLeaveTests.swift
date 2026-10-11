@@ -42,4 +42,27 @@ struct EarlyLeaveTests {
     @Test func 사유_네_가지_문구() {
         #expect(EarlyLeaveReason.allCases.map(\.title) == ["사장님이 일찍 보내주셨어요", "개인 사정", "몸이 안 좋아요", "기타"])
     }
+
+    @Test func 자정을_넘기는_예정_퇴근() {
+        var x = EarlyLeaveState.sample
+        x.plannedEndMinute = 60       // 01:00
+        x.nowMinute = 23 * 60 + 30    // 23:30
+        #expect(x.earlyMinutes == 90)
+        #expect(x.needsOwnerCheck)
+    }
+
+    @Test func 예정_퇴근을_지났으면_일찍_0() {
+        var x = EarlyLeaveState.sample
+        x.nowMinute = 22 * 60 + 5
+        #expect(x.earlyMinutes == 0)
+        #expect(!x.needsOwnerCheck)
+    }
+
+    @Test func 기준이_바뀌면_안내_조건도_바뀐다() {
+        var x = EarlyLeaveState.sample   // 80분 일찍
+        x.autoApproveMinutes = 90
+        #expect(!x.needsOwnerCheck)
+        x.autoApproveMinutes = 60
+        #expect(x.needsOwnerCheck)
+    }
 }

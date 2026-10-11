@@ -120,7 +120,8 @@ struct EarlyLeaveSheet: View {
         }
         .buttonStyle(.plain)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(Text("\(reason.title), \(on ? "선택됨, " : "")\(count)개 중 \(index + 1)번째"))
+        // 「선택됨」은 .isSelected 특성이 읽는다(라벨에 넣으면 두 번 읽힘)
+        .accessibilityLabel(Text("\(reason.title), \(count)개 중 \(index + 1)번째"))
         .accessibilityAddTraits(on ? [.isButton, .isSelected] : .isButton)
     }
 
