@@ -49,8 +49,10 @@ struct StaffDetailView: View {
                     profile
                     contactButtons
                     infoCard
-                    documentsHeader
-                    documentsCard
+                    VStack(alignment: .leading, spacing: PumTokens.Space.s8) { // 원문: 머리와 카드 사이 약 8
+                        documentsHeader
+                        documentsCard
+                    }
                     Text(state.notice).pumText(.caption).foregroundStyle(PumColor.textSecondary) // 12px 회색
                         .padding(.horizontal, PumTokens.Space.s4)
                 }
@@ -206,8 +208,10 @@ struct StaffDetailView: View {
             Spacer(minLength: PumTokens.Space.s8)
             Button(action: onRequestDocument) {
                 Text("+ 서류 요청").pumText(.caption, weight: .semibold).foregroundStyle(PumColor.accent)
-                    .frame(minHeight: PumTokens.Size.tapMin)
+                    // 보이는 줄은 그대로, 누름 영역만 위아래로 넓혀 44(줄 높이 약 16 + 28)
+                    .padding(.vertical, PumTokens.Space.s14)
                     .contentShape(Rectangle())
+                    .padding(.vertical, -PumTokens.Space.s14)
             }
             .buttonStyle(.plain)
             .accessibilityLabel(Text("서류 요청"))
