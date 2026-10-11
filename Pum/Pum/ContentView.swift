@@ -7,11 +7,37 @@
 
 import SwiftUI
 
-/// 아직 기능 화면이 없어 컴포넌트 갤러리를 띄운다. 디자인에 다크 모드 값이 없어 라이트로 고정한다(README 「테마」).
+/// 개발용 시작 화면 — 구현된 화면과 컴포넌트 갤러리 목록.
+/// 실행 인자 `-PumScreen 1at` 이면 그 화면으로 바로 연다(비교 캡처용).
+/// 디자인에 다크 모드 값이 없어 라이트로 고정한다(README 「테마」).
 struct ContentView: View {
+    private let screen = UserDefaults.standard.string(forKey: "PumScreen")
+
     var body: some View {
-        ComponentGalleryView()
-            .preferredColorScheme(.light)
+        Group {
+            switch screen {
+            case "1at": EmployeeHomeView()
+            case "gallery": ComponentGalleryView()
+            default: DevMenu()
+            }
+        }
+        .preferredColorScheme(.light)
+    }
+}
+
+private struct DevMenu: View {
+    var body: some View {
+        NavigationStack {
+            List {
+                Section("화면") {
+                    NavigationLink("1at 직원 홈 · 출근 전") { EmployeeHomeView().toolbar(.hidden, for: .navigationBar) }
+                }
+                Section("디자인 시스템") {
+                    NavigationLink("컴포넌트 갤러리") { ComponentGalleryView() }
+                }
+            }
+            .navigationTitle("품 개발 메뉴")
+        }
     }
 }
 

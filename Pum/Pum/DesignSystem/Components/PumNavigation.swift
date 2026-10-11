@@ -1,0 +1,109 @@
+// C6 Navigation — 사업장 칩(무채색) · 원형 아이콘 버튼 · 하단 탭 바
+// 활성 탭 파랑, 비활성 --gray-500(= textTertiary #8A919E) · 아이콘은 SF Symbols(F8) · 알림 점은 주황(처리 필요)
+import SwiftUI
+
+/// 상단 사업장 칩 — 누르면 사업장 전환 시트(1y)
+struct PumWorkplaceChip: View {
+    let name: String
+    let initial: String
+    var tileColor: Color = PumColor.accent
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: PumTokens.Space.s8) {
+                Text(initial)
+                    .pumText(.caption2, weight: .bold)
+                    .foregroundStyle(.white)
+                    .frame(width: PumLayout.storeTileSmall, height: PumLayout.storeTileSmall)
+                    .background(tileColor, in: RoundedRectangle(cornerRadius: PumLayout.storeTileSmall * PumLayout.storeTileRadiusRatio, style: .continuous))
+                Text(name).pumText(.callout).foregroundStyle(PumColor.textPrimary)
+                Image(systemName: "chevron.down")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(PumColor.textSecondary)
+            }
+            .padding(.leading, PumTokens.Space.s8)
+            .padding(.trailing, PumTokens.Space.s12)
+            .frame(minHeight: PumTokens.Size.tapMin)
+            .background(PumColor.surfaceCard, in: Capsule())
+            .pumRing(.hairline, cornerRadius: PumTokens.Size.tapMin / 2)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(Text("사업장: \(name)"))
+        .accessibilityHint(Text("사업장을 바꿔요"))
+    }
+}
+
+/// 원형 아이콘 버튼(알림 등). `showsDot`이면 처리 필요 점(주황).
+struct PumIconButton: View {
+    let systemImage: String
+    let label: String
+    var showsDot = false
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: systemImage)
+                .font(.system(size: PumLayout.navIcon, weight: .medium))
+                .foregroundStyle(PumColor.textPrimary)
+                .frame(width: PumTokens.Size.tapMin, height: PumTokens.Size.tapMin)
+                .background(PumColor.surfaceCard, in: Circle())
+                .pumRing(.hairline, cornerRadius: PumTokens.Size.tapMin / 2)
+                .overlay(alignment: .topTrailing) {
+                    if showsDot {
+                        Circle().fill(PumColor.statusAttentionDot)
+                            .frame(width: PumLayout.notificationDot, height: PumLayout.notificationDot)
+                            .offset(x: -PumTokens.Space.s6, y: PumTokens.Space.s6)
+                    }
+                }
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(Text(showsDot ? "\(label), 새 항목 있음" : label))
+    }
+}
+
+struct PumTabItem: Identifiable, Hashable {
+    let id: String
+    let title: String
+    let systemImage: String
+}
+
+/// 하단 탭 바 — 디자인 1at 기준 4개(홈 · 근무 · 급여 · 내 정보). 탭 구성은 README 충돌 #9 참고.
+struct PumTabBar: View {
+    let items: [PumTabItem]
+    @Binding var selection: String
+
+    var body: some View {
+        HStack(spacing: 0) {
+            ForEach(items) { item in
+                let active = item.id == selection
+                Button { selection = item.id } label: {
+                    VStack(spacing: PumLayout.tabLabelGap) {
+                        Image(systemName: item.systemImage).font(.system(size: PumLayout.tabIcon, weight: .regular))
+                            .symbolVariant(.none) // F8: 채운 아이콘 없음(선택돼도 외곽선)
+                        Text(item.title).pumText(.caption2, weight: .medium)
+                    }
+                    .foregroundStyle(active ? PumColor.accent : PumColor.textTertiary)
+                    .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin)
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(Text(item.title))
+                .accessibilityHint(Text("탭"))
+                .accessibilityAddTraits(active ? [.isSelected] : [])
+            }
+        }
+        .padding(.top, PumTokens.Space.s8)
+        .background(PumColor.surfaceCard.opacity(0.96))
+        .overlay(alignment: .top) { Rectangle().fill(PumColor.borderHairline).frame(height: 1) }
+    }
+}
+
+extension PumTabItem {
+    static let employeeTabs: [PumTabItem] = [
+        .init(id: "home", title: "홈", systemImage: "house"),
+        .init(id: "work", title: "근무", systemImage: "calendar"),
+        .init(id: "pay", title: "급여", systemImage: "wonsign.circle"),
+        .init(id: "me", title: "내 정보", systemImage: "person"),
+    ]
+}
