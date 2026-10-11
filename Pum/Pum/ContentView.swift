@@ -71,6 +71,7 @@ struct ContentView: View {
             case "2l": StaffDetailView(state: .sample)
             case "4b": NotificationSettingsView(state: .sample)
             case "4a": MyInfoView(state: .sample)
+            case "5a": OwnerHomeUnverifiedView(state: .sample)
             case "gallery": ComponentGalleryView()
             default: DevMenu()
             }
@@ -139,6 +140,7 @@ private struct DevMenu: View {
                     NavigationLink("2l 직원 상세") { StaffDetailView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("4b 알림 설정") { NotificationSettingsView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("4a 내 정보") { MyInfoView(state: .sample).toolbar(.hidden, for: .navigationBar) }
+                    NavigationLink("5a 미인증 사업장 홈") { OwnerHomeUnverifiedView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                 }
                 Section("디자인 시스템") {
                     NavigationLink("컴포넌트 갤러리") { ComponentGalleryView() }
