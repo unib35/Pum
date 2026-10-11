@@ -71,8 +71,10 @@ struct NoticeReadStatusView: View {
                 HStack(alignment: .firstTextBaseline) {
                     Text("확인 현황").pumText(.callout, weight: .bold).foregroundStyle(PumColor.textPrimary)
                     Spacer(minLength: PumTokens.Space.s8)
-                    Text("\(state.readCount)").pumText(.title2).foregroundStyle(PumColor.textPrimary) // 원문 큰 숫자 → title2 24px 근사
-                    Text(" / \(state.totalCount)").pumText(.footnote, weight: .medium).foregroundStyle(PumColor.textSecondary)
+                    HStack(alignment: .firstTextBaseline, spacing: 0) { // 원문: 「3」과 「/ 5」 사이는 띄어쓰기 하나
+                        Text("\(state.readCount)").pumText(.title2).foregroundStyle(PumColor.textPrimary) // 원문 큰 숫자 → title2 24px 근사
+                        Text(" / \(state.totalCount)").pumText(.footnote, weight: .medium).foregroundStyle(PumColor.textSecondary)
+                    }
                 }
                 bar
             }
