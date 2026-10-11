@@ -77,7 +77,7 @@ struct InviteSwitchView: View {
     }
 
     private var personalBox: some View {
-        box(fill: PumColor.surfaceFill) {
+        box(fill: PumColor.bgApp) { // 원문: 앱 바탕색과 같은 연회색
             PumMyRecordTag()
             title(state.personalName)
             detail(state.personalPeriod)
@@ -93,8 +93,8 @@ struct InviteSwitchView: View {
                 .padding(.vertical, PumTokens.Space.s4).padding(.horizontal, 9) // PumBadge와 같은 안쪽 여백
                 .background(PumColor.surfaceCard, in: RoundedRectangle(cornerRadius: PumTokens.Radius.sm, style: .continuous))
             title(state.workplaceName)
-            detail(state.startDate)
-            detail(InviteSwitchState.workplaceDetail)
+            detail(state.startDate, color: PumColor.statusDone) // 원문: 초록 상자 안 보조 글자도 초록
+            detail(InviteSwitchState.workplaceDetail, color: PumColor.statusDone)
         }
     }
 
@@ -108,8 +108,8 @@ struct InviteSwitchView: View {
     private func title(_ s: String) -> some View {
         Text(s).pumText(.callout, weight: .semibold).foregroundStyle(PumColor.textPrimary) // 14px 600
     }
-    private func detail(_ s: String) -> some View {
-        Text(s).pumText(.caption).foregroundStyle(PumColor.textSecondary)
+    private func detail(_ s: String, color: Color = PumColor.textSecondary) -> some View {
+        Text(s).pumText(.caption).foregroundStyle(color)
     }
 
     private var note: some View {
