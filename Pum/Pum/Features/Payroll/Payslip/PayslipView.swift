@@ -105,7 +105,7 @@ struct PayslipView: View {
             .foregroundStyle(badgeTint)
             .padding(.horizontal, PumTokens.Space.s10)
             .padding(.vertical, PumTokens.Space.s4)
-            .background(badgeTint.opacity(badgeFillOpacity), in: Capsule())
+            .background(badgeTint.opacity(badgeFillOpacity), in: RoundedRectangle(cornerRadius: PumTokens.Radius.sm, style: .continuous))
     }
 
     /// 3칸: 좁으면(큰 글자) 세로로
@@ -169,8 +169,8 @@ struct PayslipView: View {
             Text(record.amountText(l, deduction: deduction)).pumText(.body, weight: .semibold)
                 .foregroundStyle(deduction ? PumColor.statusDanger : PumColor.textPrimary)
         }
-        .padding(.vertical, PumTokens.Space.s8)
-        .frame(minHeight: PumTokens.Size.tapMin)
+        // 누를 수 없는 표시 행이라 44pt 최소 높이를 두지 않는다(디자인 1m 행 간격)
+        .padding(.vertical, PumTokens.Space.s6)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(record.accessibilityText(l, deduction: deduction)))
     }
