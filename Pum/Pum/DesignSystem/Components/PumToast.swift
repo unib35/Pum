@@ -22,7 +22,8 @@ struct PumToast: View {
                 Button(actionTitle, action: action)
                     .pumText(.callout)
                     .foregroundStyle(PumTokens.ColorToken.blue300)
-                    .frame(minHeight: PumTokens.Size.tapMin)
+                    // 터치 영역은 44pt 이상, 토스트 높이는 그대로(디자인 C11)
+                    .contentShape(Rectangle().inset(by: -(PumTokens.Size.tapMin - PumTokens.FontToken.callout.size) / 2))
             }
         }
         .padding(.vertical, PumTokens.Space.s12)

@@ -15,3 +15,9 @@
 .idea/
 .vscode/*
 !.vscode/extensions.json
+
+# Xcode · Node
+xcuserdata/
+DerivedData/
+*.xcresult
+node_modules/
