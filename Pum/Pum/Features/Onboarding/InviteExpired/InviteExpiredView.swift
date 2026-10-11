@@ -7,7 +7,7 @@ struct InviteExpiredView: View {
     var onBack: () -> Void = {}
     var onContactWorkplace: () -> Void = {}
     /// 보내기를 끝내면 done(성공 여부)를 부른다 — 실패하면 다시 누를 수 있다
-    var onRequestAgain: (_ done: @escaping (Bool) -> Void) -> Void = { $0(true) }
+    var onRequestAgain: (_ done: @escaping (Bool) -> Void) -> Void = { $0(false) } // 연결 전 기본값은 미전송 — 성공처럼 보이지 않게
 
     @State private var lock = InviteRequestLock()
     /// 목업 사업장 색 네모 약 48 — InviteAccept(1o)와 같은 값, 큰 글자에서 글자와 함께 커진다(공통 후보)
