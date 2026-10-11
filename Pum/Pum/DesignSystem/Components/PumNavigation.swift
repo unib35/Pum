@@ -117,7 +117,7 @@ struct PumTabBar: View {
             }
         }
         .padding(.top, PumTokens.Space.s8)
-        .background(PumColor.surfaceCard.opacity(0.96))
+        .background(PumColor.surfaceCard) // 불투명: 스크롤한 내용이 비쳐 글자가 겹치지 않게
         .overlay(alignment: .top) { Rectangle().fill(PumColor.borderHairline).frame(height: 1) }
     }
 }
