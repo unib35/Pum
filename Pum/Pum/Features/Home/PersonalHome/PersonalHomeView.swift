@@ -65,19 +65,7 @@ struct PersonalHomeView: View {
     }
 }
 
-// MARK: - 점선 표시 (개인 모드 · 내 기록)
-
-/// 점선 윤곽 — REQ-006 PERSONAL 표시. 점선 간격은 간격 토큰.
-private struct PersonalDash: ViewModifier {
-    let radius: CGFloat
-    func body(content: Content) -> some View {
-        content.overlay {
-            RoundedRectangle(cornerRadius: radius, style: .continuous)
-                .strokeBorder(PumTokens.ColorToken.gray400,
-                              style: StrokeStyle(lineWidth: 1, dash: [PumTokens.Space.s4, PumTokens.Space.s2]))
-        }
-    }
-}
+// MARK: - 개인 모드 칩 (점선은 공통 PumPersonalMark)
 
 /// 사업장 칩의 개인 모드 모양 — 점선 네모 안 「개」 + 「개인 · 이름」 + ⌄. 1at 칩(PumWorkplaceChip)과 같은 크기.
 /// 공통 후보: PumWorkplaceChip의 개인 모드 변형.
@@ -94,7 +82,7 @@ private struct PersonalModeChip: View {
                     .pumText(.caption2, weight: .bold)
                     .foregroundStyle(PumTokens.ColorToken.gray700)
                     .frame(width: tile, height: tile)
-                    .modifier(PersonalDash(radius: tile * PumLayout.storeTileRadiusRatio))
+                    .pumDashedOutline(cornerRadius: tile * PumLayout.storeTileRadiusRatio)
                 Text("개인 · \(name)").pumText(.callout).foregroundStyle(PumColor.textPrimary)
                 Image(systemName: "chevron.down")
                     .font(.caption.weight(.semibold))
@@ -112,17 +100,6 @@ private struct PersonalModeChip: View {
     }
 }
 
-/// 점선 「내 기록」 — 본인이 입력 · 자유 수정하는 기록(REQ-006)
-private struct PersonalRecordTag: View {
-    var body: some View {
-        Text("내 기록")
-            .font(PumFont.font(size: PumTokens.FontToken.caption.size, weight: .semibold, relativeTo: .caption))
-            .foregroundStyle(PumTokens.ColorToken.gray700)
-            .padding(.vertical, PumTokens.Space.s4)
-            .padding(.horizontal, 9) // PumBadge와 같은 안쪽 여백
-            .modifier(PersonalDash(radius: PumTokens.Radius.sm))
-    }
-}
 
 // MARK: - 오늘 카드
 
@@ -171,7 +148,7 @@ private struct PersonalTodayCard: View {
 
     private var badges: some View {
         HStack(spacing: PumTokens.Space.s8) {
-            PersonalRecordTag()
+            PumMyRecordTag()
             PumBadge(text: "출근 전", kind: .waiting)
         }
     }
