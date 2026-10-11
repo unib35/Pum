@@ -43,9 +43,17 @@ nonisolated struct ClockInState: Equatable, Sendable {
     var locationDetail: String { "\(workplaceName)에서 \(distanceMeters)m \u{00B7} 허용 반경 \(radiusMeters)m" }
     var plannedText: String { "예정 출근 \(HomeFormat.clock(plannedStart))" }
 
-    /// 지금이 예정 출근 ±자동 인정 기준 안이면 정시 출근 안내(경계 포함). 밖이면 디자인에 문구가 없어 nil.
+    /// 위치가 확인됐고 지금이 예정 출근 ±자동 인정 기준 안이면 정시 출근 안내(경계 포함).
+    /// 위치 미확인이거나 기준 밖이면 디자인에 문구가 없어 nil — 이때도 출근 버튼은 그대로(REQ-029).
+    /// 하루 안의 분끼리 비교 — 자정을 넘는 근무는 실제 연결 때 Date(Asia/Seoul) 기준으로 바꾼다.
     var onTimeNote: String? {
-        abs(now - plannedStart) <= autoApproveMinutes ? "정시 출근으로 기록돼요" : nil
+        guard locationStatus == .confirmed else { return nil }
+        return abs(now - plannedStart) <= autoApproveMinutes ? "정시 출근으로 기록돼요" : nil
+    }
+
+    /// VoiceOver용 위치 카드 문장(가운뎃점 대신 쉼표)
+    var locationAccessibilityText: String {
+        "현재 위치 확인됨. \(workplaceName)에서 \(distanceMeters)m, 허용 반경 \(radiusMeters)m"
     }
 
     /// 디자인 1e 예시 값(가짜 데이터)

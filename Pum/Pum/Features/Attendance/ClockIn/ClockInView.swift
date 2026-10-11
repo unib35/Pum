@@ -141,7 +141,7 @@ struct ClockInView: View {
             .padding(PumTokens.Space.s14)
         }
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(Text("현재 위치 확인됨. \(state.locationDetail)"))
+        .accessibilityLabel(Text(state.locationAccessibilityText))
     }
 
     private var scheduleLine: some View {

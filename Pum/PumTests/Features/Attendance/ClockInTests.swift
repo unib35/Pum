@@ -45,6 +45,40 @@ struct ClockInTests {
         #expect(x.onTimeNote == nil)
     }
 
+    @Test func 확인_중이_다른_판정보다_먼저() {
+        var x = s
+        x.isChecking = true
+        x.accuracyMeters = 101
+        x.distanceMeters = 500
+        #expect(x.locationStatus == .checking)
+    }
+
+    @Test func 정확도_초과는_거리_초과보다_먼저() {
+        var x = s
+        x.accuracyMeters = 101
+        x.distanceMeters = 500
+        #expect(x.locationStatus == .undetermined)
+        x.accuracyMeters = 100
+        #expect(x.locationStatus == .outOfRange)
+    }
+
+    @Test func 위치가_확인되지_않으면_정시_안내_없음() {
+        var x = s
+        x.distanceMeters = 101
+        #expect(x.onTimeNote == nil)
+        x = s
+        x.accuracyMeters = 101
+        #expect(x.onTimeNote == nil)
+        x = s
+        x.isChecking = true
+        #expect(x.onTimeNote == nil)
+    }
+
+    @Test func 위치_카드_음성_문장() {
+        #expect(s.locationAccessibilityText == "현재 위치 확인됨. 종민김밥 본점에서 32m, 허용 반경 100m")
+    }
+
+    // 원문 = 디자인 1e 화면 글자(screen-index 72행은 줄인 요약)
     @Test func 문구는_원문_그대로() {
         #expect(s.locationDetail == "종민김밥 본점에서 32m \u{00B7} 허용 반경 100m")
         #expect(s.scanHint == "계산대 옆 QR \u{00B7} 종민김밥 본점")
