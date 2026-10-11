@@ -12,6 +12,9 @@ struct WelcomeView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.accessibilityVoiceOverEnabled) private var voiceOver
     @Environment(\.dynamicTypeSize) private var typeSize
+    @Environment(\.scenePhase) private var scenePhase
+    /// 손으로 넘기거나 점을 누르면 늘어나 자동 전환을 5초 멈춘 뒤 다시 시작한다(21i)
+    @State private var manualTurn = 0
 
     private let slogans = WelcomeSlogan.all
 
@@ -31,7 +34,9 @@ struct WelcomeView: View {
     }
 
     private var autoRuns: Bool {
-        WelcomeRotation.shouldAutoAdvance(enabled: state.autoAdvance, voiceOver: voiceOver, count: slogans.count)
+        WelcomeRotation.shouldAutoAdvance(enabled: state.autoAdvance, voiceOver: voiceOver,
+                                          reduceMotion: reduceMotion, count: slogans.count)
+            && scenePhase == .active
     }
 
     var body: some View {
@@ -64,7 +69,12 @@ struct WelcomeView: View {
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
         .background(PumColor.bgApp)
-        .task(id: autoRuns) { await runAutoAdvance() }
+        .task(id: AutoKey(runs: autoRuns, turn: manualTurn)) { await runAutoAdvance() }
+        // 21i: 동작 줄이기면 첫 문장 고정, 백그라운드에서 돌아오면 1번부터
+        .onChange(of: reduceMotion, initial: true) { _, on in if on && state.autoAdvance { index = 0 } }
+        .onChange(of: scenePhase) { old, new in
+            if new == .active, old != .active, state.autoAdvance { index = 0 }
+        }
     }
 
     // MARK: 1 · 2. 로고 + 슬로건 + 점
@@ -76,6 +86,8 @@ struct WelcomeView: View {
                 .background(PumColor.surfaceInverse, in: RoundedRectangle(cornerRadius: PumTokens.Radius.lg, style: .continuous))
                 .accessibilityHidden(true)
             sloganBlock
+                .contentShape(Rectangle())
+                .gesture(swipe)
             dots
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -94,6 +106,14 @@ struct WelcomeView: View {
         .transition(sloganTransition)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(s.accessibilityText)) // 현재 슬로건만 읽는다
+        .accessibilityValue(Text("\(slogans.count)개 중 \(index + 1)번째"))
+        .accessibilityAdjustableAction { dir in
+            switch dir {
+            case .increment: go(to: WelcomeRotation.next(after: index, count: slogans.count))
+            case .decrement: go(to: WelcomeRotation.previous(before: index, count: slogans.count))
+            @unknown default: break
+            }
+        }
     }
 
     /// 원문: 아래 14에서 올라오며 나타나고, 위로 10 올라가며 사라짐. 동작 줄이기(M22)면 이동 없이 페이드만.
@@ -107,12 +127,20 @@ struct WelcomeView: View {
     private var dots: some View {
         HStack(spacing: PumTokens.Space.s6) {
             ForEach(slogans.indices, id: \.self) { i in
-                Capsule()
-                    .fill(i == index ? PumColor.surfaceInverse : PumTokens.ColorToken.gray300)
-                    .frame(width: i == index ? dotCurrentWidth : dot, height: dot)
+                // 점을 누르면 그 문장으로(21i). 보이는 크기는 원문, 누름 영역만 위아래로 넓힌다.
+                Button { go(to: i) } label: {
+                    Capsule()
+                        .fill(i == index ? PumColor.surfaceInverse : PumTokens.ColorToken.gray300)
+                        .frame(width: i == index ? dotCurrentWidth : dot, height: dot)
+                        .padding(.vertical, PumTokens.Space.s20)
+                        .contentShape(Rectangle())
+                        .padding(.vertical, -PumTokens.Space.s20)
+                }
+                .buttonStyle(.plain)
             }
         }
         .animation(PumMotion.respecting(reduceMotion, PumMotion.base), value: index)
+        // VoiceOver는 슬로건 요소에서 위아래로 쓸어 넘긴다 — 점은 숨김
         .accessibilityHidden(true)
     }
 
@@ -133,10 +161,32 @@ struct WelcomeView: View {
             .frame(maxWidth: .infinity)
     }
 
-    // MARK: 자동 전환 — 화면이 사라지면 task가 취소되어 멈춘다
+    // MARK: 손으로 넘기기 · 점 누르기(21i)
+
+    private var swipe: some Gesture {
+        DragGesture(minimumDistance: PumTokens.Space.s20)
+            .onEnded { v in
+                let w = v.translation.width
+                guard abs(w) > abs(v.translation.height) else { return }
+                if w < 0 { go(to: WelcomeRotation.next(after: index, count: slogans.count)) }
+                else { go(to: WelcomeRotation.previous(before: index, count: slogans.count)) }
+            }
+    }
+
+    private func go(to i: Int) {
+        withAnimation(PumMotion.respecting(reduceMotion, PumMotion.base)) { index = i }
+        manualTurn += 1 // 자동 전환을 5초 멈췄다가 다시
+    }
+
+    private struct AutoKey: Equatable { let runs: Bool; let turn: Int }
+
+    // MARK: 자동 전환 — 화면이 사라지거나 백그라운드면 task가 취소되어 멈춘다
 
     private func runAutoAdvance() async {
         guard autoRuns else { return }
+        if manualTurn > 0 {
+            do { try await Task.sleep(for: .seconds(WelcomeRotation.manualPause - WelcomeRotation.interval)) } catch { return }
+        }
         while !Task.isCancelled {
             do { try await Task.sleep(for: .seconds(WelcomeRotation.interval)) } catch { return }
             withAnimation(PumMotion.respecting(reduceMotion, PumMotion.base)) {

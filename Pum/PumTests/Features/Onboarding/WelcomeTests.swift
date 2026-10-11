@@ -33,10 +33,10 @@ struct WelcomeTests {
     }
 
     @Test func 자동_전환_조건() {
-        #expect(WelcomeRotation.shouldAutoAdvance(enabled: true, voiceOver: false, count: 5))
-        #expect(!WelcomeRotation.shouldAutoAdvance(enabled: true, voiceOver: true, count: 5))
-        #expect(!WelcomeRotation.shouldAutoAdvance(enabled: false, voiceOver: false, count: 5))
-        #expect(!WelcomeRotation.shouldAutoAdvance(enabled: true, voiceOver: false, count: 1))
+        #expect(WelcomeRotation.shouldAutoAdvance(enabled: true, voiceOver: false, reduceMotion: false, count: 5))
+        #expect(!WelcomeRotation.shouldAutoAdvance(enabled: true, voiceOver: true, reduceMotion: false, count: 5))
+        #expect(!WelcomeRotation.shouldAutoAdvance(enabled: false, voiceOver: false, reduceMotion: false, count: 5))
+        #expect(!WelcomeRotation.shouldAutoAdvance(enabled: true, voiceOver: false, reduceMotion: false, count: 1))
     }
 
     @Test func 시작_위치_보정() {
@@ -50,5 +50,14 @@ struct WelcomeTests {
         #expect(!WelcomeState.sample.autoAdvance)
         #expect(WelcomeSlogan.all[WelcomeState.sample.startIndex].title.hasPrefix("이번 달 얼마 받을지"))
         #expect(WelcomeState().autoAdvance)
+    }
+
+    @Test func 동작_줄이기면_자동_전환_안_함() {
+        #expect(!WelcomeRotation.shouldAutoAdvance(enabled: true, voiceOver: false, reduceMotion: true, count: 5))
+    }
+
+    @Test func 이전_슬로건은_처음_이전이_마지막() {
+        #expect(WelcomeRotation.previous(before: 0, count: 5) == 4)
+        #expect(WelcomeRotation.previous(before: 3, count: 5) == 2)
     }
 }

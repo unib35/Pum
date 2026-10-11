@@ -48,10 +48,19 @@ enum WelcomeRotation {
         return ((index % count) + count + 1) % count
     }
 
-    /// 자동 전환을 돌려도 되는가. 동작 줄이기는 이동 없이 페이드만 하므로 허용(M22),
+    /// 손으로 넘기거나 점을 누른 뒤 자동 전환을 멈추는 시간(초) — UI-IOS-21i
+    static let manualPause: Double = 5
+
+    /// 자동 전환을 돌려도 되는가. 동작 줄이기면 첫 문장 고정(M31 · M22 · 21i),
     /// VoiceOver가 켜져 있으면 읽는 도중 내용이 바뀌므로 멈춘다.
-    static func shouldAutoAdvance(enabled: Bool, voiceOver: Bool, count: Int) -> Bool {
-        enabled && !voiceOver && count > 1
+    static func shouldAutoAdvance(enabled: Bool, voiceOver: Bool, reduceMotion: Bool, count: Int) -> Bool {
+        enabled && !voiceOver && !reduceMotion && count > 1
+    }
+
+    /// 이전 슬로건 위치(처음 이전은 마지막)
+    static func previous(before index: Int, count: Int) -> Int {
+        guard count > 0 else { return 0 }
+        return ((index % count) + count - 1) % count
     }
 
     /// 시작 위치 보정
