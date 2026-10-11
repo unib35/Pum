@@ -46,7 +46,10 @@ struct WorkCalendarDayCell: View {
                     .foregroundStyle(numberColor)
                     .frame(minWidth: disc, minHeight: disc)
                     .background(isToday ? PumColor.surfaceInverse : .clear, in: Circle())
-                markView
+                // 점 자리 높이는 고정 — 「휴무」 글자가 숫자 줄을 밀어 올리지 않게(디자인 1g)
+                Color.clear
+                    .frame(width: WorkCalendarMetrics.dot, height: WorkCalendarMetrics.dot)
+                    .overlay(alignment: .top) { markView.fixedSize() }
             }
             .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin)
             .contentShape(Rectangle())

@@ -50,6 +50,7 @@ struct WorkCalendarView: View {
                 weekdayHeader
                 grid
                 legend
+                    .padding(.top, PumTokens.Space.s12) // 디자인 1g: 범례는 마지막 주와 떨어져 있다
             }
             .padding(PumTokens.Space.s16)
         }
@@ -207,10 +208,19 @@ struct WorkCalendarView: View {
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                HStack(alignment: .top, spacing: PumTokens.Space.s8) {
-                    stat("근무일", m.workDaysText)
-                    stat("총 근무", m.totalText)
-                    stat("연장", m.overtimeText)
+                // 큰 글자에서 3칸이 좁으면 값이 쪼개지지 않도록 세로로
+                ViewThatFits(in: .horizontal) {
+                    HStack(alignment: .top, spacing: PumTokens.Space.s8) {
+                        stat("근무일", m.workDaysText)
+                        stat("총 근무", m.totalText)
+                        stat("연장", m.overtimeText)
+                    }
+                    .fixedSize(horizontal: false, vertical: true)
+                    VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+                        stat("근무일", m.workDaysText)
+                        stat("총 근무", m.totalText)
+                        stat("연장", m.overtimeText)
+                    }
                 }
                 Rectangle().fill(PumColor.borderHairline).frame(height: 1)
                 HStack(alignment: .firstTextBaseline) {
@@ -238,6 +248,7 @@ struct WorkCalendarView: View {
             Text(label).pumText(.caption2, weight: .regular).foregroundStyle(PumColor.textSecondary)
             // 목업 16px 700 → headline(17) bold
             Text(value).pumText(.headline, weight: .bold).foregroundStyle(PumColor.textPrimary)
+                .lineLimit(1).minimumScaleFactor(0.7) // 「82시간 30분」이 쪼개지지 않게
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .accessibilityElement(children: .combine)
