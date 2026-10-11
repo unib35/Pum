@@ -36,11 +36,13 @@ struct PhoneVerifyView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s20) {
+            // 원문 간격: 뒤로 → 제목 약 20, 안내 → 6칸 · 6칸 → 남은 시간 약 16
+            VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
                 HStack {
                     PumIconButton(systemImage: "chevron.left", label: "뒤로", action: onBack)
                     Spacer()
                 }
+                .padding(.bottom, PumTokens.Space.s4)
                 heading
                 codeField
                 timerRow
@@ -79,8 +81,10 @@ struct PhoneVerifyView: View {
     private var changeButton: some View {
         Button(action: onChangeNumber) {
             Text("번호 변경").pumText(.callout).foregroundStyle(PumColor.accent) // 14px 600
-                .frame(minHeight: PumTokens.Size.tapMin)
+                // 보이는 줄 높이는 그대로, 누름 영역만 위아래로 넓힌다(줄 간격이 원문보다 벌어지지 않게)
+                .padding(.vertical, PumTokens.Space.s12)
                 .contentShape(Rectangle())
+                .padding(.vertical, -PumTokens.Space.s12)
         }
         .buttonStyle(.plain)
     }
@@ -131,6 +135,8 @@ struct PhoneVerifyView: View {
         .keyboardType(.numberPad)
         .textContentType(.oneTimeCode)
         .focused($focused)
+        .foregroundStyle(.clear) // 입력한 숫자가 첫 칸 뒤로 비치지 않게
+        .tint(.clear)
         .opacity(0.011) // 눈에는 안 보이고 입력만 받는다
         .accessibilityHidden(true)
         .allowsHitTesting(false)
@@ -147,9 +153,10 @@ struct PhoneVerifyView: View {
             Button(action: onResend) {
                 Text("다시 보내기").pumText(.footnote, weight: .semibold) // 13px 600
                     .foregroundStyle(PumColor.accent)
-                    .frame(minHeight: PumTokens.Size.tapMin)
                     .padding(.horizontal, PumTokens.Space.s8)
+                    .padding(.vertical, PumTokens.Space.s12) // 누름 영역만 44 쪽으로 넓힌다
                     .contentShape(Rectangle())
+                    .padding(.vertical, -PumTokens.Space.s12)
             }
             .buttonStyle(.plain)
         }
