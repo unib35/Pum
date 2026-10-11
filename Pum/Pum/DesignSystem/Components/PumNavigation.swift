@@ -44,6 +44,40 @@ struct PumWorkplaceChip: View {
     }
 }
 
+/// C6 NAV HEADER — 왼쪽 원형 뒤로 버튼 · 가운데 제목 · 오른쪽 선택 동작(예: 편집)
+struct PumNavHeader<Trailing: View>: View {
+    let title: String
+    var onBack: (() -> Void)?
+    @ViewBuilder var trailing: Trailing
+
+    var body: some View {
+        ZStack {
+            Text(title)
+                .pumText(.headline)
+                .foregroundStyle(PumColor.textPrimary)
+                .lineLimit(1)
+                .padding(.horizontal, PumTokens.Size.tapMin + PumTokens.Space.s8)
+                .accessibilityAddTraits(.isHeader)
+            HStack {
+                if let onBack {
+                    PumIconButton(systemImage: "chevron.left", label: "뒤로", action: onBack)
+                } else {
+                    Color.clear.frame(width: PumTokens.Size.tapMin, height: PumTokens.Size.tapMin)
+                }
+                Spacer()
+                trailing
+            }
+        }
+        .padding(.top, PumTokens.Space.s8)
+    }
+}
+
+extension PumNavHeader where Trailing == EmptyView {
+    init(title: String, onBack: (() -> Void)? = nil) {
+        self.init(title: title, onBack: onBack) { EmptyView() }
+    }
+}
+
 /// 원형 아이콘 버튼(알림 등). `showsDot`이면 처리 필요 점(주황).
 struct PumIconButton: View {
     let systemImage: String

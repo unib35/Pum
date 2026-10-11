@@ -7,9 +7,12 @@
 #   그 외    → 자동 검증 없음으로 보고
 # 출력: 영역마다 "PASS|FAIL|SKIP <area> — <실행 명령>", 실패 시 로그 끝 30줄. 전체 로그는 $TMPDIR.
 # 환경 변수: PUM_SIM (기본 "iPhone 17")
+#            PUM_DERIVED_DATA (선택) — 빌드 산출물 폴더. 여러 세션 · 에이전트가 같은 저장소 경로에서 동시에 빌드하면
+#            기본 DerivedData를 같이 써서 「Failed to create a bundle instance … PumTests.xctest」가 난다(2026-10-12).
 set -u
 cd "$(git rev-parse --show-toplevel)" || exit 1
 sim=${PUM_SIM:-iPhone 17}
+dd_args=""; [ -n "${PUM_DERIVED_DATA:-}" ] && dd_args="-derivedDataPath $PUM_DERIVED_DATA"
 logdir=${TMPDIR:-/tmp}/pum-verify; mkdir -p "$logdir"
 fail=0
 
@@ -31,9 +34,9 @@ check_claude() {
 for a in "$@"; do
   case "$a" in
     ios)    run ios xcodebuild test -quiet -project Pum/Pum.xcodeproj -scheme Pum \
-              -destination "platform=iOS Simulator,name=$sim" -parallel-testing-enabled NO -only-testing:PumTests ;;
+              -destination "platform=iOS Simulator,name=$sim" -parallel-testing-enabled NO -only-testing:PumTests $dd_args ;;
     ios-ui) run ios-ui xcodebuild test -quiet -project Pum/Pum.xcodeproj -scheme Pum \
-              -destination "platform=iOS Simulator,name=$sim" -parallel-testing-enabled NO ;;
+              -destination "platform=iOS Simulator,name=$sim" -parallel-testing-enabled NO $dd_args ;;
     tokens) run tokens-test  npm --prefix packages/design-tokens test --silent
             run tokens-check npm --prefix packages/design-tokens run check --silent ;;
     claude) run claude check_claude ;;
