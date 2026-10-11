@@ -20,7 +20,6 @@ struct OwnerPayrollView: View {
     var onProcess: () -> Void = {}
     var onEmployee: (OwnerPayrollEmployee) -> Void = { _ in }
     var onConfirm: () -> Void = {}
-    @State private var tab = "pay"
     @Environment(\.dynamicTypeSize) private var typeSize
     @ScaledMetric(relativeTo: .caption2) private var circle = OwnerPayrollLayout.stepCircle
     @ScaledMetric(relativeTo: .callout) private var warnCircle = OwnerPayrollLayout.warnCircle
@@ -45,7 +44,7 @@ struct OwnerPayrollView: View {
                     .accessibilityHint(Text(record.confirmAccessibilityHint))
                     .padding(.horizontal, PumTokens.Size.screenPad)
                     .padding(.vertical, PumTokens.Space.s8)
-                PumTabBar(items: PumTabItem.ownerTabs(workBadge: 0), selection: $tab)
+                // 원문 1u는 탭 바 없이 확정 버튼만 하단 고정
             }
             .background(PumColor.bgApp)
         }
@@ -119,7 +118,7 @@ struct OwnerPayrollView: View {
             Circle().fill(PumColor.statusAttentionDot).frame(width: circle, height: circle) // amber400
         case .waiting:
             Circle().fill(PumColor.surfaceCard)
-                .overlay { Circle().strokeBorder(PumTokens.ColorToken.borderHairline, lineWidth: 1) }
+                .overlay { Circle().strokeBorder(PumTokens.ColorToken.gray200, lineWidth: 2) } // 원문 대기 원: 회색 테두리가 보임
                 .frame(width: circle, height: circle)
         }
     }
@@ -176,12 +175,9 @@ struct OwnerPayrollView: View {
                     }
                 }
                 .foregroundStyle(PumColor.textSecondary)
-                // 32px 700 → hero. 「원」은 금액 뒤 작게(1n과 같은 규칙)
-                HStack(alignment: .firstTextBaseline, spacing: PumTokens.Space.s4) {
-                    Text(record.totalText).pumText(.hero).foregroundStyle(PumColor.textPrimary)
-                        .lineLimit(1).minimumScaleFactor(0.5)
-                    Text("원").pumText(.title3, weight: .semibold).foregroundStyle(PumColor.textPrimary)
-                }
+                // 32px 700 → hero. 원문 1u는 「4,210,000원」 한 덩어리(「원」도 같은 크기)
+                Text(record.totalText + "원").pumText(.hero).foregroundStyle(PumColor.textPrimary)
+                    .lineLimit(1).minimumScaleFactor(0.5)
                 footer
             }
             .padding(PumTokens.Space.s16)
