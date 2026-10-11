@@ -43,6 +43,7 @@ struct ContentView: View {
             case "1s": EditApprovalView()
             case "1t": OwnerScheduleView()
             case "1u": OwnerPayrollView()
+            case "1v": PayrollConfirmView()
             case "1w": OwnerWorkplacesView()
             case "gallery": ComponentGalleryView()
             default: DevMenu()
@@ -84,6 +85,7 @@ private struct DevMenu: View {
                     NavigationLink("1s 수정 요청 승인") { EditApprovalView().toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("1t 사업장 스케줄") { OwnerScheduleView().toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("1u 급여 정산") { OwnerPayrollView().toolbar(.hidden, for: .navigationBar) }
+                    NavigationLink("1v 급여 확정 시트") { PayrollConfirmView().toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("1w 전체 사업장") { OwnerWorkplacesView().toolbar(.hidden, for: .navigationBar) }
                 }
                 Section("디자인 시스템") {
