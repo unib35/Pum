@@ -65,6 +65,7 @@ nonisolated struct OwnerRecordActionsState: Equatable, Sendable {
     var guideText: String { Self.guideRuleTitle + Self.guideBefore + Self.guideCorrection + Self.guideAfter }
 
     /// 확정 전: 시간 수정 · 결근 처리 · 기록 삭제 / 확정 후: 삭제 숨김(대체 문구는 디자인 없음)
+    /// 확정 후 「시간 수정」 · 「결근 처리」를 정정(10f)으로 바꿀지는 미결정 — 충돌표 #33
     var menu: [OwnerRecordAction] {
         isPayrollConfirmed ? [.editTime, .markAbsent] : [.editTime, .markAbsent, .delete]
     }

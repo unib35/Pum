@@ -28,10 +28,15 @@ struct OwnerRecordActionsView: View {
                 .buttonStyle(.plain)
                 .accessibilityLabel(Text(OwnerRecordActionsState.cancelText))
                 .transition(.opacity)
-                OwnerRecordActionsSheet(state: state, onAction: choose, onCancel: cancel)
-                    .frame(maxHeight: .infinity, alignment: .bottom)
-                    // M22: 동작 줄이기면 올라오는 대신 페이드
-                    .transition(reduceMotion ? .opacity : .move(edge: .bottom))
+                // 높이 상한은 공통 C9와 같은 비율 — 큰 글자에서도 위쪽 막을 눌러 닫을 자리를 남긴다
+                GeometryReader { geo in
+                    VStack(spacing: 0) {
+                        Spacer(minLength: geo.size.height * (1 - PumBottomSheetStyle.maxHeightRatio))
+                        OwnerRecordActionsSheet(state: state, onAction: choose, onCancel: cancel)
+                    }
+                }
+                // M22: 동작 줄이기면 올라오는 대신 페이드
+                .transition(reduceMotion ? .opacity : .move(edge: .bottom))
             }
         }
         .animation(PumMotion.respecting(reduceMotion, PumMotion.sheet), value: isSheetOpen) // M3
@@ -42,6 +47,7 @@ struct OwnerRecordActionsView: View {
         onCancel()
     }
 
+    /// 「기록 삭제」는 받는 쪽이 사유 입력 단계를 거쳐야 한다(REQ-027) — 사유 화면 디자인 없음, 연결 후속
     private func choose(_ item: OwnerRecordAction) {
         isSheetOpen = false
         onAction(item)

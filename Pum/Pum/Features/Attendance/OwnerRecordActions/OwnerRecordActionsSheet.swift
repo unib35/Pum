@@ -59,7 +59,7 @@ struct OwnerRecordActionsSheet: View {
                 .accessibilityAddTraits(.isHeader)
             ForEach(state.menu, id: \.self) { item in
                 hairline
-                Button { onAction(item) } label: {
+                Button(role: item.isDestructive ? .destructive : nil) { onAction(item) } label: {
                     Text(item.title)
                         // 17px: 일반 동작 500 파랑, 삭제 600 빨강
                         .pumText(.headline, weight: item.isDestructive ? .semibold : .medium)
