@@ -30,54 +30,24 @@ struct MyScheduleView: View {
 
     // 화면 전용 상수 — 토큰에 없는 값(DEC-005)
     private enum Local {
-        /// 막(scrim): 토큰 없음 · 보고. 먹색(textPrimary) 약 35%
-        static let scrimOpacity = 0.35
         /// 날짜 칸 고정 폭(요일 + 숫자)
         static let dateColumnWidth: CGFloat = 40
         /// 대타 요청 중 행 강조 테두리 약 2pt
         static let highlightStroke: CGFloat = 2
-        /// 시트 최대 높이 비율(넘치면 안쪽 스크롤)
-        static let sheetMaxHeightRatio: CGFloat = 0.9
     }
 
     var body: some View {
-        ZStack(alignment: .bottom) {
-            listScreen
-                .accessibilityHidden(sheetOpen) // 시트가 열리면 뒤 화면은 읽지 않는다
-            if sheetOpen, let request = state.substitute {
-                scrim
-                    .transition(.opacity)
-                GeometryReader { geo in
-                    // 위쪽 10%는 비워 뒤 화면이 보이게, 시트는 내용 높이만큼 아래에 붙인다
-                    VStack(spacing: 0) {
-                        Spacer(minLength: geo.size.height * (1 - Local.sheetMaxHeightRatio))
-                        SubstituteRequestSheet(
-                            request: request,
-                            bottomInset: geo.safeAreaInsets.bottom,
-                            onCancelRequest: onCancelSubstitute,
-                            onDismiss: dismissSheet)
-                    }
-                    .ignoresSafeArea(.container, edges: .bottom)
+        listScreen
+            .pumBottomSheet(isPresented: sheetBinding, onDismiss: onDismissSheet) {
+                if let request = state.substitute {
+                    SubstituteRequestSheet(request: request, onCancelRequest: onCancelSubstitute)
                 }
-                .transition(reduceMotion ? .opacity : .move(edge: .bottom))
             }
-        }
-        .animation(PumMotion.respecting(reduceMotion, PumMotion.sheet), value: sheetOpen) // M3
     }
 
-    private var scrim: some View {
-        Button { dismissSheet() } label: {
-            PumColor.textPrimary.opacity(Local.scrimOpacity)
-                .ignoresSafeArea()
-                .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
-        .accessibilityLabel(Text("닫기"))
-    }
-
-    private func dismissSheet() {
-        sheetOpen = false
-        onDismissSheet()
+    /// 대타 요청이 있을 때만 시트를 연다
+    private var sheetBinding: Binding<Bool> {
+        Binding(get: { sheetOpen && state.substitute != nil }, set: { sheetOpen = $0 })
     }
 
     // MARK: 뒤 화면(목록)
