@@ -28,4 +28,15 @@ struct EmployeeHomeNoShiftTests {
         #expect(s.week.filter(\.hasShift).map(\.label) == ["월", "수", "금", "토"])
         #expect(s.upcoming.count == 3)
     }
+
+    @Test func 그다음_근무_3건과_이번_달_값() {
+        let s = NoShiftHomeState.sample
+        #expect(s.upcoming.map(\.id) == ["수 7일", "금 9일", "토 10일"])
+        #expect(s.upcoming.allSatisfy { $0.start == "17:00" && $0.end == "22:00" })
+        let m = s.monthCardState
+        #expect(m.monthTitle == "10월")
+        #expect(m.monthPlannedMinutes == 82 * 60 + 30)
+        #expect(m.monthExpectedPay == 1_188_000)
+        #expect(m.monthDaysSummary == "17일 · 확정 2일")
+    }
 }

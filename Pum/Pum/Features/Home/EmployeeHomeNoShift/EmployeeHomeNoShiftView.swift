@@ -61,25 +61,28 @@ struct NoShiftTodayCard: View {
                 }
                 .accessibilityElement(children: .combine)
                 Text(state.plannedSummary).pumText(.caption).foregroundStyle(PumColor.textSecondary)
-                Rectangle().fill(PumColor.borderHairline).frame(height: 1)
-                Button(action: onUnplannedClockIn) {
-                    HStack {
-                        Text("예정에 없는 출근")
-                            .pumText(.footnote, weight: .semibold)
-                            .foregroundStyle(PumColor.textSecondary)
-                        Spacer(minLength: PumTokens.Space.s8)
-                        Image(systemName: "chevron.right")
-                            .pumText(.caption2)
-                            .foregroundStyle(PumColor.textSecondary)
-                            .accessibilityHidden(true)
-                    }
-                    .frame(minHeight: PumTokens.Size.tapMin)
-                    .contentShape(Rectangle())
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel(Text("예정에 없는 출근"))
             }
             .padding(PumTokens.Space.s20)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            // 디자인 1au: 구분선은 카드 끝에서 끝까지, 이동 행은 카드 바닥(C5 이동 행)
+            Rectangle().fill(PumColor.borderHairline).frame(height: 1)
+            Button(action: onUnplannedClockIn) {
+                HStack {
+                    Text("예정에 없는 출근")
+                        .pumText(.footnote, weight: .semibold)
+                        .foregroundStyle(PumColor.textSecondary)
+                    Spacer(minLength: PumTokens.Space.s8)
+                    Image(systemName: "chevron.right")
+                        .pumText(.caption2)
+                        .foregroundStyle(PumColor.textDisabled)
+                        .accessibilityHidden(true)
+                }
+                .padding(.horizontal, PumTokens.Space.s20)
+                .frame(minHeight: PumTokens.Size.tapMin + PumTokens.Space.s8)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(Text("예정에 없는 출근"))
         }
     }
 
