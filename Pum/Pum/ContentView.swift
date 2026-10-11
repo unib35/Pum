@@ -18,6 +18,7 @@ struct ContentView: View {
             switch screen {
             case "1at": EmployeeHomeView()
             case "1au": EmployeeHomeNoShiftView()
+            case "1av": EmployeeHomeWorkingView()
             case "gallery": ComponentGalleryView()
             default: DevMenu()
             }
@@ -33,6 +34,7 @@ private struct DevMenu: View {
                 Section("화면") {
                     NavigationLink("1at 직원 홈 · 출근 전") { EmployeeHomeView().toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("1au 직원 홈 · 근무 없는 날") { EmployeeHomeNoShiftView().toolbar(.hidden, for: .navigationBar) }
+                    NavigationLink("1av 직원 홈 · 근무 중") { EmployeeHomeWorkingView().toolbar(.hidden, for: .navigationBar) }
                 }
                 Section("디자인 시스템") {
                     NavigationLink("컴포넌트 갤러리") { ComponentGalleryView() }
