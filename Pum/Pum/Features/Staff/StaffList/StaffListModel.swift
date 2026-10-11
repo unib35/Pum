@@ -69,7 +69,7 @@ nonisolated struct StaffMember: Equatable, Sendable, Identifiable {
         var parts = [name]
         if let daysText { parts.append("\(daysText) \(startHour)시부터 \(endHour)시") }
         if let note { parts.append(note) }
-        if let healthCertText { parts.append(healthCertText) }
+        if let healthCertText { parts.append(healthCertWarning ? "\(healthCertText), 확인 필요" : healthCertText) } // 주황 경고를 말로도
         if let wageText { parts.append("시급 \(wageText)원") }
         parts.append(status.title)
         return parts.joined(separator: ", ")

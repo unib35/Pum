@@ -49,7 +49,7 @@ struct StaffListTests {
     @Test func 전화_버튼과_음성_안내() {
         #expect(r.members.map(\.showsCallButton) == [true, false, false, false, false])
         #expect(r.members[0].callAccessibilityLabel == "이종민에게 전화")
-        #expect(r.members[0].accessibilityText == "이종민, 월·수·금 17시부터 22시, 보건증 42일 남음, 시급 12,000원, 계약 완료")
+        #expect(r.members[0].accessibilityText == "이종민, 월·수·금 17시부터 22시, 보건증 42일 남음, 확인 필요, 시급 12,000원, 계약 완료")
         #expect(r.members[3].accessibilityText == "박서준, 토·일 9시부터 15시, 홀 서빙, 시급 11,000원, 서명 대기")
         #expect(r.members[4].accessibilityText == "정우진, 초대 중, 조건 미설정")
     }

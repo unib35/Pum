@@ -133,6 +133,7 @@ struct StaffListView: View {
             Button { onMember(m) } label: { Color.clear.contentShape(Rectangle()) }
                 .buttonStyle(.plain)
                 .accessibilityLabel(Text(m.accessibilityText))
+                .accessibilityHint(Text("직원 상세 보기"))
         }
     }
 
@@ -182,7 +183,7 @@ struct StaffListView: View {
                 (Text(wage).font(run(.headline, .bold)).foregroundColor(PumColor.textPrimary)
                  + Text("원/h").font(run(.caption, .medium)).foregroundColor(PumColor.textSecondary))
                     .pumText(.headline, weight: .bold)
-                    .lineLimit(1).minimumScaleFactor(0.7)
+                    .fixedSize(horizontal: false, vertical: true) // 시급은 핵심 값 — 큰 글자에서 줄이지 않는다(좁으면 행이 세로로 바뀜)
             }
             Text(m.status.title).pumText(.caption2, weight: .semibold) // 11px 600
                 .foregroundStyle(color(m.status.tone))
