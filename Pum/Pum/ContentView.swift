@@ -57,6 +57,7 @@ struct ContentView: View {
             case "3c": NoticeComposeView(state: .sample)
             case "2b": PhoneVerifyView(state: .sample)
             case "2a": WelcomeView(state: .sample)
+            case "2c": StartChoiceView(state: .sample)
             case "2d": InviteCodeView(state: .sample)
             case "gallery": ComponentGalleryView()
             default: DevMenu()
@@ -112,6 +113,7 @@ private struct DevMenu: View {
                     NavigationLink("3c 공지 작성") { NoticeComposeView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("2b 휴대폰 인증") { PhoneVerifyView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("2a 시작") { WelcomeView(state: .sample).toolbar(.hidden, for: .navigationBar) }
+                    NavigationLink("2c 시작 방식") { StartChoiceView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("2d 초대 코드 입력") { InviteCodeView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                 }
                 Section("디자인 시스템") {
