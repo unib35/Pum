@@ -39,4 +39,16 @@ struct OwnerHomeTests {
         #expect(p.progress(now: 0) == 0)
         #expect(p.progress(now: 23 * 60) == 1)
     }
+
+    @Test func 경계값() {
+        let s = OwnerHomeState.sample
+        // 예정 퇴근과 같은 분이면 지남이 아님
+        if let d = s.working.first {
+            #expect(d.isOverdue(now: d.plannedEndMinute) == false)
+            #expect(d.overdueMinutes(now: d.plannedEndMinute + 40) == 40)
+        }
+        #expect(s.decisions.map(\.actionTitle) == ["인정", "처리"])
+        #expect(s.remainingPay == s.expectedPay - s.confirmedPay)
+        #expect(s.confirmedRatio >= 0 && s.confirmedRatio <= 1)
+    }
 }

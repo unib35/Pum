@@ -82,7 +82,7 @@ struct OwnerHomeView: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     Image(systemName: "chevron.right")
-                        .font(.footnote.weight(.semibold))
+                        .pumText(.footnote, weight: .semibold)
                         .foregroundStyle(PumColor.textDisabled)
                         .accessibilityHidden(true)
                 }

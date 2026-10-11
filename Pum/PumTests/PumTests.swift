@@ -116,3 +116,13 @@ struct OwnerComponentTests {
         #expect(PumTabItem.employeeTabs.allSatisfy { $0.badge == 0 })
     }
 }
+
+struct AvatarInitialTests {
+    @Test func 이름_첫_글자() {
+        #expect(PumAvatar.initial(for: "김하늘") == "하")
+        #expect(PumAvatar.initial(for: "박서준") == "서")
+        #expect(PumAvatar.initial(for: "하") == "하")
+        #expect(PumAvatar.initial(for: "남궁민수") == "남")
+        #expect(PumAvatar.initial(for: "Alex") == "A")
+    }
+}
