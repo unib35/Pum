@@ -65,6 +65,7 @@ struct ContentView: View {
             case "15f": InviteExpiredView(state: .sample)
             case "2h": InviteSwitchView(state: .sample)
             case "2g": PersonalRecordDetailView(state: .sample)
+            case "2j": ExtraShiftRequestView(state: .sample)
             case "gallery": ComponentGalleryView()
             default: DevMenu()
             }
@@ -127,6 +128,7 @@ private struct DevMenu: View {
                     NavigationLink("15f 초대 만료") { InviteExpiredView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("2h 초대 수락 전환") { InviteSwitchView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("2g 개인 기록 상세") { PersonalRecordDetailView(state: .sample).toolbar(.hidden, for: .navigationBar) }
+                    NavigationLink("2j 추가 근무 요청") { ExtraShiftRequestView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                 }
                 Section("디자인 시스템") {
                     NavigationLink("컴포넌트 갤러리") { ComponentGalleryView() }

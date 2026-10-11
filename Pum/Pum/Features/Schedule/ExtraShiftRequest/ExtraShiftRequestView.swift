@@ -182,8 +182,10 @@ struct ExtraShiftRequestView: View {
                         Text("· \(recognized)").pumText(.caption).foregroundStyle(PumColor.textSecondary)
                     }
                 }
-                .frame(minHeight: PumTokens.Size.tapMin)
+                // 보이는 줄 높이는 그대로, 누름 영역만 위아래로 넓힌다(행이 원문보다 높아지지 않게)
+                .padding(.vertical, PumTokens.Space.s12)
                 .contentShape(Rectangle())
+                .padding(.vertical, -PumTokens.Space.s12)
             }
             .buttonStyle(.plain)
             .accessibilityElement(children: .ignore)
@@ -239,7 +241,7 @@ struct ExtraShiftRequestView: View {
                 .padding(.horizontal, PumTokens.Space.s4)
             PumCard {
                 ForEach(Array(state.candidates.enumerated()), id: \.element.id) { index, c in
-                    if index > 0 { divider }
+                    if index > 0 { Rectangle().fill(PumColor.borderHairline).frame(height: 1) } // 원문: 직원 행 구분선은 카드 끝까지
                     candidateRow(c)
                 }
             }
