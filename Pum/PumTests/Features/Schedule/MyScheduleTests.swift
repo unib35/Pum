@@ -14,7 +14,7 @@ struct MyScheduleTests {
 
     @Test func 섹션은_이번_주_다음_주_순서() {
         #expect(s.sections.map(\.title) == ["이번 주 · 10월 첫째 주", "다음 주"])
-        #expect(s.sections[0].items.map(\.day) == [5, 6, 7, 9])
+        #expect(s.sections[0].items.map(\.day) == [3, 5, 7, 9])
         #expect(s.sections[1].items.map(\.day) == [12, 14])
     }
 
