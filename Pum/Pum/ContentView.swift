@@ -37,6 +37,7 @@ struct ContentView: View {
             case "1ao": EarlyLeaveView()
             case "1al": MissingClockOutView(state: .sample)
             case "1ae": RecordReviewView()
+            case "1y": WorkplaceSwitcherView()
             case "1ab": ContractListView()
             case "gallery": ComponentGalleryView()
             default: DevMenu()
@@ -72,6 +73,7 @@ private struct DevMenu: View {
                     NavigationLink("1ao 조기 퇴근") { EarlyLeaveView().toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("1al 퇴근 미확정") { MissingClockOutView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("1ae 근무기록 확인 요청") { RecordReviewView().toolbar(.hidden, for: .navigationBar) }
+                    NavigationLink("1y 사업장 전환") { WorkplaceSwitcherView().toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("1ab 계약서 보관함") { ContractListView().toolbar(.hidden, for: .navigationBar) }
                 }
                 Section("디자인 시스템") {
