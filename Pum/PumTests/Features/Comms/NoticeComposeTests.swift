@@ -46,9 +46,12 @@ struct NoticeComposeTests {
 
     @Test func 보내기는_한_번만_실패하면_다시() {
         var s = NoticeComposeState.sample
-        #expect(s.beginSend())
-        #expect(!s.beginSend())
+        let first = s.beginSend()
+        let second = s.beginSend()
+        #expect(first)
+        #expect(!second)
         s.failSend()
-        #expect(s.beginSend())
+        let retry = s.beginSend()
+        #expect(retry)
     }
 }
