@@ -188,7 +188,7 @@ struct WorkplaceCreateView: View {
                 keyValue {
                     keyText("주소")
                 } value: {
-                    VStack(alignment: .trailing, spacing: PumTokens.Space.s2) {
+                    VStack(alignment: .leading, spacing: PumTokens.Space.s2) { // 원문: 반경 줄은 주소와 왼쪽 맞춤
                         valueText(state.address)
                         if let r = state.radiusText {
                             Text(r).pumText(.caption).foregroundStyle(PumColor.textSecondary) // 12px 400
