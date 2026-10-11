@@ -58,7 +58,10 @@ struct OwnerRecordActionsView: View {
                 VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
                     personRow
                     PumCard {
-                        PumRow(OwnerRecordActionsState.recordMethodLabel, value: state.recordMethod)
+                        // 원문 값 15px 600 — PumRow 기본 값 글자보다 굵다
+                        PumRow(title: OwnerRecordActionsState.recordMethodLabel, isKey: true) {
+                            Text(state.recordMethod).pumText(.body, weight: .semibold).foregroundStyle(PumColor.textPrimary)
+                        }
                         PumRow(title: OwnerRecordActionsState.payrollLabel, isKey: true, isLast: true) {
                             // 15px 600. 확정 전 = 주황(처리 필요)
                             Text(state.payrollStatusText).pumText(.body, weight: .semibold)
