@@ -42,7 +42,7 @@ struct StartChoiceTests {
 
     @Test func 접근성_문장() {
         let s = StartChoiceState.sample
-        #expect(s.accessibilityValue(for: .personal) == "3개 중 1번째, 선택됨")
+        #expect(s.accessibilityValue(for: .personal) == "3개 중 1번째")
         #expect(s.accessibilityValue(for: .owner) == "3개 중 3번째")
         #expect(s.accessibilityLabel(for: .personal).hasSuffix("기능: 근무 캘린더, 급여 계산기, 출퇴근 기록"))
         #expect(s.accessibilityLabel(for: .owner) == "사장님이에요, 사업장을 만들고 직원을 초대해요. 사업자 정보는 나중에 입력해도 돼요.")

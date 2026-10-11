@@ -55,7 +55,8 @@ struct StartChoiceState: Equatable, Sendable {
         return text
     }
 
+    /// 선택 여부는 .isSelected 특성이 읽어 준다 — 값에 넣으면 두 번 읽힘(공통 PumRadioRow와 같은 방식)
     func accessibilityValue(for choice: StartChoice) -> String {
-        "\(StartChoice.allCases.count)개 중 \(choice.position)번째" + (isSelected(choice) ? ", 선택됨" : "")
+        "\(StartChoice.allCases.count)개 중 \(choice.position)번째"
     }
 }
