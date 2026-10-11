@@ -23,8 +23,24 @@ struct InviteAcceptTests {
 
     @Test func 빈_값_행은_생략() {
         var x = r
-        x.terms[3] = .init(label: "휴게시간", value: "  ")
+        x.terms[3] = .init(order: 4, label: "휴게시간", value: " \n ")
         #expect(x.visibleTerms.count == 5)
         #expect(!x.visibleTerms.map(\.label).contains("휴게시간"))
+    }
+
+    @Test func 제목은_원문처럼_세_줄() {
+        #expect(r.titleLead == "박민수 사장님이\n")
+        #expect(r.titleTail == "에\n초대했어요")
+        #expect((r.titleLead + r.workplaceName + r.titleTail).split(separator: "\n").count == 3)
+    }
+
+    @Test func 사업장_색_번호_방어() {
+        var x = r
+        for i in [0, -1, -7, 5, 100] {
+            x.colorIndex = i
+            _ = x.tileColor // 음수 · 범위 밖에서도 멈추지 않는다
+        }
+        x.colorIndex = -1
+        #expect(x.tileColor == PumAvatarPalette.stores[PumAvatarPalette.stores.count - 1])
     }
 }

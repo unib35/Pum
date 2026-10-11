@@ -7,10 +7,10 @@ struct InviteAcceptView: View {
     var onAccept: () -> Void = {}
     var onLater: () -> Void = {}
 
-    /// 목업 앱 표시 네모 약 28 — 토큰에 없어 이름을 붙임(DEC-005)
-    private let brandMark: CGFloat = 28
-    /// 목업 사업장 색 네모 약 48 — 토큰에 없어 이름을 붙임(DEC-005)
-    private let workplaceTile: CGFloat = 48
+    /// 목업 앱 표시 네모 약 28 — 토큰에 없어 이름을 붙임(DEC-005), 큰 글자에서 글자와 함께 커진다
+    @ScaledMetric(relativeTo: .callout) private var brandMark: CGFloat = 28
+    /// 목업 사업장 색 네모 약 48 — 토큰에 없어 이름을 붙임(DEC-005), 큰 글자에서 글자와 함께 커진다
+    @ScaledMetric(relativeTo: .headline) private var workplaceTile: CGFloat = 48
     /// 안내 문구는 카드보다 약 4 안쪽 — space-4
     private let noteInset = PumTokens.Space.s4
 
