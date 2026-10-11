@@ -128,13 +128,16 @@ private struct NewsFilterBar: View {
                             Text("\(count)").pumText(.footnote, weight: .bold).foregroundStyle(countColor(item))
                         }
                     }
-                    .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin - PumTokens.Space.s8)
+                    // 원문 바 높이 약 35 = 칸 28 + 바깥 4 · 4. 누름 영역은 위아래로 8씩 넓혀 44(옆 칸과 겹치지 않게 세로만)
+                    .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin - PumTokens.Space.s16)
                     .background {
                         if selected {
                             RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous).fill(PumColor.surfaceCard)
                         }
                     }
+                    .padding(.vertical, PumTokens.Space.s8)
                     .contentShape(Rectangle())
+                    .padding(.vertical, -PumTokens.Space.s8)
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel(Text(label(item)))
