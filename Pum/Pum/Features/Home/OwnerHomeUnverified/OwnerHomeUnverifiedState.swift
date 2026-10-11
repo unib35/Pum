@@ -23,7 +23,7 @@ nonisolated struct OwnerHomeUnverifiedState: Equatable, Sendable {
             switch status {
             case .done: "\(title), 완료"
             case .todo: "\(title), \(detail)"
-            case .locked: "\(title), \(detail.components(separatedBy: " · ").first ?? detail), 잠김"
+            case .locked: "\(title), \(detail.replacingOccurrences(of: " · ", with: ", ")), 잠김" // 표시 문구 전부(「약 2분」 포함)
             }
         }
     }

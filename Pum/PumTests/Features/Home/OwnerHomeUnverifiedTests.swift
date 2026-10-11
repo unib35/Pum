@@ -24,7 +24,7 @@ struct OwnerHomeUnverifiedTests {
 
     @Test func 보이스오버_문구() {
         #expect(s.steps[0].accessibilityText == "사업장 정보, 완료")
-        #expect(s.steps[3].accessibilityText == "직원 초대, 사업장 인증 후, 잠김")
+        #expect(s.steps[3].accessibilityText == "직원 초대, 사업장 인증 후, 약 2분, 잠김")
         #expect(s.steps[2].accessibilityText == "근무 시간대, 오전 · 오후 · 마감 같은 기본 근무")
     }
 }
