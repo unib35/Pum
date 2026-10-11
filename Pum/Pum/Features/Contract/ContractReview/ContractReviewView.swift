@@ -25,8 +25,6 @@ struct ContractReviewView: View {
         _agreed = State(initialValue: startsAgreed)
     }
 
-    /// 목업 체크 네모 약 22 — 토큰에 없어 이름을 붙임(DEC-005), 큰 글자에서 글자와 함께 커진다
-    @ScaledMetric(relativeTo: .footnote) private var checkBox: CGFloat = 22
     /// 동의 문구 색 #3A4150 = 토큰 gray800(textPrimary보다 연함, 값 일치)
     private let consentColor = PumTokens.ColorToken.gray800
 
@@ -171,39 +169,9 @@ struct ContractReviewView: View {
         .accessibilityLabel(Text("\(record.fullTextTitle), \(record.fullTextDetail)"))
     }
 
-    // 5. 동의 체크 — 공통 체크박스가 없어 화면 전용(공통 변경 요청 후보)
+    // 5. 동의 체크 — 공통 체크박스 행(PumCheckboxRow). 무엇에 동의하는지 문구 전체를 VoiceOver 라벨로
     private var consentRow: some View {
-        Button { agreed.toggle() } label: {
-            HStack(alignment: .top, spacing: PumTokens.Space.s10) {
-                checkMark
-                Text(record.consentText).pumText(.footnote).foregroundStyle(consentColor) // 13px 400
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            }
-            .padding(.horizontal, PumTokens.Space.s4)
-            .padding(.vertical, PumTokens.Space.s10)
-            .frame(minHeight: PumTokens.Size.tapMin)
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
-        .accessibilityElement(children: .ignore)
-        // 무엇에 동의하는지가 핵심이라 문구 전체를 라벨로(힌트는 꺼질 수 있다)
-        .accessibilityLabel(Text(record.consentText))
-        .accessibilityValue(Text(agreed ? "선택됨" : "선택 안 됨"))
-        .accessibilityAddTraits(.isToggle)
-    }
-
-    private var checkMark: some View {
-        RoundedRectangle(cornerRadius: PumTokens.Radius.sm, style: .continuous)
-            .fill(agreed ? PumColor.accent : PumColor.surfaceCard)
-            .overlay {
-                if agreed {
-                    Image(systemName: "checkmark").font(.footnote.weight(.bold)).foregroundStyle(.white)
-                } else { // 체크 안 된 모양은 원문에 없음 — 추정: 흰 바탕 + hairline 테두리
-                    RoundedRectangle(cornerRadius: PumTokens.Radius.sm, style: .continuous)
-                        .strokeBorder(PumColor.borderHairline, lineWidth: 1)
-                }
-            }
-            .frame(width: checkBox, height: checkBox)
+        PumCheckboxRow(title: record.consentText, isOn: agreed, textColor: consentColor) { agreed.toggle() } // 13px 400
     }
 
     // 6. 하단 고정

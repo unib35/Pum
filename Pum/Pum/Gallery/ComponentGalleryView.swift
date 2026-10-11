@@ -8,6 +8,9 @@ struct ComponentGalleryView: View {
 
     /// 개발용: `-PumGalleryAnchor C12` 로 실행하면 그 섹션으로 이동(비교 캡처용)
     private let anchor = UserDefaults.standard.string(forKey: "PumGalleryAnchor")
+    @State private var galleryReason = 0
+    @State private var galleryAgreed = true
+    private let galleryReasons = ["사장님이 일찍 보내주셨어요", "개인 사정", "몸이 안 좋아요"]
 
     var body: some View {
         ScrollViewReader { proxy in
@@ -21,6 +24,7 @@ struct ComponentGalleryView: View {
                     PumButton(title: "스케줄 전체", kind: .outline) {}
                     PumButton(title: "거절", kind: .dangerOutline) {}
                     PumButton(title: "급여 확정하기 · 미처리 2건 남음") {}.disabled(true)
+                    PumButton(title: "공유", kind: .tonal) {}
                     PumButton(title: "나중에 할게요", kind: .text) {}
                     PumButtonPair(negative: "거절", positive: "승인 · 22:30으로 확정", onNegative: {}, onPositive: {})
                     HStack(spacing: PumTokens.Space.s8) {
@@ -61,6 +65,16 @@ struct ComponentGalleryView: View {
                             PumBadge(text: "확인 필요", kind: .attention)
                         }
                     }
+                }
+
+                section("Selection · 라디오 · 체크박스") {
+                    PumCard {
+                        ForEach(Array(galleryReasons.enumerated()), id: \.offset) { i, r in
+                            PumRadioRow(title: r, isOn: galleryReason == i, index: i, count: galleryReasons.count) { galleryReason = i }
+                        }
+                    }
+                    PumCheckboxRow(title: "계약 조건을 모두 확인했고, 전자서명이 서면 서명과 같은 효력을 가진다는 점에 동의합니다.",
+                                   isOn: galleryAgreed) { galleryAgreed.toggle() }
                 }
 
                 section("F4 Numbers") {

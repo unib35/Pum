@@ -1,9 +1,10 @@
 // C1 Button — PRIMARY 화면당 하나 · DARK 완료·저장 · OUTLINE 보조 · DANGER OUTLINE 거절 · TEXT 취소·나중에
+// TONAL(회색 바탕 · 먹색 글자)은 C1 목록 밖 — 1ab 「공유」 원문에서 모았다
 // 높이 54(작게 44) · 모서리 12 · 누름 M1 · 처리 중 M26 · 비활성은 이유를 문구에
 import SwiftUI
 
 struct PumButton: View {
-    enum Kind: CaseIterable { case primary, dark, outline, dangerOutline, text }
+    enum Kind: CaseIterable { case primary, dark, outline, dangerOutline, tonal, text }
     enum Size { case regular, small }
 
     let title: String
@@ -81,7 +82,7 @@ struct PumButtonStyle: ButtonStyle {
         guard enabled else { return kind == .text ? PumColor.textDisabled : .white } // 디자인 C1 DISABLED: gray-300 바탕 · 흰 글자
         switch kind {
         case .primary, .dark: return .white
-        case .outline: return PumColor.textPrimary
+        case .outline, .tonal: return PumColor.textPrimary
         case .dangerOutline: return PumColor.statusDanger
         case .text: return PumColor.textSecondary
         }
@@ -93,6 +94,7 @@ struct PumButtonStyle: ButtonStyle {
         case .primary: return pressed ? PumTokens.ColorToken.blue700 : PumColor.accent // M1 한 단계 진하게
         case .dark: return pressed ? PumTokens.ColorToken.gray800 : PumColor.surfaceInverse
         case .outline, .dangerOutline: return pressed ? PumColor.surfaceFill : PumColor.surfaceCard
+        case .tonal: return pressed ? PumTokens.ColorToken.gray200 : PumColor.surfaceFill
         case .text: return pressed ? PumColor.surfaceFill : .clear
         }
     }

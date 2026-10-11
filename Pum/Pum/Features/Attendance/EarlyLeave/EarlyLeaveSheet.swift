@@ -3,12 +3,6 @@ import SwiftUI
 
 /// 화면 전용 상수 — 토큰에 없는 값
 enum EarlyLeaveLocal {
-    /// 라디오 원 지름 약 22
-    static let radioSize: CGFloat = 22
-    /// 선택 점 / 원 비율
-    static let dotRatio: CGFloat = 0.36
-    /// 빈 라디오 테두리 두께
-    static let radioStroke: CGFloat = 1.5
     /// 뒤 카드 안 흰 글자 투명도(목업 80–85%)
     static let cardTextOpacity = 0.8
 }
@@ -19,7 +13,6 @@ struct EarlyLeaveSheet: View {
     var onContinue: () -> Void = {}
     var onRecord: () -> Void = {}
 
-    @ScaledMetric private var radio = EarlyLeaveLocal.radioSize
     @AccessibilityFocusState private var titleFocused: Bool
 
     var body: some View {
@@ -103,39 +96,9 @@ struct EarlyLeaveSheet: View {
         }
     }
 
+    /// 공통 라디오 행(PumRadioRow) — 선택은 600 먹색, 나머지 400 gray800
     private func reasonRow(_ reason: EarlyLeaveReason, index: Int, count: Int) -> some View {
-        let on = state.selected == reason
-        return Button { onSelect(reason) } label: {
-            HStack(spacing: PumTokens.Space.s12) {
-                radioMark(on: on)
-                Text(reason.title)
-                    .pumText(.callout, weight: on ? .semibold : .regular)
-                    .foregroundStyle(on ? PumColor.textPrimary : PumTokens.ColorToken.gray800)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            }
-            .padding(.horizontal, PumTokens.Size.rowPadX)
-            .padding(.vertical, PumTokens.Size.rowPadY)
-            .frame(minHeight: PumTokens.Size.tapMin)
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
-        .accessibilityElement(children: .ignore)
-        // 「선택됨」은 .isSelected 특성이 읽는다(라벨에 넣으면 두 번 읽힘)
-        .accessibilityLabel(Text("\(reason.title), \(count)개 중 \(index + 1)번째"))
-        .accessibilityAddTraits(on ? [.isButton, .isSelected] : .isButton)
-    }
-
-    @ViewBuilder
-    private func radioMark(on: Bool) -> some View {
-        ZStack {
-            if on {
-                Circle().fill(PumColor.accent)
-                Circle().fill(.white).frame(width: radio * EarlyLeaveLocal.dotRatio)
-            } else {
-                Circle().strokeBorder(PumTokens.ColorToken.gray300, lineWidth: EarlyLeaveLocal.radioStroke)
-            }
-        }
-        .frame(width: radio, height: radio)
+        PumRadioRow(title: reason.title, isOn: state.selected == reason, index: index, count: count) { onSelect(reason) }
     }
 
     private var notice: some View {
