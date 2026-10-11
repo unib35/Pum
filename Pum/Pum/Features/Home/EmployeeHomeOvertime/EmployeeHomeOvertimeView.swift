@@ -93,6 +93,7 @@ struct OvertimeCard: View {
             Text(OvertimeFormat.clockStyle(state.elapsedMinutes)).pumText(.display).foregroundStyle(.white)
             Text("근무").pumText(.title3, weight: .medium).foregroundStyle(PumColor.textOnInverseSecondary)
         }
+        .lineLimit(1).minimumScaleFactor(0.6) // 접근성 큰 글자에서 잘리지 않게 한 줄 유지 · 축소
     }
 
     private var bottomLine: some View {
@@ -192,16 +193,19 @@ struct OvertimeSoFarCard: View {
         cell("예정 근무", HomeFormat.hours(state.plan.plannedPaidMinutes), PumColor.textPrimary)
         cell("예정 초과", OvertimeFormat.plusDuration(state.overtimeMinutes), PumColor.statusAttention)
         // 서버(엔진) 값 그대로 — 화면에서 계산하지 않는다
-        cell("인정 예상", "\(PumFormat.amount(state.recognizedPayEstimate))원~", PumColor.statusDone)
+        // 「~」는 「이상(더 늘 수 있음)」 — VoiceOver가 물결표로 읽지 않게 따로 읽힘 문장
+        cell("인정 예상", "\(PumFormat.amount(state.recognizedPayEstimate))원~", PumColor.statusDone,
+             spoken: "인정 예상 \(PumFormat.amount(state.recognizedPayEstimate))원 이상")
     }
 
-    private func cell(_ title: String, _ value: String, _ color: Color) -> some View {
+    private func cell(_ title: String, _ value: String, _ color: Color, spoken: String? = nil) -> some View {
         VStack(alignment: .leading, spacing: PumTokens.Space.s4) {
             Text(title).pumText(.caption2, weight: .regular).foregroundStyle(PumColor.textSecondary)
             Text(value).pumText(.body, weight: .bold).foregroundStyle(color)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .accessibilityElement(children: .combine)
+        .accessibilityLabel(spoken.map { Text($0) } ?? Text("\(title) \(value)"))
     }
 }
 

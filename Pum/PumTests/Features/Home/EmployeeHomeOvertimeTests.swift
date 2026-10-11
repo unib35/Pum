@@ -56,4 +56,20 @@ struct EmployeeHomeOvertimeTests {
         #expect(OvertimeFormat.cardLabel(elapsed: s.elapsedMinutes, plannedEnd: "20:00", overtime: s.overtimeMinutes)
             == "연장 근무 중, 4시간 15분 근무, 예정 퇴근 20:00보다 1시간 13분 초과")
     }
+
+    @Test func 지금이_출근보다_조금_이르면_경과_0() {
+        var x = EmployeeHomeOvertimeState.sample
+        x.nowMinute = x.clockInMinute - 3
+        #expect(x.elapsedMinutes == 0 && !x.isOvertime)
+    }
+
+    @Test func 예정_퇴근_뒤에_출근하면_전부_초과() {
+        var x = EmployeeHomeOvertimeState.sample
+        x.clockInMinute = 20 * 60 + 30
+        x.nowMinute = 21 * 60
+        #expect(x.scheduledSpanMinutes == 0)
+        #expect(x.overtimeMinutes == 30)
+        x.clockInMinute = 20 * 60 // 예정 퇴근과 같은 시각
+        #expect(x.overtimeMinutes == 60)
+    }
 }
