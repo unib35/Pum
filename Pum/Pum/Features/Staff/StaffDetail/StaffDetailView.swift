@@ -102,7 +102,7 @@ struct StaffDetailView: View {
         .contentShape(Rectangle())
     }
 
-    private var contactShape: RoundedRectangle { RoundedRectangle(cornerRadius: PumTokens.Radius.lg, style: .continuous) }
+    private var contactShape: RoundedRectangle { RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous) } // DEC-005 버튼 · 타일 12
 
     private var phoneButton: some View {
         Button(action: onCall) {
@@ -116,7 +116,7 @@ struct StaffDetailView: View {
 
     private var messageButton: some View {
         Button(action: onMessage) {
-            contactLabel("문자") { Image(systemName: "message").font(.system(size: contactIcon, weight: .regular)) }
+            contactLabel("문자") { Image(systemName: "bubble.left").font(.system(size: contactIcon, weight: .regular)) }
                 .foregroundStyle(PumColor.textPrimary)
                 .background(PumColor.surfaceCard, in: contactShape)
                 .overlay(contactShape.strokeBorder(PumColor.borderHairline, lineWidth: 1))
