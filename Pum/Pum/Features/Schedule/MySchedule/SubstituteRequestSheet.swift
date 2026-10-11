@@ -4,8 +4,7 @@ import SwiftUI
 
 struct SubstituteRequestSheet: View {
     let request: SubstituteRequest
-    /// 시트가 차지할 수 있는 최대 높이(넘치면 안쪽이 스크롤)
-    var maxHeight: CGFloat = .infinity
+    /// 홈 인디케이터 영역만큼 아래 여백(바탕은 화면 끝까지)
     var bottomInset: CGFloat = 0
     var onCancelRequest: () -> Void = {}
 
@@ -26,14 +25,13 @@ struct SubstituteRequestSheet: View {
                 .padding(.top, PumTokens.Space.s8)
                 .padding(.bottom, PumTokens.Space.s12)
                 .accessibilityHidden(true)
-            // 내용이 길면(큰 글자) 스크롤, 짧으면 내용 높이만큼
+            // 짧으면 내용 높이만큼(원문), 받은 높이를 넘으면(큰 글자) 그 안에서 스크롤 — 높이 상한은 부모가 준다
             ViewThatFits(in: .vertical) {
                 content
                 ScrollView { content }.scrollBounceBehavior(.basedOnSize)
             }
         }
         .frame(maxWidth: .infinity)
-        .frame(maxHeight: maxHeight, alignment: .top)
         .padding(.bottom, bottomInset)
         .background(
             UnevenRoundedRectangle(topLeadingRadius: PumTokens.Radius.xl, topTrailingRadius: PumTokens.Radius.xl, style: .continuous)

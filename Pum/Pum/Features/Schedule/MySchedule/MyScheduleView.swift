@@ -48,13 +48,15 @@ struct MyScheduleView: View {
                 scrim
                     .transition(.opacity)
                 GeometryReader { geo in
-                    SubstituteRequestSheet(
-                        request: request,
-                        maxHeight: geo.size.height * Local.sheetMaxHeightRatio,
-                        bottomInset: geo.safeAreaInsets.bottom,
-                        onCancelRequest: onCancelSubstitute)
-                        .frame(maxHeight: .infinity, alignment: .bottom)
-                        .ignoresSafeArea(.container, edges: .bottom)
+                    // 위쪽 10%는 비워 뒤 화면이 보이게, 시트는 내용 높이만큼 아래에 붙인다
+                    VStack(spacing: 0) {
+                        Spacer(minLength: geo.size.height * (1 - Local.sheetMaxHeightRatio))
+                        SubstituteRequestSheet(
+                            request: request,
+                            bottomInset: geo.safeAreaInsets.bottom,
+                            onCancelRequest: onCancelSubstitute)
+                    }
+                    .ignoresSafeArea(.container, edges: .bottom)
                 }
                 .transition(reduceMotion ? .opacity : .move(edge: .bottom))
             }

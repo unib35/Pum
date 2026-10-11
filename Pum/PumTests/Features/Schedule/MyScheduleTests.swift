@@ -19,7 +19,7 @@ struct MyScheduleTests {
     }
 
     @Test func 오늘_행은_출근_전_배지_꺾쇠_없음() {
-        let t = item(6)
+        let t = item(3)
         #expect(t.isToday)
         #expect(t.badge?.text == "출근 전")
         #expect(t.badge?.kind == .waiting)
@@ -56,7 +56,7 @@ struct MyScheduleTests {
     @Test func 행_음성_문구() {
         #expect(item(9).accessibilityLabel == "10월 9일 금요일, 18:00부터 23:00, 변경됨, 기존 17:00부터 22:00")
         #expect(item(5).accessibilityLabel == "10월 5일 월요일, 17:00부터 22:00, 종민김밥 본점")
-        #expect(item(6).accessibilityLabel == "오늘, 10월 6일 화요일, 17:00부터 22:00, 출근 전, 종민김밥 본점, 휴게 30분")
+        #expect(item(3).accessibilityLabel == "오늘, 10월 3일 토요일, 17:00부터 22:00, 출근 전, 종민김밥 본점, 휴게 30분")
         #expect(item(12).accessibilityLabel == "10월 12일 월요일, 17:00부터 22:00, 대타 요청 중, 종민김밥 본점")
     }
 

@@ -150,9 +150,10 @@ nonisolated struct MyScheduleState: Equatable, Sendable {
         return MyScheduleState(
             sections: [
                 ScheduleSection(id: "thisWeek", title: "이번 주 · 10월 첫째 주", items: [
-                    ScheduleItem(id: 1, month: 10, day: 5, weekday: "월", start: "17:00", end: "22:00", workplace: shop),
-                    ScheduleItem(id: 2, month: 10, day: 6, weekday: "화", start: "17:00", end: "22:00", workplace: shop,
+                    // 원문 1j: 오늘 = 10월 3일 토(1at과 같은 날), 그다음 월 5 · 수 7 · 금 9
+                    ScheduleItem(id: 2, month: 10, day: 3, weekday: "토", start: "17:00", end: "22:00", workplace: shop,
                                  breakMinutes: 30, kind: .today(statusText: "출근 전")),
+                    ScheduleItem(id: 1, month: 10, day: 5, weekday: "월", start: "17:00", end: "22:00", workplace: shop),
                     ScheduleItem(id: 3, month: 10, day: 7, weekday: "수", start: "17:00", end: "22:00", workplace: shop),
                     ScheduleItem(id: 4, month: 10, day: 9, weekday: "금", start: "18:00", end: "23:00", workplace: shop,
                                  kind: .changed(originalStart: "17:00", originalEnd: "22:00")),
