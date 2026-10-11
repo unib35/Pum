@@ -62,4 +62,11 @@ struct StaffInviteTests {
         #expect(p.avatarInitial == "한")
         #expect(StaffInviteDraft.sample.ownerLine == "종민김밥 본점 \u{00B7} 대표 박민수")
     }
+
+    @Test func 국가번호_붙여넣기와_010_검사() {
+        #expect(StaffInviteDraft.formatPhone("+82 10-4182-7750") == "010-4182-7750")
+        var d = StaffInviteDraft.sample
+        d.phone = StaffInviteDraft.formatPhone("12345678901")
+        #expect(!d.canSend) // 010이 아니면 보낼 수 없다
+    }
 }

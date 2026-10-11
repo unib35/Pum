@@ -67,10 +67,11 @@ nonisolated struct StaffInviteDraft: Equatable, Sendable {
 
     var ownerLine: String { "\(workplaceName) \u{00B7} 대표 \(ownerName)" }
 
-    /// 이름 · 번호(11자리)가 다 채워져야 보낼 수 있다
+    /// 이름 · 휴대폰 번호(010 + 11자리)가 다 채워져야 보낼 수 있다 — 초대는 번호에 묶여(REQ-002) 잘못된 번호면 수락할 수 없다
     var canSend: Bool {
-        !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-            && Self.digits(phone).count == Self.phoneDigitCount
+        let d = Self.digits(phone)
+        return !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            && d.count == Self.phoneDigitCount && d.hasPrefix("010")
     }
     var sendTitle: String { method.sendTitle }
     var guideText: String { method.guide }
@@ -82,7 +83,12 @@ nonisolated struct StaffInviteDraft: Equatable, Sendable {
 
     // MARK: 형식
 
-    static func digits(_ s: String) -> String { s.filter { $0.isASCII && $0.isNumber } }
+    /// 숫자만. 국가번호로 붙여 넣은 번호(+82 10…, 8210…)는 앞의 82를 0으로 바꾼다
+    static func digits(_ s: String) -> String {
+        let d = s.filter { $0.isASCII && $0.isNumber }
+        if d.hasPrefix("8210") { return "0" + d.dropFirst(2) }
+        return d
+    }
 
     /// 숫자만 남기고 11자리까지 — 010-XXXX-XXXX. 3자리까지는 하이픈 없음, 7자리까지는 앞 3 + 나머지.
     static func formatPhone(_ s: String) -> String {

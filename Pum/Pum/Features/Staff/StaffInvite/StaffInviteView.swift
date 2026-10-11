@@ -101,7 +101,7 @@ struct StaffInviteView: View {
             VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
                 field("이름") {
                     TextField("", text: $draft.name)
-                        .textContentType(.name)
+                        // 자동 채움이 사장님 본인 정보를 제안하지 않게 내용 종류를 지정하지 않는다
                         .submitLabel(.next)
                         .onSubmit { focus = .phone }
                         .focused($focus, equals: .name)
@@ -110,7 +110,12 @@ struct StaffInviteView: View {
                 field("휴대폰 번호") {
                     TextField("", text: $draft.phone)
                         .keyboardType(.numberPad)
-                        .textContentType(.telephoneNumber)
+                        .toolbar { // 숫자 키패드에는 return 키가 없어 「완료」로 키보드를 내린다
+                            ToolbarItemGroup(placement: .keyboard) {
+                                Spacer()
+                                Button("완료") { focus = nil }
+                            }
+                        }
                         // 입력하면 하이픈을 자동으로 붙인다(모델 함수)
                         .onChange(of: draft.phone) { _, new in
                             let f = StaffInviteDraft.formatPhone(new)
@@ -284,7 +289,7 @@ struct StaffInviteView: View {
             HStack(spacing: PumTokens.Space.s12) {
                 // 회색 아바타 — PumAvatar 팔레트에 중립색이 없어 같은 모양을 gray 토큰으로 만든다
                 Text(p.avatarInitial)
-                    .font(PumFont.font(size: avatarSize * 0.38, weight: .bold, relativeTo: .callout))
+                    .font(PumFont.font(size: StaffInviteLayout.avatar * 0.38, weight: .bold, relativeTo: .callout)) // 글자는 relativeTo로 한 번만 커진다(PumAvatar와 같은 0.38 비율)
                     .foregroundStyle(PumTokens.ColorToken.gray800)
                     .frame(width: avatarSize, height: avatarSize)
                     .background(PumTokens.ColorToken.gray200, in: Circle())
