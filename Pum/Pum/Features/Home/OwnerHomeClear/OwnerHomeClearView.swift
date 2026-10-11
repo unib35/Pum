@@ -121,7 +121,8 @@ struct OwnerHomeClearView: View {
             }
             ForEach(state.scheduled) { p in
                 ClearPersonRow(name: p.name, colorIndex: p.colorIndex, detail: p.detail,
-                               isDimmed: true, accessibilityPrefix: "출근 전") { EmptyView() }
+                               isDimmed: true, accessibilityPrefix: "출근 전",
+                               showsDivider: p.id != state.scheduled.last?.id) { EmptyView() }
             }
         }
     }
@@ -176,6 +177,7 @@ private struct ClearPersonRow<Trailing: View>: View {
     let isDimmed: Bool
     /// VoiceOver에서 근무 중 / 출근 전을 구분하는 말
     let accessibilityPrefix: String
+    var showsDivider: Bool = true
     @ViewBuilder var trailing: Trailing
 
     var body: some View {
@@ -194,7 +196,10 @@ private struct ClearPersonRow<Trailing: View>: View {
         .padding(.horizontal, PumTokens.Size.rowPadX)
         .frame(minHeight: PumTokens.Size.tapMin)
         .overlay(alignment: .bottom) {
-            Rectangle().fill(PumColor.borderHairline).frame(height: 1).padding(.horizontal, PumTokens.Size.rowPadX)
+            // 행 사이에만 구분선 — 카드 마지막 행 아래에는 없음(C5)
+            if showsDivider {
+                Rectangle().fill(PumColor.borderHairline).frame(height: 1).padding(.horizontal, PumTokens.Size.rowPadX)
+            }
         }
     }
 
@@ -223,7 +228,7 @@ private struct MiniProgressBar: View {
             }
             .frame(width: OwnerHomeClearLayout.miniBarWidth, height: OwnerHomeClearLayout.miniBarHeight)
             .accessibilityElement(children: .ignore)
-            .accessibilityLabel(Text("예정 근무 진행"))
+            .accessibilityLabel(Text("근무 진행"))
             .accessibilityValue(Text("\(Int((progress * 100).rounded()))%"))
     }
 }
