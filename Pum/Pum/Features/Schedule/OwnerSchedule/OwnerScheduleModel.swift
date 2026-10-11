@@ -101,12 +101,12 @@ struct OwnerScheduleState: Equatable, Sendable {
 
     static let sample: OwnerScheduleState = {
         let morning = ScheduleGroup(id: 1, start: "09:00", end: "15:00", period: "오전", hours: "6h", people: [
-            .init(id: 1, name: "최유나", colorIndex: 1, breakText: "1h"),
+            .init(id: 1, name: "최유나", colorIndex: 2, breakText: "1h"),
             .init(id: 2, name: "박서준", colorIndex: 3, breakText: "1h"),
         ])
         let evening = ScheduleGroup(id: 2, start: "17:00", end: "22:00", period: "오후", hours: "5h", people: [
             .init(id: 3, name: "이종민", colorIndex: 0, breakText: "30m"),
-            .init(id: 4, name: "김하늘", colorIndex: 2, breakText: "30m"),
+            .init(id: 4, name: "김하늘", colorIndex: 1, breakText: "30m"),
         ])
         func day(_ n: Int, _ wd: String, _ count: Int, short: Bool = false, closed: Bool = false,
                  title: String, groups: [ScheduleGroup] = []) -> ScheduleDay {
@@ -118,8 +118,8 @@ struct OwnerScheduleState: Equatable, Sendable {
             weekTitle: "10월 5일 \u{2013} 11일",
             days: [
                 day(5, "월", 4, title: "10월 5일 월 \u{00B7} 4명 \u{00B7} 22시간", groups: [morning, evening]),
-                day(6, "화", 3, title: "10월 6일 화 \u{00B7} 3명 \u{00B7} 16시간"),
-                day(7, "수", 3, title: "10월 7일 수 \u{00B7} 3명 \u{00B7} 17시간"),
+                day(6, "화", 2, title: "10월 6일 화 \u{00B7} 2명 \u{00B7} 16시간"),
+                day(7, "수", 4, title: "10월 7일 수 \u{00B7} 4명 \u{00B7} 17시간"),
                 day(8, "목", 1, short: true, title: "10월 8일 목 \u{00B7} 1명 \u{00B7} 6시간"),
                 day(9, "금", 4, title: "10월 9일 금 \u{00B7} 4명 \u{00B7} 21시간"),
                 day(10, "토", 3, title: "10월 10일 토 \u{00B7} 3명 \u{00B7} 18시간"),
