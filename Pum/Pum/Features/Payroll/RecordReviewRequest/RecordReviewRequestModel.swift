@@ -80,7 +80,10 @@ nonisolated struct RecordReviewRequestState: Equatable, Sendable {
     var progressText: String { "\(repliedCount) / \(totalCount)" }
     var progressFraction: Double { totalCount > 0 ? min(1, Double(repliedCount) / Double(totalCount)) : 0 }
     var sendTitle: String { "\(targetCount)명에게 요청 보내기" }
-    var canSend: Bool { targetCount > 0 && !isSending }
+    /// 대상이 있고, 「날짜 선택」이면 고른 날짜가 있어야(빈 기한으로 보내지 않게)
+    var canSend: Bool {
+        targetCount > 0 && !isSending && !(choice == .custom && (customDeadline ?? "").isEmpty)
+    }
 
     /// VoiceOver 한 문장 — 「직원 확인 현황, 5명 중 3명 회신, 김하늘 수정 요청 1건, 정우진 미회신」
     var statusAccessibilityLabel: String {
@@ -101,6 +104,9 @@ nonisolated struct RecordReviewRequestState: Equatable, Sendable {
         isSending = true
         return true
     }
+
+    /// 보내기 실패 — 처리 중을 풀어 다시 보낼 수 있게(실패 안내 문구는 디자인 없음, 연결 때)
+    mutating func failSend() { isSending = false }
 
     /// 원문 캡처(시트 열림 · 「월말」 선택 · 자동 보내기 켜짐) — 가짜 예시 값
     static let sample = RecordReviewRequestState(

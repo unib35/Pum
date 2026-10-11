@@ -11,9 +11,9 @@ struct RecordReviewRequestTests {
         n.choice = .beforePayday
         #expect(n.deadlineText == "11월 7일 (금)")
         n.choice = .custom
-        #expect(n.deadlineText == "")
+        #expect(n.deadlineText == "" && !n.canSend) // 날짜를 고르기 전엔 보낼 수 없다
         n.customDeadline = "11월 3일 (월)"
-        #expect(n.deadlineText == "11월 3일 (월)")
+        #expect(n.deadlineText == "11월 3일 (월)" && n.canSend)
         #expect(RecordReviewDeadlineChoice.allCases.map(\.title) == ["월말", "급여일 3일 전", "날짜 선택"])
     }
 
@@ -50,5 +50,15 @@ struct RecordReviewRequestTests {
         z.targetCount = 0
         let none = z.beginSend()
         #expect(!none && !z.isSending)
+    }
+
+    @Test func 실패하면_다시_보낼_수_있다() {
+        var n = s
+        let first = n.beginSend()
+        let again = n.beginSend()
+        #expect(first && !again)
+        n.failSend()
+        let retry = n.beginSend()
+        #expect(retry)
     }
 }

@@ -3,7 +3,7 @@ import SwiftUI
 
 /// 화면 전용 상수 — 토큰에 없는 값(DEC-005)
 enum RecordReviewRequestLocal {
-    /// 메시지 입력칸 최소 높이(목업 약 84 → 세 줄 이상) — space-24 × 4 = 96
+    /// 메시지 입력칸 높이(TextEditor는 세로로 늘어나려 해 높이를 정한다)
     static let messageMinHeight: CGFloat = PumTokens.Space.s16 * 5 // 원문 두 줄 + 안쪽 여백(약 80)
 }
 
@@ -12,6 +12,7 @@ struct RecordReviewRequestSheet: View {
     var onSend: () -> Void = {}
     var onPickDate: () -> Void = {}
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @ScaledMetric(relativeTo: .footnote) private var messageMinHeight = RecordReviewRequestLocal.messageMinHeight
 
     var body: some View {
@@ -48,7 +49,7 @@ struct RecordReviewRequestSheet: View {
                 autoSendRow
             }
         }
-        .animation(PumMotion.fast, value: state.autoSends) // M2
+        .animation(PumMotion.respecting(reduceMotion, PumMotion.fast), value: state.autoSends) // M2 · M22
     }
 
     private var divider: some View {
@@ -155,9 +156,9 @@ struct RecordReviewRequestPill: View {
             Text(title).pumText(.footnote, weight: .semibold)
                 .foregroundStyle(isOn ? Color.white : PumColor.textPrimary)
                 .padding(.horizontal, PumTokens.Space.s14)
-                .frame(minHeight: PumTokens.Size.tapMin)
+                .padding(.vertical, PumTokens.Space.s8) // 원문 알약 높이 약 31 — 누르는 영역은 아래 contentShape로 44 이상
                 .background(isOn ? PumColor.textPrimary : PumColor.surfaceFill, in: Capsule())
-                .contentShape(Capsule())
+                .contentShape(Rectangle().inset(by: -PumTokens.Space.s8))
         }
         .buttonStyle(.plain)
         .accessibilityLabel(Text(title))
