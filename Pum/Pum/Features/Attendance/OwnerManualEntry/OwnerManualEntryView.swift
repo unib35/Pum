@@ -168,9 +168,9 @@ struct OwnerManualEntryView: View {
                     .pumText(.body, weight: .semibold)
                     .foregroundStyle(draft.dateText == nil ? PumColor.textTertiary : PumColor.textPrimary)
                     .padding(.horizontal, PumTokens.Space.s12)
-                    .frame(minHeight: PumTokens.Size.tapMin)
+                    .padding(.vertical, PumTokens.Space.s6) // 원문 캡슐 높이 약 30 — 보이는 크기는 작게, 누르는 영역은 아래에서 44 이상
                     .background(PumColor.surfaceFill, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
-                    .contentShape(Rectangle())
+                    .contentShape(Rectangle().inset(by: -PumTokens.Space.s8))
             }
             .buttonStyle(.plain)
             .accessibilityElement(children: .ignore)
@@ -192,10 +192,10 @@ struct OwnerManualEntryView: View {
                 // 목업 20px 700 → title3 bold
                 Text(text).pumText(.title3, weight: .bold)
                     .foregroundStyle(on ? PumColor.accent : PumColor.textPrimary)
-                    .frame(minWidth: timeCellMinWidth, minHeight: max(timeCellMinHeight, PumTokens.Size.tapMin))
+                    .frame(minWidth: timeCellMinWidth, minHeight: timeCellMinHeight) // 원문 약 36 — 누르는 영역은 contentShape로 44 이상
                     .background(on ? PumColor.accentSoftStrong : PumColor.surfaceFill,
                                 in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
-                    .contentShape(Rectangle())
+                    .contentShape(Rectangle().inset(by: -PumTokens.Space.s4))
             }
             .buttonStyle(.plain)
             .accessibilityElement(children: .ignore)
@@ -234,10 +234,10 @@ struct OwnerManualEntryView: View {
             Text(title).pumText(.footnote, weight: .semibold)
                 .foregroundStyle(selected ? Color.white : PumColor.textPrimary)
                 .padding(.horizontal, PumTokens.Space.s14)
-                .frame(minHeight: PumTokens.Size.tapMin)
+                .padding(.vertical, PumTokens.Space.s8) // 원문 알약 높이 약 30(C1 SMALL 칩과 같은 방식)
                 .background(selected ? PumColor.surfaceInverse : (filledWhenOff ? PumColor.surfaceFill : PumColor.surfaceCard), in: Capsule())
                 .overlay { if !selected && !filledWhenOff { Capsule().stroke(PumColor.borderHairline, lineWidth: restLine) } }
-                .contentShape(Capsule())
+                .contentShape(Rectangle().inset(by: -PumTokens.Space.s8)) // 누르는 영역 44 이상
         }
         .buttonStyle(.plain)
         .accessibilityElement(children: .ignore)
