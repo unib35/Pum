@@ -51,6 +51,7 @@ struct ContentView: View {
             case "1af": OwnerManualEntryView(draft: .sample)
             case "1ah": OwnerRecordActionsView()
             case "1an": AttendancePolicyView()
+            case "3b": NoticeDetailView(state: .sample)
             case "3a": NewsFeedView(state: .sample)
             case "gallery": ComponentGalleryView()
             default: DevMenu()
@@ -100,6 +101,7 @@ private struct DevMenu: View {
                     NavigationLink("1af 근무기록 직접 추가") { OwnerManualEntryView(draft: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("1ah 근무기록 삭제 시트") { OwnerRecordActionsView().toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("1an 근태 정책") { AttendancePolicyView().toolbar(.hidden, for: .navigationBar) }
+                    NavigationLink("3b 공지 상세") { NoticeDetailView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("3a 소식") { NewsFeedView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                 }
                 Section("디자인 시스템") {
