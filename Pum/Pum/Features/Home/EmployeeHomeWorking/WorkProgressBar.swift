@@ -44,6 +44,13 @@ struct WorkProgressBar: View {
         .animation(reduceMotion ? nil : PumMotion.progress, value: nowMinute)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text("예정 \(HomeFormat.clock(plan.startMinute))부터 \(HomeFormat.clock(plan.endMinute))까지, 휴게 \(plan.breakMinutes)분"))
+        .accessibilityValue(Text("예정 근무의 \(Int((progress * 100).rounded()))% 지남"))
+    }
+
+    /// 예정 구간 기준 지난 비율(접근성 안내용)
+    private var progress: Double {
+        let total = Double(max(1, plan.endMinute - plan.startMinute))
+        return min(1, max(0, Double(nowMinute - plan.startMinute) / total))
     }
 
     private func segmentView(_ seg: Segment, width: CGFloat) -> some View {

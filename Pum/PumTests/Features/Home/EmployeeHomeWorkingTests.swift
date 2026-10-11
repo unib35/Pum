@@ -1,4 +1,5 @@
 // UI-IOS-1av — 직원 홈(근무 중) 지난 시간 · 진행 비율 · 자동 퇴근 없음
+import Foundation
 import Testing
 @testable import Pum
 
@@ -20,10 +21,32 @@ struct EmployeeHomeWorkingTests {
         #expect(s.progress == 1)
     }
 
-    @Test func 예정_퇴근이_지나도_퇴근으로_바뀌지_않는다() {
+    @Test func 예정_퇴근이_지나도_근무_시간은_계속_늘어난다() {
+        // 자동 퇴근 없음(REQ-024): 예정 22:00이 지나도 막대는 끝(1)에 머물고 지난 시간은 계속 센다
         let s = EmployeeHomeWorkingState.sample.with(now: 22 * 60 + 40)
-        #expect(s.status == .working)
-        #expect(s.elapsedMinutes == 5 * 60 + 42) // 계속 늘어난다
+        #expect(s.elapsedMinutes == 5 * 60 + 42)
+        #expect(s.progress == 1)
+    }
+
+    @Test func 자정을_넘겨도_지난_시간을_이어서_센다() {
+        var s = EmployeeHomeWorkingState.sample
+        s.clockInMinute = 23 * 60
+        s.nowMinute = 30 // 다음 날 00:30
+        #expect(s.elapsedMinutes == 90)
+        #expect(WorkingFormat.minutesBetween(16 * 60 + 58, 18 * 60 + 40) == 102)
+    }
+
+    @Test func 분은_두_자리_F4() {
+        #expect(WorkingFormat.elapsedLabel(5 * 60 + 5) == "5시간 05분 근무 중")
+        #expect(WorkingFormat.elapsedLabel(2 * 60) == "2시간 00분 근무 중")
+        #expect(WorkingFormat.minuteText((0, 7)) == "7")
+        #expect(WorkingFormat.minuteText((1, 7)) == "07")
+    }
+
+    @Test func 지금_시각은_서울_기준() {
+        // 2026-10-03 09:40 UTC = 18:40 KST
+        let date = Date(timeIntervalSince1970: 1_791_020_400)
+        #expect(WorkingFormat.minuteOfDay(date) == 18 * 60 + 40)
     }
 
     @Test func 오늘_예정_안내() {

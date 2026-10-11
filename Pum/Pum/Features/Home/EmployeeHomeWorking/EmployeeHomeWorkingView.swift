@@ -111,7 +111,7 @@ struct WorkingTodayCard: View {
                 number("\(p.hours)")
                 unit("시간")
             }
-            number("\(p.minutes)")
+            number(WorkingFormat.minuteText(p))
             unit("분")
         }
         .accessibilityElement(children: .ignore)
@@ -127,7 +127,7 @@ struct WorkingTodayCard: View {
     }
 
     private func times(alignment: HorizontalAlignment) -> some View {
-        VStack(alignment: alignment, spacing: PumLayout.tabLabelGap) {
+        VStack(alignment: alignment, spacing: PumTokens.Space.s2) {
             Text("\(HomeFormat.clock(state.clockInMinute)) 출근")
                 .pumText(.footnote).foregroundStyle(PumColor.textSecondary)
             HStack(alignment: .firstTextBaseline, spacing: PumTokens.Space.s4) {
