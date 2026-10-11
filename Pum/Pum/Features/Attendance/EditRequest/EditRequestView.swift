@@ -30,6 +30,7 @@ struct EditRequestView: View {
                     // 목업 13px 400 → footnote
                     Text("사장님이 확인한 뒤 반영돼요. 승인·거절 결과는 알림으로 알려드리고, 모든 변경은 이력으로 남아요.")
                         .pumText(.footnote).foregroundStyle(PumColor.textSecondary)
+                        .padding(.horizontal, PumTokens.Space.s4)
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
                 .padding(.vertical, PumTokens.Space.s12)
@@ -73,7 +74,9 @@ struct EditRequestView: View {
     private var timeCard: some View {
         PumCard {
             startRow
+            // 디자인 1i: 구분선은 행 안쪽 여백만큼 들여쓴다
             Rectangle().fill(PumColor.borderHairline).frame(height: 1)
+                .padding(.horizontal, PumTokens.Size.rowPadX)
             endRow
         }
     }
@@ -155,6 +158,7 @@ struct EditRequestView: View {
         VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
             Text("사유").pumText(.footnote, weight: .bold).foregroundStyle(PumColor.textSecondary)
                 .accessibilityAddTraits(.isHeader)
+                .padding(.horizontal, PumTokens.Space.s4) // 원문: 카드보다 약 4 안쪽
             TextEditor(text: Binding(
                 get: { draft.reason },
                 set: { draft.reason = EditRequestDraft.clampedReason($0) }
@@ -173,6 +177,7 @@ struct EditRequestView: View {
             .accessibilityLabel(Text("사유"))
             Text(draft.counterText).pumText(.caption).foregroundStyle(PumColor.textTertiary)
                 .frame(maxWidth: .infinity, alignment: .trailing)
+                .padding(.horizontal, PumTokens.Space.s4)
                 .accessibilityLabel(Text(draft.counterAccessibility))
         }
     }
