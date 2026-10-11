@@ -14,7 +14,7 @@ struct EditApprovalTests {
     @Test func 시간_변경_읽기() {
         #expect(s.recordedEndText == "22:00")
         #expect(s.requestedEndText == "22:30")
-        #expect(s.timeAccessibilityText == "퇴근시간, 기록됨 22:00에서 요청 22:30으로")
+        #expect(s.timeAccessibilityText == "퇴근시간, 기록됨 22:00, 요청 22:30, 승인 전")
     }
 
     @Test func 승인_버튼은_요청_시각에서() {
@@ -37,8 +37,8 @@ struct EditApprovalTests {
         #expect(s.history[1].title == "직원 수정 요청 \u{00B7} 22:00 \u{2192} 22:30")
         #expect(s.history[2].title == "사업주 승인 \u{00B7} 대기 중")
         #expect(s.history[2].detail == "승인하면 근무기록이 22:30으로 확정돼요")
-        #expect(s.history[0].accessibilityText == "완료, 퇴근 기록 생성 \u{00B7} 22:00, 09/30 22:01 \u{00B7} 매장 QR \u{00B7} 시스템")
+        #expect(s.history[0].accessibilityText == "완료, 퇴근 기록 생성, 22:00, 09/30 22:01, 매장 QR, 시스템")
         #expect(s.history[1].accessibilityText.hasPrefix("진행, "))
-        #expect(s.history[2].accessibilityText.hasPrefix("대기, "))
+        #expect(s.history[2].accessibilityText.hasPrefix("사업주 승인, 대기 중")) // 「대기」 반복 없음
     }
 }

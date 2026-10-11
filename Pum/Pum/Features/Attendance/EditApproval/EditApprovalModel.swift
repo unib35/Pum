@@ -1,4 +1,4 @@
-// UI-IOS-1s · REQ-006 · REQ-042 · DEC-005 — 수정 요청 승인(사장님) 데이터
+// UI-IOS-1s · REQ-006 · REQ-027 · REQ-042 · DEC-005 — 수정 요청 승인(사장님) 데이터
 // 사업장 확인 기록은 직원이 수정 요청 → 사업주가 승인해야 바뀐다. 승인 전까지는 기존 기록 그대로(REQ-042).
 // 인정 근무 · 기본급 변화는 서버(급여 엔진)가 준 값 그대로 — 화면에서 계산하지 않는다.
 import Foundation
@@ -23,7 +23,12 @@ nonisolated struct ApprovalHistoryStep: Identifiable, Equatable, Sendable {
     var title: String
     var detail: String
 
-    var accessibilityText: String { "\(status.spokenText), \(title), \(detail)" }
+    /// 「·」는 낭독에서 쉼표로. 제목에 이미 「대기 중」이 있으면 상태 접두어를 반복하지 않는다
+    var accessibilityText: String {
+        let spokenTitle = title.replacingOccurrences(of: " \u{00B7} ", with: ", ")
+        let lead = title.contains(status.spokenText) ? "" : "\(status.spokenText), "
+        return lead + spokenTitle + ", " + detail.replacingOccurrences(of: " \u{00B7} ", with: ", ")
+    }
 }
 
 /// 「인정 근무」「기본급」 변화 한 칸 — 앞 값 → 뒤 값
@@ -80,7 +85,8 @@ nonisolated struct EditApprovalState: Equatable, Sendable {
     var personAccessibilityText: String { "\(employeeName), \(subtitleText), \(Self.reviewBadgeText)" }
 
     var timeAccessibilityText: String {
-        "\(Self.fieldLabel), \(Self.recordedLabel) \(recordedEndText)에서 \(Self.requestedLabel) \(requestedEndText)으로"
+        // 승인 전에는 기존 기록이 유효(REQ-042) — 바뀐 것처럼 들리지 않게 「승인 전」을 붙인다
+        "\(Self.fieldLabel), \(Self.recordedLabel) \(recordedEndText), \(Self.requestedLabel) \(requestedEndText), 승인 전"
     }
 
     /// 하단 승인 버튼 — 요청 시각에서 만든다
