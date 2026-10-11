@@ -46,4 +46,18 @@ struct EditRequestTests {
         x.requestedEnd = x.recordedEnd
         #expect(!x.canSubmit)
     }
+
+    @Test func 경계_200자는_그대로_201자는_200자로() {
+        let s200 = String(repeating: "가", count: 200)
+        #expect(EditRequestDraft.clampedReason(s200) == s200)
+        #expect(EditRequestDraft.clampedReason(s200 + "나").count == 200)
+    }
+
+    @Test func 결합_문자는_한_글자로_센다() {
+        let flag = "🇰🇷", family = "👨‍👩‍👧"
+        let decomposed = "\u{1100}\u{1161}" // NFD 「가」
+        #expect((flag + family + decomposed).count == 3)
+        let s = String(repeating: flag, count: 201)
+        #expect(EditRequestDraft.clampedReason(s) == String(repeating: flag, count: 200))
+    }
 }

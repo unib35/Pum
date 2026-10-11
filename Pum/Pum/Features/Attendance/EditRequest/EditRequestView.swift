@@ -106,6 +106,7 @@ struct EditRequestView: View {
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(draft.endRowAccessibility))
         .accessibilityAddTraits(.isButton)
+        .accessibilityHint(Text("퇴근 시간을 골라요"))
         .accessibilityAction(.default, onPickTime)
     }
 
@@ -159,10 +160,12 @@ struct EditRequestView: View {
             Text("사유").pumText(.footnote, weight: .bold).foregroundStyle(PumColor.textSecondary)
                 .accessibilityAddTraits(.isHeader)
                 .padding(.horizontal, PumTokens.Space.s4) // 원문: 카드보다 약 4 안쪽
-            TextEditor(text: Binding(
-                get: { draft.reason },
-                set: { draft.reason = EditRequestDraft.clampedReason($0) }
-            ))
+            TextEditor(text: $draft.reason)
+            // 200자 자르기는 값이 바뀐 뒤에 — 바인딩 set에서 자르면 한글 조합 중 글자가 끊기거나 201번째가 화면에 남는다
+            .onChange(of: draft.reason) { _, new in
+                let clamped = EditRequestDraft.clampedReason(new)
+                if clamped != new { draft.reason = clamped }
+            }
             .focused($reasonFocused)
             .pumText(.body, weight: .regular) // 목업 16px → body(15)
             .foregroundStyle(PumColor.textPrimary)
