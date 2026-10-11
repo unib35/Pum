@@ -3,10 +3,6 @@ import SwiftUI
 
 /// 화면 전용 상수 — 토큰에 없는 값
 enum MissingClockOutLocal {
-    /// 라디오(1ao 화면 전용 구현과 같은 모양): 지름 약 22
-    static let radioSize: CGFloat = 22
-    static let dotRatio: CGFloat = 0.36
-    static let radioStroke: CGFloat = 1.5
     /// 시간 칸 크기(목업 약 96×76). 큰 글자에서 커진다
     static let timeCellWidth: CGFloat = 96
     static let timeCellHeight: CGFloat = 76
@@ -19,7 +15,6 @@ struct MissingClockOutSheet: View {
     var onSelect: (MissingClockOutReason) -> Void = { _ in }
     var onRequest: () -> Void = {}
 
-    @ScaledMetric private var radio = MissingClockOutLocal.radioSize
     @ScaledMetric private var cellW = MissingClockOutLocal.timeCellWidth
     @ScaledMetric private var cellH = MissingClockOutLocal.timeCellHeight
     @AccessibilityFocusState private var titleFocused: Bool
@@ -123,37 +118,8 @@ struct MissingClockOutSheet: View {
         }
     }
 
+    /// 공통 라디오 행(PumRadioRow) — 선택은 600 먹색, 나머지 400 gray800
     private func reasonRow(_ reason: MissingClockOutReason, index: Int, count: Int) -> some View {
-        let on = state.selected == reason
-        return Button { onSelect(reason) } label: {
-            HStack(spacing: PumTokens.Space.s12) {
-                radioMark(on: on)
-                Text(reason.title)
-                    .pumText(.callout, weight: on ? .semibold : .regular)
-                    .foregroundStyle(on ? PumColor.textPrimary : PumTokens.ColorToken.gray800)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            }
-            .padding(.horizontal, PumTokens.Size.rowPadX)
-            .padding(.vertical, PumTokens.Size.rowPadY)
-            .frame(minHeight: PumTokens.Size.tapMin)
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(Text("\(reason.title), \(count)개 중 \(index + 1)번째"))
-        .accessibilityAddTraits(on ? [.isButton, .isSelected] : .isButton)
-    }
-
-    @ViewBuilder
-    private func radioMark(on: Bool) -> some View {
-        ZStack {
-            if on {
-                Circle().fill(PumColor.accent)
-                Circle().fill(.white).frame(width: radio * MissingClockOutLocal.dotRatio)
-            } else {
-                Circle().strokeBorder(PumTokens.ColorToken.gray300, lineWidth: MissingClockOutLocal.radioStroke)
-            }
-        }
-        .frame(width: radio, height: radio)
+        PumRadioRow(title: reason.title, isOn: state.selected == reason, index: index, count: count) { onSelect(reason) }
     }
 }
