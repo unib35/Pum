@@ -14,8 +14,6 @@ struct ClockInView: View {
     private enum Local {
         /// 먹색 위 반투명 흰 원(목업 rgba 흰색 약 14%)
         static let circleFill = Color.white.opacity(0.14)
-        /// 안내 보조 글자: 목업 흰색 55%(공통 textOnInverseSecondary는 70%라 다름)
-        static let hintText = Color.white.opacity(0.55)
         static let frameWidthRatio: CGFloat = 0.62
         static let frameStroke: CGFloat = 3
         static let checkCircle: CGFloat = 36
@@ -91,7 +89,7 @@ struct ClockInView: View {
             VStack(spacing: PumTokens.Space.s4) {
                 // 목업 18px 600 → headline(17) semibold
                 Text(state.scanTitle).pumText(.headline, weight: .semibold).foregroundStyle(.white)
-                Text(state.scanHint).pumText(.footnote).foregroundStyle(Local.hintText)
+                Text(state.scanHint).pumText(.footnote).foregroundStyle(PumColor.textOnInverseSecondary) // 목업 55% — 충돌 #24에 따라 공통 70%
             }
             .multilineTextAlignment(.center)
             .padding(.horizontal, PumTokens.Size.screenPad)
