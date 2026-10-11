@@ -31,7 +31,7 @@ sh .claude/skills/finish-feature/scripts/verify.sh tokens claude ios
 | 날짜 | 환경 | 명령 | 결과 | 시간 |
 |---|---|---|---|---|
 | 2026-10-12 | 로컬 macOS · Node 26.5 · Xcode 26.5 · iPhone Air(iOS 26.5) | `verify.sh tokens claude ios` | PASS 4 (tokens-test · tokens-check · claude · ios) | 9분 52초 (다른 세션 빌드와 동시 실행) |
-| 2026-10-12 | GitHub Actions ubuntu-latest · Node 22 | PR #4 `tokens` · `automation` | PR 결과 참고 | — |
+| 2026-10-12 | GitHub Actions ubuntu-latest · Node 22.23.3 | PR #4 `tokens` · `automation` (run 38153365062) | PASS 3 (tokens-test · tokens-check · claude), ios 건너뜀(수동 전용) | 6초 · 5초 |
 | — | GitHub Actions macos-latest | `ios` (수동) | **미실행** | — |
 
 ## 비용 · 사용량
