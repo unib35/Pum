@@ -93,7 +93,9 @@ nonisolated struct OwnerManualEntryDraft: Equatable, Sendable {
     var hasReason: Bool { reasonChip != nil || hasReasonText }
 
     /// 비활성 이유 문구는 디자인에 없다(충돌 #30)
-    var canSubmit: Bool { employeeName != nil && dateText != nil && hasReason }
+    /// 직원 · 날짜 · 사유가 있어야(REQ-027 사유 필수). 출근과 퇴근이 같은 시각이면 0분 근무라 막는다.
+    /// 퇴근이 더 이르면 다음 날 퇴근(야간) — 막지 않음(표시는 디자인 없음, endsNextDay)
+    var canSubmit: Bool { employeeName != nil && dateText != nil && hasReason && startMinute != endMinute }
 
     static func clampedReason(_ s: String) -> String {
         s.count > reasonLimit ? String(s.prefix(reasonLimit)) : s
@@ -105,7 +107,8 @@ nonisolated struct OwnerManualEntryDraft: Equatable, Sendable {
         let on = selectedField == field
         let label = field == .start ? "출근" : "퇴근"
         let value = field == .start ? startText : endText
-        return "\(label), \(value)" + (on ? ", 선택됨" : "")
+        _ = on // 「선택됨」은 .isSelected 특성이 읽는다(라벨에 넣으면 두 번 읽힘)
+        return "\(label), \(value)"
     }
     var employeeAccessibility: String { "직원, \(employeeName ?? "선택 안 됨")" }
     var dateAccessibility: String { "날짜, \(dateText ?? "선택 안 됨")" }

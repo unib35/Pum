@@ -201,6 +201,7 @@ struct OwnerManualEntryView: View {
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(Text(draft.timeAccessibility(field)))
             .accessibilityAddTraits(on ? [.isButton, .isSelected] : .isButton)
+            .accessibilityHint(Text("위아래로 쓸어 10분씩 바꿔요"))
             .accessibilityAdjustableAction { direction in
                 switch direction {
                 case .increment: changed { $0.step(field, by: OwnerManualEntryDraft.stepMinutes) }
@@ -237,7 +238,10 @@ struct OwnerManualEntryView: View {
                 .padding(.vertical, PumTokens.Space.s8) // 원문 알약 높이 약 30(C1 SMALL 칩과 같은 방식)
                 .background(selected ? PumColor.surfaceInverse : (filledWhenOff ? PumColor.surfaceFill : PumColor.surfaceCard), in: Capsule())
                 .overlay { if !selected && !filledWhenOff { Capsule().stroke(PumColor.borderHairline, lineWidth: restLine) } }
-                .contentShape(Rectangle().inset(by: -PumTokens.Space.s8)) // 누르는 영역 44 이상
+                // 누르는 영역은 위아래로만 넓혀 44 이상(옆 알약과 겹치지 않게 좌우는 그대로)
+                .padding(.vertical, PumTokens.Space.s6)
+                .contentShape(Rectangle())
+                .padding(.vertical, -PumTokens.Space.s6)
         }
         .buttonStyle(.plain)
         .accessibilityElement(children: .ignore)

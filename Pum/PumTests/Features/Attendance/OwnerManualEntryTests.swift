@@ -60,7 +60,7 @@ struct OwnerManualEntryTests {
         #expect(OwnerManualEntryReason.allCases.map(\.title) == ["출퇴근 기록 누락", "앱 오류", "급한 호출", "기타"])
         #expect(sample.startText == "13:00" && sample.endText == "18:00")
         #expect(sample.employeeAccessibility == "직원, 이종민")
-        #expect(sample.timeAccessibility(.start) == "출근, 13:00, 선택됨")
+        #expect(sample.timeAccessibility(.start) == "출근, 13:00") // 「선택됨」은 특성
         #expect(sample.timeAccessibility(.end) == "퇴근, 18:00")
     }
 
@@ -94,5 +94,11 @@ struct OwnerManualEntryTests {
         d.setTime(.end, minute: 2 * 60)
         #expect(d.endsNextDay)
         #expect(d.endText == "02:00") // 표시는 그대로
+    }
+
+    @Test func 출퇴근_같은_시각이면_추가_못함() {
+        var d = OwnerManualEntryDraft.sample
+        d.endMinute = d.startMinute
+        #expect(!d.canSubmit)
     }
 }
