@@ -23,7 +23,6 @@ private enum OwnerWorkplacesLayout {
 struct OwnerWorkplacesView: View {
     var record: OwnerWorkplacesRecord = .sample
     var onEntry: (OwnerWorkplaceEntry) -> Void = { _ in }
-    var onBadge: (OwnerWorkplaceEntry, OwnerWorkplaceBadge) -> Void = { _, _ in }
     var onAdd: () -> Void = {}
 
     @State private var tab = "store"
@@ -157,17 +156,13 @@ struct OwnerWorkplacesView: View {
 
                 if !e.badges.isEmpty {
                     OwnerWorkplacesFlow(hSpacing: PumTokens.Space.s6, vSpacing: PumTokens.Space.s6) {
+                        // 원문: 배지는 요약 표시(촘촘한 한 줄) — 따로 누르지 않고 카드 위쪽 누름이 사업장으로 이동.
+                        // 내용은 카드 VoiceOver 문장에 들어 있다
                         ForEach(e.badges) { b in
-                            Button { onBadge(e, b) } label: {
-                                PumBadge(text: b.text, kind: b.isAttention ? .attention : .waiting)
-                                    .frame(minHeight: PumTokens.Size.tapMin) // 터치 44
-                                    .contentShape(Rectangle())
-                            }
-                            .buttonStyle(.plain)
-                            .accessibilityElement(children: .ignore)
-                            .accessibilityLabel(Text(b.spoken))
+                            PumBadge(text: b.text, kind: b.isAttention ? .attention : .waiting)
                         }
                     }
+                    .accessibilityHidden(true)
                 }
             }
             .padding(PumTokens.Space.s16)
