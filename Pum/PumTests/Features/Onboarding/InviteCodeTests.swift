@@ -49,4 +49,24 @@ struct InviteCodeTests {
         #expect(m.initial == "가")
         #expect(InviteMatch(workplaceName: "", ownerName: "", employeeCount: 0, daysLeft: 0, colorIndex: 0).initial == "")
     }
+
+    @Test func 다른_코드로_조회된_결과는_숨김() {
+        var s = InviteCodeState(code: "8F3K2P")
+        s.matched = InviteCodeState.sample.matched // 8F3K2Q로 조회된 응답이 늦게 옴
+        #expect(s.visibleMatch == nil)
+        #expect(!s.canConfirm)
+        s.code = "8F3K2Q"
+        #expect(s.visibleMatch != nil) // 같은 코드를 다시 넣으면 다시 보임
+    }
+
+    @Test func 확인은_한_번만_실패하면_다시() {
+        var s = InviteCodeState.sample
+        let first = s.beginConfirm()
+        let second = s.beginConfirm()
+        #expect(first)
+        #expect(!second)
+        s.failConfirm()
+        let retry = s.beginConfirm()
+        #expect(retry)
+    }
 }

@@ -1,5 +1,6 @@
 // UI-IOS-2d · REQ-002 — 초대 코드 입력: 코드 · 링크 · QR(확정). 탭 바 없음.
-// 6칸은 공통 PumCodeField. 잘못된 코드 · 만료 · 조회 중 디자인은 없다(만들지 않음).
+// 6칸은 공통 PumCodeField. 틀린 코드(15e) · 만료(15f)는 다른 캔버스의 확정 화면 — 별도 이슈로 이 화면 상태에 붙인다.
+// 조회 중 디자인은 없다(만들지 않음).
 // 비활성 확인 버튼의 이유 문구는 디자인 없음(충돌 #30과 같은 처리: 회색 비활성만).
 import SwiftUI
 
@@ -10,7 +11,8 @@ struct InviteCodeView: View {
     var onBack: () -> Void
     var onCodeComplete: (String) -> Void
     var onScanQR: () -> Void
-    var onConfirm: (String) -> Void
+    /// 확인할 코드와 끝 알림 — 실패면 done(false)로 다시 누를 수 있게
+    var onConfirm: (String, _ done: @escaping (_ succeeded: Bool) -> Void) -> Void
 
     @FocusState private var focused: Bool
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -22,7 +24,7 @@ struct InviteCodeView: View {
          onBack: @escaping () -> Void = {},
          onCodeComplete: @escaping (String) -> Void = { _ in },
          onScanQR: @escaping () -> Void = {},
-         onConfirm: @escaping (String) -> Void = { _ in }) {
+         onConfirm: @escaping (String, _ done: @escaping (_ succeeded: Bool) -> Void) -> Void = { _, _ in }) {
         var initial = state
         if initial.matched == nil { initial.matched = match }
         _state = State(initialValue: initial)
@@ -63,8 +65,8 @@ struct InviteCodeView: View {
             if state.isComplete && state.matched == nil { onCodeComplete(state.code) }
         }
         .onChange(of: state.code) { _, new in
-            state.matched = nil // 코드가 바뀌면 이전 매칭은 무효
-            if new.count == InviteCodeState.codeLength { onCodeComplete(new) }
+            // 이전 매칭은 지우지 않는다 — 보일지는 코드가 같은지로 정한다(visibleMatch)
+            if new.count == InviteCodeState.codeLength, state.matched?.code != new { onCodeComplete(new) }
         }
         .onChange(of: match) { _, new in state.matched = new }
     }
@@ -125,11 +127,19 @@ struct InviteCodeView: View {
 
     // 6. 초대 확인하기(키보드 위에 붙는다)
     private var actions: some View {
-        PumButton(title: "초대 확인하기", kind: .primary) { onConfirm(state.code) }
-            .disabled(!state.canConfirm)
+        PumButton(title: "초대 확인하기", kind: .primary, isLoading: state.isConfirming, action: confirm)
+            .disabled(!state.canConfirm && !state.isConfirming)
             .padding(.horizontal, PumTokens.Size.screenPad)
             .padding(.vertical, PumTokens.Space.s12)
             .background(PumColor.bgApp)
+    }
+
+    /// 연속으로 눌러도 한 번만 보낸다
+    private func confirm() {
+        guard state.beginConfirm() else { return }
+        onConfirm(state.code) { succeeded in
+            if !succeeded { state.failConfirm() }
+        }
     }
 }
 
