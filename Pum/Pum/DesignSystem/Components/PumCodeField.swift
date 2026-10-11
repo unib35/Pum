@@ -28,6 +28,8 @@ struct PumCodeField: View {
     /// VoiceOver 이름 — 「인증번호」 「초대 코드」
     var label: String
     var focus: FocusState<Bool>.Binding
+    /// 틀린 코드(15e) — 모든 칸 빨간 테두리. 문구는 화면이 칸 아래에 둔다(색만으로 알리지 않게)
+    var isError: Bool = false
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var caretOn = true
@@ -73,7 +75,7 @@ struct PumCodeField: View {
     }
 
     private func cell(_ i: Int) -> some View {
-        let isActive = focus.wrappedValue && activeIndex == i
+        let isActive = focus.wrappedValue && activeIndex == i && !isError
         let radius = PumTokens.Radius.lg
         return ZStack {
             // 목업 26px 700 → title2(24px 700) 근사(26 단계 없음)
@@ -90,8 +92,8 @@ struct PumCodeField: View {
         .background(PumColor.surfaceCard, in: RoundedRectangle(cornerRadius: radius, style: .continuous))
         .overlay {
             RoundedRectangle(cornerRadius: radius, style: .continuous)
-                .strokeBorder(isActive ? PumColor.accent : PumColor.borderHairline,
-                              lineWidth: isActive ? PumCodeFieldStyle.activeBorder : 1)
+                .strokeBorder(isError ? PumColor.statusDanger : (isActive ? PumColor.accent : PumColor.borderHairline),
+                              lineWidth: isError || isActive ? PumCodeFieldStyle.activeBorder : 1)
         }
     }
 
