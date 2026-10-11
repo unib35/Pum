@@ -34,6 +34,7 @@ struct ContentView: View {
             case "1z": ContractReviewView(startsAgreed: true) // 원문 캡처는 체크한 뒤 모습
             case "1aa": SignaturePadView(drawing: .sample) // 원문 캡처는 예시 서명이 그려진 모습
             case "1ak": EmployeeHomeOvertimeView()
+            case "1ao": EarlyLeaveView()
             case "gallery": ComponentGalleryView()
             default: DevMenu()
             }
@@ -65,6 +66,7 @@ private struct DevMenu: View {
                     NavigationLink("1z 근로계약서 확인") { ContractReviewView(startsAgreed: true).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("1aa 서명 패드") { SignaturePadView(drawing: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("1ak 연장 근무 중") { EmployeeHomeOvertimeView().toolbar(.hidden, for: .navigationBar) }
+                    NavigationLink("1ao 조기 퇴근") { EarlyLeaveView().toolbar(.hidden, for: .navigationBar) }
                 }
                 Section("디자인 시스템") {
                     NavigationLink("컴포넌트 갤러리") { ComponentGalleryView() }
