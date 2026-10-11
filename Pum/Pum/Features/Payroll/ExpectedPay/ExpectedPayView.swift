@@ -52,9 +52,9 @@ struct ExpectedPayView: View {
                 Text(record.payDateText).pumText(.caption, weight: .regular)
                     .foregroundStyle(PumColor.textOnInverseSecondary)
             }
-            // 목업 약 64px 700 → display 52(가까운 토큰 단계), 「원」 20px 600 → title3
+            // 목업 실측 약 42px 700 → hero 32(52보다 가까운 토큰 단계, DEC-005), 「원」 20px 600 → title3
             HStack(alignment: .firstTextBaseline, spacing: PumTokens.Space.s4) {
-                Text(record.totalText).pumText(.display).foregroundStyle(.white)
+                Text(record.totalText).pumText(.hero).foregroundStyle(.white)
                     .lineLimit(1).minimumScaleFactor(0.5)
                 Text("원").pumText(.title3, weight: .semibold).foregroundStyle(.white)
             }
@@ -70,15 +70,14 @@ struct ExpectedPayView: View {
 
     // MARK: 확정 / 남은 예정 (2칸, 좁으면 세로)
 
+    /// 디자인 1l: 두 칸은 각각 따로 된 흰 카드
     private var confirmedCard: some View {
-        PumCard {
-            if typeSize.isAccessibilitySize {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s12) { confirmedCell; remainingCell }
-                    .padding(PumTokens.Space.s16)
-            } else {
-                HStack(alignment: .top, spacing: PumTokens.Space.s12) { confirmedCell; remainingCell }
-                    .padding(PumTokens.Space.s16)
-            }
+        let layout = typeSize.isAccessibilitySize
+            ? AnyLayout(VStackLayout(spacing: PumTokens.Space.s12))
+            : AnyLayout(HStackLayout(alignment: .top, spacing: PumTokens.Space.s12))
+        return layout {
+            PumCard { confirmedCell.padding(PumTokens.Space.s16) }
+            PumCard { remainingCell.padding(PumTokens.Space.s16) }
         }
     }
 
@@ -203,7 +202,8 @@ struct ExpectedPayView: View {
     }
 
     private func calcLine(_ l: ExpectedPayCalcLine) -> some View {
-        let valueWeight: Font.Weight = l.tone == .normal ? .regular : (l.tone == .strong ? .bold : .semibold)
+        // 목업: 값은 13px 600, 마지막 합계만 700
+        let valueWeight: Font.Weight = l.tone == .strong ? .bold : .semibold
         let valueColor: Color = l.tone == .positive ? PumColor.statusDone : PumColor.textPrimary
         return ViewThatFits(in: .horizontal) {
             HStack(alignment: .firstTextBaseline, spacing: PumTokens.Space.s8) {

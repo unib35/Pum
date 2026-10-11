@@ -4,16 +4,19 @@ import SwiftUI
 struct ExpectedPayBar: View {
     let record: ExpectedPayRecord
 
-    /// 디자인 1l 막대 높이 약 26 — 토큰에 없어 이름을 붙임(DEC-005)
-    static let barHeight: CGFloat = 26
+    /// 디자인 1l 막대 높이 약 14 — 토큰에 없어 이름을 붙임(DEC-005)
+    static let barHeight: CGFloat = 14
+    /// 조각 사이 틈(목업 약 2) — space-2
+    static let gap: CGFloat = PumTokens.Space.s2
     /// 조각 색: 기본급 statusDone, 주휴 green-300, 기타 green-50(연한 초록)
     static let colors: [Color] = [PumColor.statusDone, PumTokens.ColorToken.green300, PumTokens.ColorToken.green50]
 
     var body: some View {
         GeometryReader { geo in
-            HStack(spacing: 0) {
+            let usable = max(0, geo.size.width - Self.gap * 2)
+            HStack(spacing: Self.gap) {
                 ForEach(0..<3, id: \.self) { i in
-                    Rectangle().fill(Self.colors[i]).frame(width: geo.size.width * record.barFraction(i))
+                    Rectangle().fill(Self.colors[i]).frame(width: usable * record.barFraction(i))
                 }
             }
         }
