@@ -55,6 +55,7 @@ struct ContentView: View {
             case "3a": NewsFeedView(state: .sample)
             case "3d": NoticeReadStatusView(state: .sample)
             case "3c": NoticeComposeView(state: .sample)
+            case "2b": PhoneVerifyView(state: .sample)
             case "2a": WelcomeView(state: .sample)
             case "gallery": ComponentGalleryView()
             default: DevMenu()
@@ -108,6 +109,7 @@ private struct DevMenu: View {
                     NavigationLink("3a 소식") { NewsFeedView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("3d 공지 확인 현황") { NoticeReadStatusView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("3c 공지 작성") { NoticeComposeView(state: .sample).toolbar(.hidden, for: .navigationBar) }
+                    NavigationLink("2b 휴대폰 인증") { PhoneVerifyView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("2a 시작") { WelcomeView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                 }
                 Section("디자인 시스템") {
