@@ -49,14 +49,17 @@ struct EarlyLeaveView: View {
     private var workingCard: some View {
         VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
             HStack(spacing: PumTokens.Space.s8) {
-                Circle().fill(PumColor.statusDone).frame(width: PumLayout.dayDot, height: PumLayout.dayDot)
+                Circle().fill(PumColor.statusDone).frame(width: PumTokens.Space.s8, height: PumTokens.Space.s8) // 원문 점 약 8
                 Text("근무 중").pumText(.callout, weight: .semibold)
                     .foregroundStyle(.white.opacity(EarlyLeaveLocal.cardTextOpacity))
             }
+            elapsed
+            // 원문: 큰 시간 아래 한 줄 — 왼쪽 「출근」, 오른쪽 「퇴근 예정」(좁으면 세로)
             ViewThatFits(in: .horizontal) {
-                HStack(alignment: .lastTextBaseline) { elapsed; Spacer(minLength: PumTokens.Space.s8); times(.trailing) }
-                VStack(alignment: .leading, spacing: PumTokens.Space.s8) { elapsed; times(.leading) }
+                HStack { clockIn; Spacer(minLength: PumTokens.Space.s8); plannedEnd }
+                VStack(alignment: .leading, spacing: PumTokens.Space.s2) { clockIn; plannedEnd }
             }
+            .pumText(.footnote).foregroundStyle(.white.opacity(EarlyLeaveLocal.cardTextOpacity))
         }
         .padding(PumTokens.Space.s20)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -71,13 +74,8 @@ struct EarlyLeaveView: View {
             .accessibilityLabel(Text(WorkingFormat.elapsedLabel(state.elapsedMinutes)))
     }
 
-    private func times(_ a: HorizontalAlignment) -> some View {
-        VStack(alignment: a, spacing: PumTokens.Space.s2) {
-            Text("\(EarlyLeaveFormat.clock(state.clockInMinute)) 출근")
-            Text("\(EarlyLeaveFormat.clock(state.plannedEndMinute)) 퇴근 예정")
-        }
-        .pumText(.footnote).foregroundStyle(.white.opacity(EarlyLeaveLocal.cardTextOpacity))
-    }
+    private var clockIn: some View { Text("\(EarlyLeaveFormat.clock(state.clockInMinute)) 출근") }
+    private var plannedEnd: some View { Text("\(EarlyLeaveFormat.clock(state.plannedEndMinute)) 퇴근 예정") }
 }
 
 #Preview("1ao") { EarlyLeaveView() }

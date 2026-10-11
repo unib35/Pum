@@ -28,6 +28,7 @@ struct EarlyLeaveSheet: View {
             compareCards
             Text("사유").pumText(.footnote, weight: .bold).foregroundStyle(PumColor.textSecondary)
                 .accessibilityAddTraits(.isHeader)
+                .padding(.horizontal, PumTokens.Space.s4) // 원문: 카드보다 약 4 안쪽
             reasonList
             if state.needsOwnerCheck { notice }
             PumButtonPair(negative: "계속 근무", positive: state.recordTitle, negativeKind: .outline,
@@ -62,7 +63,7 @@ struct EarlyLeaveSheet: View {
                 HStack(spacing: PumTokens.Space.s8) { plannedCell; actualCell }
                 VStack(spacing: PumTokens.Space.s8) { plannedCell; actualCell }
             }
-            .padding(PumTokens.Space.s8)
+            .padding(PumTokens.Space.s16) // 원문: 바깥 카드 안쪽 약 16
         }
     }
 
@@ -95,7 +96,7 @@ struct EarlyLeaveSheet: View {
             ForEach(Array(all.enumerated()), id: \.offset) { index, reason in
                 if index > 0 {
                     Rectangle().fill(PumColor.borderHairline).frame(height: 1)
-                        .padding(.leading, PumTokens.Size.rowPadX)
+                        .padding(.horizontal, PumTokens.Size.rowPadX) // 원문: 양쪽 들여씀
                 }
                 reasonRow(reason, index: index, count: all.count)
             }
@@ -143,5 +144,6 @@ struct EarlyLeaveSheet: View {
             .pumText(.caption)
             .foregroundStyle(PumColor.textSecondary)
             .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, PumTokens.Space.s4) // 원문: 카드보다 약 4 안쪽
     }
 }
