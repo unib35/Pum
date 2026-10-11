@@ -150,15 +150,17 @@ struct OvertimeProgressBar: View {
         GeometryReader { geo in
             let w = geo.size.width
             let over = w * CGFloat(state.overtimeRatio)
-            HStack(spacing: PumLayout.timelineGap) {
-                shape.fill(PumTokens.ColorToken.green300) // 목업 연초록 → green-300
-                    .frame(width: max(0, w - over - (over > 0 ? PumLayout.timelineGap : 0)))
+            // 원문 1ak: 예정 구간(연초록)과 초과 구간(주황)이 틈 없이 이어진 한 막대
+            HStack(spacing: 0) {
+                Rectangle().fill(PumTokens.ColorToken.green300) // 목업 연초록 → green-300
+                    .frame(width: max(0, w - over))
                 if over > 0 {
-                    shape.fill(OvertimeCard.overtimeTint).frame(width: over)
+                    Rectangle().fill(OvertimeCard.overtimeTint).frame(width: over)
                 }
             }
         }
         .frame(height: barHeight)
+        .clipShape(shape)
         // M7: 값이 바뀔 때만. 동작 줄이기면 즉시
         .animation(reduceMotion ? nil : PumMotion.progress, value: state.nowMinute)
         .accessibilityHidden(true) // 의미는 카드 한 문장에 포함
