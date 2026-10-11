@@ -1,0 +1,60 @@
+# CI — 실제로 있는 검사만 실행한다. 명령은 로컬과 같은 verify.sh를 쓴다.
+# 절차 · 비용 · 미설정 검사: docs/conventions/ci.md
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      ios:
+        description: "iOS 빌드 · 단위 테스트도 실행 (macOS runner, 느림)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tokens:
+    name: 디자인 토큰 (테스트 · 생성물 최신)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "22"
+      - run: sh .claude/skills/finish-feature/scripts/verify.sh tokens
+
+  automation:
+    name: Claude 자동화 파일 (스크립트 문법 · settings.json · hook)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - run: sh .claude/skills/finish-feature/scripts/verify.sh claude
+
+  ios:
+    # PR마다 돌리지 않는다. 로컬 xcodebuild가 기준(docs/conventions/ci.md). 필요할 때 Actions 탭에서 수동 실행.
+    if: github.event_name == 'workflow_dispatch' && inputs.ios
+    name: iOS 빌드 · 단위 테스트 (수동)
+    runs-on: macos-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Xcode 26.5 선택 (없으면 실패)
+        run: |
+          ls -d /Applications/Xcode_26.5*.app
+          sudo xcode-select -s "$(ls -d /Applications/Xcode_26.5*.app | head -1)"
+          xcodebuild -version
+      - name: 시뮬레이터 확인
+        run: xcrun simctl list devices available | grep -E "iPhone 17 \(" 
+      - run: sh .claude/skills/finish-feature/scripts/verify.sh ios
+        env:
+          PUM_SIM: iPhone 17
