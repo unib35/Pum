@@ -28,7 +28,7 @@ struct InviteCodeRetryView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
                 PumNavHeader(title: "초대 코드", onBack: onBack)
-                Text("사장님께 받은\n초대 코드를 입력해주세요")
+                Text("사장님께 받은 초대 코드를\n입력해주세요") // 원문 15e 줄바꿈(2d와 다름)
                     .pumText(.title1) // 2d 제목과 같은 단계
                     .foregroundStyle(PumColor.textPrimary)
                     .accessibilityAddTraits(.isHeader)
