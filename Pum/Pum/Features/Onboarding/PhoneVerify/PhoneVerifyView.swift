@@ -13,6 +13,8 @@ struct PhoneVerifyView: View {
     @FocusState private var focused: Bool
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var caretOn = true
+    /// 다시 보내기마다 바뀌어 카운트다운을 새로 시작한다
+    @State private var countdownRun = 0
 
     /// 목업 칸 높이 약 60 — 토큰에 없어 이름을 붙임(DEC-005), 큰 글자에서 글자와 함께 커진다
     @ScaledMetric(relativeTo: .title2) private var cellHeight: CGFloat = 60
@@ -55,7 +57,7 @@ struct PhoneVerifyView: View {
         .background(PumColor.bgApp)
         .safeAreaInset(edge: .bottom, spacing: 0) { actions }
         .task { focused = true }
-        .task { await countdown() }
+        .task(id: countdownRun) { await countdown() }
         .task(id: reduceMotion) { await blink() }
     }
 
@@ -82,9 +84,9 @@ struct PhoneVerifyView: View {
         Button(action: onChangeNumber) {
             Text("번호 변경").pumText(.callout).foregroundStyle(PumColor.accent) // 14px 600
                 // 보이는 줄 높이는 그대로, 누름 영역만 위아래로 넓힌다(줄 간격이 원문보다 벌어지지 않게)
-                .padding(.vertical, PumTokens.Space.s12)
+                .padding(.vertical, PumTokens.Space.s14) // 줄 높이 약 19 + 28 ≥ 44
                 .contentShape(Rectangle())
-                .padding(.vertical, -PumTokens.Space.s12)
+                .padding(.vertical, -PumTokens.Space.s14)
         }
         .buttonStyle(.plain)
     }
@@ -150,13 +152,13 @@ struct PhoneVerifyView: View {
                 .padding(.leading, PumTokens.Space.s8) // 목업: 칸 왼쪽보다 약 4 안쪽 → 가까운 단계
                 .monospacedDigit()
             Spacer(minLength: PumTokens.Space.s8)
-            Button(action: onResend) {
+            Button(action: resend) {
                 Text("다시 보내기").pumText(.footnote, weight: .semibold) // 13px 600
                     .foregroundStyle(PumColor.accent)
                     .padding(.horizontal, PumTokens.Space.s8)
-                    .padding(.vertical, PumTokens.Space.s12) // 누름 영역만 44 쪽으로 넓힌다
+                    .padding(.vertical, PumTokens.Space.s14) // 누름 영역만 44로 넓힌다(줄 높이 약 17 + 28)
                     .contentShape(Rectangle())
-                    .padding(.vertical, -PumTokens.Space.s12)
+                    .padding(.vertical, -PumTokens.Space.s14)
             }
             .buttonStyle(.plain)
         }
@@ -171,13 +173,21 @@ struct PhoneVerifyView: View {
             .background(PumColor.bgApp)
     }
 
-    // 남은 초를 1초마다 줄이고 0이면 멈춘다
+    // 만료 시각을 정해 두고 1초마다 남은 초를 다시 계산, 0이면 멈춘다
     private func countdown() async {
+        let deadline = Date().addingTimeInterval(TimeInterval(state.remainingSeconds))
         while !Task.isCancelled && state.remainingSeconds > 0 {
             try? await Task.sleep(for: .seconds(1))
             if Task.isCancelled { return }
-            state.tick()
+            state.update(deadline: deadline, now: Date())
         }
+    }
+
+    private func resend() {
+        state.restart()
+        countdownRun += 1
+        focused = true
+        onResend()
     }
 
     // 커서 깜박임(동작 줄이기면 고정)

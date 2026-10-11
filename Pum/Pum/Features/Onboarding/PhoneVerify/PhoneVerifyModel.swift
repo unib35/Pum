@@ -10,6 +10,8 @@ struct PhoneVerifyState: Equatable {
     var code: String = ""
     /// 남은 초(0이면 타이머 정지)
     var remainingSeconds: Int
+    /// 다시 보내면 돌아가는 유효 시간(초) — 서버 값
+    var validSeconds: Int = 180
 
     /// 디자인 원문: 「482」 입력됨 · 02:41(161초) 남음
     static let sample = PhoneVerifyState(phoneDisplay: "010-4821-7733", code: "482", remainingSeconds: 161)
@@ -47,5 +49,16 @@ struct PhoneVerifyState: Equatable {
 
     mutating func tick() {
         if remainingSeconds > 0 { remainingSeconds -= 1 }
+    }
+
+    /// 만료 시각 기준 남은 초 — 백그라운드에 다녀와도 실제 경과와 맞는다
+    mutating func update(deadline: Date, now: Date) {
+        remainingSeconds = max(0, Int(deadline.timeIntervalSince(now).rounded(.up)))
+    }
+
+    /// 다시 보내기 — 새 번호가 오므로 입력을 비우고 시간을 처음으로
+    mutating func restart() {
+        code = ""
+        remainingSeconds = validSeconds
     }
 }

@@ -1,4 +1,5 @@
 // UI-IOS-2b — 휴대폰 인증: 숫자만 6자리 · 칸 나누기 · 남은 시간 문구 · 타이머 정지
+import Foundation
 import Testing
 @testable import Pum
 
@@ -42,5 +43,21 @@ struct PhoneVerifyTests {
         #expect(s.remainingText == "00:00 남음")
         let big = PhoneVerifyState(phoneDisplay: "x", remainingSeconds: 600)
         #expect(big.remainingText == "10:00 남음")
+    }
+
+    @Test func 남은_시간은_만료_시각_기준() {
+        var s = PhoneVerifyState.sample
+        let now = Date()
+        s.update(deadline: now.addingTimeInterval(100.2), now: now)
+        #expect(s.remainingSeconds == 101)
+        s.update(deadline: now, now: now.addingTimeInterval(5))
+        #expect(s.remainingSeconds == 0)
+    }
+
+    @Test func 다시_보내면_입력을_비우고_시간을_처음으로() {
+        var s = PhoneVerifyState.sample
+        s.restart()
+        #expect(s.code.isEmpty)
+        #expect(s.remainingSeconds == s.validSeconds)
     }
 }
