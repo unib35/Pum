@@ -93,9 +93,14 @@ nonisolated struct OwnerPayrollRecord: Equatable, Sendable {
     }
 
     // 확정 버튼: 미처리가 남으면 확정 불가(REQ-107)
-    var canConfirm: Bool { pendingCount == 0 }
+    /// 확정은 「확인 필요」 단계에서 미처리가 0건일 때만. 이미 확정 이후 단계면 다시 확정하지 않는다(1v 재확정 방지)
+    var canConfirm: Bool { stage == .needsReview && pendingCount == 0 }
+    /// 확정 이후 단계 — 하단 확정 버튼 자리를 무엇으로 채울지는 디자인 없음(지금은 버튼 숨김)
+    var showsConfirmButton: Bool { stage.rawValue <= OwnerPayrollStage.needsReview.rawValue }
     var confirmTitle: String { canConfirm ? "급여 확정하기" : "급여 확정하기 \u{00B7} 미처리 \(pendingCount)건 남음" }
-    var confirmAccessibilityHint: String { canConfirm ? "" : "미처리 근무기록 \(pendingCount)건을 먼저 처리해야 해요" }
+    /// VoiceOver 라벨은 「급여 확정하기」만 — 이유는 힌트로 한 번(보이는 문구 · 힌트가 겹쳐 두 번 읽히지 않게)
+    var confirmAccessibilityLabel: String { "급여 확정하기" }
+    var confirmAccessibilityHint: String { pendingCount > 0 ? "미처리 근무기록 \(pendingCount)건을 먼저 처리해야 해요" : "" }
 
     static let sample = OwnerPayrollRecord(
         monthTitle: "2026년 10월", stage: .needsReview, pendingCount: 2,
@@ -110,7 +115,7 @@ nonisolated struct OwnerPayrollRecord: Equatable, Sendable {
 
     static let sampleClear: OwnerPayrollRecord = {
         var r = sample
-        r.stage = .confirmed; r.pendingCount = 0
+        r.stage = .needsReview; r.pendingCount = 0 // 미처리를 모두 처리한 「확인 필요」 단계 — 확정 가능
         r.employees = r.employees.map {
             OwnerPayrollEmployee(id: $0.id, name: $0.name, colorIndex: $0.colorIndex, workMinutes: $0.workMinutes,
                                  workDays: $0.workDays, wageKindText: $0.wageKindText, amount: $0.amount, pendingCount: 0)

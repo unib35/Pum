@@ -39,11 +39,14 @@ struct OwnerPayrollView: View {
         .background(PumColor.bgApp)
         .safeAreaInset(edge: .bottom, spacing: 0) {
             VStack(spacing: 0) {
-                PumButton(title: record.confirmTitle, kind: .primary, action: onConfirm)
-                    .disabled(!record.canConfirm) // 비활성 모양은 공통 버튼 것, 이유는 문구에
-                    .accessibilityHint(Text(record.confirmAccessibilityHint))
-                    .padding(.horizontal, PumTokens.Size.screenPad)
-                    .padding(.vertical, PumTokens.Space.s8)
+                if record.showsConfirmButton {
+                    PumButton(title: record.confirmTitle, kind: .primary, action: onConfirm)
+                        .disabled(!record.canConfirm) // 비활성 모양은 공통 버튼 것, 이유는 문구에
+                        .accessibilityLabel(Text(record.confirmAccessibilityLabel))
+                        .accessibilityHint(Text(record.confirmAccessibilityHint))
+                        .padding(.horizontal, PumTokens.Size.screenPad)
+                        .padding(.vertical, PumTokens.Space.s8)
+                }
                 // 원문 1u는 탭 바 없이 확정 버튼만 하단 고정
             }
             .background(PumColor.bgApp)
@@ -53,10 +56,14 @@ struct OwnerPayrollView: View {
     // MARK: 머리
 
     private var header: some View {
-        HStack(alignment: .center, spacing: PumTokens.Space.s8) {
+        // 큰 글자에서 월 칩이 잘리지 않게 좁으면 세로로
+        let layout = typeSize.isAccessibilitySize
+            ? AnyLayout(VStackLayout(alignment: .leading, spacing: PumTokens.Space.s8))
+            : AnyLayout(HStackLayout(alignment: .center, spacing: PumTokens.Space.s8))
+        return layout {
             Text("급여").pumText(.title1).foregroundStyle(PumColor.textPrimary) // 28px 700
                 .accessibilityAddTraits(.isHeader)
-            Spacer(minLength: PumTokens.Space.s8)
+            if !typeSize.isAccessibilitySize { Spacer(minLength: PumTokens.Space.s8) }
             Button(action: onPickMonth) {
                 HStack(spacing: PumTokens.Space.s4) {
                     Text(record.monthTitle).pumText(.body, weight: .semibold).lineLimit(1) // 15px 600

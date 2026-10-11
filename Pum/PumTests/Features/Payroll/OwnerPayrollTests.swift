@@ -23,6 +23,10 @@ struct OwnerPayrollTests {
         #expect(r.confirmTitle == "급여 확정하기 \u{00B7} 미처리 2건 남음")
         let c = OwnerPayrollRecord.sampleClear
         #expect(c.canConfirm && c.confirmTitle == "급여 확정하기")
+        var done = c
+        done.stage = .confirmed // 이미 확정 — 다시 확정하지 않는다
+        #expect(!done.canConfirm && !done.showsConfirmButton)
+        #expect(r.confirmAccessibilityLabel == "급여 확정하기" && !r.confirmAccessibilityHint.isEmpty)
     }
 
     @Test func 행_문구() {
