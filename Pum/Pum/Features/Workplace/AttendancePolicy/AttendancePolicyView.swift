@@ -1,4 +1,4 @@
-// UI-IOS-1an · REQ-026 · REQ-024 · REQ-025 · DEC-004 · DEC-005 — 사업장 설정: 근태 정책(확정). 탭 바 없음.
+// UI-IOS-1an · REQ-026 · REQ-093 · REQ-024 · REQ-025 · DEC-004 · DEC-005 — 사업장 설정: 근태 정책(확정). 탭 바 없음.
 // 정책 · 기준 선택은 화면 상태 + 변경 클로저(저장 전송은 후속). 퇴근 리마인드는 서버 값 표시만.
 import SwiftUI
 
@@ -106,7 +106,7 @@ struct AttendancePolicyView: View {
             }
             .buttonStyle(.plain)
             .accessibilityElement(children: .ignore)
-            .accessibilityLabel(Text("\(p.title.replacingOccurrences(of: " · ", with: ", ")), \(p.detail), \(count)개 중 \(p.rawValue + 1)번째"))
+            .accessibilityLabel(Text("\(p.title.replacingOccurrences(of: " · ", with: ", ")), \(p.detail), \(count)개 중 \((OvertimePolicy.allCases.firstIndex(of: p) ?? 0) + 1)번째"))
             .accessibilityAddTraits(isOn ? [.isButton, .isSelected] : .isButton)
 
             if isOn && p.usesThreshold { thresholdPicker }
@@ -129,6 +129,9 @@ struct AttendancePolicyView: View {
         .padding(.leading, PumTokens.Size.rowPadX + PumSelectionStyle.markSize + PumTokens.Space.s12)
         .padding(.trailing, PumTokens.Size.rowPadX)
         .padding(.bottom, PumTokens.Size.rowPadY)
+        // 알약이 「15분」만 들리지 않게 묶음 이름을 준다
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel(Text("자동 인정 기준"))
     }
 
     @ViewBuilder private func pills(_ all: [AutoApproveThreshold]) -> some View {
