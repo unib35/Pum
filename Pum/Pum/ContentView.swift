@@ -30,6 +30,7 @@ struct ContentView: View {
             case "1i": EditRequestView()
             case "1n": MultiWorkplacePayView()
             case "1o": InviteAcceptView()
+            case "1j": MyScheduleView()
             case "gallery": ComponentGalleryView()
             default: DevMenu()
             }
@@ -57,6 +58,7 @@ private struct DevMenu: View {
                     NavigationLink("1i 근무기록 수정 요청") { EditRequestView().toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("1n 여러 사업장") { MultiWorkplacePayView().toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("1o 초대 수락") { InviteAcceptView().toolbar(.hidden, for: .navigationBar) }
+                    NavigationLink("1j 내 스케줄 · 대타 요청") { MyScheduleView().toolbar(.hidden, for: .navigationBar) }
                 }
                 Section("디자인 시스템") {
                     NavigationLink("컴포넌트 갤러리") { ComponentGalleryView() }
