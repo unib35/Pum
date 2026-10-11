@@ -68,6 +68,7 @@ struct ContentView: View {
             case "2i": WorkplaceCreateView(state: .sample)
             case "2j": ExtraShiftRequestView(state: .sample)
             case "2k": ExtraShiftOfferView(state: .sample)
+            case "2l": StaffDetailView(state: .sample)
             case "gallery": ComponentGalleryView()
             default: DevMenu()
             }
@@ -133,6 +134,7 @@ private struct DevMenu: View {
                     NavigationLink("2i 사업장 만들기") { WorkplaceCreateView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("2j 추가 근무 요청") { ExtraShiftRequestView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("2k 추가 근무 요청 받음") { ExtraShiftOfferView(state: .sample).toolbar(.hidden, for: .navigationBar) }
+                    NavigationLink("2l 직원 상세") { StaffDetailView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                 }
                 Section("디자인 시스템") {
                     NavigationLink("컴포넌트 갤러리") { ComponentGalleryView() }
