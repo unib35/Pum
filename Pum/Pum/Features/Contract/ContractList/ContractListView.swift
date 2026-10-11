@@ -10,6 +10,7 @@ struct ContractListView: View {
     var onShare: (ContractItem) -> Void = { _ in }
     var onConfirmChange: (ContractItem) -> Void = { _ in }
 
+    @Environment(\.dynamicTypeSize) private var typeSize
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     init(record: ContractListRecord = .sample,
@@ -68,20 +69,21 @@ struct ContractListView: View {
     }
 
     private var divider: some View {
-        Rectangle().fill(PumColor.borderHairline).frame(height: 1)
-            .padding(.horizontal, PumTokens.Space.s16)
+        Rectangle().fill(PumColor.borderHairline).frame(height: 1) // 원문: 카드 전폭
     }
 
     // 사업장 색 네모 · 이름 · 기간/시급 · 배지. 누르면 펼침 · 접힘(M11, 동작 줄이기면 즉시)
     @ViewBuilder
     private func header(_ item: ContractItem) -> some View {
-        let content = ViewThatFits(in: .horizontal) {
+        // 원문: 기간 · 시급 줄은 여러 줄로 접히고 배지는 오른쪽에 고정 — 접근성 큰 글자에서만 배지를 아래로
+        let content = Group { if !typeSize.isAccessibilitySize {
             HStack(alignment: .center, spacing: PumTokens.Space.s12) {
                 tile(item)
                 titles(item)
-                PumBadge(text: item.status.badgeText, kind: badgeKind(item.status))
+                PumBadge(text: item.status.badgeText, kind: badgeKind(item.status)).fixedSize()
             }
-            VStack(alignment: .leading, spacing: PumTokens.Space.s8) { // 큰 글자: 배지를 아래로
+        } else {
+            VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
                 HStack(alignment: .center, spacing: PumTokens.Space.s12) {
                     tile(item)
                     titles(item)
@@ -89,7 +91,7 @@ struct ContractListView: View {
                 PumBadge(text: item.status.badgeText, kind: badgeKind(item.status))
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-        }
+        } }
         .padding(PumTokens.Space.s16)
         .frame(minHeight: PumTokens.Size.tapMin, alignment: .leading)
         .contentShape(Rectangle())
@@ -137,7 +139,7 @@ struct ContractListView: View {
 
     // 이력: 「시각 · 내용」 한 줄씩(시각 고정 폭 열)
     private func historyList(_ item: ContractItem) -> some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s12) { // 원문 줄 간격 약 31pt
             ForEach(item.history) { h in
                 HStack(alignment: .firstTextBaseline, spacing: PumTokens.Space.s8) {
                     Text(h.timeText).pumText(.footnote, weight: .regular)
@@ -166,17 +168,19 @@ struct ContractListView: View {
 
     // 변경 단락 + 확인 ›
     private func changeRow(_ item: ContractItem, _ c: ContractChangeNotice) -> some View {
-        ViewThatFits(in: .horizontal) {
+        // 원문: 단락은 접히고 「확인 ›」는 오른쪽 — 접근성 큰 글자에서만 아래로
+        Group { if !typeSize.isAccessibilitySize {
             HStack(alignment: .center, spacing: PumTokens.Space.s8) {
-                changeText(c)
-                confirmButton(item)
+                changeText(c).frame(maxWidth: .infinity, alignment: .leading)
+                confirmButton(item).fixedSize()
             }
+        } else {
             VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
                 changeText(c)
                 confirmButton(item)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-        }
+        } }
         .padding(.leading, PumTokens.Space.s16)
         .padding(.trailing, PumTokens.Space.s4)
         .padding(.vertical, PumTokens.Space.s4)
