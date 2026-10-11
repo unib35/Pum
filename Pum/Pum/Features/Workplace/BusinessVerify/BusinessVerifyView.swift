@@ -40,8 +40,11 @@ struct BusinessVerifyView: View {
             VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
                 topBar
                 heading
-                card
-                scanRow
+                Group { // 확인하는 동안은 입력 잠금(보낸 값과 화면 값이 어긋나지 않게)
+                    card
+                    scanRow
+                }
+                .disabled(state.isSubmitting)
                 Text("국세청 사업자등록 상태를 조회해 실제 영업 중인 사업자인지 확인해요. 대표자가 아니어도 다음 단계에서 관리 권한을 확인할 수 있어요.")
                     .pumText(.caption)
                     .foregroundStyle(PumColor.textSecondary)
@@ -55,6 +58,10 @@ struct BusinessVerifyView: View {
         .background(PumColor.bgApp)
         .safeAreaInset(edge: .bottom, spacing: 0) { actions }
         .task { focus = .number }
+        // 등록번호 10자리를 다 채우면 대표자명으로
+        .onChange(of: state.registrationNumber) { _, new in
+            if new.count == 10, focus == .number { focus = .name }
+        }
     }
 
     // 1. 뒤로 · 단계
@@ -94,7 +101,9 @@ struct BusinessVerifyView: View {
                     .tint(PumColor.accent)
                     .multilineTextAlignment(.trailing)
                     .textContentType(.name)
+                    .autocorrectionDisabled()
                     .submitLabel(.done)
+                    .onSubmit { focus = nil }
                     .accessibilityLabel(Text("대표자명"))
             }
             divider
