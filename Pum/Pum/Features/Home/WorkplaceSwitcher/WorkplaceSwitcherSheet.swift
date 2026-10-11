@@ -96,6 +96,7 @@ struct WorkplaceSwitcherSheet: View {
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(state.accessibilityText(for: w)))
         .accessibilityAddTraits(w.id == state.selectedID ? .isSelected : [])
+        .accessibilityHint(Text(w.id == state.selectedID ? "" : "이 사업장으로 바꿔요"))
     }
 
     @ViewBuilder
@@ -105,7 +106,7 @@ struct WorkplaceSwitcherSheet: View {
             Image(systemName: "checkmark").font(.body.weight(.bold)).foregroundStyle(PumColor.accent)
                 .frame(minWidth: WorkplaceSwitcherLocal.markMinWidth)
         case .pending(let n):
-            PumBadge(text: "확인 \(n)", kind: .attention)
+            PumBadge(text: SwitcherWorkplace.pendingText(n), kind: .attention)
         case .none:
             EmptyView()
         }

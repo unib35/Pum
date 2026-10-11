@@ -44,9 +44,26 @@ struct WorkplaceSwitcherTests {
 
     @Test func 읽어주기_문구() {
         var s = WorkplaceSwitcherState.sample
-        #expect(s.accessibilityText(for: s.workplaces[0]) == "종민김밥 본점, 오늘 17:00부터 22:00, 시급 12,000원, 선택됨")
+        #expect(s.accessibilityText(for: s.workplaces[0]) == "종민김밥 본점, 오늘 17:00부터 22:00, 시급 12,000원") // 「선택됨」은 특성이 읽음
         #expect(s.accessibilityText(for: s.workplaces[1]) == "B카페 서면점, 내일 09:00부터 14:00, 시급 11,500원, 확인할 것 1건")
         s.select("w2")
-        #expect(s.accessibilityText(for: s.workplaces[1]).hasSuffix("선택됨, 확인할 것 1건"))
+        #expect(s.accessibilityText(for: s.workplaces[1]).hasSuffix("시급 11,500원, 확인할 것 1건"))
+    }
+
+    @Test func 같은_사업장을_다시_고르면_바뀌지_않음() {
+        var s = WorkplaceSwitcherState.sample
+        let same = s.select(s.selectedID)
+        let other = s.select("w2")
+        let missing = s.select("없는-id")
+        #expect(!same && other && !missing)
+    }
+
+    @Test func 사업장_색_번호_방어() {
+        var s = WorkplaceSwitcherState.sample
+        let n = PumAvatarPalette.stores.count
+        s.workplaces[0] = SwitcherWorkplace(id: s.workplaces[0].id, name: s.workplaces[0].name, initial: s.workplaces[0].initial,
+            colorIndex: -1, scheduleText: s.workplaces[0].scheduleText, scheduleSpoken: s.workplaces[0].scheduleSpoken,
+            hourlyWage: s.workplaces[0].hourlyWage, pendingCount: 0)
+        #expect(s.workplaces[0].tileColor == PumAvatarPalette.stores[n - 1])
     }
 }

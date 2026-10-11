@@ -30,7 +30,7 @@ struct WorkplaceSwitcherView: View {
             .pumBottomSheet(isPresented: $sheetOpen, onDismiss: onClose) {
                 WorkplaceSwitcherSheet(
                     state: state,
-                    onSelect: { id in state.select(id); sheetOpen = false; onSelect(id) },
+                    onSelect: { id in let changed = state.select(id); sheetOpen = false; if changed { onSelect(id) } },
                     onShowAll: { sheetOpen = false; onShowAll() },
                     onAddByCode: { sheetOpen = false; onAddByCode() }
                 )

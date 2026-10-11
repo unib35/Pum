@@ -16,11 +16,15 @@ nonisolated struct SwitcherWorkplace: Equatable, Sendable, Identifiable {
     /// 확인할 것 건수(0이면 배지 없음)
     let pendingCount: Int
 
-    var tileColor: Color { PumAvatarPalette.stores[colorIndex % PumAvatarPalette.stores.count] }
+    var tileColor: Color {
+        let n = PumAvatarPalette.stores.count
+        return PumAvatarPalette.stores[((colorIndex % n) + n) % n] // 음수 · 범위 밖 번호 방어(서버 값)
+    }
     var wageText: String { "시급 \(PumFormat.amount(hourlyWage))원" }
     /// 「오늘 17:00 – 22:00 · 시급 12,000원」
     var detailText: String { "\(scheduleText) · \(wageText)" }
-    var pendingBadgeText: String { "확인 \(pendingCount)" }
+    var pendingBadgeText: String { Self.pendingText(pendingCount) }
+    static func pendingText(_ n: Int) -> String { "확인 \(n)" }
 }
 
 /// 오른쪽 표시. 선택됨과 확인이 겹치면 체크가 우선(디자인에 없는 경우 — 보고 항목)
@@ -55,15 +59,17 @@ nonisolated struct WorkplaceSwitcherState: Equatable, Sendable {
 
     func accessibilityText(for w: SwitcherWorkplace) -> String {
         var s = "\(w.name), \(w.scheduleSpoken), \(w.wageText)"
-        if w.id == selectedID { s += ", 선택됨" }
+        // 「선택됨」은 .isSelected 특성이 읽는다(라벨에 넣으면 두 번 읽힘)
         if w.pendingCount > 0 { s += ", 확인할 것 \(w.pendingCount)건" }
         return s
     }
 
-    /// 목록에 없는 id는 무시한다
-    mutating func select(_ id: String) {
-        guard workplaces.contains(where: { $0.id == id }) else { return }
+    /// 목록에 없는 id는 무시한다. 바뀌었으면 true(같은 사업장을 다시 누르면 false — 바깥에 전환을 알리지 않음)
+    @discardableResult
+    mutating func select(_ id: String) -> Bool {
+        guard workplaces.contains(where: { $0.id == id }), id != selectedID else { return false }
         selectedID = id
+        return true
     }
 
     /// 디자인 1y 예시 값(가짜 데이터)
