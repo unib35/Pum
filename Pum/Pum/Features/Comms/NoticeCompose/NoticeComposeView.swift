@@ -16,8 +16,8 @@ struct NoticeComposeView: View {
     @FocusState private var focus: Field?
     private enum Field { case title, body }
 
-    /// 본문 입력칸 높이 — 원문 약 170, 끝없이 늘어나지 않게 최대를 둔다(넘치면 칸 안에서 스크롤). 토큰 밖이라 이름 상수.
-    @ScaledMetric(relativeTo: .body) private var bodyMinHeight: CGFloat = 170
+    /// 본문 입력칸 높이 — 원문 본문 7줄(줄 높이 약 25) + 안쪽 여백 ≈ 200, 끝없이 늘어나지 않게 최대를 둔다(넘치면 칸 안에서 스크롤). 토큰 밖이라 이름 상수.
+    @ScaledMetric(relativeTo: .body) private var bodyMinHeight: CGFloat = 200
     @ScaledMetric(relativeTo: .body) private var bodyMaxHeight: CGFloat = 320
     /// 카드 안쪽 여백 — 원문 18(토큰 s18)
     private let cardPad = PumTokens.Space.s18
