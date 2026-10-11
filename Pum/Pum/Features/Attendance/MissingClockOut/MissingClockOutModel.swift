@@ -69,6 +69,9 @@ nonisolated struct MissingClockOutState: Equatable, Sendable {
         case .hour: inputMinute = (((hour + delta) % 24 + 24) % 24) * 60 + minute
         case .minute: inputMinute = hour * 60 + ((minute + delta) % 60 + 60) % 60
         }
+        // 시각이 바뀌면 이전 시각 기준의 서버 인정 값은 버린다(새 값은 서버 재조회 후 — 연결 후속)
+        recognizedText = nil
+        recognizedPay = nil
     }
 
     var plannedEndText: String { MissingClockOutFormat.clock(plannedEndMinute) }
@@ -93,7 +96,8 @@ nonisolated enum MissingClockOutFormat {
         return String(format: "%02d:%02d", m / 60, m % 60)
     }
 
-    /// 120 → 「새벽 2시」, 150 → 「새벽 2시 30분」, 8시 → 「오전 8시」, 13시 → 「오후 1시」, 22시 → 「밤 10시」
+    /// 120 → 「새벽 2시」, 150 → 「새벽 2시 30분」, 8시 → 「오전 8시」, 13시 → 「오후 1시」, 19시 → 「저녁 7시」, 22시 → 「밤 10시」
+    /// 원문은 「새벽 2시」만 있다 — 나머지 구간 이름은 구현 기준
     static func dayPart(_ minute: Int) -> String {
         let m = ((minute % 1440) + 1440) % 1440
         let h = m / 60, mm = m % 60
@@ -102,6 +106,7 @@ nonisolated enum MissingClockOutFormat {
         case 0..<6: part = "새벽"
         case 6..<12: part = "오전"
         case 12..<18: part = "오후"
+        case 18..<21: part = "저녁"
         default: part = "밤"
         }
         let h12 = h % 12 == 0 ? 12 : h % 12

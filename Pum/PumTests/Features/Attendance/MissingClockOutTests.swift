@@ -58,7 +58,7 @@ struct MissingClockOutTests {
         x.plannedEndMinute = 23 * 60 + 30
         #expect(x.sessionEndText == "새벽 5시 30분")
         x.plannedEndMinute = 12 * 60
-        #expect(x.sessionEndText == "밤 6시")
+        #expect(x.sessionEndText == "저녁 6시")
     }
 
     @Test func 알림_시각_문구와_안내() {
@@ -75,5 +75,12 @@ struct MissingClockOutTests {
         #expect(x.canRequest)
         x.selected = nil
         #expect(!x.canRequest)
+    }
+
+    @Test func 시각을_바꾸면_이전_인정_값은_버린다() {
+        var x = MissingClockOutState.sample
+        #expect(x.recognizedLine != nil)
+        x.step(.minute, by: -1)
+        #expect(x.recognizedLine == nil)
     }
 }
