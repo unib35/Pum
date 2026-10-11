@@ -39,7 +39,7 @@ struct ContractReviewView: View {
 
     // 2. 제목 · 배지 · 문서 종류 · 보낸 사람
     private var heading: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s4) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s10) { // 원문: 제목 · 문서 종류 · 부제 사이가 넉넉하다(캡처 실측)
             ViewThatFits(in: .horizontal) {
                 HStack(alignment: .center, spacing: PumTokens.Space.s8) {
                     docTitle
