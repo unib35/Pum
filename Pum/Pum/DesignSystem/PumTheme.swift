@@ -46,6 +46,10 @@ nonisolated enum PumLayout {
     static let timelineGap: CGFloat = 3
     /// 탭 아이콘과 이름 사이
     static let tabLabelGap: CGFloat = 2
+    /// C7 사람 아바타(목록 행)
+    static let avatar: CGFloat = 36
+    /// 탭 숫자 배지 최소 지름
+    static let tabBadge: CGFloat = 18
 }
 
 // MARK: - 글자 (F3 · F4)

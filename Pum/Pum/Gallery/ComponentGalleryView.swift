@@ -98,6 +98,23 @@ struct ComponentGalleryView: View {
                     }
                 }
 
+                section("C6 · C7 · SMALL") {
+                    HStack {
+                        PumWorkplaceChip(name: "종민김밥 본점", initial: "종", tileColor: PumColor.surfaceInverse, role: "사장님") {}
+                        Spacer()
+                    }
+                    HStack(spacing: PumTokens.Space.s8) {
+                        ForEach(0..<6, id: \.self) { i in PumAvatar(name: ["종", "하", "유", "서", "우", "박"][i], colorIndex: i) }
+                        PumCountTile(count: 4)
+                    }
+                    HStack(spacing: PumTokens.Space.s8) {
+                        PumChipButton(title: "인정", kind: .accent) {}
+                        PumChipButton(title: "처리", kind: .neutral) {}
+                        PumChipButton(title: "퇴근 확인", kind: .attention) {}
+                    }
+                    PumTabBar(items: PumTabItem.ownerTabs(workBadge: 4), selection: .constant("home"))
+                }
+
                 section("C11 Toast") {
                     PumToast(message: "출근했어요 · 16:58", systemImage: "checkmark")
                     PumToast(message: "수정 요청을 보냈어요", actionTitle: "실행 취소") {}
