@@ -21,3 +21,6 @@ xcuserdata/
 DerivedData/
 *.xcresult
 node_modules/
+
+# Claude Code worktree (에이전트 · -w)
+.claude/worktrees/
