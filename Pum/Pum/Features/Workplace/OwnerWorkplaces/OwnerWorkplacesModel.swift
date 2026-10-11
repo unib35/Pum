@@ -54,7 +54,8 @@ nonisolated struct OwnerWorkplaceEntry: Equatable, Sendable, Identifiable {
 
     /// VoiceOver: 카드 한 문장
     var accessibilityText: String {
-        var parts = [name, "직원 \(staffCount)명", "근무 중 \(workingCount)명", "예상 인건비 \(amountText)원"]
+        var parts = [name, "직원 \(staffCount)명", "근무 중 \(workingCount)명", "예상 인건비 \(amountText)원",
+                     "확정 \(PumFormat.amount(confirmedAmount))원"] // 숨긴 막대의 내용
         parts += badges.map(\.spoken)
         return parts.joined(separator: ", ")
     }
@@ -97,7 +98,8 @@ nonisolated struct OwnerWorkplacesRecord: Equatable, Sendable {
 
     /// VoiceOver: 요약 카드 한 문장
     var summaryAccessibilityText: String {
-        "\(titleText) \(totalText)원, \(entries.count)곳, 직원 \(staffCount)명, 지금 근무 중 \(workingCount)명, 확인 필요 \(attentionCount)건, 급여 정산 \(dDayText)"
+        // 요약 카드는 한 요소로 읽으므로 막대 내용(확정 · 남은 예정)도 여기에 넣는다
+        "\(titleText) \(totalText)원, \(barAccessibilityText), \(entries.count)곳, 직원 \(staffCount)명, 지금 근무 중 \(workingCount)명, 확인 필요 \(attentionCount)건, 급여 정산 \(dDayText)"
     }
     var barAccessibilityText: String {
         "확정 \(PumFormat.amount(confirmedAmount))원, 남은 예정 \(PumFormat.amount(scheduledAmount))원"

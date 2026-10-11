@@ -16,7 +16,7 @@ struct OwnerWorkplacesTests {
         #expect(r.totalText == "7,330,000")
         #expect(r.countText == "2곳 · 직원 7명")
         #expect(r.workingText == "4명" && r.attentionText == "6건" && r.dDayText == "D-7")
-        #expect(r.summaryAccessibilityText == "10월 전체 예상 인건비 7,330,000원, 2곳, 직원 7명, 지금 근무 중 4명, 확인 필요 6건, 급여 정산 D-7")
+        #expect(r.summaryAccessibilityText == "10월 전체 예상 인건비 7,330,000원, 확정 4,085,000원, 남은 예정 3,245,000원, 2곳, 직원 7명, 지금 근무 중 4명, 확인 필요 6건, 급여 정산 D-7")
     }
 
     @Test func D_day_오늘() {
@@ -31,7 +31,7 @@ struct OwnerWorkplacesTests {
         #expect(a.badges.map(\.text) == ["확인 필요 4", "수정 요청 1", "대타 1"])
         #expect(a.badges.map(\.isAttention) == [true, false, false])
         #expect(b.badges.map(\.text) == ["확인 필요 2", "초대 중 1"])
-        #expect(a.accessibilityText == "종민김밥 본점, 직원 4명, 근무 중 2명, 예상 인건비 4,210,000원, 확인 필요 4건, 수정 요청 1건, 대타 1건")
+        #expect(a.accessibilityText == "종민김밥 본점, 직원 4명, 근무 중 2명, 예상 인건비 4,210,000원, 확정 2,525,000원, 확인 필요 4건, 수정 요청 1건, 대타 1건")
     }
 
     @Test func 건수_0이면_배지_없음() {

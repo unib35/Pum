@@ -200,11 +200,12 @@ struct OwnerWorkplacesSummaryBar: View {
     var body: some View {
         GeometryReader { geo in
             let usable = max(0, geo.size.width - OwnerWorkplacesLayout.barGap)
+            // 두 구간 + 틈 하나(Spacer 없이 — 틈이 두 번 들어가 넘치지 않게)
             HStack(spacing: OwnerWorkplacesLayout.barGap) {
                 Rectangle().fill(PumTokens.ColorToken.green300).frame(width: usable * record.barFraction(0))
                 Rectangle().fill(PumColor.statusDone).frame(width: usable * record.barFraction(1))
-                Spacer(minLength: 0)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
         .frame(height: OwnerWorkplacesLayout.summaryBarHeight)
         .clipShape(Capsule())
