@@ -31,7 +31,7 @@ struct MyInfoView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+            VStack(alignment: .leading, spacing: PumTokens.Space.s10) { // 원문: 카드 사이 약 10
                 Text("내 정보").pumText(.title1).foregroundStyle(PumColor.textPrimary)
                     .accessibilityAddTraits(.isHeader)
                     .padding(.top, PumTokens.Space.s8)
@@ -86,7 +86,7 @@ struct MyInfoView: View {
     // MARK: 소속 사업장
 
     private var workplaceSection: some View {
-        VStack(spacing: PumTokens.Space.s8) {
+        VStack(spacing: PumTokens.Space.s4) { // 원문: 머리와 카드 사이 약 4–6
             ViewThatFits(in: .horizontal) {
                 HStack(alignment: .center) {
                     PumSectionHeader(title: state.workplaceHeader)
