@@ -90,28 +90,24 @@ struct NoticeDetailView: View {
         Rectangle().fill(PumColor.borderHairline).frame(height: 1)
     }
 
+    /// 본문은 한 Text로 이어 붙인다 — 줄 사이 간격이 날짜 줄에도 똑같이 들어가고, 문단 사이는 원문처럼 빈 줄 하나
     private var bodyText: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
-            ForEach(state.paragraphs) { p in
-                VStack(alignment: .leading, spacing: 0) {
-                    ForEach(p.lines) { line in
-                        lineText(line)
-                    }
-                }
-            }
+        let paragraphs = state.paragraphs.compactMap { p in
+            p.lines.map(lineText).reduce(nil as Text?) { acc, t in acc.map { $0 + Text("\n") + t } ?? t }
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(Text(state.bodyAccessibilityText))
-    }
-
-    private func lineText(_ line: NoticeBodyLine) -> some View {
-        let strong = line.strong.map { Text($0).fontWeight(.bold) } ?? Text("")
-        return (strong + Text(line.text))
+        let joined = paragraphs.reduce(nil as Text?) { acc, t in acc.map { $0 + Text("\n\n") + t } ?? t } ?? Text("")
+        return joined
             .pumText(.body, weight: .regular) // 15px
             .lineSpacing(bodyLineSpacing)
             .foregroundStyle(bodyColor)
             .fixedSize(horizontal: false, vertical: true)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .accessibilityLabel(Text(state.bodyAccessibilityText))
+    }
+
+    private func lineText(_ line: NoticeBodyLine) -> Text {
+        let strong = line.strong.map { Text($0).fontWeight(.bold) } ?? Text("")
+        return strong + Text(line.text)
     }
 
     private var readStatus: some View {
@@ -142,6 +138,7 @@ struct NoticeDetailView: View {
             Text("공지는 읽기만 하면 돼요. 근무 신청은 별도 요청으로 처리되어 수락 시 스케줄에 추가돼요.")
                 .pumText(.caption).foregroundStyle(PumColor.textSecondary)
                 .padding(.horizontal, PumTokens.Space.s4)
+                .padding(.top, PumTokens.Space.s8) // 원문: 카드와 안내 사이 약 16
                 .fixedSize(horizontal: false, vertical: true)
         }
     }
