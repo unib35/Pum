@@ -167,7 +167,7 @@ struct ContractListView: View {
     private func actions(_ item: ContractItem) -> some View {
         HStack(spacing: PumTokens.Space.s8) {
             PumButton(title: "PDF 보기", kind: .outline) { onViewPDF(item) }
-            ContractTonalButton(title: "공유") { onShare(item) }
+            PumButton(title: "공유", kind: .tonal) { onShare(item) }
         }
         .padding(PumTokens.Space.s16)
     }
@@ -221,31 +221,4 @@ struct ContractListView: View {
 
 /// 회색 바탕 버튼(먹색 글자, surfaceFill). 공통 PumButton에 회색 종류가 없어 화면 전용 — 공통 변경 요청 후보.
 /// 높이 · 모서리 · 누름은 PumButton과 같다(buttonH · md · M1).
-private struct ContractTonalButton: View {
-    let title: String
-    let action: () -> Void
-    var body: some View {
-        Button(action: action) {
-            Text(title)
-                .frame(maxWidth: .infinity)
-                .frame(height: PumTokens.Size.buttonH)
-                .contentShape(Rectangle())
-        }
-        .buttonStyle(ContractTonalStyle())
-    }
-}
-
-private struct ContractTonalStyle: ButtonStyle {
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .pumText(.headline) // PumButton regular와 같은 글자 단계
-            .foregroundStyle(PumColor.textPrimary)
-            .background(configuration.isPressed ? PumTokens.ColorToken.gray200 : PumColor.surfaceFill,
-                        in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
-            .scaleEffect(configuration.isPressed && !reduceMotion ? 0.97 : 1) // M1
-            .animation(PumMotion.respecting(reduceMotion, PumMotion.press), value: configuration.isPressed)
-    }
-}
-
 #Preview("계약서 보관함") { ContractListView() }
