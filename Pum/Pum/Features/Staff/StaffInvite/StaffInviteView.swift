@@ -74,7 +74,7 @@ struct StaffInviteView: View {
                 .padding(.vertical, PumTokens.Space.s12)
                 .background(PumColor.bgApp)
         }
-        .task { if initialFocus { focus = .phone } }
+        // 원문 캡처는 번호 칸에 포커스 테두리만 있고 키보드는 없다 — 테두리만 보여 준다(실제 포커스는 주지 않음)
     }
 
     // MARK: 인증된 사업장
@@ -129,7 +129,7 @@ struct StaffInviteView: View {
     /// 라벨 + 입력칸(흰 바탕 · hairline · 포커스 파랑 2)
     private func field<F: View>(_ label: String, @ViewBuilder input: () -> F) -> some View {
         let key: InviteField = label == "이름" ? .name : .phone
-        let focused = focus == key
+        let focused = focus == key || (initialFocus && focus == nil && key == .phone)
         return VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
             // 목업 13px 600 gray800 → footnote semibold
             Text(label).pumText(.footnote, weight: .semibold).foregroundStyle(PumColor.textPrimary)
@@ -209,16 +209,17 @@ struct StaffInviteView: View {
     // MARK: 앞에 있는 직원
 
     private var frontCard: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+        // 원문: 제목은 카드 안 첫 줄
+        PumCard {
             // 목업 15px 700 → body bold
             Text("앞에 있는 직원").pumText(.body, weight: .bold).foregroundStyle(PumColor.textPrimary)
-                .padding(.horizontal, PumTokens.Space.s4)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, PumTokens.Size.rowPadX)
+                .padding(.top, PumTokens.Space.s16)
                 .accessibilityAddTraits(.isHeader)
-            PumCard {
-                qrRow
-                Rectangle().fill(PumColor.borderHairline).frame(height: 1) // 전폭 hairline
-                codeRow
-            }
+            qrRow
+            Rectangle().fill(PumColor.borderHairline).frame(height: 1) // 전폭 hairline
+            codeRow
         }
     }
 
@@ -272,8 +273,7 @@ struct StaffInviteView: View {
     }
 
     private var copyButton: some View {
-        PumButton(title: "복사", kind: .tonal, size: .small) { onCopyCode(draft.inviteCode) }
-            .fixedSize()
+        PumChipButton(title: "복사") { onCopyCode(draft.inviteCode) } // 원문 12px 700 회색 작은 버튼 = C1 SMALL 칩
             .accessibilityLabel(Text("초대 코드 복사"))
     }
 
@@ -296,8 +296,7 @@ struct StaffInviteView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel(Text(p.accessibilityLabel))
-                PumButton(title: "다시 보내기", kind: .tonal, size: .small) { onResend(p) }
-                    .fixedSize()
+                PumChipButton(title: "다시 보내기") { onResend(p) }
                     .accessibilityLabel(Text("\(p.name)에게 다시 보내기"))
             }
             .padding(.vertical, PumTokens.Size.rowPadY)
