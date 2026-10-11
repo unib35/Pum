@@ -24,6 +24,28 @@ nonisolated enum PumColor {
     static let statusAttentionDot = T.statusAttentionDot
     static let statusDanger = T.statusDanger
     static let statusDangerSoft = T.statusDangerSoft
+    /// 조금 진한 연파랑(#D6DFFB) — C7 아바타 · C8 예정 타임라인. 배지 · 선택 배경은 accentSoft(DEC-005)
+    static let accentSoftStrong = T.blue100
+    /// 먹색 바탕 위 보조 글자(디자인 rgba(255,255,255,.7)) · 강조 점(blue-300)
+    static let textOnInverseSecondary = Color.white.opacity(0.7)
+    static let accentOnInverse = T.blue300
+}
+
+/// 디자인 컴포넌트 고정 크기(토큰에 없는 컴포넌트 치수). 화면 코드에서 숫자 대신 이 이름을 쓴다.
+nonisolated enum PumLayout {
+    /// C7 사업장 타일(칩 안) 크기 · 모서리 비율
+    static let storeTileSmall: CGFloat = 24
+    static let storeTileRadiusRatio: CGFloat = 0.3
+    /// C6 아이콘
+    static let navIcon: CGFloat = 18
+    static let tabIcon: CGFloat = 21
+    /// 알림 점 · 근무일 점
+    static let notificationDot: CGFloat = 9
+    static let dayDot: CGFloat = 5
+    /// C8 타임라인 구간 사이 간격
+    static let timelineGap: CGFloat = 3
+    /// 탭 아이콘과 이름 사이
+    static let tabLabelGap: CGFloat = 2
 }
 
 // MARK: - 글자 (F3 · F4)
@@ -80,17 +102,19 @@ enum PumTextStyle: CaseIterable, Sendable {
 
 private struct PumTextModifier: ViewModifier {
     let style: PumTextStyle
+    let weight: Font.Weight?
     @ScaledMetric private var scale: CGFloat = 1
 
-    init(style: PumTextStyle) {
+    init(style: PumTextStyle, weight: Font.Weight?) {
         self.style = style
+        self.weight = weight
         _scale = ScaledMetric(wrappedValue: 1, relativeTo: style.relativeTo)
     }
 
     func body(content: Content) -> some View {
         let t = style.token
         content
-            .font(style.font)
+            .font(PumFont.font(size: t.size, weight: weight ?? t.weight, relativeTo: style.relativeTo))
             .monospacedDigit() // F4: 숫자는 고정폭
             .tracking(style.tracking)
             .lineSpacing(max(0, t.size * (t.lineHeight - 1)) * scale)
@@ -100,7 +124,12 @@ private struct PumTextModifier: ViewModifier {
 extension View {
     /// `Text("…").pumText(.body)` — 크기 · 굵기 · 줄 간격 · 자간 · 고정폭 숫자를 한 번에.
     func pumText(_ style: PumTextStyle) -> some View {
-        modifier(PumTextModifier(style: style))
+        modifier(PumTextModifier(style: style, weight: nil))
+    }
+
+    /// 같은 크기 단계에서 굵기만 바꿀 때(디자인이 단계 기본과 다른 굵기를 쓸 때)
+    func pumText(_ style: PumTextStyle, weight: Font.Weight) -> some View {
+        modifier(PumTextModifier(style: style, weight: weight))
     }
 }
 
