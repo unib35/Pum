@@ -5,11 +5,13 @@ import SwiftUI
 
 struct PersonalRecordDetailView: View {
     @State private var state: PersonalRecordDetailState
+    /// 부모가 엔진 재계산 결과를 넘기는 곳 — 조건과 함께 받아 지금 조건일 때만 보인다
+    var calc: PersonalRecordDetailState.Calc?
     var onBack: () -> Void
     var onDelete: () -> Void
     var onPickStart: () -> Void
     var onPickEnd: () -> Void
-    /// 출근 · 퇴근 · 휴게 · 메모가 바뀌었을 때(서버 재계산용)
+    /// 출근 · 퇴근 · 휴게가 바뀌었을 때(서버 재계산용). 메모는 계산과 무관해 저장 때 함께 보낸다.
     var onRecordChange: (PersonalRecordDetailState) -> Void
     /// 저장 — 끝나면 done(성공 여부). 실패(false)면 잠금이 풀린다.
     var onSave: (PersonalRecordDetailState, @escaping (Bool) -> Void) -> Void
@@ -24,13 +26,17 @@ struct PersonalRecordDetailView: View {
     @ScaledMetric(relativeTo: .callout) private var memoMaxHeight: CGFloat = 160
 
     init(state: PersonalRecordDetailState = .sample,
+         calc: PersonalRecordDetailState.Calc? = nil,
          onBack: @escaping () -> Void = {},
          onDelete: @escaping () -> Void = {},
          onPickStart: @escaping () -> Void = {},
          onPickEnd: @escaping () -> Void = {},
          onRecordChange: @escaping (PersonalRecordDetailState) -> Void = { _ in },
-         onSave: @escaping (PersonalRecordDetailState, @escaping (Bool) -> Void) -> Void = { _, done in done(true) }) {
-        _state = State(initialValue: state)
+         onSave: @escaping (PersonalRecordDetailState, @escaping (Bool) -> Void) -> Void = { _, done in done(false) }) { // 연결 전 기본값은 미저장
+        var initial = state
+        if let calc { initial.calc = calc }
+        _state = State(initialValue: initial)
+        self.calc = calc
         self.onBack = onBack
         self.onDelete = onDelete
         self.onPickStart = onPickStart
@@ -56,6 +62,7 @@ struct PersonalRecordDetailView: View {
             .scrollDismissesKeyboard(.interactively)
         }
         .background(PumColor.bgApp)
+        .onChange(of: calc) { _, new in state.calc = new }
         .safeAreaInset(edge: .bottom, spacing: 0) {
             PumButton(title: "저장", kind: .dark, isLoading: state.isSaving, action: save)
                 .padding(.horizontal, PumTokens.Size.screenPad)
@@ -72,8 +79,9 @@ struct PersonalRecordDetailView: View {
     }
 
     private func changed(_ edit: (inout PersonalRecordDetailState) -> Void) {
+        let before = state.basis
         edit(&state)
-        onRecordChange(state)
+        if state.basis != before { onRecordChange(state) } // 메모만 바뀌면 재계산 요청하지 않음
     }
 
     // MARK: 1. 헤더
