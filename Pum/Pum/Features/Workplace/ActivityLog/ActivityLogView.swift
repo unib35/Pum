@@ -67,6 +67,7 @@ struct ActivityLogView: View {
                 .pumText(.body, weight: .regular)
                 .foregroundStyle(PumColor.textPrimary)
                 .submitLabel(.search)
+                .onSubmit { onSearch(query) } // 한글 조합 중 글자마다 서버로 보내지 않게 「검색」을 누를 때만
                 .accessibilityLabel(Text(state.searchPlaceholder))
         }
         .padding(.horizontal, PumTokens.Space.s16)
@@ -74,7 +75,6 @@ struct ActivityLogView: View {
         .frame(minHeight: PumTokens.Size.tapMin)
         .background(PumColor.surfaceCard, in: RoundedRectangle(cornerRadius: PumTokens.Radius.lg, style: .continuous))
         .pumRing(.hairline, cornerRadius: PumTokens.Radius.lg)
-        .onChange(of: query) { _, new in onSearch(new) }
     }
 
     // MARK: 칩
