@@ -56,6 +56,8 @@ nonisolated struct EmploymentStatusState: Equatable, Sendable {
     let rows: [EmploymentInfoRow]
     /// 「3년」 — 법정 보존 기간(서버 값)
     let retentionPeriod: String
+    /// 대상 아바타 색 번호(서버 값) — 원문 박서준은 남색(3)
+    var targetColorIndex: Int = 0
 
     var confirmTitle: String { "퇴사 처리 · \(targetName)에게 알림" }
     var initialDraft: EmploymentStatusDraft { EmploymentStatusDraft(status: status, reason: reason) }
@@ -92,6 +94,7 @@ nonisolated struct EmploymentStatusState: Equatable, Sendable {
             EmploymentInfoRow(id: "lastPay", label: "마지막 급여", value: "4월 10일 · 3월분 정산"),
             EmploymentInfoRow(id: "contract", label: "근로계약", value: "2027.03.31 종료"),
         ],
-        retentionPeriod: "3년"
+        retentionPeriod: "3년",
+        targetColorIndex: 3
     )
 }

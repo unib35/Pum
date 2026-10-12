@@ -68,7 +68,7 @@ struct EmploymentStatusView: View {
 
     private var targetBlock: some View {
         HStack(spacing: PumTokens.Space.s12) {
-            PumAvatar(name: serverState.targetName, colorIndex: 0, size: avatarSize).accessibilityHidden(true)
+            PumAvatar(name: serverState.targetName, colorIndex: serverState.targetColorIndex, size: avatarSize).accessibilityHidden(true)
             VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
                 Text(serverState.targetName).pumText(.headline, weight: .bold).foregroundStyle(PumColor.textPrimary)
                 Text(serverState.subtitle).pumText(.footnote, weight: .regular).foregroundStyle(PumColor.textSecondary)
@@ -189,7 +189,8 @@ struct EmploymentStatusView: View {
     // MARK: 하단
 
     private var bottomBar: some View {
-        PumButton(title: serverState.confirmTitle, kind: .primary, isLoading: isProcessing) {
+        // 원문 먹색 버튼(되돌리기 어려운 처리)
+        PumButton(title: serverState.confirmTitle, kind: .dark, isLoading: isProcessing) {
             onConfirmLeave(draft.reason)
         }
         .disabled(isDone)
