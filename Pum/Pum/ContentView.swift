@@ -135,6 +135,7 @@ struct ContentView: View {
             case "6f": AppPermissionsView(state: .sample)
             case "6g": OwnerNotificationSettingsView(state: .sample)
             case "6h": ManagerPermissionsView(state: .sample)
+            case "6i": OnboardingChecklistView(state: .sample)
             case "gallery": ComponentGalleryView()
             default: DevMenu()
             }
@@ -267,6 +268,7 @@ private struct DevMenu: View {
                     NavigationLink("6f 앱 권한") { AppPermissionsView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("6g 사장님 알림 설정") { OwnerNotificationSettingsView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("6h 관리자 권한") { ManagerPermissionsView(state: .sample).toolbar(.hidden, for: .navigationBar) }
+                    NavigationLink("6i 입사 준비") { OnboardingChecklistView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                 }
                 Section("디자인 시스템") {
                     NavigationLink("컴포넌트 갤러리") { ComponentGalleryView() }
