@@ -148,7 +148,7 @@ struct ManagerPermissionsView: View {
         PumButton(title: serverState.saveTitle, kind: .primary, isLoading: isSaving) {
             onSave(draft.role, serverState.enabledIDs(draft))
         }
-        .disabled(!serverState.hasChanges(draft) || isSaving)
+        // 원문은 저장 버튼이 늘 켜져 있다 — 바뀐 것이 없을 때 끄는 동작은 디자인에 없어 두지 않음(처리 중엔 PumButton이 잠금)
         .padding(.horizontal, PumTokens.Size.screenPad)
         .padding(.vertical, PumTokens.Space.s12)
         .background(PumColor.bgApp)
