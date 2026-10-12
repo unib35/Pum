@@ -32,28 +32,29 @@ struct EmployeeHomeView: View {
                 // 21k: 출근 버튼 줄은 없고(버튼 자리는 본문 카드 안 회색 사각) 탭 바만
                 PumTabBar(items: PumTabItem.employeeTabs, selection: $tab)
             } else {
-            VStack(spacing: 0) {
-                // 출근 버튼은 엄지 영역에 고정
-                VStack(spacing: PumTokens.Space.s10) {
-                    PumButton(title: "출근하기", action: onClockIn)
-                    Text("매장 QR 스캔 또는 위치 확인으로 기록돼요")
-                        .pumText(.footnote)
-                        .foregroundStyle(PumColor.textSecondary)
+                VStack(spacing: 0) {
+                    // 출근 버튼은 엄지 영역에 고정
+                    VStack(spacing: PumTokens.Space.s10) {
+                        PumButton(title: "출근하기", action: onClockIn)
+                        Text("매장 QR 스캔 또는 위치 확인으로 기록돼요")
+                            .pumText(.footnote)
+                            .foregroundStyle(PumColor.textSecondary)
+                    }
+                    .padding(.horizontal, PumTokens.Size.screenPad)
+                    .padding(.vertical, PumTokens.Space.s12)
+                    .background(PumColor.bgApp)
+                    PumTabBar(items: PumTabItem.employeeTabs, selection: $tab)
                 }
-                .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s12)
-                .background(PumColor.bgApp)
-                PumTabBar(items: PumTabItem.employeeTabs, selection: $tab)
-            }
             }
         }
+        .animation(PumMotion.fast, value: isLoading)
     }
 
     private var header: some View {
         HStack {
             PumWorkplaceChip(name: state.workplaceName, initial: state.workplaceInitial) {}
             Spacer()
-            PumIconButton(systemImage: "bell", label: "알림", showsDot: state.hasUnreadNotification) {}
+            PumIconButton(systemImage: "bell", label: "알림", showsDot: !isLoading && state.hasUnreadNotification) {} // 로딩 중엔 안 읽음 여부를 아직 모름(21j · 21k 원문 점 없음)
         }
         .padding(.top, PumTokens.Space.s8)
     }
