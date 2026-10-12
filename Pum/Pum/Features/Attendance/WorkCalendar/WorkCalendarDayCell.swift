@@ -45,7 +45,7 @@ struct WorkCalendarDayCell: View {
         Button(action: action) {
             VStack(spacing: PumTokens.Space.s2) {
                 Text("\(day)")
-                    .pumText(.body, weight: isToday ? .bold : .medium)
+                    .pumText(.body, weight: isToday ? .bold : (isQuiet ? .regular : .medium)) // 빈 상태(6p) 원문은 400
                     .foregroundStyle(numberColor)
                     .frame(minWidth: disc, minHeight: disc)
                     .background(isToday ? PumColor.surfaceInverse : .clear, in: Circle())
