@@ -98,7 +98,7 @@ struct LeaveRequestView: View {
 
     private var shiftCard: some View {
         PumCard {
-            HStack(alignment: .top, spacing: PumTokens.Space.s12) {
+            HStack(alignment: .center, spacing: PumTokens.Space.s12) {
                 VStack(alignment: .leading, spacing: PumTokens.Space.s4) {
                     Text(LeaveRequestState.shiftLabel).pumText(.caption).foregroundStyle(PumColor.textSecondary)
                     // 목업 19px 700 → title3(20)
