@@ -189,7 +189,7 @@ private struct DocumentRow: View {
         } else {
             Button { onIssue(item.id) } label: {
                 Text(item.statusText).pumText(.footnote, weight: .semibold).foregroundStyle(PumColor.accent)
-                    .frame(minWidth: PumTokens.Size.tapMin, minHeight: PumTokens.Size.tapMin)
+                    .frame(minWidth: PumTokens.Size.tapMin, minHeight: PumTokens.Size.tapMin, alignment: .trailing) // 원문처럼 배지 끝선에 맞춤
                     .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
