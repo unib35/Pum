@@ -84,6 +84,8 @@ struct ContentView: View {
             case "8a": WorkClosingView(state: .sample)
             case "8b": WorkClosingProblemsView(state: .sample)
             case "8c": WorkClosingConfirmView(state: .sample)
+            case "7b": PaymentSendScreen(state: .sample)
+            case "21e": PaymentSendScreen(state: .masked)
             case "gallery": ComponentGalleryView()
             default: DevMenu()
             }
@@ -165,6 +167,8 @@ private struct DevMenu: View {
                     NavigationLink("8a 근무 마감") { WorkClosingView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("8b 문제 기록 처리") { WorkClosingProblemsView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("8c 근무 마감 확인") { WorkClosingConfirmView(state: .sample).toolbar(.hidden, for: .navigationBar) }
+                    NavigationLink("7b 직원별 지급 시트") { PaymentSendScreen(state: .sample).toolbar(.hidden, for: .navigationBar) }
+                    NavigationLink("21e 지급 시트 · 계좌 가림") { PaymentSendScreen(state: .masked).toolbar(.hidden, for: .navigationBar) }
                 }
                 Section("디자인 시스템") {
                     NavigationLink("컴포넌트 갤러리") { ComponentGalleryView() }
