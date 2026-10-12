@@ -36,6 +36,9 @@ struct WorkCalendarDayCell: View {
     let mark: WorkCalendarMark?
     let label: String
     let action: () -> Void
+    /// 6p 빈 상태 전용(기본 꺼짐): 날짜 글자를 옅게, 예정 근무 날엔 연파랑 빈 원 점
+    var isQuiet = false
+    var showsPlannedDot = false
     @ScaledMetric private var disc = WorkCalendarMetrics.todayDisc
 
     var body: some View {
@@ -66,11 +69,18 @@ struct WorkCalendarDayCell: View {
             // 목업 9px 600 → caption2(11, 가장 작은 토큰)
             Text("휴무").pumText(.caption2).foregroundStyle(PumColor.textTertiary).lineLimit(1)
         case nil:
-            Color.clear.frame(width: WorkCalendarMetrics.dot, height: WorkCalendarMetrics.dot)
+            if showsPlannedDot {
+                Circle().strokeBorder(PumTokens.ColorToken.blue300, lineWidth: WorkCalendarMetrics.hollowLine)
+                    .frame(width: WorkCalendarMetrics.dot, height: WorkCalendarMetrics.dot)
+                    .accessibilityHidden(true)
+            } else {
+                Color.clear.frame(width: WorkCalendarMetrics.dot, height: WorkCalendarMetrics.dot)
+            }
         }
     }
 
     private var numberColor: Color {
+        if isQuiet { return PumColor.textDisabled }
         if isToday { return .white }
         if mark == .dayOff { return PumColor.textTertiary }
         return isSunday ? PumColor.statusDanger : PumColor.textPrimary
