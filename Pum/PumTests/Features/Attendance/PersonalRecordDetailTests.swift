@@ -54,4 +54,31 @@ struct PersonalRecordDetailTests {
         let third = x.beginSave()
         #expect(third)
     }
+
+    @Test func 시트에서_고른_같은_값이면_서버_값_유지() {
+        let a = s.applying(picked: 17 * 60 + 2, for: .start)
+        let b = s.applying(picked: 22 * 60 + 31, for: .end)
+        #expect(a == s)
+        #expect(b == s)
+        #expect(a.payText == "59,800원")
+    }
+
+    @Test func 시트에서_고른_값이_바뀌면_옛_값_숨김() {
+        let a = s.applying(picked: 17 * 60 + 10, for: .start)
+        #expect(a.startText == "17:10")
+        #expect(a.endText == "22:31")
+        #expect(a.recognizedText == nil)
+        #expect(a.payText == nil)
+        let b = s.applying(picked: 22 * 60 + 45, for: .end)
+        #expect(b.endText == "22:45")
+        #expect(b.payText == nil)
+    }
+
+    @Test func 시트에서_고른_값_하루_경계() {
+        #expect(s.applying(picked: -5, for: .start).startMinute == 0)
+        #expect(s.applying(picked: 24 * 60, for: .end).endMinute == 1439)
+        #expect(s.applying(picked: 0, for: .end).endText == "00:00")
+        #expect(PersonalRecordDetailState.pickerTitle(.start) == "출근")
+        #expect(PersonalRecordDetailState.pickerTitle(.end) == "퇴근")
+    }
 }

@@ -74,6 +74,22 @@ struct PersonalTermsState: Equatable {
         return Int(String(whole.filter { $0.isASCII && $0.isNumber }.prefix(maxAmountDigits))) ?? 0
     }
 
+    /// C13 시트 설정 — 근무 시간(시작 → 끝, 원문 17:00 – 22:00)이라 30분 간격
+    static let pickerIntervalMinutes = 30
+    static let pickerTitle = "근무 시간"
+    /// 시트 휴게 알약과 같은 값(없음 · 30분 · 1시간)
+    static let breakChoices = [0, 30, 60]
+
+    /// C13 시트에서 고른 값 반영(순수). 시각은 하루 안으로 붙이고(끝이 시작보다 이르면 다음 날로 넘어간 것), 휴게는 알약 값만 받는다.
+    /// 값이 바뀌면 basis가 달라져 옛 엔진 예상은 `estimateText`에서 숨는다.
+    func applying(pickedStart start: Int, end: Int, breakMinutes pickedBreak: Int) -> PersonalTermsState {
+        var s = self
+        s.startMinute = min(max(start, 0), 24 * 60 - 1)
+        s.endMinute = min(max(end, 0), 24 * 60 - 1)
+        if Self.breakChoices.contains(pickedBreak) { s.breakMinutes = pickedBreak }
+        return s
+    }
+
     func isSelected(_ day: Int) -> Bool { days.contains(day) }
 
     mutating func toggleDay(_ day: Int) {
