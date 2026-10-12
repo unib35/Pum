@@ -24,17 +24,21 @@ struct OwnerHomeView: View {
         ScrollView {
             VStack(spacing: PumTokens.Space.s12) {
                 header
-                PumLoadingContainer(isLoading: isLoading) {
-                    VStack(spacing: PumTokens.Space.s12) {
+                if isLoading {
+                    // M32 — 0.5초 안에 오면 스켈레톤 없이 본문. 본문은 컨테이너에 넣지 않는다(넣으면 1aq 행 높이가 달라짐)
+                    PumLoadingContainer(isLoading: true) { EmptyView() } placeholder: { OwnerHomeLoadingBody() }
+                        .transition(.opacity)
+                } else {
+                    Group {
                         titleBlock
                         decisionCard
                         workingCard
                         payrollCard
                     }
-                } placeholder: {
-                    OwnerHomeLoadingBody()
+                    .transition(.opacity)
                 }
             }
+            .animation(PumMotion.fast, value: isLoading)
             .padding(.horizontal, PumTokens.Size.screenPad)
             .padding(.bottom, PumTokens.Space.s24)
         }
