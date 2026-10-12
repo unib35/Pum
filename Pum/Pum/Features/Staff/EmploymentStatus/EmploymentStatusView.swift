@@ -51,7 +51,7 @@ struct EmploymentStatusView: View {
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
                 .padding(.vertical, PumTokens.Space.s8)
-                .disabled(locked)
+                .allowsHitTesting(!locked) // 처리 중 · 성공 뒤엔 입력만 막고, 처리 중 모양은 버튼에만
             }
             .scrollBounceBehavior(.basedOnSize)
         }
