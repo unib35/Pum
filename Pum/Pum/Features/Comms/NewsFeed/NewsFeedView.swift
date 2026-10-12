@@ -302,13 +302,33 @@ private struct InviteCard: View {
                 PumButton(title: "거절", kind: .outline, size: .small, isLoading: action == .decline, action: onDecline).disabled(action != nil)
             }
         } else {
-            HStack(spacing: PumTokens.Space.s8) { // 원문 비율 약 1 : 1.5
+            InviteButtonRow(spacing: PumTokens.Space.s8) { // 원문 비율 약 2 : 3
                 PumButton(title: "거절", kind: .outline, size: .small, isLoading: action == .decline, action: onDecline)
-                    .disabled(action != nil).layoutPriority(2)
+                    .disabled(action != nil)
                 PumButton(title: "확인하기", size: .small, isLoading: action == .open, action: onOpen)
-                    .disabled(action != nil).layoutPriority(3)
+                    .disabled(action != nil)
             }
         }
+    }
+}
+
+/// 버튼 두 개를 받은 폭 그대로 2 : 3으로 나눈다(우선순위로 다투면 한쪽이 찌그러짐)
+private struct InviteButtonRow: Layout {
+    var spacing: CGFloat
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        let width = proposal.width ?? 0
+        let height = subviews.map { $0.sizeThatFits(ProposedViewSize(width: width / 2, height: nil)).height }.max() ?? 0
+        return CGSize(width: width, height: height)
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        guard subviews.count == 2 else { return }
+        let usable = max(bounds.width - spacing, 0)
+        let first = usable * 2 / 5
+        subviews[0].place(at: bounds.origin, proposal: ProposedViewSize(width: first, height: bounds.height))
+        subviews[1].place(at: CGPoint(x: bounds.minX + first + spacing, y: bounds.minY),
+                          proposal: ProposedViewSize(width: usable - first, height: bounds.height))
     }
 }
 
