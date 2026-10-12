@@ -225,7 +225,8 @@ struct PayslipIssueView: View {
             .fill(ok ? PumColor.surfaceFill : PumColor.statusAttentionSoft)
             .overlay {
                 if ok {
-                    Image(systemName: "checkmark").font(.caption2.weight(.bold)).foregroundStyle(PumColor.textPrimary)
+                    Image(systemName: "checkmark").font(.system(size: checkSize * 0.45, weight: .semibold)) // 원 크기에 비례(원문 작은 체크)
+                        .foregroundStyle(PumColor.textPrimary)
                 } else {
                     Text("!").pumText(.caption, weight: .bold).foregroundStyle(PumColor.statusAttention)
                 }
