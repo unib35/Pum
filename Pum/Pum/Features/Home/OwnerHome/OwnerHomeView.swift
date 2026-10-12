@@ -52,8 +52,7 @@ struct OwnerHomeView: View {
         VStack(alignment: .leading, spacing: PumTokens.Space.s4) {
             Text(state.dateText).pumText(.footnote, weight: .medium).foregroundStyle(PumColor.textSecondary)
             // 목업 26px → title1(28): 24와 28이 같은 거리, 화면 제목이라 큰 쪽
-            (Text("처리할 일 ").foregroundStyle(PumColor.textPrimary)
-                + Text("\(state.attentionCount)").foregroundStyle(PumColor.statusAttention))
+            Text("\(Text("처리할 일 ").foregroundStyle(PumColor.textPrimary))\(Text("\(state.attentionCount)").foregroundStyle(PumColor.statusAttention))")
                 .pumText(.title1)
                 .accessibilityLabel(Text("처리할 일 \(state.attentionCount)건"))
                 .accessibilityAddTraits(.isHeader)
@@ -237,7 +236,7 @@ private struct OwnerPersonRow<Trailing: View>: View {
     private var secondLine: Text {
         let base = Text(detail).foregroundColor(PumColor.textSecondary)
         guard let overdueText else { return base }
-        return base + Text(" · \(overdueText)").fontWeight(.semibold).foregroundColor(PumColor.statusAttention)
+        return Text("\(base)\(Text(" · \(overdueText)").fontWeight(.semibold).foregroundColor(PumColor.statusAttention))")
     }
 }
 

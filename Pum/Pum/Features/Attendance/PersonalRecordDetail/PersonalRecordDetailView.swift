@@ -228,10 +228,7 @@ struct PersonalRecordDetailView: View {
         rowLayout {
             rowLabel("시급")
         } value: {
-            (Text(state.wageText).font(PumFont.font(size: PumTokens.FontToken.headline.size, weight: .semibold, relativeTo: .headline))
-                .foregroundStyle(PumColor.textPrimary)
-                + Text(" · 내 조건").font(PumFont.font(size: PumTokens.FontToken.caption.size, weight: .regular, relativeTo: .caption))
-                .foregroundStyle(PumColor.textTertiary))
+            Text("\(Text(state.wageText).font(PumFont.font(size: PumTokens.FontToken.headline.size, weight: .semibold, relativeTo: .headline)).foregroundStyle(PumColor.textPrimary))\(Text(" · 내 조건").font(PumFont.font(size: PumTokens.FontToken.caption.size, weight: .regular, relativeTo: .caption)).foregroundStyle(PumColor.textTertiary))")
                 .multilineTextAlignment(.trailing)
         }
         .accessibilityElement(children: .ignore)

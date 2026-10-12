@@ -193,12 +193,13 @@ struct ContractListView: View {
     }
 
     private func changeText(_ c: ContractChangeNotice) -> some View {
-        (Text(c.leadText).foregroundStyle(PumColor.textPrimary)
-         + Text(c.oldWageText).strikethrough().foregroundStyle(PumColor.textTertiary)
-         + Text(ContractChangeNotice.arrowText).foregroundStyle(PumColor.textPrimary)
-         + Text(c.newWageText).font(PumFont.font(size: PumTokens.FontToken.footnote.size, weight: .bold, relativeTo: .footnote))
+        let lead = Text(c.leadText).foregroundStyle(PumColor.textPrimary)
+        let oldWage = Text(c.oldWageText).strikethrough().foregroundStyle(PumColor.textTertiary)
+        let arrow = Text(ContractChangeNotice.arrowText).foregroundStyle(PumColor.textPrimary)
+        let newWage = Text(c.newWageText).font(PumFont.font(size: PumTokens.FontToken.footnote.size, weight: .bold, relativeTo: .footnote))
             .foregroundStyle(PumTokens.ColorToken.gray800) // #3A4150 = gray800
-         + Text(ContractChangeNotice.tailText).foregroundStyle(PumColor.textPrimary))
+        let tail = Text(ContractChangeNotice.tailText).foregroundStyle(PumColor.textPrimary)
+        return Text("\(lead)\(oldWage)\(arrow)\(newWage)\(tail)")
             .pumText(.footnote, weight: .regular) // 13px 400
             .frame(maxWidth: .infinity, alignment: .leading)
             .accessibilityElement(children: .ignore)

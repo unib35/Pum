@@ -86,9 +86,7 @@ struct DuplicateBusinessView: View {
 
     /// 따옴표 안 사업장 이름만 굵게(12px 700)
     private var deleteNote: some View {
-        (Text("내가 만든 ")
-         + Text("\"\(state.myName)\"").fontWeight(.bold)
-         + Text("은 직원 \(state.myStaffCount)명 · 기록 없음이라 삭제돼요."))
+        Text("내가 만든 \(Text("\"\(state.myName)\"").fontWeight(.bold))은 직원 \(state.myStaffCount)명 · 기록 없음이라 삭제돼요.")
             .pumText(.caption).foregroundStyle(PumColor.textSecondary)
             .frame(maxWidth: .infinity, alignment: .leading)
     }

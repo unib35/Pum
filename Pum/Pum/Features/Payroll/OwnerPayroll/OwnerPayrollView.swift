@@ -205,8 +205,7 @@ struct OwnerPayrollView: View {
     @ViewBuilder private var facts: some View {
         Text(record.headcountText).pumText(.caption, weight: .regular).foregroundStyle(PumColor.textSecondary)
         Text(record.totalWorkText).pumText(.caption, weight: .regular).foregroundStyle(PumColor.textSecondary)
-        (Text("전월 대비 ").foregroundColor(PumColor.textSecondary)
-         + Text(record.deltaText).fontWeight(.bold).foregroundColor(deltaColor))
+        Text("\(Text("전월 대비 ").foregroundColor(PumColor.textSecondary))\(Text(record.deltaText).fontWeight(.bold).foregroundColor(deltaColor))")
             .pumText(.caption, weight: .regular)
     }
 

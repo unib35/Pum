@@ -273,8 +273,7 @@ struct OwnerManualEntryView: View {
 
     private var previewPay: some View {
         // 서버(엔진) 값 그대로. 13px 700 먹색 + 13px 500 보조색
-        (Text(draft.previewPayText ?? "").fontWeight(.bold).foregroundStyle(PumColor.textPrimary)
-            + Text(draft.previewNoteText ?? "").fontWeight(.medium).foregroundStyle(PumColor.textSecondary))
+        Text("\(Text(draft.previewPayText ?? "").fontWeight(.bold).foregroundStyle(PumColor.textPrimary))\(Text(draft.previewNoteText ?? "").fontWeight(.medium).foregroundStyle(PumColor.textSecondary))")
             .pumText(.footnote)
             .multilineTextAlignment(.trailing)
     }
@@ -284,7 +283,7 @@ struct OwnerManualEntryView: View {
     private var reasonSection: some View {
         let all = OwnerManualEntryReason.allCases
         return VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
-            (Text("사유") + Text(" *").foregroundStyle(PumColor.statusDanger).fontWeight(.bold))
+            Text("사유\(Text(" *").foregroundStyle(PumColor.statusDanger).fontWeight(.bold))")
                 .pumText(.footnote, weight: .semibold).foregroundStyle(PumColor.textSecondary)
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel(Text("사유, 필수"))
@@ -322,9 +321,7 @@ struct OwnerManualEntryView: View {
     // MARK: 5. 안내
 
     private var notice: some View {
-        (Text(OwnerManualEntryDraft.notice.lead)
-            + Text(OwnerManualEntryDraft.notice.strong).fontWeight(.bold)
-            + Text(OwnerManualEntryDraft.notice.tail))
+        Text("\(Text(OwnerManualEntryDraft.notice.lead))\(Text(OwnerManualEntryDraft.notice.strong).fontWeight(.bold))\(Text(OwnerManualEntryDraft.notice.tail))")
             .pumText(.caption).foregroundStyle(PumColor.textSecondary)
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, PumTokens.Space.s4)

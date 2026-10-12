@@ -122,9 +122,7 @@ struct MissingClockOutView: View {
     }
 
     private var notice: some View {
-        (Text(state.noticeLead)
-            + Text(state.noticeStrong).fontWeight(.bold)
-            + Text(MissingClockOutState.noticeTail))
+        Text("\(Text(state.noticeLead))\(Text(state.noticeStrong).fontWeight(.bold))\(Text(MissingClockOutState.noticeTail))")
             .pumText(.caption)
             .foregroundStyle(PumColor.textSecondary)
             .frame(maxWidth: .infinity, alignment: .leading)

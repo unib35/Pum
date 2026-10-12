@@ -199,9 +199,7 @@ struct AttendancePolicyView: View {
 
     // 5. 안내 상자
     private var note: some View {
-        (Text(record.noteLead).foregroundStyle(PumColor.textSecondary)
-            + Text(record.noteStrong).fontWeight(.bold).foregroundStyle(noteStrongColor)
-            + Text(record.noteTail).foregroundStyle(PumColor.textSecondary))
+        Text("\(Text(record.noteLead).foregroundStyle(PumColor.textSecondary))\(Text(record.noteStrong).fontWeight(.bold).foregroundStyle(noteStrongColor))\(Text(record.noteTail).foregroundStyle(PumColor.textSecondary))")
             .pumText(.caption)
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(PumTokens.Space.s14)

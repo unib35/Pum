@@ -61,8 +61,7 @@ struct ClockOutDoneView: View {
     /// 「오늘 기본급」 + 회색 작은 「 · 시급 …」 — PumRow는 제목이 문자열뿐이라 같은 여백으로 화면 전용 행을 둔다
     private var payRow: some View {
         HStack(spacing: PumTokens.Space.s12) {
-            (Text("오늘 기본급").foregroundStyle(PumColor.textSecondary)
-                + Text(record.wageText).foregroundStyle(PumColor.textDisabled))
+            Text("\(Text("오늘 기본급").foregroundStyle(PumColor.textSecondary))\(Text(record.wageText).foregroundStyle(PumColor.textDisabled))")
                 .pumText(.body, weight: .regular)
                 .frame(maxWidth: .infinity, alignment: .leading)
             bold(record.basePayText, PumColor.statusDone) // 확정 금액 = 초록

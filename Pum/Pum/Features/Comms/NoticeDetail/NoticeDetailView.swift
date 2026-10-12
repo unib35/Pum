@@ -96,9 +96,9 @@ struct NoticeDetailView: View {
     /// 본문은 한 Text로 이어 붙인다 — 줄 사이 간격이 날짜 줄에도 똑같이 들어가고, 문단 사이는 원문처럼 빈 줄 하나
     private var bodyText: some View {
         let paragraphs = state.paragraphs.compactMap { p in
-            p.lines.map(lineText).reduce(nil as Text?) { acc, t in acc.map { $0 + Text("\n") + t } ?? t }
+            p.lines.map(lineText).reduce(nil as Text?) { acc, t in acc.map { Text("\($0)\n\(t)") } ?? t }
         }
-        let joined = paragraphs.reduce(nil as Text?) { acc, t in acc.map { $0 + Text("\n\n") + t } ?? t } ?? Text("")
+        let joined = paragraphs.reduce(nil as Text?) { acc, t in acc.map { Text("\($0)\n\n\(t)") } ?? t } ?? Text("")
         return joined
             .pumText(.body, weight: .regular) // 15px
             .lineSpacing(bodyLineSpacing)
@@ -110,7 +110,7 @@ struct NoticeDetailView: View {
 
     private func lineText(_ line: NoticeBodyLine) -> Text {
         let strong = line.strong.map { Text($0).fontWeight(.bold) } ?? Text("")
-        return strong + Text(line.text)
+        return Text("\(strong)\(Text(line.text))")
     }
 
     private var readStatus: some View {

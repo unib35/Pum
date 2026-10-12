@@ -276,8 +276,7 @@ private struct NoticeRow: View {
         let base = "\(notice.author) · \(notice.date)"
         return Group {
             if let link = notice.linkLabel {
-                Text(base + " · ").foregroundStyle(PumColor.textSecondary)
-                    + Text(link).fontWeight(.semibold).foregroundStyle(PumColor.accent)
+                Text("\(Text(base + " · ").foregroundStyle(PumColor.textSecondary))\(Text(link).fontWeight(.semibold).foregroundStyle(PumColor.accent))")
             } else {
                 Text(base + (notice.isRead ? " · 읽음" : "")).foregroundStyle(PumColor.textSecondary)
             }

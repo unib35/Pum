@@ -49,8 +49,7 @@ struct LaborSimulatorResultView: View {
                         afterColumn
                     }
                 }
-                (Text(state.deltaAmountText).foregroundStyle(PumColor.textPrimary)
-                 + Text(state.deltaPercentSuffix).foregroundStyle(PumColor.textSecondary))
+                Text("\(Text(state.deltaAmountText).foregroundStyle(PumColor.textPrimary))\(Text(state.deltaPercentSuffix).foregroundStyle(PumColor.textSecondary))")
                     .pumText(.footnote)
             }
             .padding(PumTokens.Space.s16)

@@ -148,9 +148,7 @@ struct StaffDetailView: View {
                 if state.hasEmergency, let phone = state.emergencyPhone {
                     keyValue("비상 연락처", spoken: state.emergencyAccessibilityText, isLast: !state.hasAccount,
                              action: onCallEmergency, hint: "전화 걸기") {
-                        (Text(phone).font(run(.body, .semibold)).foregroundColor(PumColor.accent)
-                         + Text(state.emergencyRelation.map { " \u{00B7} \($0)" } ?? "")
-                            .font(run(.caption, .regular)).foregroundColor(PumColor.textSecondary))
+                        Text("\(Text(phone).font(run(.body, .semibold)).foregroundColor(PumColor.accent))\(Text(state.emergencyRelation.map { " \u{00B7} \($0)" } ?? "").font(run(.caption, .regular)).foregroundColor(PumColor.textSecondary))")
                             .pumText(.body, weight: .semibold)
                     }
                 }
@@ -241,8 +239,7 @@ struct StaffDetailView: View {
     private func documentRow(_ d: StaffDocument) -> some View {
         let missing = d.tone == .missing
         let text = VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
-            (Text(d.title).font(run(.body, .semibold)).foregroundColor(missing ? PumColor.textSecondary : PumColor.textPrimary)
-             + Text(d.qualifier.map { " \($0)" } ?? "").font(run(.caption, .regular)).foregroundColor(PumColor.textSecondary))
+            Text("\(Text(d.title).font(run(.body, .semibold)).foregroundColor(missing ? PumColor.textSecondary : PumColor.textPrimary))\(Text(d.qualifier.map { " \($0)" } ?? "").font(run(.caption, .regular)).foregroundColor(PumColor.textSecondary))")
                 .pumText(.body, weight: .semibold)
             Text(d.detail)
                 .pumText(.caption, weight: d.tone == .attention ? .semibold : .regular)

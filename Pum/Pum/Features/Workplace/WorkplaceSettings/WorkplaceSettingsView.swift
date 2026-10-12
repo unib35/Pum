@@ -298,7 +298,7 @@ private struct AdminRow: View {
         let me = Text(" \(WorkplaceSettingsState.meMark)")
             .font(PumFont.font(size: PumTokens.FontToken.caption.size, weight: .medium, relativeTo: .caption))
             .foregroundStyle(PumColor.textSecondary)
-        return Group { if admin.isMe { name + me } else { name } }
+        return Group { if admin.isMe { Text("\(name)\(me)") } else { name } }
             .tracking(PumTokens.Tracking.body)
             .multilineTextAlignment(.leading)
     }

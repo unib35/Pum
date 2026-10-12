@@ -175,9 +175,7 @@ struct NoticeReadStatusView: View {
                 HStack(spacing: PumTokens.Space.s8) {
                     VStack(alignment: .leading, spacing: PumTokens.Space.s4) {
                         Text("연결된 근무 모집").pumText(.footnote, weight: .bold).foregroundStyle(PumColor.textSecondary)
-                        (Text(r.prefixText).foregroundStyle(PumColor.textPrimary)
-                            + Text(r.confirmedText).foregroundStyle(PumColor.statusDone)
-                            + Text(r.suffixText).foregroundStyle(PumColor.textPrimary))
+                        Text("\(Text(r.prefixText).foregroundStyle(PumColor.textPrimary))\(Text(r.confirmedText).foregroundStyle(PumColor.statusDone))\(Text(r.suffixText).foregroundStyle(PumColor.textPrimary))")
                             .pumText(.callout)
                             .fixedSize(horizontal: false, vertical: true)
                     }
