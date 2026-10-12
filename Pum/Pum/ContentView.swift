@@ -126,6 +126,7 @@ struct ContentView: View {
             case "15c": InviteAfterSignupView(state: .sample)
             case "21l": PayrollCalculatingView(state: .sample)
             case "15g": InvitePhoneMismatchView(state: .sample)
+            case "15d": NewsFeedView(state: .withInvite)
             case "gallery": ComponentGalleryView()
             default: DevMenu()
             }
@@ -249,6 +250,7 @@ private struct DevMenu: View {
                     NavigationLink("15c 가입 직후 받은 초대") { InviteAfterSignupView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("21l 급여 계산 중") { PayrollCalculatingView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("15g 초대 번호가 다를 때") { InvitePhoneMismatchView(state: .sample).toolbar(.hidden, for: .navigationBar) }
+                    NavigationLink("15d 소식 · 초대") { NewsFeedView(state: .withInvite).toolbar(.hidden, for: .navigationBar) }
                 }
                 Section("디자인 시스템") {
                     NavigationLink("컴포넌트 갤러리") { ComponentGalleryView() }

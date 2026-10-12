@@ -17,7 +17,7 @@ enum NewsFilter: CaseIterable, Hashable {
 }
 
 /// 결정이 필요한 요청. 종류마다 동작이 다르다(추가 근무 = 수락/거절, 계약 서명 = 열기).
-enum NewsRequest: Identifiable, Hashable {
+nonisolated enum NewsRequest: Identifiable, Hashable {
     case extraShift(ExtraShiftRequest)
     case contractSign(ContractSignRequest)
 
@@ -29,7 +29,7 @@ enum NewsRequest: Identifiable, Hashable {
     }
 }
 
-struct ExtraShiftRequest: Identifiable, Hashable {
+nonisolated struct ExtraShiftRequest: Identifiable, Hashable {
     let id: String
     /// 「1시간 전」
     let ago: String
@@ -50,7 +50,7 @@ struct ExtraShiftRequest: Identifiable, Hashable {
     }
 }
 
-struct ContractSignRequest: Identifiable, Hashable {
+nonisolated struct ContractSignRequest: Identifiable, Hashable {
     let id: String
     let ago: String
     /// 「B카페 서면점 · 시급 변경 계약서」
@@ -66,7 +66,7 @@ struct ContractSignRequest: Identifiable, Hashable {
     }
 }
 
-struct NewsNotice: Identifiable, Hashable {
+nonisolated struct NewsNotice: Identifiable, Hashable {
     let id: String
     let title: String
     /// 본문(두 줄까지 표시). 읽은 공지는 본문 없이 제목 + 메타만(원문)
@@ -78,27 +78,62 @@ struct NewsNotice: Identifiable, Hashable {
     let linkLabel: String?
 }
 
-struct NewsAlert: Identifiable, Hashable {
+nonisolated struct NewsAlert: Identifiable, Hashable {
     let id: String
     let message: String
     /// 「오늘 09:40」 · 「9월 10일」 — 서버 문구
     let time: String
     /// 원문: 오래된(이미 본) 알림은 회색 글자
     let isMuted: Bool
+    /// 15d 원문: 제목 아래 사업장 이름(3a는 없음 = nil)
+    var source: String? = nil
 }
 
-struct NewsFeedState: Hashable {
+/// UI-IOS-15d · REQ-002 · REQ-013 — 가입 직후 받은 직원 초대. 모든 값은 서버 문구.
+nonisolated struct NewsInvite: Identifiable, Hashable, Sendable {
+    let id: String
+    /// 「방금」
+    let ago: String
+    /// 「종민김밥 본점」
+    let workplaceName: String
+    /// 타일 글자 「종」
+    let workplaceInitial: String
+    /// 「직원」
+    let role: String
+    /// 「박민수」
+    let ownerName: String
+    let isVerified: Bool
+    /// 「10월 14일까지」 — 서버 문구
+    let validUntil: String
+
+    /// 「종민김밥 본점 · 직원」
+    var title: String { "\(workplaceName) · \(role)" }
+    /// 「대표 박민수 · 인증됨 · 10월 14일까지」
+    var detail: String {
+        var parts = ["대표 \(ownerName)"]
+        if isVerified { parts.append("인증됨") }
+        parts.append(validUntil)
+        return parts.joined(separator: " · ")
+    }
+}
+
+nonisolated struct NewsFeedState: Hashable {
     var workplaceName: String
     var workplaceInitial: String
+    /// 사업장 타일 색 번호(PumAvatarPalette.stores). 0 = 블루(3a)
+    var workplaceTileIndex: Int = 0
     var requests: [NewsRequest]
     var notices: [NewsNotice]
     var alerts: [NewsAlert]
+    /// 15d: 받은 초대(서버 값). nil이면 3a 그대로
+    var invite: NewsInvite? = nil
     /// 탭 바 「소식」 배지(처리할 일 개수, 서버 값)
     var tabBadge: Int
 
     var unreadNoticeCount: Int { notices.filter { !$0.isRead }.count }
-    var requestCount: Int { requests.count }
-    var isEmpty: Bool { requests.isEmpty && notices.isEmpty && alerts.isEmpty }
+    /// 초대도 결정이 필요한 요청 하나로 센다(15d 「요청 1」)
+    var requestCount: Int { requests.count + (invite == nil ? 0 : 1) }
+    var isEmpty: Bool { requests.isEmpty && notices.isEmpty && alerts.isEmpty && invite == nil }
 
     /// 실제 진입용 빈 값 — 디자인에 빈 상태가 없어 섹션을 모두 숨기기만 한다.
     static func empty(workplaceName: String, workplaceInitial: String) -> NewsFeedState {
@@ -130,6 +165,22 @@ struct NewsFeedState: Hashable {
 }
 
 extension NewsFeedState {
+    /// 원문 15d 값 — 현재 사업장 B카페 서면점, 초대 1건
+    static let withInvite = NewsFeedState(
+        workplaceName: "B카페 서면점", workplaceInitial: "B", workplaceTileIndex: 1,
+        requests: [],
+        notices: [
+            .init(id: "n1", title: "10월 위생교육 안내", body: nil,
+                  author: "B카페 서면점", date: "9월 28일", isRead: true, linkLabel: nil),
+        ],
+        alerts: [
+            .init(id: "a1", message: "9월 급여명세서가 도착했어요", time: "10월 10일", isMuted: false, source: "B카페 서면점"),
+            .init(id: "a2", message: "사업주가 9월 급여를 지급 완료로 처리했어요", time: "10월 10일", isMuted: false, source: "B카페 서면점"),
+        ],
+        invite: .init(id: "i1", ago: "방금", workplaceName: "종민김밥 본점", workplaceInitial: "종", role: "직원",
+                      ownerName: "박민수", isVerified: true, validUntil: "10월 14일까지"),
+        tabBadge: 1) // 원문에 탭 바가 없어 정한 값: 처리할 일 = 초대 1건
+
     /// 필터에 따라 이 섹션을 보여 줄지
     func shows(_ section: NewsFilter, under filter: NewsFilter) -> Bool {
         filter == .all || filter == section
