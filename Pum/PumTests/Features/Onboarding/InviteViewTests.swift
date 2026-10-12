@@ -15,19 +15,34 @@ struct InviteViewTests {
     }
 
     @Test func 인증됨은_경고_없이_표시들이_보인다() {
-        #expect(s.warningText == nil)
         #expect(s.ownerTag == "본인확인")
         #expect(s.operatingTag == "영업 중")
         #expect(s.ownerAccessibility == "대표자, 박민수, 본인확인")
         #expect(s.businessAccessibility == "사업자등록, 123-45-*****, 영업 중")
     }
 
-    @Test func 미인증은_경고만_보이고_인증_표시는_숨는다() {
+    @Test func 미인증은_21g_원문_값과_문구() {
         let u = InviteViewState.unverifiedSample
-        #expect(u.warningText == "아직 인증되지 않은 사업장이에요. 개인정보 제출과 계약 서명은 인증 후에 진행돼요")
+        #expect(!u.isVerified)
+        #expect(u.titleText == "종민김밥 율하점에서\n직원으로 초대했어요")
+        #expect(u.subtitleText == "음식점 · 김해시 율하로 40")
+        #expect(u.initial == "율")
+        #expect(u.colorIndex == 2)
+        #expect(InviteViewState.unverifiedBadge == "인증 전")
+        #expect(u.unverifiedOwnerValue == "확인 전")
+        #expect(u.unverifiedBusinessValue == "확인 전")
+        #expect(u.unverifiedInviterValue == "박민수")
+        #expect(InviteViewState.unverifiedNoticeTitle == "아직 인증되지 않은 사업장이에요")
+        #expect(InviteViewState.unverifiedNoticeDetail == "개인정보 제출과 계약 서명은 인증 후에 진행돼요")
+        #expect(InviteViewState.unverifiedAllowedNow == "지금은 초대 수락 · 출퇴근 기록")
+        #expect(InviteViewState.unverifiedAfterVerify == "인증되면 계약 서명 알림")
+    }
+
+    @Test func 미인증은_인증_표시가_숨고_음성_문구가_맞다() {
+        let u = InviteViewState.unverifiedSample
         #expect(u.ownerTag == nil)
         #expect(u.operatingTag == nil)
-        #expect(u.ownerAccessibility == "대표자, 박민수")
+        #expect(u.unverifiedCardAccessibility == "종민김밥 율하점, 인증 전")
     }
 
     @Test func 사업장_색_번호_방어() {
