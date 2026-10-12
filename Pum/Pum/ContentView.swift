@@ -107,6 +107,7 @@ struct ContentView: View {
             case "10v": LocationCheckInView(state: .sample)
             case "10c": ContractChangeView(state: .sample)
             case "10b": ContractPreviewView(state: .sample)
+            case "10d": PayslipIssueView(state: .sample)
             case "gallery": ComponentGalleryView()
             default: DevMenu()
             }
@@ -211,6 +212,7 @@ private struct DevMenu: View {
                     NavigationLink("10v 위치만 간편 출근") { LocationCheckInView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("10c 조건 변경") { ContractChangeView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("10b 계약서 미리보기") { ContractPreviewView(state: .sample).toolbar(.hidden, for: .navigationBar) }
+                    NavigationLink("10d 급여명세서 발행") { PayslipIssueView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                 }
                 Section("디자인 시스템") {
                     NavigationLink("컴포넌트 갤러리") { ComponentGalleryView() }
