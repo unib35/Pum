@@ -7,6 +7,8 @@ struct OffboardingView: View {
     var onBack: () -> Void
     /// 다음 할 일(문구는 서버 값)
     var onNextStep: () -> Void
+    /// 「약정 지급 추가」 행 — 입력 화면 원문 없음, 클로저만
+    var onAddAgreedPay: () -> Void
 
     /// 단계 원 지름 — 원문 약 24
     @ScaledMetric(relativeTo: .body) private var circleSize: CGFloat = 24
@@ -14,10 +16,12 @@ struct OffboardingView: View {
 
     init(state: OffboardingState = .sample,
          onBack: @escaping () -> Void = {},
-         onNextStep: @escaping () -> Void = {}) {
+         onNextStep: @escaping () -> Void = {},
+         onAddAgreedPay: @escaping () -> Void = {}) {
         self.state = state
         self.onBack = onBack
         self.onNextStep = onNextStep
+        self.onAddAgreedPay = onAddAgreedPay
     }
 
     var body: some View {
@@ -108,6 +112,10 @@ struct OffboardingView: View {
                 if i > 0 { divider }
                 payRow(item)
             }
+            if let add = state.addAgreedPay {
+                divider
+                addRow(add)
+            }
         }
     }
 
@@ -116,16 +124,51 @@ struct OffboardingView: View {
             Text(item.title).pumText(.callout, weight: .regular).foregroundStyle(PumTokens.ColorToken.gray800)
             Text(item.detail).pumText(.caption).foregroundStyle(PumColor.textSecondary)
         }
-        let amount = Text(item.amountText).pumText(.callout, weight: .semibold).foregroundStyle(PumColor.textPrimary)
         return ViewThatFits(in: .horizontal) {
-            HStack(spacing: PumTokens.Space.s12) { texts; Spacer(minLength: 0); amount.fixedSize() }
-            VStack(alignment: .leading, spacing: PumTokens.Space.s4) { texts; amount } // 넘치면 아래로
+            HStack(spacing: PumTokens.Space.s12) { texts; Spacer(minLength: 0); payValue(item.value).fixedSize() }
+            VStack(alignment: .leading, spacing: PumTokens.Space.s4) { texts; payValue(item.value) } // 넘치면 아래로
         }
         .padding(.vertical, PumTokens.Size.rowPadY)
         .padding(.horizontal, PumTokens.Size.rowPadX)
         .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin, alignment: .leading)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(item.spoken))
+    }
+
+    /// 오른쪽 값: 금액(굵은 먹색) · 상태 배지(회색) · 상태 글자(회색, 금액 아님)
+    @ViewBuilder private func payValue(_ value: OffboardingPayValue) -> some View {
+        switch value {
+        case .won(let t):
+            Text(t).pumText(.callout, weight: .semibold).foregroundStyle(PumColor.textPrimary)
+        case .badge(let t):
+            PumBadge(text: t, kind: .waiting)
+        case .note(let t):
+            Text(t).pumText(.callout, weight: .semibold).foregroundStyle(PumColor.textSecondary)
+        }
+    }
+
+    /// 선택 행 「약정 지급 추가 ›」 — 서버가 줄 때만
+    private func addRow(_ add: OffboardingAddRow) -> some View {
+        Button(action: onAddAgreedPay) {
+            HStack(spacing: PumTokens.Space.s12) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
+                    Text(add.title).pumText(.callout, weight: .semibold).foregroundStyle(PumColor.textPrimary)
+                    Text(add.detail).pumText(.caption).foregroundStyle(PumColor.textSecondary)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                Image(systemName: "chevron.right").font(.footnote.weight(.semibold))
+                    .foregroundStyle(PumTokens.ColorToken.gray300)
+                    .accessibilityHidden(true)
+            }
+            .padding(.vertical, PumTokens.Size.rowPadY)
+            .padding(.horizontal, PumTokens.Size.rowPadX)
+            .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin, alignment: .leading)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(Text(add.spoken))
+        .accessibilityAddTraits(.isButton)
     }
 
     // MARK: 처리 순서
@@ -176,3 +219,7 @@ struct OffboardingView: View {
 
 #Preview("10n 원문") { OffboardingView(state: .sample) }
 #Preview("10n · 큰 글자") { OffboardingView(state: .sample).dynamicTypeSize(.accessibility3) }
+#Preview("10r 대상 아님") { OffboardingView(state: .notEligible) }
+#Preview("10s 퇴직연금 DC") { OffboardingView(state: .dcPension) }
+#Preview("10r · 큰 글자") { OffboardingView(state: .notEligible).dynamicTypeSize(.accessibility3) }
+#Preview("10s · 큰 글자") { OffboardingView(state: .dcPension).dynamicTypeSize(.accessibility3) }
