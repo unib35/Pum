@@ -63,7 +63,7 @@ struct InviteOfferView: View {
 
     /// 인증된 사업장만 — 미인증이면 숨김
     @ViewBuilder private var badge: some View {
-        if state.isVerified { PumBadge(text: "\u{2713} 인증된 사업장", kind: .done) }
+        if state.isVerified { PumBadge(text: "\u{2713} 인증된 사업장", kind: .done).accessibilityLabel(Text("인증된 사업장")) }
     }
 
     /// 2열 정보 4칸 — 넘치면 1열
