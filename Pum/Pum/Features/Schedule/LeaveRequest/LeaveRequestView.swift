@@ -159,6 +159,9 @@ struct LeaveRequestView: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        // 서버가 고를 수 없다고 준 방식 · 보내는 중엔 누를 수 없고 흐리게(8b 잠긴 알약과 같은 값)
+        .disabled(!option.isSelectable || isSending)
+        .opacity(option.isSelectable ? 1 : 0.5)
         .accessibilityElement(children: .ignore)
         // 「선택됨」이 라벨에 있어 isSelected 특성은 붙이지 않는다(두 번 읽힘)
         .accessibilityLabel(Text(LeaveRequestState.optionAccessibility(option, isOn: isOn)))
@@ -179,11 +182,7 @@ struct LeaveRequestView: View {
             .padding(.vertical, PumTokens.Space.s10)
             .frame(minHeight: PumTokens.Size.tapMin)
         }
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(Text(LeaveRequestState.substituteAccessibility(isOn: draft.withSubstitute)))
-        .accessibilityValue(Text(state.colleaguesText))
-        .accessibilityAddTraits(.isButton)
-        .accessibilityAction(.default) { if !isSending { draft.withSubstitute.toggle() } }
+        // 시스템 Toggle이 스위치로 읽힌다(제목 · 동료 수 · 켬/끔)
     }
 
     private var reasonField: some View {
