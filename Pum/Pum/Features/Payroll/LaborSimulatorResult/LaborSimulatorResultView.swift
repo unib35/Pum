@@ -37,10 +37,11 @@ struct LaborSimulatorResultView: View {
             VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
                 Text(state.compareTitle).pumText(.footnote, weight: .medium).foregroundStyle(PumColor.textSecondary)
                 ViewThatFits(in: .horizontal) {
+                    // 원문: 두 열 같은 폭 · 화살표는 카드 가운데
                     HStack(alignment: .bottom, spacing: PumTokens.Space.s12) {
-                        currentColumn
+                        currentColumn.frame(maxWidth: .infinity, alignment: .leading)
                         arrow(systemName: "arrow.right").padding(.bottom, PumTokens.Space.s4)
-                        afterColumn
+                        afterColumn.frame(maxWidth: .infinity, alignment: .leading)
                     }
                     VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
                         currentColumn
