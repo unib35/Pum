@@ -59,7 +59,6 @@ struct CheckInMethodView: View {
     private var footer: some View {
         VStack(spacing: PumTokens.Space.s8) {
             PumButton(title: CheckInMethodState.saveTitle, kind: .dark, isLoading: isSaving, action: save)
-                .disabled(!draft.canSave(for: state))
             Text(CheckInMethodState.notice).pumText(.caption).foregroundStyle(PumColor.textTertiary)
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: .infinity)
@@ -256,7 +255,7 @@ struct CheckInMethodView: View {
 
     /// 한 번만 — 누르는 즉시 잠그고, 실패일 때만 푼다
     private func save() {
-        guard draft.canSave(for: state), lock.begin() else { return }
+        guard lock.begin() else { return } // 원문은 저장 버튼이 늘 켜져 있다 — 바뀐 게 없어도 보낼 수 있다
         onSave(draft.policy) { success in lock.finish(success: success) }
     }
 }
