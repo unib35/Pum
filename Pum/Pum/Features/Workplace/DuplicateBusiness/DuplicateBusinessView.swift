@@ -118,7 +118,7 @@ struct DuplicateBusinessView: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 Image(systemName: "chevron.right").font(.footnote.weight(.semibold))
-                    .foregroundStyle(PumColor.textTertiary).accessibilityHidden(true)
+                    .foregroundStyle(PumColor.textDisabled).accessibilityHidden(true) // PumRow 화살표와 같은 색
             }
             .padding(.vertical, PumTokens.Size.rowPadY)
             .padding(.horizontal, PumTokens.Size.rowPadX)
