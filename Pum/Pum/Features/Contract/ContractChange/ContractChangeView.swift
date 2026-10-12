@@ -37,6 +37,7 @@ struct ContractChangeView: View {
 
     private var isSending: Bool { lock.isSending }
     private var impact: ContractChangeImpact? { state.visibleImpact(for: start) }
+    private var canSend: Bool { state.hasChanges && impact != nil }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -62,8 +63,10 @@ struct ContractChangeView: View {
 
     private var footer: some View {
         VStack(spacing: PumTokens.Space.s8) {
-            PumButton(title: ContractChangeState.sendTitle, kind: .primary, isLoading: isSending, action: send)
-                .disabled(!state.hasChanges)
+            PumButton(title: ContractChangeState.sendTitle, kind: .primary, isLoading: isSending,
+                      loadingTitle: "보내는 중", action: send)
+                // 바뀐 조건이 있고, 지금 선택으로 계산한 영향을 본 뒤에만 보낸다(영향이 숨겨진 동안은 잠금)
+                .disabled(!canSend)
             if let notice = impact?.noticeText {
                 Text(notice).pumText(.caption).foregroundStyle(PumColor.textTertiary)
                     .multilineTextAlignment(.center)
@@ -285,7 +288,7 @@ struct ContractChangeView: View {
 
     /// 한 번만 — 누르는 즉시 잠그고, 실패일 때만 푼다
     private func send() {
-        guard state.hasChanges, lock.begin() else { return }
+        guard canSend, lock.begin() else { return }
         onSend { success in lock.finish(success: success) }
     }
 }
