@@ -25,7 +25,6 @@ nonisolated struct PolicyChangeNotice: Equatable, Sendable {
 
 nonisolated struct PoliciesState: Equatable, Sendable {
     static let headerTitle = "약관 및 정책"
-    static let noticeMiddle = "이 "
     static let noticeTail = "부터 바뀌어요"
     static let noticeAction = "변경 내용"
     static let footerLead = "내가 무엇에 언제 동의했는지는 "
@@ -37,7 +36,13 @@ nonisolated struct PoliciesState: Equatable, Sendable {
 
     /// 「서비스 이용약관이 2027.01.01부터 바뀌어요」
     func noticeText(_ n: PolicyChangeNotice) -> String {
-        n.documentName + Self.noticeMiddle + n.effectiveDate + Self.noticeTail
+        n.documentName + Self.noticeMiddle(n.documentName) + n.effectiveDate + Self.noticeTail
+    }
+
+    /// 문서 이름 끝 글자에 받침이 있으면 「이 」, 없으면 「가 」(「…동의가」). 한글이 아니면 「이 」
+    static func noticeMiddle(_ name: String) -> String {
+        guard let last = name.unicodeScalars.last, (0xAC00...0xD7A3).contains(last.value) else { return "이 " }
+        return (last.value - 0xAC00) % 28 == 0 ? "가 " : "이 "
     }
     /// 띠를 한 번에 읽는 문구
     func noticeAccessibility(_ n: PolicyChangeNotice) -> String { "\(noticeText(n)), \(Self.noticeAction)" }

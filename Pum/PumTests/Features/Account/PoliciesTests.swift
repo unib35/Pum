@@ -34,4 +34,10 @@ struct PoliciesTests {
         #expect(PoliciesState.sampleNoNotice.notice == nil)
         #expect(PoliciesState.sampleNoNotice.rows == s.rows)
     }
+
+    @Test func 문서_이름_받침에_따라_이_가() {
+        #expect(PoliciesState.noticeMiddle("서비스 이용약관") == "이 ")
+        #expect(PoliciesState.noticeMiddle("개인정보 수집 · 이용 동의") == "가 ")
+        #expect(PoliciesState.noticeMiddle("Terms") == "이 ")
+    }
 }

@@ -61,7 +61,7 @@ struct PoliciesView: View {
     private func noticeText(_ n: PolicyChangeNotice) -> some View {
         var name = AttributedString(n.documentName)
         name.font = PumFont.font(size: PumTokens.FontToken.footnote.size, weight: .bold, relativeTo: .footnote)
-        var rest = AttributedString(PoliciesState.noticeMiddle + n.effectiveDate + PoliciesState.noticeTail)
+        var rest = AttributedString(PoliciesState.noticeMiddle(n.documentName) + n.effectiveDate + PoliciesState.noticeTail)
         name.foregroundColor = PumColor.accent
         rest.foregroundColor = PumColor.accent
         return Text(name + rest)
