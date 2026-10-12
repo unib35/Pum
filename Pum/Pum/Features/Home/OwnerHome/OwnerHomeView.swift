@@ -16,23 +16,31 @@ struct OwnerHomeView: View {
     var onDecide: (OwnerHomeState.Decision) -> Void = { _ in }
     var onClockOutCheck: (OwnerHomeState.OnDuty) -> Void = { _ in }
     var onOpenOthers: () -> Void = {}
+    /// UI-IOS-21j · M32 — 서버 응답을 기다리는 중(0.5초 넘으면 본문만 스켈레톤)
+    var isLoading = false
     @State private var tab = "home"
 
     var body: some View {
         ScrollView {
             VStack(spacing: PumTokens.Space.s12) {
                 header
-                titleBlock
-                decisionCard
-                workingCard
-                payrollCard
+                PumLoadingContainer(isLoading: isLoading) {
+                    VStack(spacing: PumTokens.Space.s12) {
+                        titleBlock
+                        decisionCard
+                        workingCard
+                        payrollCard
+                    }
+                } placeholder: {
+                    OwnerHomeLoadingBody()
+                }
             }
             .padding(.horizontal, PumTokens.Size.screenPad)
             .padding(.bottom, PumTokens.Space.s24)
         }
         .background(PumColor.bgApp)
         .safeAreaInset(edge: .bottom, spacing: 0) {
-            PumTabBar(items: PumTabItem.ownerTabs(workBadge: state.workTabBadge), selection: $tab)
+            PumTabBar(items: PumTabItem.ownerTabs(workBadge: isLoading ? 0 : state.workTabBadge), selection: $tab)
         }
     }
 
@@ -271,4 +279,5 @@ private struct PayrollBar: View {
 }
 
 #Preview("1aq") { OwnerHomeView() }
+#Preview("21j") { OwnerHomeView(isLoading: true) }
 #Preview("1aq · 큰 글자") { OwnerHomeView().dynamicTypeSize(.xxxLarge) }
