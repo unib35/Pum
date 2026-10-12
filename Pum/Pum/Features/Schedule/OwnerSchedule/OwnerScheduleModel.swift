@@ -136,7 +136,7 @@ struct OwnerScheduleState: Equatable, Sendable {
 
 enum OwnerScheduleFormat {
     /// 「1h」 → 「1시간」, 「30m」 → 「30분」, 「6h」 → 「6시간」. 형식이 다르면 그대로
-    static func spokenDuration(_ s: String) -> String {
+    nonisolated static func spokenDuration(_ s: String) -> String {
         if s.hasSuffix("h"), let n = Int(s.dropLast()) { return "\(n)시간" }
         if s.hasSuffix("m"), let n = Int(s.dropLast()) { return "\(n)분" }
         return s

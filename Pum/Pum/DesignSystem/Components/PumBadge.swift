@@ -3,7 +3,7 @@ import SwiftUI
 
 struct PumBadge: View {
     /// 상태 시스템 6가지. 배경은 디자인의 다섯 가지 연한 색.
-    enum Kind: CaseIterable {
+    nonisolated enum Kind: CaseIterable {
         case waiting      // 대기
         case active       // 진행 · 행동
         case done         // 완료 · 확정

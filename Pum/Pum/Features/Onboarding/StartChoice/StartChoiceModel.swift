@@ -1,7 +1,7 @@
 // UI-IOS-2c · REQ-001 · REQ-005 — 시작 방식: 선택지 3개와 선택 상태(순수 로직). 문구는 디자인 원문 그대로.
 import Foundation
 
-enum StartChoice: CaseIterable, Equatable, Sendable {
+nonisolated enum StartChoice: CaseIterable, Equatable, Sendable {
     case personal, inviteCode, owner
 
     var title: String {

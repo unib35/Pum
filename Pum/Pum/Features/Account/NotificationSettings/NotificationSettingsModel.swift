@@ -13,7 +13,7 @@ enum NotificationLeadTime: String, CaseIterable, Equatable {
     }
 }
 
-struct NotificationSettingsState: Equatable {
+nonisolated struct NotificationSettingsState: Equatable {
     // 근무
     var leadTime: NotificationLeadTime
     /// 퇴근 리마인드 — 사업장 정책이라 직원이 바꿀 수 없다(서버 값)

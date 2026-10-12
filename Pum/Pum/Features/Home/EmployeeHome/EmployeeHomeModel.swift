@@ -72,7 +72,7 @@ nonisolated enum HomeFormat {
 
 extension EmployeeHomeState {
     /// 디자인 1at 예시 값(가짜 데이터)
-    static let sample = EmployeeHomeState(
+    nonisolated static let sample = EmployeeHomeState(
         workplaceName: "종민김밥 본점",
         workplaceInitial: "종",
         weekTitle: "10월 첫째 주",

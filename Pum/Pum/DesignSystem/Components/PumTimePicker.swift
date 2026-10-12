@@ -72,7 +72,7 @@ nonisolated enum PumTimeWheelMath {
 // MARK: - 값 · 옵션
 
 /// 시트가 고치는 값. 날짜 · 종료일은 글자만 가진다(달력은 후속). 요일 id는 2e와 같게 월 1 … 일 7.
-struct PumTimeRangeValue: Equatable {
+nonisolated struct PumTimeRangeValue: Equatable {
     var startMinutes = 17 * 60
     var endMinutes = 22 * 60
     /// 휴게 분 — 0(없음) · 30 · 60
@@ -115,7 +115,7 @@ enum PumTimePickerStyle {
         (1, "월", "월요일"), (2, "화", "화요일"), (3, "수", "수요일"), (4, "목", "목요일"),
         (5, "금", "금요일"), (6, "토", "토요일"), (7, "일", "일요일"),
     ]
-    static let breakChoices: [(minutes: Int, title: String)] = [(0, "없음"), (30, "30분"), (60, "1시간")]
+    nonisolated static let breakChoices: [(minutes: Int, title: String)] = [(0, "없음"), (30, "30분"), (60, "1시간")]
 }
 
 // MARK: - 휠 하나
