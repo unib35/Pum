@@ -48,6 +48,7 @@ nonisolated struct LaborSimulatorResultState: Equatable, Sendable {
     var saveOnlyNotice: String { " \u{00B7} 실제 데이터는 바뀌지 않아요" }
 
     var compareAccessibilityText: String {
+        if deltaAmount == 0 { return "\(compareTitle), 현재 \(currentText)원, 추가 후 \(afterText)원, 변화 없음" }
         let direction = deltaAmount < 0 ? "감소" : "증가"
         let pct = deltaPercentText.replacingOccurrences(of: "+", with: "")
             .replacingOccurrences(of: "\u{2212}", with: "").replacingOccurrences(of: "-", with: "")

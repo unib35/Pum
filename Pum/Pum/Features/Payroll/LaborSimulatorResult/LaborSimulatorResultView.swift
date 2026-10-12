@@ -72,7 +72,7 @@ struct LaborSimulatorResultView: View {
         VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
             Text(title).pumText(.caption, weight: labelWeight).foregroundStyle(label)
             Text(value).pumText(.title3).foregroundStyle(valueColor) // 원문 20px 700
-                .lineLimit(1).minimumScaleFactor(0.7)
+                .fixedSize() // 줄이지 않는다 — 넘치면 ViewThatFits가 세로로
         }
     }
 
@@ -140,7 +140,7 @@ struct LaborSimulatorResultView: View {
             .buttonStyle(.plain)
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(Text("\(state.recommendTitle), \(state.recommendSubtitle)"))
-            .accessibilityAddTraits(.isButton)
+            .accessibilityHint(Text("스케줄 추천 화면으로 가요"))
         }
     }
 

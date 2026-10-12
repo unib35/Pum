@@ -48,4 +48,10 @@ struct LaborSimulatorResultTests {
         #expect(d.changeText == "\u{2212}1")
         #expect(d.accessibilityText == "월요일 3명, 1명 줄어듦")
     }
+
+    @Test func 변화가_없으면_변화_없음으로_읽는다() {
+        var s = LaborSimulatorResultState.sample
+        s.afterAmount = s.currentAmount; s.deltaAmount = 0; s.deltaPercentText = "0.0%"
+        #expect(s.compareAccessibilityText.hasSuffix("변화 없음"))
+    }
 }
