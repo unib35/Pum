@@ -145,6 +145,7 @@ struct ContentView: View {
             case "6o": PrivacyAppInfoView(state: .sample)
             case "6r": LocationDeniedView(state: .sample)
             case "6q": EmployeeHomeWorkingView(state: .offline)
+            case "6t": ForceUpdateView(state: .sample)
             case "gallery": ComponentGalleryView()
             default: DevMenu()
             }
@@ -287,6 +288,7 @@ private struct DevMenu: View {
                     NavigationLink("6o 개인정보 · 앱 정보") { PrivacyAppInfoView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("6r 위치 권한 꺼짐") { LocationDeniedView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("6q 오프라인") { EmployeeHomeWorkingView(state: .offline).toolbar(.hidden, for: .navigationBar) }
+                    NavigationLink("6t 업데이트 필수") { ForceUpdateView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                 }
                 Section("디자인 시스템") {
                     NavigationLink("컴포넌트 갤러리") { ComponentGalleryView() }
