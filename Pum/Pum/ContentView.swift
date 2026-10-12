@@ -129,6 +129,7 @@ struct ContentView: View {
             case "15d": NewsFeedView(state: .withInvite)
             case "6a": AccountSecurityView(state: .sample)
             case "6b": WithdrawView(state: .sample)
+            case "6d": ConsentsView(state: .sample)
             case "gallery": ComponentGalleryView()
             default: DevMenu()
             }
@@ -255,6 +256,7 @@ private struct DevMenu: View {
                     NavigationLink("15d 소식 · 초대") { NewsFeedView(state: .withInvite).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("6a 계정 · 로그인 및 보안") { AccountSecurityView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("6b 회원 탈퇴") { WithdrawView(state: .sample).toolbar(.hidden, for: .navigationBar) }
+                    NavigationLink("6d 내 동의 내역") { ConsentsView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                 }
                 Section("디자인 시스템") {
                     NavigationLink("컴포넌트 갤러리") { ComponentGalleryView() }
