@@ -99,7 +99,7 @@ private struct LocationPermissionSheetContent: View {
                 .accessibilityLabel(Text(state.hintPlain))
             VStack(spacing: PumTokens.Space.s4) {
                 PumButton(title: LocationPermissionIntroState.continueTitle, action: onContinue)
-                PumButton(title: LocationPermissionIntroState.qrOnlyTitle, kind: .text, action: onUseQROnly)
+                PumButton(title: LocationPermissionIntroState.qrOnlyTitle, kind: .text, size: .small, action: onUseQROnly) // 원문 14px
             }
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
@@ -120,7 +120,7 @@ private struct LocationPermissionReasonRow: View {
                 .background(PumColor.textPrimary, in: Circle())
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
-                Text(reason.title).pumText(.callout, weight: .semibold).foregroundStyle(PumColor.textPrimary)
+                Text(reason.title).pumText(.body, weight: .semibold).foregroundStyle(PumColor.textPrimary)
                 Text(reason.detail).pumText(.caption).foregroundStyle(PumColor.textSecondary)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
