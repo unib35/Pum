@@ -54,23 +54,10 @@ struct OnboardingChecklistView: View {
 
     // MARK: 머리 · 제목 · 진행 막대
 
+    // 원문: 원형 뒤로 버튼 + 가운데 제목(공통 머리)
     private var backRow: some View {
-        HStack {
-            Button(action: onBack) {
-                HStack(spacing: PumTokens.Space.s4) {
-                    Image(systemName: "chevron.left").pumText(.headline, weight: .semibold)
-                    Text(OnboardingChecklistState.backTitle).pumText(.headline, weight: .semibold)
-                }
-                .foregroundStyle(PumColor.textPrimary)
-                .frame(minWidth: PumTokens.Size.tapMin, minHeight: PumTokens.Size.tapMin, alignment: .leading)
-                .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel(Text(OnboardingChecklistState.backTitle))
-            Spacer()
-        }
-        .padding(.horizontal, PumTokens.Size.screenPad)
-        .padding(.top, PumTokens.Space.s8)
+        PumNavHeader(title: OnboardingChecklistState.backTitle, onBack: onBack)
+            .padding(.horizontal, PumTokens.Size.screenPad)
     }
 
     private var titleBlock: some View {
