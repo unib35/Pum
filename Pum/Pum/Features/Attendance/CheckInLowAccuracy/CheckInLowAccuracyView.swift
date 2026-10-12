@@ -41,7 +41,7 @@ struct CheckInLowAccuracyView: View {
         static let pinStroke: CGFloat = 2
         static let pinInner: CGFloat = 14
         /// 사업장 표시 · 오차 원 · 내 위치 점 위치 비율(원문)
-        static let pinX: CGFloat = 0.44
+        static let pinX: CGFloat = 0.50 // 원문: 사업장은 지도 가운데
         static let pinY: CGFloat = 0.50
         static let errorX: CGFloat = 0.58
         static let errorY: CGFloat = 0.50
