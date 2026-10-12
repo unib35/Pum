@@ -40,4 +40,23 @@ struct PaymentChecklistTests {
     @Test func 끝자리_숫자() {
         #expect(s.pending[1].accountLastDigits == "5521")
     }
+
+    @Test func 막대_비율은_0과_1_사이() {
+        var over = s; over.paidCount = 5
+        #expect(over.progress == 1)
+        var none = s; none.paidCount = 0
+        #expect(none.progress == 0)
+    }
+
+    @Test func 숫자_없는_마스킹은_은행만_읽는다() {
+        var p = s.pending[0]; p.maskedAccount = "••••"
+        #expect(p.accountLastDigits.isEmpty)
+        #expect(p.accessibilityText == "김하늘, 국민은행, 1,062,000원, 지급 대기")
+    }
+
+    @Test func 전원_완료면_대기_머리는_0() {
+        var all = s; all.paid += all.pending; all.pending = []
+        #expect(all.pendingHeaderText == "지급 대기 0")
+        #expect(all.paidHeaderText == "지급 완료 4")
+    }
 }
