@@ -87,6 +87,7 @@ struct ContentView: View {
             case "7c": PaymentDoneConfirmScreen(state: .sample)
             case "7b": PaymentSendScreen(state: .sample)
             case "21e": PaymentSendScreen(state: .masked)
+            case "8d": LaborSimulatorView(state: .sample)
             case "gallery": ComponentGalleryView()
             default: DevMenu()
             }
@@ -171,6 +172,7 @@ private struct DevMenu: View {
                     NavigationLink("7c 지급 완료 확인") { PaymentDoneConfirmScreen(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("7b 직원별 지급 시트") { PaymentSendScreen(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("21e 지급 시트 · 계좌 가림") { PaymentSendScreen(state: .masked).toolbar(.hidden, for: .navigationBar) }
+                    NavigationLink("8d 인건비 시뮬레이터") { LaborSimulatorView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                 }
                 Section("디자인 시스템") {
                     NavigationLink("컴포넌트 갤러리") { ComponentGalleryView() }

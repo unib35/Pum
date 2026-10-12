@@ -235,10 +235,14 @@ struct LaborSimulatorView: View {
                     estimatePill
                     Spacer(minLength: 0)
                 }
+                // 머리 · 큰 숫자를 한 번에 읽는다(「예상 추가 인건비 약 504,000원」)
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(Text(state.resultSpoken))
                 if let result = state.visibleResult {
                     Text(LaborSimulatorState.totalText(result.expectedWon))
                         .pumText(.hero).foregroundStyle(PumColor.textPrimary)
                         .minimumScaleFactor(0.6).lineLimit(2)
+                        .accessibilityHidden(true)
                     Rectangle().fill(PumColor.borderHairline).frame(height: 1)
                         .padding(.vertical, PumTokens.Space.s4)
                     VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
