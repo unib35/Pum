@@ -109,7 +109,8 @@ struct InviteUnverifiedSections: View {
         .frame(minHeight: PumTokens.Size.tapMin)
         .overlay(alignment: .top) { Rectangle().fill(PumColor.borderHairline).frame(height: 1) }
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(Text("\(text), \(allowed ? "가능" : "인증 후")"))
+        .accessibilityLabel(Text(text)) // 문구 자체가 「지금은 …」 · 「인증되면 …」이라 꼬리표를 붙이지 않는다
+        .accessibilityAddTraits(allowed ? .isSelected : [])
     }
 }
 

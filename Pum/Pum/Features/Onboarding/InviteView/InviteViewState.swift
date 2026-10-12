@@ -9,7 +9,7 @@ nonisolated struct InviteViewState: Equatable, Sendable {
     var colorIndex: Int
     var category: String
     var address: String
-    /// 사업장 인증 여부 — false면 배지 · 본인확인 · 영업 중을 숨기고 경고 상자를 보인다(충돌 #36)
+    /// 사업장 인증 여부 — false면 21g 미인증 화면(인증 전 배지 · 확인 전 행 · 안내 카드), 충돌 #36
     var isVerified: Bool
     var ownerName: String
     var ownerIdentityVerified: Bool
