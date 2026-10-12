@@ -70,7 +70,6 @@ struct OnboardingChecklistView: View {
             bar.padding(.top, PumTokens.Space.s8)
                 .accessibilityHidden(true) // 제목이 같은 내용을 읽음
         }
-        .padding(.horizontal, PumTokens.Space.s4)
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
@@ -171,6 +170,7 @@ struct OnboardingChecklistView: View {
 
     private var fileButton: some View {
         uploadButton(icon: "photo", title: OnboardingChecklistState.pickFileTitle, action: onPickFile)
+            .accessibilityLabel(Text("앨범 또는 파일")) // 「·」를 「점」으로 읽지 않게
     }
 
     private func uploadButton(icon: String, title: String, action: @escaping () -> Void) -> some View {
