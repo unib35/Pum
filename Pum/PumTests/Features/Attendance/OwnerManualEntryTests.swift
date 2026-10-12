@@ -101,4 +101,36 @@ struct OwnerManualEntryTests {
         d.endMinute = d.startMinute
         #expect(!d.canSubmit)
     }
+
+    @Test func 시트_열_때_값은_초안에서() {
+        let v = sample.pickerValue
+        #expect(v.startMinutes == 13 * 60 && v.endMinutes == 18 * 60)
+        #expect(v.breakMinutes == 30 && v.dateText == "10월 4일 (일)")
+        #expect(OwnerManualEntryDraft.initial.pickerValue.dateText == "선택")
+    }
+
+    @Test func 시트에서_고른_값_반영() {
+        let same = sample.applying(picked: sample.pickerValue)
+        #expect(same == sample) // 같은 값이면 서버 미리보기 유지
+        #expect(same.preview != nil)
+
+        var v = sample.pickerValue
+        v.startMinutes = 13 * 60 + 5
+        let changed = sample.applying(picked: v)
+        #expect(changed.startMinute == 13 * 60 + 5 && changed.endMinute == 18 * 60)
+        #expect(changed.preview == nil) // 바뀌면 숨김
+        #expect(changed.breakOption == .thirty && changed.reasonChip == .missingRecord) // 다른 입력은 그대로
+    }
+
+    @Test func 시트_반영_하루_경계() {
+        var v = sample.pickerValue
+        v.startMinutes = -1
+        v.endMinutes = 1440
+        let r = sample.applying(picked: v)
+        #expect(r.startMinute == 0 && r.endMinute == 1439)
+        #expect(r.preview == nil)
+        v.startMinutes = 23 * 60 + 59; v.endMinutes = 0
+        let night = sample.applying(picked: v)
+        #expect(night.endsNextDay) // 퇴근이 더 이르면 다음 날 퇴근 — 값은 그대로 둔다
+    }
 }

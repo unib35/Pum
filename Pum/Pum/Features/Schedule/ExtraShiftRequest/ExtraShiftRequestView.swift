@@ -1,9 +1,11 @@
 // UI-IOS-2j · REQ-043 — 사장님 · 추가 근무 요청 (하위 화면, 탭 바 없음)
-// 시간 휠은 공통 후속(#66), 「직접」 가산 입력 화면은 디자인 없음 — 지금은 클로저만 호출한다.
+// 시간 · 휴게 칸 → C13 시간 선택 시트(#66). 「직접」 가산 입력 화면은 디자인 없음 — 지금은 클로저만 호출한다.
 import SwiftUI
 
 struct ExtraShiftRequestView: View {
     @State private var state: ExtraShiftRequestState
+    @State private var pickerOpen = false
+    @State private var pickerValue = PumTimeRangeValue()
     var onClose: () -> Void
     var onPickDate: () -> Void
     var onPickStart: () -> Void
@@ -54,6 +56,9 @@ struct ExtraShiftRequestView: View {
             }
         }
         .background(PumColor.bgApp)
+        .pumTimeRangeSheet(isPresented: $pickerOpen, value: $pickerValue, options: pickerOptions) {
+            state = state.applying(picked: pickerValue)
+        }
         .safeAreaInset(edge: .bottom, spacing: 0) {
             // 0명이면 비활성 — 이유 문구 없음(충돌 #30)
             PumButton(title: state.sendTitle, kind: .primary, isLoading: state.isSending, action: send)
@@ -62,6 +67,22 @@ struct ExtraShiftRequestView: View {
                 .padding(.vertical, PumTokens.Space.s12)
                 .background(PumColor.bgApp)
         }
+    }
+
+    /// 반복 · 종료일은 끈다(2j에 없음). 날짜 행은 화면의 날짜 문구 + 기존 onPickDate(달력 없음)
+    private var pickerOptions: PumTimeRangeOptions {
+        PumTimeRangeOptions(
+            showsDate: true, showsBreak: true, showsRepeat: false, showsEndDate: false,
+            intervalMinutes: ExtraShiftRequestState.pickerIntervalMinutes,
+            onDateTap: onPickDate
+        )
+    }
+
+    /// 열 때의 값을 시트용 복사본에 담는다 — 「완료」 전에 닫으면 화면 값은 그대로
+    private func openPicker(_ open: @escaping () -> Void) {
+        open()
+        pickerValue = state.pickerValue
+        pickerOpen = true
     }
 
     private func send() {
@@ -150,10 +171,10 @@ struct ExtraShiftRequestView: View {
             rowLabel("시간")
         } value: {
             HStack(spacing: PumTokens.Space.s8) {
-                timeCell(state.startText, label: "시작 시간", action: onPickStart)
+                timeCell(state.startText, label: "시작 시간") { openPicker(onPickStart) }
                 Text("–").pumText(.body, weight: .regular).foregroundStyle(PumTokens.ColorToken.gray300)
                     .accessibilityHidden(true)
-                timeCell(state.endText, label: "종료 시간", action: onPickEnd)
+                timeCell(state.endText, label: "종료 시간") { openPicker(onPickEnd) }
             }
         }
     }
@@ -176,7 +197,7 @@ struct ExtraShiftRequestView: View {
         rowLayout {
             rowLabel("휴게")
         } value: {
-            Button(action: onPickBreak) {
+            Button { openPicker(onPickBreak) } label: {
                 HStack(alignment: .firstTextBaseline, spacing: PumTokens.Space.s4) {
                     Text(state.breakText).pumText(.body, weight: .bold).foregroundStyle(PumColor.textPrimary)
                     if let recognized = state.recognizedText {

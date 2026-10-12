@@ -1,5 +1,5 @@
 // UI-IOS-1af · REQ-027 · DEC-005 — 근무기록 직접 추가 (하위 화면, 탭 바 없음)
-// 직원 선택 · 날짜 · 시간 휠(공통 #66)은 후속 — 지금은 클로저만 호출하고 시간 칸은 선택 강조만 한다.
+// 출근 · 퇴근 칸 → C13 시간 선택 시트(#66). 직원 선택 · 날짜 달력은 후속 — 클로저만 호출한다.
 import SwiftUI
 
 struct OwnerManualEntryView: View {
@@ -13,6 +13,8 @@ struct OwnerManualEntryView: View {
     var onSubmit: (OwnerManualEntryDraft) async -> Void
 
     @FocusState private var reasonFocused: Bool
+    @State private var pickerOpen = false
+    @State private var pickerValue = PumTimeRangeValue()
 
     // 화면 전용 상수 (DEC-005: 목업 px → 가까운 토큰 단계)
     /// 직원 행 작은 아바타 — 목업 약 26
@@ -58,6 +60,10 @@ struct OwnerManualEntryView: View {
             .scrollDismissesKeyboard(.interactively)
         }
         .background(PumColor.bgApp)
+        .pumTimeRangeSheet(isPresented: $pickerOpen, value: $pickerValue, options: pickerOptions) {
+            let picked = pickerValue
+            changed { $0 = $0.applying(picked: picked) }
+        }
         .safeAreaInset(edge: .bottom, spacing: 0) {
             PumButton(title: OwnerManualEntryDraft.submitTitle, kind: .primary, isLoading: draft.isSending, action: submit)
                 .disabled(!draft.canSubmit)
@@ -65,6 +71,15 @@ struct OwnerManualEntryView: View {
                 .padding(.vertical, PumTokens.Space.s12)
                 .background(PumColor.bgApp)
         }
+    }
+
+    /// 휴게는 화면에 알약이 있어 끄고, 반복 · 종료일도 끈다. 날짜 행은 화면의 날짜 문구 + 기존 onPickDate(달력 없음)
+    private var pickerOptions: PumTimeRangeOptions {
+        PumTimeRangeOptions(
+            showsDate: true, showsBreak: false, showsRepeat: false, showsEndDate: false,
+            intervalMinutes: OwnerManualEntryDraft.pickerIntervalMinutes,
+            onDateTap: onPickDate
+        )
     }
 
     private func submit() {
@@ -188,6 +203,8 @@ struct OwnerManualEntryView: View {
             Button {
                 draft.select(field)
                 onSelectTimeField(field)
+                pickerValue = draft.pickerValue // 열 때 값 복사 — 「완료」 전에 닫으면 화면 값은 그대로
+                pickerOpen = true
             } label: {
                 // 목업 20px 700 → title3 bold
                 Text(text).pumText(.title3, weight: .bold)
