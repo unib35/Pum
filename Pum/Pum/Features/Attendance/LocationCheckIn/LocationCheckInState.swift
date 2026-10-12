@@ -13,6 +13,8 @@ nonisolated struct LocationCheckInState: Equatable, Sendable {
     var statusText: String
     /// 직전 판정 값(정수 m). 값이 없어도 출근하기는 활성(REQ-029)
     var distanceMeters: Int?
+    /// 서버 판정 — 반경 안이면 true. 체크 표시 · 「확인됨」은 이 값으로만(거리 숫자로 화면이 판단하지 않는다)
+    var isWithinRadius: Bool = false
     var radiusMeters: Int
     /// 서버가 준 사업장 짧은 이름(「종민김밥」)
     var placeShortName: String
@@ -35,7 +37,8 @@ nonisolated struct LocationCheckInState: Equatable, Sendable {
 
     var locationAccessibilityLabel: String {
         guard let d = distanceMeters else { return "현재 위치, 아직 확인 전, 허용 \(Self.spoken(radiusMeters))" }
-        return "현재 위치, \(placeShortName), \(Self.spoken(d)), 허용 \(Self.spoken(radiusMeters)), 확인됨"
+        let tail = isWithinRadius ? ", 확인됨" : ""
+        return "현재 위치, \(placeShortName), \(Self.spoken(d)), 허용 \(Self.spoken(radiusMeters))\(tail)"
     }
 
     /// 10u와 같은 규칙 — 1000m 미만은 「Nm」, 이상은 소수 한 자리 km
@@ -46,7 +49,7 @@ nonisolated struct LocationCheckInState: Equatable, Sendable {
     static let sample = LocationCheckInState(
         workplaceName: "종민김밥 본점", workplaceInitial: "종", dateText: "10월 6일 화",
         shiftText: "17:00 \u{2013} 22:00", statusText: "출근 전",
-        distanceMeters: 12, radiusMeters: 100, placeShortName: "종민김밥",
+        distanceMeters: 12, isWithinRadius: true, radiusMeters: 100, placeShortName: "종민김밥",
         methodNote: "사업장 설정 \u{00B7} 사장님이 정해요", methodValue: "위치 확인"
     )
 }

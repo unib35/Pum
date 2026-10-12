@@ -210,7 +210,7 @@ struct LocationCheckInView: View {
             .foregroundStyle(PumColor.textPrimary)
             .frame(width: checkCircle, height: checkCircle)
             .background(PumColor.surfaceFill, in: Circle())
-            .opacity(state.distanceMeters == nil ? 0 : 1)
+            .opacity(state.isWithinRadius ? 1 : 0) // 서버 판정이 반경 안일 때만 체크
             .accessibilityHidden(true)
     }
 

@@ -40,4 +40,11 @@ struct LocationCheckInTests {
         let third = lock.begin()
         #expect(third)
     }
+
+    @Test func 반경_밖이면_확인됨을_읽지_않는다() {
+        var s = LocationCheckInState.sample
+        s.distanceMeters = 240
+        s.isWithinRadius = false
+        #expect(!s.locationAccessibilityLabel.contains("확인됨"))
+    }
 }
