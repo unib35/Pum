@@ -35,7 +35,7 @@ struct WorkClosingConfirmView: View {
     /// 처리 중에는 막 누름 · 두 손가락 닫기로 닫히지 않게 한다
     private var guardedOpen: Binding<Bool> {
         Binding(get: { sheetOpen }, set: { newValue in
-            if newValue || !isClosing { sheetOpen = newValue }
+            if WorkClosingConfirmState.allowsSheetChange(to: newValue, isClosing: isClosing) { sheetOpen = newValue }
         })
     }
 
@@ -90,14 +90,13 @@ struct WorkClosingConfirmView: View {
             .padding(.top, PumTokens.Space.s4)
             VStack(spacing: PumTokens.Space.s4) {
                 PumButton(title: state.confirmTitle, kind: .primary, isLoading: isClosing, loadingTitle: "마감하는 중", action: confirm)
-                    .disabled(isClosing)
+                    .disabled(isClosing || !state.canClose)
                 PumButton(title: "취소", kind: .text, action: cancel)
                     .disabled(isClosing)
             }
             .padding(.top, PumTokens.Space.s4)
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
-        .padding(.bottom, PumTokens.Space.s16)
     }
 
     private var summaryCard: some View {
@@ -160,7 +159,7 @@ struct WorkClosingConfirmView: View {
 
     /// 한 번만 — 누르는 즉시 잠그고, 실패일 때만 푼다
     private func confirm() {
-        guard lock.begin(canClose: true) else { return }
+        guard lock.begin(canClose: state.canClose) else { return }
         onConfirm { success in lock.finish(success: success) }
     }
 

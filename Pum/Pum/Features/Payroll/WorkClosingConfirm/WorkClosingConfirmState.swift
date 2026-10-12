@@ -10,6 +10,11 @@ nonisolated struct WorkClosingConfirmState: Equatable, Sendable {
     var expectedLaborCost: Int     // 서버가 준 예상 인건비(원)
     var problemCount: Int          // 뒤 화면 카드용 — 처리 필요 건수
 
+    /// 처리 필요가 남았으면 마감하지 않는다(8a와 같은 규칙, 서버가 다시 확인)
+    var canClose: Bool { problemCount == 0 }
+    /// 시트 열림 바꾸기 허용 — 마감 처리 중에는 닫기(막 누름 · 두 손가락 · 취소)를 무시한다
+    static func allowsSheetChange(to open: Bool, isClosing: Bool) -> Bool { open || !isClosing }
+
     var sheetTitle: String { "\(month)월 근무를 마감할까요?" }
     var employeeText: String { "\(employeeCount)명" }
     var recordText: String { "\(recordCount)건" }

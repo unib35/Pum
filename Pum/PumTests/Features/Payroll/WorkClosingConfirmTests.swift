@@ -45,4 +45,17 @@ struct WorkClosingConfirmTests {
         let again = lock.begin(canClose: true)
         #expect(again)
     }
+
+    @Test func 처리_필요가_남으면_마감_안_함() {
+        var s = WorkClosingConfirmState.sample
+        #expect(s.canClose)
+        s.problemCount = 3
+        #expect(!s.canClose)
+    }
+
+    @Test func 마감_중에는_시트가_닫히지_않는다() {
+        #expect(!WorkClosingConfirmState.allowsSheetChange(to: false, isClosing: true))
+        #expect(WorkClosingConfirmState.allowsSheetChange(to: false, isClosing: false))
+        #expect(WorkClosingConfirmState.allowsSheetChange(to: true, isClosing: true))
+    }
 }
