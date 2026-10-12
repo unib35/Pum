@@ -18,7 +18,11 @@ struct OwnerHomeView: View {
     var onOpenOthers: () -> Void = {}
     /// UI-IOS-21j · M32 — 서버 응답을 기다리는 중(0.5초 넘으면 본문만 스켈레톤)
     var isLoading = false
+    /// UI-IOS-21n · M38 — 불러오기 실패. 서버가 준 마지막 받은 시각 글자(예: 「15:12」). nil이면 1aq 그대로
+    var staleSince: String?
+    var onRetry: () -> Void = {}
     @State private var tab = "home"
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         ScrollView {
@@ -31,22 +35,32 @@ struct OwnerHomeView: View {
                 } else {
                     Group {
                         titleBlock
-                        decisionCard
-                        workingCard
-                        payrollCard
+                        if let staleSince {
+                            OwnerHomeLoadFailedCard(since: staleSince, onRetry: onRetry)
+                                .transition(.opacity)
+                                .animation(PumMotion.respecting(reduceMotion, PumMotion.base), value: staleSince)
+                        }
+                        decisionCard.ownerHomeStale(isStale)
+                        workingCard.ownerHomeStale(isStale)
+                        payrollCard.ownerHomeStale(isStale)
                     }
                     .transition(.opacity)
                 }
             }
-            .animation(PumMotion.fast, value: isLoading)
+            .animation(PumMotion.respecting(reduceMotion, PumMotion.fast), value: isLoading)
+            .onChange(of: staleSince, initial: true) { _, new in
+                if let new { AccessibilityNotification.Announcement(OwnerHomeLoadFailed.announcement(since: new)).post() }
+            }
             .padding(.horizontal, PumTokens.Size.screenPad)
             .padding(.bottom, PumTokens.Space.s24)
         }
         .background(PumColor.bgApp)
         .safeAreaInset(edge: .bottom, spacing: 0) {
-            PumTabBar(items: PumTabItem.ownerTabs(workBadge: isLoading ? 0 : state.workTabBadge), selection: $tab)
+            PumTabBar(items: PumTabItem.ownerTabs(workBadge: isLoading || isStale ? 0 : state.workTabBadge), selection: $tab)
         }
     }
+
+    private var isStale: Bool { staleSince != nil }
 
     // MARK: 상단
 
@@ -55,14 +69,14 @@ struct OwnerHomeView: View {
             PumWorkplaceChip(name: state.workplaceName, initial: state.workplaceInitial,
                              tileColor: PumColor.surfaceInverse, role: "사장님") {}
             Spacer(minLength: PumTokens.Space.s8)
-            PumIconButton(systemImage: "bell", label: "알림", showsDot: !isLoading && state.hasUnreadNotification) {} // 로딩 중엔 안 읽음 여부를 아직 모름(21j · 21k 원문 점 없음)
+            PumIconButton(systemImage: "bell", label: "알림", showsDot: !isLoading && !isStale && state.hasUnreadNotification) {} // 로딩 · 불러오기 실패 중엔 안 읽음 여부를 모름(21j · 21k · 21n 원문 점 없음)
         }
         .padding(.top, PumTokens.Space.s8)
     }
 
     private var titleBlock: some View {
         VStack(alignment: .leading, spacing: PumTokens.Space.s4) {
-            Text(state.dateText).pumText(.footnote, weight: .medium).foregroundStyle(PumColor.textSecondary)
+            Text(staleSince.map(OwnerHomeLoadFailed.sinceLine) ?? state.dateText).pumText(.footnote, weight: .medium).foregroundStyle(PumColor.textSecondary)
             // 목업 26px → title1(28): 24와 28이 같은 거리, 화면 제목이라 큰 쪽
             Text("\(Text("처리할 일 ").foregroundStyle(PumColor.textPrimary))\(Text("\(state.attentionCount)").foregroundStyle(PumColor.statusAttention))")
                 .pumText(.title1)
@@ -115,7 +129,7 @@ struct OwnerHomeView: View {
             HStack {
                 Text("지금 근무 중 \(state.working.count)명").pumText(.body, weight: .bold).foregroundStyle(PumColor.textPrimary)
                 Spacer(minLength: PumTokens.Space.s8)
-                Text(OwnerHomeFormat.clock(state.nowMinute)).pumText(.caption, weight: .medium).foregroundStyle(PumColor.textSecondary)
+                Text(staleSince ?? OwnerHomeFormat.clock(state.nowMinute)).pumText(.caption, weight: .medium).foregroundStyle(PumColor.textSecondary)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .accessibilityElement(children: .combine)
@@ -284,4 +298,6 @@ private struct PayrollBar: View {
 
 #Preview("1aq") { OwnerHomeView() }
 #Preview("21j") { OwnerHomeView(isLoading: true) }
+#Preview("21n") { OwnerHomeView(staleSince: OwnerHomeLoadFailed.sampleSince) }
+#Preview("21n · 큰 글자") { OwnerHomeView(staleSince: OwnerHomeLoadFailed.sampleSince).dynamicTypeSize(.xxxLarge) }
 #Preview("1aq · 큰 글자") { OwnerHomeView().dynamicTypeSize(.xxxLarge) }
