@@ -128,7 +128,6 @@ struct PumTimeWheel: View {
     var intervalMinutes = 30
 
     @State private var scrollID: Int?
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @ScaledMetric(relativeTo: .title3) private var rowHeight = PumTimePickerStyle.rowHeight
 
     init(title: String, minutes: Binding<Int>, intervalMinutes: Int = 30) {
@@ -179,9 +178,11 @@ struct PumTimeWheel: View {
         .onChange(of: minutes) { _, new in
             let target = PumTimeWheelMath.snapped(new, interval: intervalMinutes)
             guard scrollID != target else { return }
-            // M22: 동작 줄이기면 움직임 없이 바로
-            if reduceMotion { scrollID = target } else { withAnimation(PumMotion.fast) { scrollID = target } }
+            // 바깥에서 바뀐 값은 움직임 없이 바로 — 애니메이션 중 지나가는 칸이 값으로 써지지 않게(M22도 만족)
+            scrollID = target
         }
+        // 간격에 맞지 않는 값(예: 17:14)은 처음 보일 때 휠과 같은 값으로 정리 — 요약과 휠이 어긋나지 않게
+        .onAppear { if minutes != current { minutes = current } }
         .sensoryFeedback(.selection, trigger: current) // M21 selection = 휠
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(title))
@@ -367,21 +368,21 @@ struct PumTimeRangeSheetContent: View {
         let step = options.intervalMinutes
         switch options.mode {
         case .startOnly:
-            PumTimeWheel(title: "시작", minutes: $value.startMinutes, intervalMinutes: step)
+            PumTimeWheel(title: options.mode == .startOnly ? options.title : "시작", minutes: $value.startMinutes, intervalMinutes: step)
         case .endOnly:
-            PumTimeWheel(title: "종료", minutes: $value.endMinutes, intervalMinutes: step)
+            PumTimeWheel(title: options.mode == .endOnly ? options.title : "종료", minutes: $value.endMinutes, intervalMinutes: step)
         case .range:
             // 좁으면(큰 글자) 위아래로 — 화살표도 아래를 향한다
             ViewThatFits(in: .horizontal) {
                 HStack(spacing: PumTokens.Space.s8) {
-                    PumTimeWheel(title: "시작", minutes: $value.startMinutes, intervalMinutes: step)
+                    PumTimeWheel(title: options.mode == .startOnly ? options.title : "시작", minutes: $value.startMinutes, intervalMinutes: step)
                     arrow("arrow.right")
-                    PumTimeWheel(title: "종료", minutes: $value.endMinutes, intervalMinutes: step)
+                    PumTimeWheel(title: options.mode == .endOnly ? options.title : "종료", minutes: $value.endMinutes, intervalMinutes: step)
                 }
                 VStack(spacing: PumTokens.Space.s8) {
-                    PumTimeWheel(title: "시작", minutes: $value.startMinutes, intervalMinutes: step)
+                    PumTimeWheel(title: options.mode == .startOnly ? options.title : "시작", minutes: $value.startMinutes, intervalMinutes: step)
                     arrow("arrow.down")
-                    PumTimeWheel(title: "종료", minutes: $value.endMinutes, intervalMinutes: step)
+                    PumTimeWheel(title: options.mode == .endOnly ? options.title : "종료", minutes: $value.endMinutes, intervalMinutes: step)
                 }
             }
         }
