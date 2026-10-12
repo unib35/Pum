@@ -121,6 +121,7 @@ struct ContentView: View {
             case "10x": AdminConfirmCheckInView()
             case "21j": OwnerHomeView(isLoading: true)
             case "21k": EmployeeHomeView(isLoading: true)
+            case "21m": CheckInJudgingView(state: .sample)
             case "21n": OwnerHomeView(staleSince: OwnerHomeLoadFailed.sampleSince)
             case "gallery": ComponentGalleryView()
             default: DevMenu()
@@ -240,6 +241,7 @@ private struct DevMenu: View {
                     NavigationLink("10x 관리자 확인 출근 대기") { AdminConfirmCheckInView().toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("21j 사장님 홈 로딩") { OwnerHomeView(isLoading: true).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("21k 직원 홈 로딩") { EmployeeHomeView(isLoading: true).toolbar(.hidden, for: .navigationBar) }
+                    NavigationLink("21m 출근 판정 중") { CheckInJudgingView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("21n 사장님 홈 불러오기 실패") { OwnerHomeView(staleSince: OwnerHomeLoadFailed.sampleSince).toolbar(.hidden, for: .navigationBar) }
                 }
                 Section("디자인 시스템") {
