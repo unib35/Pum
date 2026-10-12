@@ -9,9 +9,18 @@ struct WorkCalendarView: View {
     var onNextMonth: () -> Void = {}
     var onSelectDay: (Int) -> Void = { _ in }
     var onOpenDetail: () -> Void = {}
+    var onOpenSchedule: () -> Void = {}
     @State private var tab = "work"
 
-    var body: some View {
+    @ViewBuilder var body: some View {
+        if let empty = state.empty {
+            emptyBody(empty)
+        } else {
+            recordsBody
+        }
+    }
+
+    private var recordsBody: some View {
         ScrollView {
             VStack(spacing: PumTokens.Space.s12) {
                 header
@@ -25,6 +34,73 @@ struct WorkCalendarView: View {
         .background(PumColor.bgApp)
         .safeAreaInset(edge: .bottom, spacing: 0) {
             PumTabBar(items: PumTabItem.employeeTabs, selection: $tab)
+        }
+    }
+
+    // MARK: 빈 상태(UI-IOS-6p · REQ-095) — 장식 없이 다음 행동만
+
+    private func emptyBody(_ empty: WorkCalendarEmpty) -> some View {
+        ScrollView {
+            VStack(spacing: PumTokens.Space.s12) {
+                header
+                emptyCalendarCard(empty)
+                VStack(alignment: .leading, spacing: PumTokens.Space.s4) {
+                    // 목업 20px 700 → title3(20)
+                    Text(WorkCalendarEmpty.title).pumText(.title3).foregroundStyle(PumColor.textPrimary)
+                    Text(WorkCalendarEmpty.hint).pumText(.callout, weight: .regular)
+                        .foregroundStyle(PumColor.textSecondary)
+                    Text("다음 근무는 \(Text(empty.nextWorkText).bold().foregroundStyle(PumColor.textPrimary))이에요.")
+                        .pumText(.callout, weight: .regular).foregroundStyle(PumColor.textSecondary)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, PumTokens.Space.s8)
+                .padding(.top, PumTokens.Space.s16)
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(Text(empty.accessibilityText))
+                PumButton(title: WorkCalendarEmpty.scheduleButton, kind: .outline, action: onOpenSchedule)
+                    .padding(.top, PumTokens.Space.s8)
+            }
+            .padding(.horizontal, PumTokens.Size.screenPad)
+            .padding(.bottom, PumTokens.Space.s24)
+        }
+        .background(PumColor.bgApp)
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            PumTabBar(items: PumTabItem.employeeTabs, selection: $tab)
+        }
+    }
+
+    /// 6p 달력 카드: 달 이동 · 범례 없이 제목 · 요일 · 날짜만
+    private func emptyCalendarCard(_ empty: WorkCalendarEmpty) -> some View {
+        let layout = state.layout
+        return PumCard {
+            VStack(spacing: PumTokens.Space.s8) {
+                Text(state.monthTitle).pumText(.headline, weight: .bold).foregroundStyle(PumColor.textPrimary)
+                    .accessibilityAddTraits(.isHeader)
+                    .frame(minHeight: PumTokens.Size.tapMin)
+                quietWeekdayHeader
+                VStack(spacing: 0) {
+                    ForEach(0..<layout.weekCount, id: \.self) { week in
+                        HStack(alignment: .top, spacing: 0) {
+                            ForEach(0..<WorkCalendarLayout.columns, id: \.self) { col in
+                                emptyCell(layout, empty, slot: week * WorkCalendarLayout.columns + col)
+                            }
+                        }
+                    }
+                }
+            }
+            .padding(PumTokens.Space.s16)
+        }
+    }
+
+    @ViewBuilder private func emptyCell(_ layout: WorkCalendarLayout, _ empty: WorkCalendarEmpty, slot: Int) -> some View {
+        if let d = layout.day(atSlot: slot) {
+            WorkCalendarDayCell(
+                day: d, isSunday: layout.isSunday(d), isToday: false, mark: nil,
+                label: empty.dayLabel(d), action: { onSelectDay(d) },
+                isQuiet: true, showsPlannedDot: empty.plannedDays.contains(d))
+        } else {
+            Color.clear.frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin)
+                .accessibilityHidden(true)
         }
     }
 
@@ -79,6 +155,18 @@ struct WorkCalendarView: View {
         }
         .buttonStyle(.plain)
         .accessibilityLabel(Text(label))
+    }
+
+    /// 6p: 요일 글자도 모두 옅은 회색(일요일 빨강 없음)
+    private var quietWeekdayHeader: some View {
+        HStack(spacing: 0) {
+            ForEach(WorkCalendarLayout.weekdayNames, id: \.self) { name in
+                Text(name).pumText(.caption2, weight: .regular)
+                    .foregroundStyle(PumColor.textDisabled)
+                    .frame(maxWidth: .infinity)
+            }
+        }
+        .accessibilityHidden(true)
     }
 
     private var weekdayHeader: some View {
@@ -256,4 +344,6 @@ struct WorkCalendarView: View {
 }
 
 #Preview("1g") { WorkCalendarView() }
+#Preview("6p") { WorkCalendarView(state: .empty) }
+#Preview("6p · 큰 글자") { WorkCalendarView(state: .empty).dynamicTypeSize(.xxxLarge) }
 #Preview("1g · 큰 글자") { WorkCalendarView().dynamicTypeSize(.xxxLarge) }

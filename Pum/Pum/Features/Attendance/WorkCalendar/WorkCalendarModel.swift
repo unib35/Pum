@@ -126,6 +126,8 @@ nonisolated struct WorkCalendarState: Equatable, Sendable {
     var today: Int?
     var selected: WorkCalendarSelectedDay
     var summary: WorkCalendarSummary
+    /// 6p 빈 상태(근무기록 0건) — 서버 값. nil이면 1g 그대로
+    var empty: WorkCalendarEmpty? = nil
 
     var monthTitle: String { "\(layout.year)년 \(layout.month)월" }
 
@@ -149,5 +151,40 @@ nonisolated struct WorkCalendarState: Equatable, Sendable {
                 title: "10월 예상", confirmedDays: 2, confirmedMinutes: 606,
                 workDays: 17, totalMinutes: 82 * 60 + 30, overtimeMinutes: 6 * 60 + 30,
                 expectedPay: 1_188_000))
+    }()
+}
+
+/// 6p 근무 달력 빈 상태 — 날짜 · 다음 근무 글자는 서버가 준 값
+nonisolated struct WorkCalendarEmpty: Equatable, Sendable {
+    /// 예정 근무 날(일)
+    var plannedDays: Set<Int>
+    /// 다음 근무 글자(굵게 표시). 예: 「10월 5일 월 17:00」
+    var nextWorkText: String
+
+    static let title = "아직 근무기록이 없어요"
+    static let hint = "첫 근무를 기록하면 여기에 날짜별로 쌓여요."
+    static let scheduleButton = "스케줄 보기"
+
+    /// 「다음 근무는 10월 5일 월 17:00이에요.」
+    var nextWorkLine: String { "다음 근무는 \(nextWorkText)이에요." }
+    /// VoiceOver 안내 한 덩어리
+    var accessibilityText: String { "\(Self.title), \(Self.hint) \(nextWorkLine)" }
+
+    /// 칸 읽기 문구: 「5일, 근무 예정」 · 그 밖은 「4일」
+    func dayLabel(_ day: Int) -> String { plannedDays.contains(day) ? "\(day)일, 근무 예정" : "\(day)일" }
+
+    /// 디자인 6p 원문 값
+    static let sample = WorkCalendarEmpty(
+        plannedDays: [5, 7, 9, 12, 14, 16, 19, 21, 23, 26, 28, 30], nextWorkText: "10월 5일 월 17:00")
+}
+
+extension WorkCalendarState {
+    /// 6p 원문 값(2026년 10월, 기록 0건)
+    static let empty: WorkCalendarState = {
+        var s = WorkCalendarState.sample
+        s.marks = [:]
+        s.today = nil
+        s.empty = .sample
+        return s
     }()
 }
