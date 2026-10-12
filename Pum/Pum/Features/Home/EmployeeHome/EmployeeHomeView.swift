@@ -4,43 +4,57 @@ import SwiftUI
 struct EmployeeHomeView: View {
     var state: EmployeeHomeState = .sample
     var onClockIn: () -> Void = {}
+    /// UI-IOS-21k · M32 — 서버 응답을 기다리는 중(0.5초 넘으면 본문만 스켈레톤, 출근 버튼은 회색 자리)
+    var isLoading = false
     @State private var tab = "home"
 
     var body: some View {
         ScrollView {
             VStack(spacing: PumTokens.Space.s12) {
                 header
-                WeekStripCard(title: state.weekTitle, summary: state.weekSummary, days: state.week)
-                TodayShiftCard(state: state)
-                MonthSummaryCard(state: state)
-                UpcomingShiftsCard(shifts: state.upcoming)
+                PumLoadingContainer(isLoading: isLoading) {
+                    VStack(spacing: PumTokens.Space.s12) {
+                        WeekStripCard(title: state.weekTitle, summary: state.weekSummary, days: state.week)
+                        TodayShiftCard(state: state)
+                        MonthSummaryCard(state: state)
+                        UpcomingShiftsCard(shifts: state.upcoming)
+                    }
+                } placeholder: {
+                    EmployeeHomeLoadingBody()
+                }
             }
             .padding(.horizontal, PumTokens.Size.screenPad)
             .padding(.bottom, PumTokens.Space.s24)
         }
         .background(PumColor.bgApp)
         .safeAreaInset(edge: .bottom, spacing: 0) {
-            VStack(spacing: 0) {
-                // 출근 버튼은 엄지 영역에 고정
-                VStack(spacing: PumTokens.Space.s10) {
-                    PumButton(title: "출근하기", action: onClockIn)
-                    Text("매장 QR 스캔 또는 위치 확인으로 기록돼요")
-                        .pumText(.footnote)
-                        .foregroundStyle(PumColor.textSecondary)
-                }
-                .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s12)
-                .background(PumColor.bgApp)
+            if isLoading {
+                // 21k: 출근 버튼 줄은 없고(버튼 자리는 본문 카드 안 회색 사각) 탭 바만
                 PumTabBar(items: PumTabItem.employeeTabs, selection: $tab)
+            } else {
+                VStack(spacing: 0) {
+                    // 출근 버튼은 엄지 영역에 고정
+                    VStack(spacing: PumTokens.Space.s10) {
+                        PumButton(title: "출근하기", action: onClockIn)
+                        Text("매장 QR 스캔 또는 위치 확인으로 기록돼요")
+                            .pumText(.footnote)
+                            .foregroundStyle(PumColor.textSecondary)
+                    }
+                    .padding(.horizontal, PumTokens.Size.screenPad)
+                    .padding(.vertical, PumTokens.Space.s12)
+                    .background(PumColor.bgApp)
+                    PumTabBar(items: PumTabItem.employeeTabs, selection: $tab)
+                }
             }
         }
+        .animation(PumMotion.fast, value: isLoading)
     }
 
     private var header: some View {
         HStack {
             PumWorkplaceChip(name: state.workplaceName, initial: state.workplaceInitial) {}
             Spacer()
-            PumIconButton(systemImage: "bell", label: "알림", showsDot: state.hasUnreadNotification) {}
+            PumIconButton(systemImage: "bell", label: "알림", showsDot: !isLoading && state.hasUnreadNotification) {} // 로딩 중엔 안 읽음 여부를 아직 모름(21j · 21k 원문 점 없음)
         }
         .padding(.top, PumTokens.Space.s8)
     }
@@ -297,3 +311,4 @@ struct UpcomingShiftsCard: View {
 
 #Preview("1at") { EmployeeHomeView() }
 #Preview("1at · 큰 글자") { EmployeeHomeView().dynamicTypeSize(.xxxLarge) }
+#Preview("21k") { EmployeeHomeView(isLoading: true) }

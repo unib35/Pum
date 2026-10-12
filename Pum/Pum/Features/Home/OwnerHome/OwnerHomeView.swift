@@ -16,23 +16,35 @@ struct OwnerHomeView: View {
     var onDecide: (OwnerHomeState.Decision) -> Void = { _ in }
     var onClockOutCheck: (OwnerHomeState.OnDuty) -> Void = { _ in }
     var onOpenOthers: () -> Void = {}
+    /// UI-IOS-21j · M32 — 서버 응답을 기다리는 중(0.5초 넘으면 본문만 스켈레톤)
+    var isLoading = false
     @State private var tab = "home"
 
     var body: some View {
         ScrollView {
             VStack(spacing: PumTokens.Space.s12) {
                 header
-                titleBlock
-                decisionCard
-                workingCard
-                payrollCard
+                if isLoading {
+                    // M32 — 0.5초 안에 오면 스켈레톤 없이 본문. 본문은 컨테이너에 넣지 않는다(넣으면 1aq 행 높이가 달라짐)
+                    PumLoadingContainer(isLoading: true) { EmptyView() } placeholder: { OwnerHomeLoadingBody() }
+                        .transition(.opacity)
+                } else {
+                    Group {
+                        titleBlock
+                        decisionCard
+                        workingCard
+                        payrollCard
+                    }
+                    .transition(.opacity)
+                }
             }
+            .animation(PumMotion.fast, value: isLoading)
             .padding(.horizontal, PumTokens.Size.screenPad)
             .padding(.bottom, PumTokens.Space.s24)
         }
         .background(PumColor.bgApp)
         .safeAreaInset(edge: .bottom, spacing: 0) {
-            PumTabBar(items: PumTabItem.ownerTabs(workBadge: state.workTabBadge), selection: $tab)
+            PumTabBar(items: PumTabItem.ownerTabs(workBadge: isLoading ? 0 : state.workTabBadge), selection: $tab)
         }
     }
 
@@ -43,7 +55,7 @@ struct OwnerHomeView: View {
             PumWorkplaceChip(name: state.workplaceName, initial: state.workplaceInitial,
                              tileColor: PumColor.surfaceInverse, role: "사장님") {}
             Spacer(minLength: PumTokens.Space.s8)
-            PumIconButton(systemImage: "bell", label: "알림", showsDot: state.hasUnreadNotification) {}
+            PumIconButton(systemImage: "bell", label: "알림", showsDot: !isLoading && state.hasUnreadNotification) {} // 로딩 중엔 안 읽음 여부를 아직 모름(21j · 21k 원문 점 없음)
         }
         .padding(.top, PumTokens.Space.s8)
     }
@@ -271,4 +283,5 @@ private struct PayrollBar: View {
 }
 
 #Preview("1aq") { OwnerHomeView() }
+#Preview("21j") { OwnerHomeView(isLoading: true) }
 #Preview("1aq · 큰 글자") { OwnerHomeView().dynamicTypeSize(.xxxLarge) }
