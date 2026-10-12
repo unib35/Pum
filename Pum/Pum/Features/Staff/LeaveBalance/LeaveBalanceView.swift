@@ -93,9 +93,14 @@ struct LeaveBalanceView: View {
                     who
                     if p.isEligible { values.fixedSize() } else { badge.fixedSize() }
                 }
-                VStack(alignment: .leading, spacing: PumTokens.Space.s8) { // 넘치면 아래로
+                VStack(alignment: .leading, spacing: PumTokens.Space.s8) { // 넘치면 아래로 — 값도 왼쪽 정렬
                     who
-                    if p.isEligible { values } else { badge }
+                    if p.isEligible {
+                        VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
+                            Text(p.remainingText).pumText(.headline, weight: .bold).foregroundStyle(PumColor.textPrimary)
+                            Text(p.usageText).pumText(.caption).foregroundStyle(PumColor.textSecondary)
+                        }
+                    } else { badge }
                 }
             }
             .padding(.vertical, PumTokens.Size.rowPadY)
