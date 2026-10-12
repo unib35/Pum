@@ -25,7 +25,7 @@ struct RequestInboxView: View {
             }
         }
         .background(PumColor.bgApp)
-        .onChange(of: state) { lock.reset() } // 서버 새 상태가 오면 잠금 해제
+        .onChange(of: state) { old, new in lock.refresh(old: old.items, new: new.items) } // 바뀐 카드만 잠금 해제
     }
 
     private func card(_ item: RequestItem) -> some View {
@@ -122,14 +122,17 @@ struct RequestInboxView: View {
     // MARK: 버튼
 
     private func buttons(_ item: RequestItem, locked: Bool) -> some View {
-        let reject = PumButton(title: item.rejectText, kind: .outline, size: .small) { decide(item, .reject) } // 카드 안 버튼 — 원문 약 42
+        let pressed = lock.decision(item.id)
+        // 카드 안 버튼 — 원문 약 42. 처리 중 표시는 누른 버튼에만, 다른 버튼은 잠금
+        let reject = PumButton(title: item.rejectText, kind: .outline, size: .small, isLoading: pressed == .reject) { decide(item, .reject) }
             .disabled(locked)
             .accessibilityLabel(Text(item.rejectAccessibility))
-        let approve = PumButton(title: item.approveText, kind: .primary, size: .small, isLoading: locked) { decide(item, .approve) }
+        let approve = PumButton(title: item.approveText, kind: .primary, size: .small, isLoading: pressed == .approve) { decide(item, .approve) }
+            .disabled(locked)
             .accessibilityLabel(Text(item.approveAccessibility))
         return Group {
             if typeSize.isAccessibilitySize {
-                VStack(spacing: PumTokens.Space.s8) { approve; reject } // 넘치면 세로
+                VStack(spacing: PumTokens.Space.s8) { reject; approve } // 넘치면 세로 — 순서는 가로와 같게(거절 → 승인)
             } else {
                 RequestButtonSplit(spacing: PumTokens.Space.s8) { reject; approve } // 원문 거절 : 승인 = 1 : 1.5
             }
@@ -137,7 +140,7 @@ struct RequestInboxView: View {
     }
 
     private func decide(_ item: RequestItem, _ decision: RequestDecision) {
-        guard lock.begin(item.id) else { return }
+        guard lock.begin(item.id, decision) else { return }
         onDecide(item.id, decision) { success in lock.finish(item.id, success: success) }
     }
 }

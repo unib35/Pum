@@ -63,10 +63,22 @@ nonisolated struct RequestInboxState: Equatable, Sendable {
 
 /// 누른 카드만 잠근다. 실패하면 풀고, 서버 새 상태가 오면 모두 푼다(8b WorkClosingRowLock과 같은 규칙).
 nonisolated struct RequestRowLock: Equatable, Sendable {
-    private(set) var processing: Set<String> = []
-    func isLocked(_ id: String) -> Bool { processing.contains(id) }
+    /// 처리 중인 카드 → 누른 결정(처리 중 표시를 누른 버튼에만)
+    private(set) var processing: [String: RequestDecision] = [:]
+    func isLocked(_ id: String) -> Bool { processing[id] != nil }
+    func decision(_ id: String) -> RequestDecision? { processing[id] }
     /// 처음 누르면 true를 돌려주고 잠근다. 이미 처리 중이면 false.
-    mutating func begin(_ id: String) -> Bool { processing.insert(id).inserted }
-    mutating func finish(_ id: String, success: Bool) { if !success { processing.remove(id) } }
-    mutating func reset() { processing.removeAll() }
+    mutating func begin(_ id: String, _ decision: RequestDecision) -> Bool {
+        guard processing[id] == nil else { return false }
+        processing[id] = decision
+        return true
+    }
+    mutating func finish(_ id: String, success: Bool) { if !success { processing[id] = nil } }
+    /// 서버 새 목록 — 사라졌거나 내용이 바뀐 카드의 잠금만 푼다(진행 중인 다른 카드는 그대로)
+    mutating func refresh(old: [RequestItem], new: [RequestItem]) {
+        for id in processing.keys {
+            let before = old.first { $0.id == id }, after = new.first { $0.id == id }
+            if after == nil || after != before { processing[id] = nil }
+        }
+    }
 }
