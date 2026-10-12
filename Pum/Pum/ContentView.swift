@@ -102,6 +102,7 @@ struct ContentView: View {
             case "10l": CheckInMethodView(state: .sample)
             case "10m": CheckInQRView(state: .sample)
             case "10u": CheckInTooFarView(state: .sample)
+            case "10t": CheckInPassedView(state: .sample)
             case "gallery": ComponentGalleryView()
             default: DevMenu()
             }
@@ -201,6 +202,7 @@ private struct DevMenu: View {
                     NavigationLink("10l 출근 확인 방식") { CheckInMethodView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("10m 출근 QR") { CheckInQRView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("10u 출근 판정 거리 초과") { CheckInTooFarView(state: .sample).toolbar(.hidden, for: .navigationBar) }
+                    NavigationLink("10t 출근 판정 통과") { CheckInPassedView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                 }
                 Section("디자인 시스템") {
                     NavigationLink("컴포넌트 갤러리") { ComponentGalleryView() }
