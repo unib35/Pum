@@ -97,6 +97,7 @@ struct ContentView: View {
             case "21d": PaymentCheckRequestScreen(state: .sample)
             case "10a": WorkTermsInputView(state: .sample)
             case "10i": LeaveRequestView(state: .sample, reason: "병원 예약이 있어요")
+            case "10j": ShiftChangeRequestView(state: .sample, start: 18 * 60, end: 23 * 60, reason: "수요일 수업이 18시에 끝나요")
             case "gallery": ComponentGalleryView()
             default: DevMenu()
             }
@@ -191,6 +192,7 @@ private struct DevMenu: View {
                     NavigationLink("21d 입금 확인 요청") { PaymentCheckRequestScreen(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("10a 근로조건 입력") { WorkTermsInputView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("10i 휴무 신청") { LeaveRequestView(state: .sample, reason: "병원 예약이 있어요").toolbar(.hidden, for: .navigationBar) }
+                    NavigationLink("10j 근무 변경 요청") { ShiftChangeRequestView(state: .sample, start: 18 * 60, end: 23 * 60, reason: "수요일 수업이 18시에 끝나요").toolbar(.hidden, for: .navigationBar) }
                 }
                 Section("디자인 시스템") {
                     NavigationLink("컴포넌트 갤러리") { ComponentGalleryView() }
