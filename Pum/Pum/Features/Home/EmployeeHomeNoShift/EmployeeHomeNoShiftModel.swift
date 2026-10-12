@@ -18,6 +18,10 @@ nonisolated struct NoShiftHomeState: Equatable, Sendable {
     var monthDaysSummary: String
     var monthExpectedPay: Int
     var hasUnreadNotification: Bool
+    /// 6u 업데이트 권장 시트 — nil이면 1au 그대로. 보일지(하루 한 번 · 근무 중/출근 30분 전 제외)는 호출자가 정한다
+    var updateNotice: AppUpdateNotice? = nil
+    /// 6v 점검 예고 한 줄 — nil이면 1au 그대로. 24시간 전부터 · 닫으면 다시 안 보임은 호출자가 정한다
+    var maintenanceNotice: MaintenanceNotice? = nil
 
     /// 「이번 주 4일 · 19시간」 — 근무일 점 개수와 주간 예정 분으로 만든다
     var weekSummary: String {
@@ -78,4 +82,67 @@ extension NoShiftHomeState {
         monthExpectedPay: 1_188_000,
         hasUnreadNotification: true
     )
+}
+
+// MARK: - 6u 업데이트 권장 · 6v 점검 예고 (UI-IOS-6u · 6v · REQ-094)
+
+/// 업데이트 권장 시트 내용(앱 버전 · 릴리스 노트는 서버/스토어 값)
+nonisolated struct AppUpdateNotice: Equatable, Sendable {
+    var version: String
+    var sizeMB: Int
+    var highlights: [String]
+
+    static let title = "새 버전이 있어요"
+    static let laterTitle = "나중에"
+    static let updateTitle = "업데이트"
+
+    /// 「1.4.3 · 12MB」
+    var meta: String { "\(version) · \(sizeMB)MB" }
+    /// VoiceOver 제목 헤더
+    var spokenTitle: String { "\(Self.title), \(version), \(sizeMB)MB" }
+}
+
+/// 점검 예고 한 줄 내용(점검 일정은 서버 값)
+nonisolated struct MaintenanceNotice: Equatable, Sendable {
+    var dateText: String        // "10월 12일 월"
+    var startClock: String      // "02:00"
+    var endClock: String        // "04:00"
+
+    static let detail = "출퇴근은 그대로 기록돼요 · 급여 · 요청은 점검 후"
+    static let dismissTitle = "닫기"
+
+    /// 「10월 12일 월 02:00 – 04:00 점검」
+    var title: String { "\(dateText) \(PumFormat.timeRange(startClock, endClock)) 점검" }
+    /// VoiceOver 한 문장
+    var spoken: String { "\(title), \(Self.detail)" }
+}
+
+extension AppUpdateNotice {
+    /// 디자인 6u 예시 값(가짜 데이터)
+    static let sample = AppUpdateNotice(
+        version: "1.4.3",
+        sizeMB: 12,
+        highlights: ["출근 QR 인식이 빨라졌어요", "명세서를 PDF로 저장할 수 있어요"]
+    )
+}
+
+extension MaintenanceNotice {
+    /// 디자인 6v 예시 값(가짜 데이터)
+    static let sample = MaintenanceNotice(dateText: "10월 12일 월", startClock: "02:00", endClock: "04:00")
+}
+
+extension NoShiftHomeState {
+    /// 6u — 1au 위에 업데이트 권장 시트
+    static var updateAvailable: NoShiftHomeState {
+        var s = NoShiftHomeState.sample
+        s.updateNotice = .sample
+        return s
+    }
+
+    /// 6v — 1au 맨 위에 점검 예고 한 줄
+    static var maintenanceNotice: NoShiftHomeState {
+        var s = NoShiftHomeState.sample
+        s.maintenanceNotice = .sample
+        return s
+    }
 }
