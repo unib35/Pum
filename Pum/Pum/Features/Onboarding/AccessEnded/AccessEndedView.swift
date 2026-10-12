@@ -45,7 +45,7 @@ struct AccessEndedView: View {
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel(Text(card.spokenText))
                 ForEach(Array(card.rows.enumerated()), id: \.offset) { _, row in
-                    Rectangle().fill(PumColor.borderHairline).frame(height: 1)
+                    Rectangle().fill(PumColor.borderHairline).frame(height: 1).padding(.horizontal, PumTokens.Space.s16) // 원문: 안쪽에서 시작
                     rowView(row)
                 }
             }
