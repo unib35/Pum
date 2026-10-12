@@ -1,4 +1,5 @@
 // UI-IOS-1av · REQ-105 · REQ-024 — 확정 · 근무 중: 지난 시간 · 진행 막대 · 퇴근 버튼은 엄지 영역에 고정 (그다음 근무 카드 없음)
+// UI-IOS-6q · REQ-029 · REQ-095 — 오프라인(state.offline != nil): 같은 화면 + 띠 · 전송 대기. 퇴근하기는 어떤 경우에도 막지 않는다.
 import SwiftUI
 
 struct EmployeeHomeWorkingView: View {
@@ -6,12 +7,20 @@ struct EmployeeHomeWorkingView: View {
     /// true면 분이 바뀔 때마다 실제 시각으로 갱신(초 표시 없음). 미리보기 · 테스트는 false
     var liveClock = false
     var onClockOut: () -> Void = {}
+    /// 오프라인 띠의 「다시 시도」(6q)
+    var onRetryConnection: () -> Void = {}
     @State private var tab = "home"
 
     var body: some View {
         content
             .background(PumColor.bgApp)
             .safeAreaInset(edge: .bottom, spacing: 0) { bottom }
+            .onChange(of: state.offline != nil) { _, isOffline in
+                // 오프라인이 되는 순간 한 번 읽어준다(VoiceOver). 돌아올 때는 알리지 않는다.
+                if isOffline, let title = state.offline?.bannerTitle {
+                    AccessibilityNotification.Announcement(title).post()
+                }
+            }
     }
 
     @ViewBuilder
@@ -28,10 +37,17 @@ struct EmployeeHomeWorkingView: View {
     private func scroll(_ s: EmployeeHomeWorkingState) -> some View {
         ScrollView {
             VStack(spacing: PumTokens.Space.s12) {
+                if let offline = s.offline {
+                    OfflineBanner(offline: offline, onRetry: onRetryConnection)
+                }
                 header(s.base)
                 WeekStripCard(title: s.base.weekTitle, summary: s.base.weekSummary, days: s.base.week)
                 WorkingTodayCard(state: s)
-                MonthSummaryCard(state: s.base)
+                if let offline = s.offline {
+                    OfflinePendingCard(offline: offline) // 이번 달 숫자는 연결 후 — 서버 숫자 카드는 그리지 않는다
+                } else {
+                    MonthSummaryCard(state: s.base)
+                }
             }
             .padding(.horizontal, PumTokens.Size.screenPad)
             .padding(.bottom, PumTokens.Space.s24)
@@ -42,9 +58,13 @@ struct EmployeeHomeWorkingView: View {
         VStack(spacing: 0) {
             VStack(spacing: PumTokens.Space.s10) {
                 PumButton(title: "퇴근하기", kind: .dark, action: onClockOut)
-                Text("퇴근할 때 눌러주세요 · 예정 \(HomeFormat.clock(state.plan.endMinute))")
-                    .pumText(.footnote)
-                    .foregroundStyle(PumColor.textSecondary)
+                if let offline = state.offline {
+                    Text(offline.clockOutHint).pumText(.footnote).foregroundStyle(PumColor.textSecondary)
+                } else {
+                    Text("퇴근할 때 눌러주세요 · 예정 \(HomeFormat.clock(state.plan.endMinute))")
+                        .pumText(.footnote)
+                        .foregroundStyle(PumColor.textSecondary)
+                }
             }
             .padding(.horizontal, PumTokens.Size.screenPad)
             .padding(.vertical, PumTokens.Space.s12)
@@ -81,6 +101,9 @@ struct WorkingTodayCard: View {
                     Text(state.base.todayTitle).pumText(.body, weight: .bold).foregroundStyle(PumColor.textPrimary)
                     Spacer()
                     PumBadge(text: "근무 중", kind: .active)
+                    if let offline = state.offline {
+                        PumBadge(text: offline.badgeText, kind: .waiting)
+                    }
                 }
                 // 큰 글자 설정에서 한 줄에 안 들어가면 위아래로(동적 글자 크기)
                 ViewThatFits(in: .horizontal) {
@@ -95,9 +118,13 @@ struct WorkingTodayCard: View {
                     }
                 }
                 WorkProgressBar(plan: state.plan, nowMinute: state.nowMinute)
-                Text("오늘 예정 \(HomeFormat.hours(state.plan.plannedPaidMinutes)) · \(PumFormat.amount(state.plannedPay))원")
-                    .pumText(.caption)
-                    .foregroundStyle(PumColor.textSecondary)
+                if let offline = state.offline {
+                    Text(offline.savedNote).pumText(.caption).foregroundStyle(PumColor.textSecondary)
+                } else {
+                    Text("오늘 예정 \(HomeFormat.hours(state.plan.plannedPaidMinutes)) · \(PumFormat.amount(state.plannedPay))원")
+                        .pumText(.caption)
+                        .foregroundStyle(PumColor.textSecondary)
+                }
             }
             .padding(PumTokens.Space.s20)
         }
@@ -139,6 +166,67 @@ struct WorkingTodayCard: View {
     }
 }
 
+/// 6q 맨 위 먹색 띠 — 제목 + 「다시 시도」(터치 44pt)
+struct OfflineBanner: View {
+    let offline: EmployeeHomeOffline
+    let onRetry: () -> Void
+
+    var body: some View {
+        HStack(spacing: PumTokens.Space.s8) {
+            Text(offline.bannerTitle)
+                .pumText(.callout, weight: .semibold) // 원문 600
+                .foregroundStyle(Color.white)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            Button(action: onRetry) {
+                Text(offline.retryTitle)
+                    .pumText(.footnote, weight: .semibold)
+                    .foregroundStyle(PumColor.accentOnInverse)
+                    .frame(minHeight: PumTokens.Size.tapMin)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(Text("연결 \(offline.retryTitle)")) // 무엇을 다시 하는지
+        }
+        .padding(.horizontal, PumTokens.Space.s16)
+        .background(PumColor.surfaceInverse, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
+        .accessibilityElement(children: .contain)
+    }
+}
+
+/// 6q 전송 대기 카드 — 빈 원 숫자 · 건수 · 기록 요약 · 안내. VoiceOver에는 한 요소로 읽힌다.
+struct OfflinePendingCard: View {
+    let offline: EmployeeHomeOffline
+    @ScaledMetric(relativeTo: .footnote) private var circle = PumTokens.Space.s24 + PumTokens.Space.s6
+
+    var body: some View {
+        PumCard {
+            VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+                HStack(alignment: .top, spacing: PumTokens.Space.s14) {
+                    Text("\(offline.pending.count)")
+                        .pumText(.footnote, weight: .bold)
+                        .foregroundStyle(PumColor.textSecondary)
+                        .frame(width: circle, height: circle)
+                        .overlay(Circle().strokeBorder(PumTokens.ColorToken.gray300, lineWidth: 1))
+                    VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
+                        Text(offline.pendingTitle).pumText(.callout).foregroundStyle(PumColor.textPrimary)
+                        ForEach(Array(offline.pending.enumerated()), id: \.offset) { _, line in
+                            Text(line).pumText(.caption).foregroundStyle(PumColor.textSecondary)
+                        }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                Text(offline.pendingNote).pumText(.caption).foregroundStyle(PumColor.textSecondary)
+            }
+            .padding(PumTokens.Space.s16)
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(Text(([offline.pendingTitle] + offline.pending + [offline.pendingNote]).joined(separator: ", ")))
+    }
+}
+
 #Preview("1av") { EmployeeHomeWorkingView() }
 #Preview("1av · 큰 글자") { EmployeeHomeWorkingView().dynamicTypeSize(.xxxLarge) }
 #Preview("1av · 예정 퇴근 이후") { EmployeeHomeWorkingView(state: EmployeeHomeWorkingState.sample.with(now: 22 * 60 + 20)) }
+#Preview("6q") { EmployeeHomeWorkingView(state: .offline) }
+#Preview("6q · 큰 글자") { EmployeeHomeWorkingView(state: .offline).dynamicTypeSize(.xxxLarge) }
