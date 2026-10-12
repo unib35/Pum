@@ -48,7 +48,7 @@ nonisolated struct CheckInPassedState: Equatable, Sendable {
 
     var subtitle: String { "\(workplaceName) \u{00B7} \(dateTitle)" }
     var clockInText: String { Self.clock(clockInMinute) }
-    var clockInAccessibility: String { "출근 시각 \((clockInMinute / 60) % 24)시 \(clockInMinute % 60)분" }
+    var clockInAccessibility: String { "출근 시각 \(PumTimeWheelMath.spokenText(clockInMinute))" } // 「오전 9시 57분」 — C13과 같은 읽기
     var plannedLine: String {
         let base = "예정 \(PumFormat.timeRange(Self.clock(plannedStartMinute), Self.clock(plannedEndMinute)))"
         guard let timingNote, !timingNote.isEmpty else { return base }

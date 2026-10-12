@@ -34,6 +34,6 @@ struct CheckInPassedTests {
     }
 
     @Test func 큰_시각_음성_문구() {
-        #expect(s.clockInAccessibility == "출근 시각 9시 57분")
+        #expect(s.clockInAccessibility == "출근 시각 오전 9시 57분")
     }
 }
