@@ -41,7 +41,7 @@ struct ManagerPermissionsView: View {
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
                 .padding(.vertical, PumTokens.Space.s8)
-                .disabled(isSaving) // 저장 중엔 보낸 값과 화면이 어긋나지 않게 편집 잠금
+                .allowsHitTesting(!isSaving) // 저장 중엔 보낸 값과 화면이 어긋나지 않게 입력만 막음(처리 중 모양은 버튼에만)
             }
         }
         .background(PumColor.bgApp)
