@@ -1,6 +1,6 @@
 // UI-IOS-2e · REQ-005 — 개인 근로조건: 급여 계산기 설정(혼자 쓸 때). 탭 바 없음.
 // 예상 월급은 서버 엔진 값을 받아 표시만 한다(조건이 바뀌면 onTermsChange로 알린다).
-// 근무 시간 · 휴게 · 급여일 선택 시트는 이번 범위 밖 — 누름 클로저만.
+// 근무 시간 · 휴게 행은 C13 시간 선택 시트(#66)를 연다. 급여일은 일자 휠이 C13에 없어 누름 클로저만.
 // 비활성 「시작하기」의 이유 문구는 디자인 없음(충돌 #30과 같은 처리: 회색 비활성만).
 import SwiftUI
 
@@ -16,6 +16,9 @@ struct PersonalTermsView: View {
     var onStart: (PersonalTermsState) -> Void
     var onLater: () -> Void
 
+    @State private var pickerOpen = false
+    /// 시트용 복사본 — 「완료」에만 state에 반영
+    @State private var pickerValue = PumTimeRangeValue()
     @FocusState private var amountFocused: Bool
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     /// 요일 칩 지름(원문 실측 30pt) — 큰 글자에서 글자와 함께 커진다. 공통 후보: 요일 원형 칩
@@ -68,6 +71,27 @@ struct PersonalTermsView: View {
         // 계산 조건이 바뀔 때만 알린다(예상 값이 들어와 바뀐 것은 다시 알리지 않음)
         .onChange(of: state.basis) { _, _ in onTermsChange(state) }
         .onChange(of: estimate) { _, new in state.estimate = new }
+        .pumTimeRangeSheet(isPresented: $pickerOpen, value: $pickerValue, options: pickerOptions) {
+            state = state.applying(pickedStart: pickerValue.startMinutes, end: pickerValue.endMinutes,
+                                   breakMinutes: pickerValue.breakMinutes)
+        }
+    }
+
+    private var pickerOptions: PumTimeRangeOptions {
+        PumTimeRangeOptions(
+            title: PersonalTermsState.pickerTitle, mode: .range,
+            showsDate: false, showsBreak: true, showsRepeat: false, showsEndDate: false,
+            intervalMinutes: PersonalTermsState.pickerIntervalMinutes
+        )
+    }
+
+    /// 열 때의 값을 시트용 복사본에 담는다 — 「완료」 전에 닫으면 화면 값은 그대로
+    private func openPicker(_ notify: () -> Void) {
+        notify()
+        pickerValue.startMinutes = state.startMinute
+        pickerValue.endMinutes = state.endMinute
+        pickerValue.breakMinutes = state.breakMinutes
+        pickerOpen = true
     }
 
     // 1. 큰 제목 + 안내
@@ -94,9 +118,9 @@ struct PersonalTermsView: View {
             divider
             row { daysRow }
             divider
-            valueRow("근무 시간", state.timeRangeText, action: onPickTime)
+            valueRow("근무 시간", state.timeRangeText) { openPicker(onPickTime) }
             divider
-            valueRow("휴게", state.breakText, action: onPickBreak)
+            valueRow("휴게", state.breakText) { openPicker(onPickBreak) }
             divider
             valueRow("급여일", state.paydayText, action: onPickPayday)
         }
