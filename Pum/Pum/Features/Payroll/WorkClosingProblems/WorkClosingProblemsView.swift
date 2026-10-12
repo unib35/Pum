@@ -76,9 +76,10 @@ struct WorkClosingProblemsView: View {
 
     private func problemRow(_ item: WorkClosingProblemItem) -> some View {
         let locked = lock.isLocked(item.id)
-        return HStack(alignment: .top, spacing: PumTokens.Space.s12) {
-            PumAvatar(name: item.name, colorIndex: item.colorIndex)
-            VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+        // 원문: 위 줄은 아바타 옆 이름 · 배지, 아래 줄(설명 · 버튼)은 아바타 아래까지 카드 폭 전체
+        return VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+            HStack(alignment: .center, spacing: PumTokens.Space.s12) {
+                PumAvatar(name: item.name, colorIndex: item.colorIndex)
                 ViewThatFits(in: .horizontal) {
                     HStack(alignment: .firstTextBaseline, spacing: PumTokens.Space.s8) {
                         nameDate(item)
@@ -90,17 +91,17 @@ struct WorkClosingProblemsView: View {
                         problemBadge(item)
                     }
                 }
-                .accessibilityHidden(true) // 행 라벨이 한 번에 읽는다
-                ViewThatFits(in: .horizontal) {
-                    HStack(alignment: .center, spacing: PumTokens.Space.s8) {
-                        detail(item)
-                        Spacer(minLength: PumTokens.Space.s8)
-                        buttons(item, locked: locked)
-                    }
-                    VStack(alignment: .leading, spacing: PumTokens.Space.s8) { // 큰 글자는 버튼을 설명 아래 줄로
-                        detail(item)
-                        buttons(item, locked: locked)
-                    }
+            }
+            .accessibilityHidden(true) // 행 라벨이 한 번에 읽는다
+            ViewThatFits(in: .horizontal) {
+                HStack(alignment: .center, spacing: PumTokens.Space.s8) {
+                    detail(item)
+                    Spacer(minLength: PumTokens.Space.s8)
+                    buttons(item, locked: locked)
+                }
+                VStack(alignment: .leading, spacing: PumTokens.Space.s8) { // 큰 글자는 버튼을 설명 아래 줄로
+                    detail(item)
+                    buttons(item, locked: locked)
                 }
             }
         }
