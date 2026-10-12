@@ -55,7 +55,7 @@ struct OwnerHomeView: View {
         }
         .background(PumColor.bgApp)
         .safeAreaInset(edge: .bottom, spacing: 0) {
-            PumTabBar(items: PumTabItem.ownerTabs(workBadge: isLoading ? 0 : state.workTabBadge), selection: $tab)
+            PumTabBar(items: PumTabItem.ownerTabs(workBadge: isLoading || isStale ? 0 : state.workTabBadge), selection: $tab)
         }
     }
 
@@ -68,7 +68,7 @@ struct OwnerHomeView: View {
             PumWorkplaceChip(name: state.workplaceName, initial: state.workplaceInitial,
                              tileColor: PumColor.surfaceInverse, role: "사장님") {}
             Spacer(minLength: PumTokens.Space.s8)
-            PumIconButton(systemImage: "bell", label: "알림", showsDot: !isLoading && state.hasUnreadNotification) {} // 로딩 중엔 안 읽음 여부를 아직 모름(21j · 21k 원문 점 없음)
+            PumIconButton(systemImage: "bell", label: "알림", showsDot: !isLoading && !isStale && state.hasUnreadNotification) {} // 로딩 · 불러오기 실패 중엔 안 읽음 여부를 모름(21j · 21k · 21n 원문 점 없음)
         }
         .padding(.top, PumTokens.Space.s8)
     }

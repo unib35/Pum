@@ -22,37 +22,45 @@ struct OwnerHomeLoadFailedCard: View {
     let since: String
     let onRetry: () -> Void
 
+    @Environment(\.dynamicTypeSize) private var typeSize
+    /// 「!」 원 지름 — 원문 실측 약 24
+    @ScaledMetric(relativeTo: .callout) private var markSize: CGFloat = 24
+
     var body: some View {
         PumCard {
-            ViewThatFits(in: .horizontal) {
-                HStack(spacing: PumTokens.Space.s12) {
-                    info.frame(maxWidth: .infinity, alignment: .leading)
-                    retry
+            Group {
+                // 원문: 이유는 두 줄로 감기고 「다시 시도」는 오른쪽. 아주 큰 글자에서만 버튼을 아래로
+                if typeSize.isAccessibilitySize {
+                    VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+                        info
+                        retry
+                    }
+                } else {
+                    HStack(spacing: PumTokens.Space.s12) {
+                        info.frame(maxWidth: .infinity, alignment: .leading)
+                        retry.fixedSize()
+                    }
                 }
-                VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
-                    info
-                    retry
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
             }
             .padding(.vertical, PumTokens.Size.rowPadY)
             .padding(.horizontal, PumTokens.Size.rowPadX)
-            .frame(minHeight: PumTokens.Size.tapMin)
+            .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin, alignment: .leading)
         }
     }
 
     private var info: some View {
         HStack(spacing: PumTokens.Space.s12) {
             Text("!")
-                .pumText(.callout, weight: .heavy)
+                .pumText(.footnote, weight: .heavy)
                 .foregroundStyle(PumColor.statusAttention)
-                .frame(width: PumLayout.avatar, height: PumLayout.avatar)
+                .frame(width: markSize, height: markSize)
                 .background(PumColor.statusAttentionSoft, in: Circle())
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
-                Text(OwnerHomeLoadFailed.title).pumText(.callout).foregroundStyle(PumColor.textPrimary)
+                Text(OwnerHomeLoadFailed.title).pumText(.callout, weight: .semibold).foregroundStyle(PumColor.textPrimary)
                 Text(OwnerHomeLoadFailed.reason(since: since)).pumText(.caption).foregroundStyle(PumColor.textSecondary)
             }
+            .fixedSize(horizontal: false, vertical: true)
         }
         .accessibilityElement(children: .combine)
         .accessibilityLabel(Text(OwnerHomeLoadFailed.announcement(since: since)))
