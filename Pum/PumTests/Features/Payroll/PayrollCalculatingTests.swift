@@ -37,4 +37,23 @@ struct PayrollCalculatingTests {
         #expect(waiting.amountText == nil)
         #expect(done.amountText == "500,000원")
     }
+
+    @Test func 완료인데_금액이_아직_없으면_이름과_완료만() {
+        let r = PayrollCalculatingRow(id: 7, name: "오세진", colorIndex: 4, status: .done, amountWon: nil)
+        #expect(r.amountText == nil)
+        #expect(r.accessibilityText == "오세진, 완료")
+    }
+
+    @Test func 진행_비율은_0과_1_사이로() {
+        let over = PayrollCalculatingState(periodText: "", doneCount: 7, totalCount: 6, rows: [])
+        let negative = PayrollCalculatingState(periodText: "", doneCount: -1, totalCount: 6, rows: [])
+        #expect(over.progressFraction == 1)
+        #expect(negative.progressFraction == 0)
+    }
+
+    @Test func 고정_문구() {
+        #expect(PayrollCalculatingState.backTitle == "급여")
+        #expect(PayrollCalculatingState.title == "급여 계산 중")
+        #expect(PayrollCalculatingState.buttonTitle == "계산 중")
+    }
 }

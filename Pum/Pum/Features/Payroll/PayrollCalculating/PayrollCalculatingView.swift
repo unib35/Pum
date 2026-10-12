@@ -9,6 +9,8 @@ struct PayrollCalculatingView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @ScaledMetric(relativeTo: .body) private var circleSize = Local.stepCircle
     @ScaledMetric(relativeTo: .body) private var barHeight = PumTokens.Space.s8
+    /// 아바타 지름 — 원문 실측 약 30(공통 기본 36보다 작음)
+    @ScaledMetric(relativeTo: .body) private var avatarSize: CGFloat = 30
 
     init(state: PayrollCalculatingState = .sample, onBack: @escaping () -> Void = {}) {
         self.state = state
@@ -36,7 +38,7 @@ struct PayrollCalculatingView: View {
                     titleBlock
                     PumCard {
                         ForEach(Array(state.rows.enumerated()), id: \.element.id) { index, row in
-                            rowView(row, index: index, isLast: index == state.rows.count - 1)
+                            rowView(row, isLast: index == state.rows.count - 1)
                         }
                     }
                     .animation(PumMotion.respecting(reduceMotion, PumMotion.fast), value: state.rows) // M37 행 fast
@@ -82,8 +84,7 @@ struct PayrollCalculatingView: View {
             Text(state.progressText).pumText(.footnote).foregroundStyle(PumColor.textSecondary)
                 .accessibilityLabel(Text(state.progressAccessibilityText))
             bar.padding(.top, PumTokens.Space.s8)
-                .accessibilityElement(children: .ignore)
-                .accessibilityLabel(Text(state.progressAccessibilityText))
+                .accessibilityHidden(true) // 위 진행 문구가 같은 내용을 읽음
         }
         .padding(.horizontal, PumTokens.Space.s4)
         .padding(.bottom, PumTokens.Space.s8)
@@ -105,10 +106,10 @@ struct PayrollCalculatingView: View {
 
     // MARK: 직원 행
 
-    private func rowView(_ row: PayrollCalculatingRow, index: Int, isLast: Bool) -> some View {
+    private func rowView(_ row: PayrollCalculatingRow, isLast: Bool) -> some View {
         HStack(spacing: PumTokens.Space.s12) {
             statusMark(row.status)
-            PumAvatar(name: row.name, colorIndex: row.colorIndex)
+            PumAvatar(name: row.name, colorIndex: row.colorIndex, size: avatarSize)
             // 금액은 넘치면 이름 아래로
             ViewThatFits(in: .horizontal) {
                 HStack(alignment: .center, spacing: PumTokens.Space.s8) {
@@ -131,7 +132,6 @@ struct PayrollCalculatingView: View {
         }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(row.accessibilityText))
-        .accessibilityValue(Text("\(index + 1)번째"))
     }
 
     private func nameBlock(_ row: PayrollCalculatingRow) -> some View {
