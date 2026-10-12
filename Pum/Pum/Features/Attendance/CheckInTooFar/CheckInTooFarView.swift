@@ -46,6 +46,8 @@ struct CheckInTooFarView: View {
         static let glyph: CGFloat = 14
     }
 
+    @ScaledMetric(relativeTo: .body) private var checkCircle = PumLayout.avatar - PumTokens.Space.s12
+
     var body: some View {
         VStack(spacing: 0) {
             header
@@ -125,7 +127,7 @@ struct CheckInTooFarView: View {
             Image(systemName: failed ? "xmark" : "checkmark")
                 .font(.system(size: Local.glyph, weight: .bold))
                 .foregroundStyle(failed ? PumColor.statusDanger : PumColor.textPrimary)
-                .frame(width: PumLayout.avatar, height: PumLayout.avatar)
+                .frame(width: checkCircle, height: checkCircle) // 원문 약 24(10t와 같은 값)
                 .background(failed ? PumColor.statusDangerSoft : PumColor.surfaceFill, in: Circle())
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
