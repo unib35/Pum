@@ -62,4 +62,17 @@ struct WorkClosingProblemsTests {
         lock.finish("p2", success: false)
         #expect(lock.isLocked("p1"))
     }
+
+    @Test func 새_상태가_오면_잠금이_풀린다() {
+        var lock = WorkClosingRowLock()
+        let began = lock.begin("p1")
+        lock.finish("p1", success: true)
+        #expect(began && lock.isLocked("p1"))
+        lock.reset()
+        #expect(!lock.isLocked("p1"))
+    }
+
+    @Test func 버튼_음성_안내에_누구_기록인지() {
+        #expect(WorkClosingProblemsState.sample.remaining[0].buttonContext == "박서준 10월 28일 화요일")
+    }
 }

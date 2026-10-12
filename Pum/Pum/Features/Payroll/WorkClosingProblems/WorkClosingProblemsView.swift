@@ -35,6 +35,7 @@ struct WorkClosingProblemsView: View {
             }
         }
         .background(PumColor.bgApp)
+        .onChange(of: state) { lock.reset() } // 서버 새 상태로 다시 그리면 잠금 해제
     }
 
     // MARK: 진행 막대
@@ -148,10 +149,10 @@ struct WorkClosingProblemsView: View {
 
     private func buttons(_ item: WorkClosingProblemItem, locked: Bool) -> some View {
         HStack(spacing: PumTokens.Space.s8) {
-            ProblemPill(title: item.leadingTitle, style: .outline, locked: locked) {
+            ProblemPill(title: item.leadingTitle, style: .outline, locked: locked, context: item.buttonContext) {
                 if let action = item.leadingAction { run(item.id, action) } else { onEdit(item.id) }
             }
-            ProblemPill(title: item.trailingTitle, style: item.kind == .missingClockOut ? .dark : .accent, locked: locked) {
+            ProblemPill(title: item.trailingTitle, style: item.kind == .missingClockOut ? .dark : .accent, locked: locked, context: item.buttonContext) {
                 run(item.id, item.trailingAction)
             }
         }
@@ -221,6 +222,8 @@ private struct ProblemPill: View {
     let title: String
     let style: Style
     let locked: Bool
+    /// VoiceOver 맥락 — 「박서준 10월 28일 화요일」(버튼 목록에서도 어느 행인지 알게)
+    var context: String = ""
     let action: () -> Void
 
     var body: some View {
@@ -233,16 +236,16 @@ private struct ProblemPill: View {
                 .background(fill, in: Capsule())
                 .overlay { if style == .outline { Capsule().strokeBorder(PumColor.textPrimary, lineWidth: PumTokens.Shadow.outline.spread) } }
                 // 누름 영역: 키운 뒤 같은 만큼 음수 padding으로 되돌려 배치는 그대로
-                .padding(.vertical, PumTokens.Space.s6)
+                .padding(.vertical, PumTokens.Space.s8) // 알약 약 30 + 위아래 8 → 44 이상
                 .padding(.horizontal, PumTokens.Space.s4)
                 .contentShape(Rectangle())
-                .padding(.vertical, -PumTokens.Space.s6)
+                .padding(.vertical, -PumTokens.Space.s8)
                 .padding(.horizontal, -PumTokens.Space.s4)
         }
         .buttonStyle(ProblemPillPressStyle())
         .disabled(locked)
         .opacity(locked ? 0.5 : 1) // 처리 중 — 그 행의 두 버튼 모두
-        .accessibilityLabel(Text(title))
+        .accessibilityLabel(Text(context.isEmpty ? title : "\(context) \(title)"))
         .accessibilityValue(Text(locked ? "처리 중" : ""))
     }
 

@@ -41,6 +41,8 @@ nonisolated struct WorkClosingProblemItem: Equatable, Sendable, Identifiable {
     var trailingAction: WorkClosingProblemAction { kind == .missingClockOut ? .confirmRequest : .approve }
 
     /// 「·」 · 「→」는 쉼표 · 「에서」로 읽히게
+    /// 버튼 음성 안내 앞말 「박서준 10월 28일 화요일」
+    var buttonContext: String { "\(name) \(dateSpokenText)" }
     var accessibilityText: String {
         let spoken = detailText
             .replacingOccurrences(of: " \u{00B7} ", with: ", ")
@@ -106,4 +108,6 @@ nonisolated struct WorkClosingRowLock: Equatable, Sendable {
     /// 처음 누르면 true를 돌려주고 잠근다. 이미 처리 중이면 false.
     mutating func begin(_ id: String) -> Bool { processing.insert(id).inserted }
     mutating func finish(_ id: String, success: Bool) { if !success { processing.remove(id) } }
+    /// 서버 새 상태가 오면 잠금을 푼다 — 성공한 행은 처리됨으로 옮겨 갔거나(확인 요청처럼) 남아도 다시 누를 수 있어야 한다
+    mutating func reset() { processing.removeAll() }
 }
