@@ -195,7 +195,10 @@ private struct PumCheckFlowLayout: Layout {
     var lineSpacing: CGFloat
 
     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
-        arrange(width: proposal.width ?? .infinity, subviews: subviews).size
+        let size = arrange(width: proposal.width ?? .infinity, subviews: subviews).size
+        // 받은 폭을 그대로 쓴다 — 더 좁게 돌려주면 배치 때 줄이 더 꺾여 마지막 줄이 잘린다
+        if let w = proposal.width, w.isFinite { return CGSize(width: w, height: size.height) }
+        return size
     }
 
     func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
