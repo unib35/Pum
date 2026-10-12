@@ -4,7 +4,7 @@
 import SwiftUI
 
 struct PumButton: View {
-    enum Kind: CaseIterable { case primary, dark, outline, dangerOutline, tonal, text }
+    nonisolated enum Kind: CaseIterable { case primary, dark, outline, dangerOutline, tonal, text }
     enum Size { case regular, small }
 
     let title: String

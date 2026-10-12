@@ -31,7 +31,7 @@ struct PumAvatar: View {
     /// 디자인 1az · 1ar · C7 예시는 성이 아니라 이름의 첫 글자(김하늘 → 하, 박서준 → 서, 최유나 → 유, 이종민 → 종).
     /// **추정 규칙**: 확인된 예시는 세 글자 한글 이름뿐이라 세 글자 한글만 둘째 글자, 그 밖(두 글자 · 네 글자 · 영문)은 첫 글자.
     /// 두 글자 · 복성 이름의 디자인 규칙은 미정 — docs/design/README.md 충돌 #21.
-    static func initial(for name: String) -> String {
+    nonisolated static func initial(for name: String) -> String {
         let chars = Array(name.trimmingCharacters(in: .whitespaces))
         let isHangul = chars.allSatisfy { ("가"..."힣").contains($0) }
         if chars.count == 3 && isHangul { return String(chars[1]) }

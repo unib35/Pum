@@ -3,7 +3,7 @@
 import CoreGraphics
 
 /// 손가락이 한 번 닿았다 떨어질 때까지의 점 목록(획 하나)
-struct SignatureStroke: Equatable {
+nonisolated struct SignatureStroke: Equatable {
     var points: [CGPoint]
 
     /// 이보다 짧은 획(점 하나를 톡 찍은 것)은 서명으로 치지 않는다 — 화면 pt 길이

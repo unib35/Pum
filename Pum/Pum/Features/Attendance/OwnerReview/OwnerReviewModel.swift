@@ -6,7 +6,7 @@ enum OwnerReviewFilter: CaseIterable, Sendable {
     case needsReview, processed, all
 }
 
-enum OwnerReviewAction: Equatable, Sendable {
+nonisolated enum OwnerReviewAction: Equatable, Sendable {
     case edit, approve, confirm, manualInput, recordPlannedEnd, reject
 }
 

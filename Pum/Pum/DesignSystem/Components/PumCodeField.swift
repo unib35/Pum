@@ -37,7 +37,7 @@ struct PumCodeField: View {
     @ScaledMetric(relativeTo: .title2) private var caretHeight = PumCodeFieldStyle.caretHeight
 
     /// 허용 글자만 · 최대 길이까지(영문은 대문자로)
-    static func sanitized(_ raw: String, length: Int, characters: Characters) -> String {
+    nonisolated static func sanitized(_ raw: String, length: Int, characters: Characters) -> String {
         let kept: [Character]
         switch characters {
         case .digits:
