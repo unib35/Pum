@@ -139,6 +139,32 @@ nonisolated struct OwnerManualEntryDraft: Equatable, Sendable {
     mutating func step(_ field: OwnerManualEntryField, by delta: Int) {
         setTime(field, minute: (field == .start ? startMinute : endMinute) + delta)
     }
+    // MARK: C13 시간 선택 시트 (#66)
+
+    /// 시트 간격 — 출퇴근 기록은 16:55처럼 분 단위일 수 있어 1분(1i 수정 요청과 같은 기준). 원문 값은 30분 눈금과 겹쳐 보일 뿐
+    static let pickerIntervalMinutes = 1
+
+    /// 시트를 열 때 쓸 값 — 날짜 행은 화면의 날짜 문구(없으면 칸의 「선택」)
+    var pickerValue: PumTimeRangeValue {
+        var v = PumTimeRangeValue()
+        v.startMinutes = startMinute
+        v.endMinutes = endMinute
+        v.breakMinutes = breakOption.minutes
+        v.dateText = dateText ?? "선택"
+        return v
+    }
+
+    /// C13 「완료」로 고른 출근 · 퇴근 반영(순수). 하루 밖이면 하루 안으로 붙이고,
+    /// 값이 바뀌면 서버 미리보기(인정 근무 · 기본급)는 낡은 값이라 비운다. 같은 값이면 그대로 둔다
+    func applying(picked: PumTimeRangeValue) -> OwnerManualEntryDraft {
+        var d = self
+        let day = 24 * 60 - 1
+        d.startMinute = min(max(picked.startMinutes, 0), day)
+        d.endMinute = min(max(picked.endMinutes, 0), day)
+        if d.startMinute != startMinute || d.endMinute != endMinute { d.preview = nil }
+        return d
+    }
+
     /// 사유 칩은 누르면 고르고, 다시 누르면 푼다(문장만으로도 보낼 수 있다)
     mutating func toggleReason(_ reason: OwnerManualEntryReason) {
         reasonChip = reasonChip == reason ? nil : reason

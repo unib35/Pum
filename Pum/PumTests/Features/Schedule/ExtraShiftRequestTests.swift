@@ -59,4 +59,45 @@ struct ExtraShiftRequestTests {
         #expect(s.holidayName == nil)
         #expect(ExtraShiftReason.allCases.map(\.title) == ["공휴일 영업", "단체 예약", "명절", "결원 대체", "기타"])
     }
+
+    @Test func 시트_열_때_값은_화면_문구에서() {
+        let v = ExtraShiftRequestState.sample.pickerValue
+        #expect(v.startMinutes == 11 * 60 && v.endMinutes == 16 * 60)
+        #expect(v.breakMinutes == 30 && v.dateText == "10월 9일 (금)")
+        #expect(ExtraShiftRequestState.minutes(fromBreakText: "1시간") == 60)
+        #expect(ExtraShiftRequestState.minutes(fromBreakText: "없음") == 0)
+        #expect(ExtraShiftRequestState.minutes(fromClock: "24:00") == nil)
+    }
+
+    @Test func 시트에서_고른_값_반영() {
+        let s = ExtraShiftRequestState.sample
+        let same = s.applying(picked: s.pickerValue)
+        #expect(same == s) // 같은 값이면 서버 값(인정 시간) 유지
+        #expect(same.recognizedText == "인정 4시간 30분")
+
+        var v = s.pickerValue
+        v.endMinutes = 17 * 60
+        let changedEnd = s.applying(picked: v)
+        #expect(changedEnd.endText == "17:00" && changedEnd.startText == "11:00")
+        #expect(changedEnd.recognizedText == nil) // 바뀌면 숨김
+
+        v = s.pickerValue
+        v.breakMinutes = 60
+        let changedBreak = s.applying(picked: v)
+        #expect(changedBreak.breakText == "1시간" && changedBreak.recognizedText == nil)
+        v.breakMinutes = 0
+        #expect(s.applying(picked: v).breakText == "없음")
+    }
+
+    @Test func 시트_반영_하루_경계() {
+        let s = ExtraShiftRequestState.sample
+        var v = s.pickerValue
+        v.startMinutes = -30
+        v.endMinutes = 1440
+        let r = s.applying(picked: v)
+        #expect(r.startText == "00:00" && r.endText == "23:59")
+        #expect(r.recognizedText == nil)
+        v.startMinutes = 0; v.endMinutes = 1439
+        #expect(s.applying(picked: v).endText == "23:59")
+    }
 }

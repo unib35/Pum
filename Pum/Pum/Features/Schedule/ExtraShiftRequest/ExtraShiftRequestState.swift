@@ -100,6 +100,66 @@ nonisolated struct ExtraShiftRequestState: Equatable, Sendable {
 
     mutating func setPremium(_ p: ExtraShiftPremium) { premium = p }
 
+    // MARK: C13 시간 선택 시트 (#66)
+
+    /// 시트 간격 — 원문 휠 11:00 – 16:00 (30분 단위)
+    static let pickerIntervalMinutes = 30
+
+    /// 「11:00」 → 660. 형식이 다르면 nil
+    static func minutes(fromClock text: String) -> Int? {
+        let parts = text.split(separator: ":")
+        guard parts.count == 2, let h = Int(parts[0]), let m = Int(parts[1]),
+              (0..<24).contains(h), (0..<60).contains(m) else { return nil }
+        return h * 60 + m
+    }
+
+    /// 「30분」 → 30, 「1시간」 → 60, 「1시간 30분」 → 90, 「없음」 → 0. 읽을 수 없으면 nil
+    static func minutes(fromBreakText text: String) -> Int? {
+        if text == "없음" { return 0 }
+        var total = 0, number = "", found = false
+        for ch in text {
+            if ch.isNumber { number.append(ch); continue }
+            guard let n = Int(number) else { number = ""; continue }
+            if ch == "시" { total += n * 60; found = true } else if ch == "분" { total += n; found = true }
+            number = ""
+        }
+        return found ? total : nil
+    }
+
+    /// 시트를 열 때 쓸 값 — 화면 문구에서 만든다. 날짜 문구는 그대로 칩에 보인다
+    var pickerValue: PumTimeRangeValue {
+        var v = PumTimeRangeValue()
+        v.startMinutes = Self.minutes(fromClock: startText) ?? v.startMinutes
+        v.endMinutes = Self.minutes(fromClock: endText) ?? v.endMinutes
+        v.breakMinutes = Self.minutes(fromBreakText: breakText) ?? v.breakMinutes
+        v.dateText = dateText
+        return v
+    }
+
+    /// C13 「완료」로 고른 값 반영(순수). 하루 밖이면 하루 안으로 붙이고,
+    /// 시작 · 끝 · 휴게가 바뀌면 서버가 계산한 인정 시간은 낡은 값이라 숨긴다(새 값은 서버 재조회 — 후속)
+    func applying(picked: PumTimeRangeValue) -> ExtraShiftRequestState {
+        var s = self
+        let day = PumTimeWheelMath.minutesPerDay - 1
+        let start = min(max(picked.startMinutes, 0), day)
+        let end = min(max(picked.endMinutes, 0), day)
+        let breakMin = max(picked.breakMinutes, 0)
+        let changed = start != Self.minutes(fromClock: startText)
+            || end != Self.minutes(fromClock: endText)
+            || breakMin != Self.minutes(fromBreakText: breakText)
+        guard changed else { return self }
+        s.startText = PumTimeWheelMath.clockText(start)
+        s.endText = PumTimeWheelMath.clockText(end)
+        s.breakText = Self.breakTitle(minutes: breakMin)
+        s.recognizedText = nil
+        return s
+    }
+
+    static func breakTitle(minutes: Int) -> String {
+        if let c = PumTimePickerStyle.breakChoices.first(where: { $0.minutes == minutes }) { return c.title }
+        return PumTimeWheelMath.durationText(minutes: minutes)
+    }
+
     /// 보내기는 한 번만 — 처리 중이면 false
     mutating func beginSend() -> Bool {
         guard canSend else { return false }
