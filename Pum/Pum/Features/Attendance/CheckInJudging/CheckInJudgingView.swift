@@ -19,8 +19,10 @@ struct CheckInJudgingView: View {
         static let stepCircle: CGFloat = 24
         /// 체크 크기 = 원 지름의 0.45
         static let checkRatio: CGFloat = 0.45
-        /// 회전 호 선 굵기 · 길이(원 둘레 비율) · 한 바퀴 시간(M36 스피너 .9s — 토큰 없음)
-        static let ringWidth: CGFloat = 1.5
+        /// 회전 호 길이(원 둘레 비율) · 한 바퀴 시간(M36 스피너 .9s — 토큰 없음)
+        /// 판정 중 표시 — 원문 실측: 지름 약 17(상태 원 칸의 0.7) · 연회색 고리 위 굵기 약 2.5 먹색 호
+        static let spinnerRatio: CGFloat = 0.7
+        static let spinnerWidth: CGFloat = 2.5
         static let arcLength: CGFloat = 0.25
         static let spinSeconds: Double = 0.9
     }
@@ -116,9 +118,14 @@ struct CheckInJudgingView: View {
                 .frame(width: circleSize, height: circleSize)
                 .accessibilityHidden(true)
         case .checking:
-            // 원문: 원 테두리 없이 회전 호만
-            SpinningArc(reduceMotion: reduceMotion)
-                .frame(width: circleSize, height: circleSize)
+            // 원문: 연회색 고리 위를 도는 먹색 호(상태 원보다 작게)
+            ZStack {
+                Circle().stroke(PumColor.surfaceFill, lineWidth: Local.spinnerWidth)
+                    .padding(Local.spinnerWidth / 2)
+                SpinningArc(reduceMotion: reduceMotion)
+            }
+            .frame(width: circleSize * Local.spinnerRatio, height: circleSize * Local.spinnerRatio)
+            .frame(width: circleSize, height: circleSize)
                 .accessibilityHidden(true)
         }
     }
@@ -146,8 +153,8 @@ private struct SpinningArc: View {
         Circle()
             .trim(from: 0, to: CheckInJudgingView.Local.arcLength)
             .stroke(PumColor.textPrimary,
-                    style: StrokeStyle(lineWidth: CheckInJudgingView.Local.ringWidth, lineCap: .round))
-            .padding(CheckInJudgingView.Local.ringWidth / 2)
+                    style: StrokeStyle(lineWidth: CheckInJudgingView.Local.spinnerWidth, lineCap: .round))
+            .padding(CheckInJudgingView.Local.spinnerWidth / 2)
             .rotationEffect(.degrees(spinning ? 360 : 0))
             .animation(reduceMotion ? nil
                        : .linear(duration: CheckInJudgingView.Local.spinSeconds).repeatForever(autoreverses: false),
