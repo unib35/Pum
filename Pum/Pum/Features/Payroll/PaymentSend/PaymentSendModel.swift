@@ -25,6 +25,8 @@ final class PaymentSendModel {
     private(set) var toastMessage: String?
     private var revealedAt: Date?
     private var lock = PaymentRevealLock()
+    /// 공개 요청 세대 — 가리면 올린다. 세대가 다른(가린 뒤 늦게 온) 결과는 버린다.
+    private var revealGeneration = 0
     private var maskTask: Task<Void, Never>?
     private var accountCopyTask: Task<Void, Never>?
     private var amountCopyTask: Task<Void, Never>?
@@ -38,7 +40,10 @@ final class PaymentSendModel {
     var canMarkPaid: Bool { PaymentSendState.canMarkPaid(isRevealed: isRevealed) }
 
     init(state: PaymentSendState) {
-        self.state = state
+        // 전체 번호는 이 객체의 fullAccount 한 곳에만 둔다(가릴 때 지워지도록 state에서는 뺀다)
+        var stripped = state
+        stripped.initialFullAccount = nil
+        self.state = stripped
         self.accountCopied = state.initialAccountCopied
         if let full = state.initialFullAccount {
             fullAccount = full
@@ -53,8 +58,9 @@ final class PaymentSendModel {
     /// Face ID + 서버 조회는 부모가 한다. 전체 번호를 받으면 보이고, nil이면 가린 채로 둔다.
     func reveal(using onReveal: (_ done: @escaping (String?) -> Void) -> Void) {
         guard lock.begin() else { return }
+        let generation = revealGeneration
         onReveal { [weak self] result in
-            guard let self else { return }
+            guard let self, generation == revealGeneration else { return } // 가린 뒤 늦게 온 결과는 버림
             if let result, !result.isEmpty {
                 fullAccount = result
                 lock.finish(success: true)
@@ -67,6 +73,7 @@ final class PaymentSendModel {
 
     /// 앱이 비활성이 되거나 30초가 지나면 — 전체 번호를 지우고 잠금을 푼다
     func mask() {
+        revealGeneration += 1
         maskTask?.cancel(); maskTask = nil
         fullAccount = nil
         revealedAt = nil
@@ -75,6 +82,11 @@ final class PaymentSendModel {
         toastTask?.cancel()
         toastMessage = nil
         lock.release()
+    }
+
+    /// 앱 상태 변화 — 백그라운드면 가림. 비활성(inactive)은 Face ID 창에서도 생기므로 보인 상태일 때만 가린다.
+    func scenePhaseChanged(_ phase: ScenePhase) {
+        if PaymentRevealPolicy.shouldMask(on: phase, isRevealed: isRevealed) { mask() }
     }
 
     func copyAccount() {

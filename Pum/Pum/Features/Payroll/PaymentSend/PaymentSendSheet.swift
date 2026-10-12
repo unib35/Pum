@@ -10,7 +10,6 @@ struct PaymentSendSheet: View {
     var onMarkPaid: () -> Void = {}
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @Environment(\.scenePhase) private var scenePhase
     @ScaledMetric(relativeTo: .body) private var avatarSize = PumLayout.avatar + PumTokens.Space.s8 // 원문 약 44pt
 
     private var state: PaymentSendState { model.state }
@@ -30,7 +29,7 @@ struct PaymentSendSheet: View {
             }
             PumButton(title: PaymentSendState.markPaidTitle, kind: .primary, action: onMarkPaid)
                 .disabled(!model.canMarkPaid)
-                .accessibilityHint(model.canMarkPaid ? Text("") : Text("Face ID로 계좌번호를 확인한 뒤 누를 수 있어요"))
+                .accessibilityHint(Text(model.canMarkPaid ? "" : "Face ID로 계좌번호를 확인한 뒤 누를 수 있어요")) // 빈 힌트는 읽지 않음
             if model.isRevealed {
                 Text(PaymentSendState.clipboardNotice).pumText(.caption, weight: .regular).foregroundStyle(PumColor.textTertiary)
                     .frame(maxWidth: .infinity, alignment: .center)
@@ -41,9 +40,6 @@ struct PaymentSendSheet: View {
         .padding(.bottom, PumTokens.Space.s8)
         .animation(PumMotion.respecting(reduceMotion, PumMotion.base), value: model.toastMessage)
         .animation(PumMotion.respecting(reduceMotion, PumMotion.fast), value: model.isRevealed) // M27
-        .onChange(of: scenePhase) { _, phase in
-            if phase != .active { model.mask() } // 앱이 비활성이 되면 즉시 가림
-        }
         .onChange(of: model.toastMessage) { _, message in
             if let message { AccessibilityNotification.Announcement(message).post() }
         }

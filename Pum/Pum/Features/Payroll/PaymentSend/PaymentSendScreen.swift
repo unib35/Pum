@@ -4,7 +4,6 @@
 import SwiftUI
 
 struct PaymentSendScreen: View {
-    var state: PaymentSendState = .sample
     /// Face ID(LocalAuthentication) + 서버 조회는 부모가 한다. 전체 번호를 done으로 넘기고, 실패 · 취소면 nil.
     var onReveal: (_ done: @escaping (String?) -> Void) -> Void = { done in done(nil) }
     var onMarkPaid: () -> Void = {}   // 7c 확인 다이얼로그를 여는 클로저
@@ -12,11 +11,11 @@ struct PaymentSendScreen: View {
 
     @State private var model: PaymentSendModel
     @State private var sheetOpen: Bool
+    @Environment(\.scenePhase) private var scenePhase
 
     init(state: PaymentSendState = .sample, sheetOpen: Bool = true,
          onReveal: @escaping (_ done: @escaping (String?) -> Void) -> Void = { done in done(nil) },
          onMarkPaid: @escaping () -> Void = {}, onClose: @escaping () -> Void = {}) {
-        self.state = state
         self.onReveal = onReveal
         self.onMarkPaid = onMarkPaid
         self.onClose = onClose
@@ -30,6 +29,9 @@ struct PaymentSendScreen: View {
             .pumBottomSheet(isPresented: $sheetOpen, onDismiss: closed) {
                 PaymentSendSheet(model: model, onReveal: onReveal, onMarkPaid: onMarkPaid)
             }
+            // 감시는 호스트에서 한 번만(시트 내용은 여러 번 만들어질 수 있다)
+            .onChange(of: scenePhase) { _, phase in model.scenePhaseChanged(phase) }
+            .onChange(of: sheetOpen) { _, open in if !open { model.mask() } } // 어떤 경로로 닫혀도 지움
     }
 
     private func closed() {

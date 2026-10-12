@@ -1,5 +1,6 @@
 // UI-IOS-7b · 21e · 21f · REQ-077 · DEC-002 — 지급 시트 문구 · 30초 재가림 · 한 번만 잠금 · 송금 버튼 · 복사 값
 import Testing
+import SwiftUI
 import Foundation
 @testable import Pum
 
@@ -85,5 +86,30 @@ struct PaymentSendTests {
         let m = PaymentSendModel(state: .masked)
         m.copyAccount()
         #expect(!m.accountCopied && m.toastMessage == nil)
+    }
+
+    @Test @MainActor func 가린_뒤_늦게_온_공개_결과는_버린다() {
+        let model = PaymentSendModel(state: .masked)
+        var pending: ((String?) -> Void)?
+        model.reveal { done in pending = done }
+        model.mask() // 인증 기다리는 중 시트 닫힘 · 백그라운드
+        pending?("123456-78-901234")
+        #expect(!model.isRevealed)
+        #expect(!model.isRevealBusy)
+    }
+
+    @Test @MainActor func 전체_번호는_모델_한_곳에만() {
+        let model = PaymentSendModel(state: .sample)
+        #expect(model.state.initialFullAccount == nil)
+        #expect(model.isRevealed)
+        model.mask()
+        #expect(!model.isRevealed)
+    }
+
+    @Test func 앱_상태로_가리기() {
+        #expect(PaymentRevealPolicy.shouldMask(on: .background, isRevealed: false))
+        #expect(PaymentRevealPolicy.shouldMask(on: .inactive, isRevealed: true))
+        #expect(!PaymentRevealPolicy.shouldMask(on: .inactive, isRevealed: false)) // Face ID 창
+        #expect(!PaymentRevealPolicy.shouldMask(on: .active, isRevealed: true))
     }
 }
