@@ -22,6 +22,7 @@ struct OwnerHomeView: View {
     var staleSince: String?
     var onRetry: () -> Void = {}
     @State private var tab = "home"
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         ScrollView {
@@ -37,7 +38,7 @@ struct OwnerHomeView: View {
                         if let staleSince {
                             OwnerHomeLoadFailedCard(since: staleSince, onRetry: onRetry)
                                 .transition(.opacity)
-                                .animation(PumMotion.base, value: staleSince)
+                                .animation(PumMotion.respecting(reduceMotion, PumMotion.base), value: staleSince)
                         }
                         decisionCard.ownerHomeStale(isStale)
                         workingCard.ownerHomeStale(isStale)
@@ -46,8 +47,8 @@ struct OwnerHomeView: View {
                     .transition(.opacity)
                 }
             }
-            .animation(PumMotion.fast, value: isLoading)
-            .onChange(of: staleSince) { _, new in
+            .animation(PumMotion.respecting(reduceMotion, PumMotion.fast), value: isLoading)
+            .onChange(of: staleSince, initial: true) { _, new in
                 if let new { AccessibilityNotification.Announcement(OwnerHomeLoadFailed.announcement(since: new)).post() }
             }
             .padding(.horizontal, PumTokens.Size.screenPad)

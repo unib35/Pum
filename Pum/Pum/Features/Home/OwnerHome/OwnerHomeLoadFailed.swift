@@ -74,10 +74,11 @@ struct OwnerHomeLoadFailedCard: View {
 /// 오래된 화면 표시 — 마지막으로 받은 값을 흐리게(M38 .6 · fast). 눌러서 처리하는 건 그대로 된다.
 private struct StaleDim: ViewModifier {
     let isStale: Bool
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     func body(content: Content) -> some View {
         content
             .opacity(isStale ? OwnerHomeLoadFailed.staleOpacity : 1)
-            .animation(PumMotion.fast, value: isStale)
+            .animation(PumMotion.respecting(reduceMotion, PumMotion.fast), value: isStale)
     }
 }
 
