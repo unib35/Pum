@@ -14,6 +14,8 @@ struct LaborSimulatorView: View {
     /// 입력이 바뀔 때마다 — 부모가 엔진에 다시 계산을 요청한다
     var onInputsChanged: (LaborSimulatorInputs) -> Void
     var onShowResult: () -> Void
+    /// 부모가 엔진에서 받은 최신 결과(계산 조건 포함). 바뀌면 화면 결과를 바꾼다 — 조건이 지금 입력과 같을 때만 보인다.
+    var latestResult: LaborSimulatorResult?
 
     // 화면 전용 상수 (DEC-005)
     /// 세그먼트 칸 높이 — 원문 약 36(누름 영역은 위아래로 넓혀 44)
@@ -29,8 +31,10 @@ struct LaborSimulatorView: View {
          onEditWage: @escaping () -> Void = {},
          onPickPeriod: @escaping () -> Void = {},
          onInputsChanged: @escaping (LaborSimulatorInputs) -> Void = { _ in },
-         onShowResult: @escaping () -> Void = {}) {
+         onShowResult: @escaping () -> Void = {},
+         latestResult: LaborSimulatorResult? = nil) {
         _state = State(initialValue: state)
+        self.latestResult = latestResult
         self.onClose = onClose
         self.onSelectMode = onSelectMode
         self.onEditWage = onEditWage
@@ -53,6 +57,7 @@ struct LaborSimulatorView: View {
             }
         }
         .background(PumColor.bgApp)
+        .onChange(of: latestResult) { _, new in if let new { state.result = new } } // 엔진 새 결과
         .pumTimeRangeSheet(isPresented: $pickerOpen, value: $pickerValue, options: pickerOptions) {
             state.apply(picked: pickerValue)
         }
@@ -218,7 +223,6 @@ struct LaborSimulatorView: View {
                 .padding(.horizontal, -PumTokens.Space.s2)
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel(Text(day.long))
-                .accessibilityValue(Text(on ? "선택됨" : "선택 안 됨"))
                 .accessibilityAddTraits(on ? [.isButton, .isSelected] : .isButton)
             }
         }
