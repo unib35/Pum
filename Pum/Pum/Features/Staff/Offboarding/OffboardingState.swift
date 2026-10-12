@@ -117,7 +117,7 @@ nonisolated struct OffboardingState: Equatable, Sendable {
 extension OffboardingState {
     /// 10r 원문 값(퇴직금 · 연차수당 대상 아님 · 최유나)
     static let notEligible = OffboardingState(
-        name: "최유나", colorIndex: 1,
+        name: "최유나", colorIndex: 2,
         periodText: "2026.3.2 \u{2013} 10.31 \u{00B7} 주 12시간",
         statusText: "퇴사 예정",
         deadlineText: "지급 기한 11월 14일",
@@ -138,7 +138,7 @@ extension OffboardingState {
 
     /// 10s 원문 값(퇴직연금 DC형 · 이종민)
     static let dcPension = OffboardingState(
-        name: "이종민", colorIndex: 2,
+        name: "이종민", colorIndex: 0,
         periodText: "2024.3.4 \u{2013} 10.31 \u{00B7} 주 20시간",
         statusText: "퇴직연금 DC",
         deadlineText: "지급 \u{00B7} 적립 기한 11월 14일",
