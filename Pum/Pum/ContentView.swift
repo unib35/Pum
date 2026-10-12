@@ -112,6 +112,7 @@ struct ContentView: View {
             case "10e": PayslipIssueConfirmScreen(state: .sample)
             case "10g": CorrectionRecalcView(state: .sample)
             case "10n": OffboardingView(state: .sample)
+            case "10h": CorrectedPayslipView(state: .sample)
             case "gallery": ComponentGalleryView()
             default: DevMenu()
             }
@@ -221,6 +222,7 @@ private struct DevMenu: View {
                     NavigationLink("10e 명세서 발행 확인") { PayslipIssueConfirmScreen(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("10g 정정 재계산") { CorrectionRecalcView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("10n 퇴사 정산") { OffboardingView(state: .sample).toolbar(.hidden, for: .navigationBar) }
+                    NavigationLink("10h 정정 명세서") { CorrectedPayslipView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                 }
                 Section("디자인 시스템") {
                     NavigationLink("컴포넌트 갤러리") { ComponentGalleryView() }
