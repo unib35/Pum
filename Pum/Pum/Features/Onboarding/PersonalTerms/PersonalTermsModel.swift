@@ -2,7 +2,7 @@
 // 돈은 정수(원). 예상 월급은 화면에서 계산하지 않고 엔진(서버) 값을 받아 표시만 한다.
 import Foundation
 
-struct PersonalTermsState: Equatable {
+nonisolated struct PersonalTermsState: Equatable {
     enum PayType: String, CaseIterable, Equatable {
         case hourly = "시급", daily = "일급", monthly = "월급"
         /// 알약 · 금액 행 이름(문구는 알약 이름 그대로)

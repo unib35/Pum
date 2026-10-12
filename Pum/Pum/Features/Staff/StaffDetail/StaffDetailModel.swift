@@ -3,7 +3,7 @@
 import Foundation
 
 /// 서류 한 줄의 상태 종류 — 배지 색을 정한다(서버가 정한 상태를 앱이 다시 계산하지 않는다)
-enum StaffDocumentTone: Equatable, Sendable {
+nonisolated enum StaffDocumentTone: Equatable, Sendable {
     case attention  // 갱신 예정 등 확인 필요(주황)
     case done       // 완료(초록)
     case missing    // 미제출(회색)
