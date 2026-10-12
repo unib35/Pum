@@ -226,7 +226,7 @@ private struct MyInfoRow: View {
             .font(PumFont.font(size: PumTokens.FontToken.caption.size, weight: .medium, relativeTo: .caption))
             .foregroundStyle(PumColor.textSecondary)
         return Group {
-            if note != nil { main + sub } else { main }
+            if note != nil { Text("\(main)\(sub)") } else { main }
         }
         .tracking(PumTokens.Tracking.body)
         .multilineTextAlignment(.leading)

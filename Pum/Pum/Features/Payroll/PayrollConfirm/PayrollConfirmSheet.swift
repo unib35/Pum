@@ -79,7 +79,7 @@ struct PayrollConfirmSheet: View {
                     Circle().fill(PumColor.textPrimary).frame(width: dot, height: dot)
                         .alignmentGuide(.firstTextBaseline) { $0[VerticalAlignment.center] + PumTokens.Space.s4 }
                         .accessibilityHidden(true)
-                    (Text(n.head) + Text(n.bold).fontWeight(.bold).foregroundColor(PumTokens.ColorToken.gray800) + Text(n.tail))
+                    Text("\(Text(n.head))\(Text(n.bold).fontWeight(.bold).foregroundColor(PumTokens.ColorToken.gray800))\(Text(n.tail))")
                         .pumText(.footnote, weight: .regular).foregroundStyle(PumColor.textSecondary)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }

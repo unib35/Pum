@@ -80,10 +80,11 @@ struct NotificationSettingsView: View {
     }
 
     private var alwaysHeader: some View {
-        (Text(NotificationSettingsState.alwaysSectionLead)
+        let lead = Text(NotificationSettingsState.alwaysSectionLead)
             .font(PumFont.font(size: PumTokens.FontToken.caption.size, weight: .bold, relativeTo: .caption))
-         + Text(NotificationSettingsState.alwaysSectionTail)
-            .font(PumFont.font(size: PumTokens.FontToken.caption.size, weight: .medium, relativeTo: .caption)))
+        let tail = Text(NotificationSettingsState.alwaysSectionTail)
+            .font(PumFont.font(size: PumTokens.FontToken.caption.size, weight: .medium, relativeTo: .caption))
+        return Text("\(lead)\(tail)")
             .foregroundStyle(PumColor.textSecondary)
             .padding(.horizontal, PumTokens.Space.s4)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -155,7 +156,9 @@ struct NotificationSettingsView: View {
     private func lockedRow(_ title: String, detail: String, tag: String?, label: String, isOn: Bool, soft: Bool) -> some View {
         let sub: Text
         if let tag {
-            sub = Text(detail + " ").foregroundStyle(PumColor.textSecondary) + Text("· \(tag)").foregroundStyle(PumColor.textTertiary)
+            let head = Text(detail + " ").foregroundStyle(PumColor.textSecondary)
+            let tagText = Text("· \(tag)").foregroundStyle(PumColor.textTertiary)
+            sub = Text("\(head)\(tagText)")
         } else {
             sub = Text(detail).foregroundStyle(PumColor.textTertiary)
         }

@@ -136,7 +136,7 @@ struct OwnerReviewView: View {
     private func person(_ item: OwnerReviewItem) -> some View {
         HStack(spacing: PumTokens.Space.s12) {
             PumAvatar(name: item.name, colorIndex: item.colorIndex)
-            (Text(item.name).pumFontBold + Text(" \u{00B7} \(item.dateText)").font(PumFont.font(size: PumTokens.FontToken.caption.size, weight: .medium, relativeTo: .caption)).foregroundColor(PumColor.textSecondary))
+            Text("\(Text(item.name).pumFontBold)\(Text(" \u{00B7} \(item.dateText)").font(PumFont.font(size: PumTokens.FontToken.caption.size, weight: .medium, relativeTo: .caption)).foregroundColor(PumColor.textSecondary))")
         }
     }
 
@@ -179,7 +179,7 @@ struct OwnerReviewView: View {
         VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
             Text("실제").pumText(.caption2).foregroundStyle(accent)
             // 원문: 출근 시각은 먹색, 문제가 된 퇴근 쪽만 강조색
-            (Text(item.actualLead ?? "").foregroundColor(PumColor.textPrimary) + Text(item.actualEndText).foregroundColor(accent).fontWeight(.bold))
+            Text("\(Text(item.actualLead ?? "").foregroundColor(PumColor.textPrimary))\(Text(item.actualEndText).foregroundColor(accent).fontWeight(.bold))")
                 .pumText(.callout, weight: .bold) // 목업 14px 700
         }
     }
@@ -207,7 +207,7 @@ struct OwnerReviewView: View {
     private func explanation(_ item: OwnerReviewItem) -> some View {
         var t = Text(item.explanationText).foregroundColor(PumColor.textSecondary)
         if let amount = item.amount {
-            t = t + Text(amount.text).fontWeight(.bold).foregroundColor(PumColor.textPrimary)
+            t = Text("\(t)\(Text(amount.text).fontWeight(.bold).foregroundColor(PumColor.textPrimary))")
         }
         return t.pumText(.footnote) // 목업 13px
             .fixedSize(horizontal: false, vertical: true)

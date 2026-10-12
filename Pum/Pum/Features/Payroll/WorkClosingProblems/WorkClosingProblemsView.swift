@@ -114,12 +114,7 @@ struct WorkClosingProblemsView: View {
     }
 
     private func nameDate(_ item: WorkClosingProblemItem) -> some View {
-        (Text(item.name)
-            .font(PumFont.font(size: PumTokens.FontToken.body.size, weight: .semibold, relativeTo: .body))
-            .foregroundColor(PumColor.textPrimary)
-         + Text(" \u{00B7} \(item.dateText)") // 원문 12px 400 회색
-            .font(PumFont.font(size: PumTokens.FontToken.caption.size, weight: .regular, relativeTo: .caption))
-            .foregroundColor(PumColor.textSecondary))
+        Text("\(Text(item.name).font(PumFont.font(size: PumTokens.FontToken.body.size, weight: .semibold, relativeTo: .body)).foregroundColor(PumColor.textPrimary))\(Text(" \u{00B7} \(item.dateText)").font(PumFont.font(size: PumTokens.FontToken.caption.size, weight: .regular, relativeTo: .caption)).foregroundColor(PumColor.textSecondary))") // 원문 12px 400 회색
             .fixedSize(horizontal: false, vertical: true)
     }
 

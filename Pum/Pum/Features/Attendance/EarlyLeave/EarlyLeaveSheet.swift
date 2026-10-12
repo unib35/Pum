@@ -102,9 +102,7 @@ struct EarlyLeaveSheet: View {
     }
 
     private var notice: some View {
-        (Text(state.noticeLead)
-            + Text(EarlyLeaveState.noticeStrong).fontWeight(.bold)
-            + Text(EarlyLeaveState.noticeTail))
+        Text("\(Text(state.noticeLead))\(Text(EarlyLeaveState.noticeStrong).fontWeight(.bold))\(Text(EarlyLeaveState.noticeTail))")
             .pumText(.caption)
             .foregroundStyle(PumColor.textSecondary)
             .frame(maxWidth: .infinity, alignment: .leading)

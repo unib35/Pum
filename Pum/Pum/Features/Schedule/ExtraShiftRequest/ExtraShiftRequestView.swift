@@ -256,8 +256,7 @@ struct ExtraShiftRequestView: View {
 
     private var recipientsSection: some View {
         VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
-            (Text(state.recipientsLead).fontWeight(.bold)
-                + Text(state.recipientsTail).fontWeight(.medium))
+            Text("\(Text(state.recipientsLead).fontWeight(.bold))\(Text(state.recipientsTail).fontWeight(.medium))")
                 .pumText(.footnote).foregroundStyle(PumColor.textSecondary)
                 .accessibilityAddTraits(.isHeader)
                 .padding(.horizontal, PumTokens.Space.s4)

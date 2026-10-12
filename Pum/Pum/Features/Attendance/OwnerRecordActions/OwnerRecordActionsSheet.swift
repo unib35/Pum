@@ -76,10 +76,7 @@ struct OwnerRecordActionsSheet: View {
     // B2. 안내 카드
     private var guideCard: some View {
         card {
-            (Text(OwnerRecordActionsState.guideRuleTitle).fontWeight(.bold).foregroundStyle(PumColor.textPrimary)
-             + Text(OwnerRecordActionsState.guideBefore).foregroundStyle(PumColor.textSecondary)
-             + Text(OwnerRecordActionsState.guideCorrection).fontWeight(.bold).foregroundStyle(PumColor.textSecondary)
-             + Text(OwnerRecordActionsState.guideAfter).foregroundStyle(PumColor.textSecondary))
+            Text("\(Text(OwnerRecordActionsState.guideRuleTitle).fontWeight(.bold).foregroundStyle(PumColor.textPrimary))\(Text(OwnerRecordActionsState.guideBefore).foregroundStyle(PumColor.textSecondary))\(Text(OwnerRecordActionsState.guideCorrection).fontWeight(.bold).foregroundStyle(PumColor.textSecondary))\(Text(OwnerRecordActionsState.guideAfter).foregroundStyle(PumColor.textSecondary))")
                 .pumText(.caption) // 12px
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(PumTokens.Space.s12)

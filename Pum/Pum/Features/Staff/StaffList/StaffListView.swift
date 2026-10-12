@@ -86,8 +86,7 @@ struct StaffListView: View {
 
     @ViewBuilder private var summaryParts: some View {
         // 13px: 「5명」 700 먹색 + 「 재직」 보조색
-        (Text(roster.headcountText).font(run(.footnote, .bold)).foregroundColor(PumColor.textPrimary)
-         + Text(roster.headcountSuffix).font(run(.footnote, .regular)).foregroundColor(PumColor.textSecondary))
+        Text("\(Text(roster.headcountText).font(run(.footnote, .bold)).foregroundColor(PumColor.textPrimary))\(Text(roster.headcountSuffix).font(run(.footnote, .regular)).foregroundColor(PumColor.textSecondary))")
             .pumText(.footnote, weight: .regular)
         Text(roster.breakdownText).pumText(.footnote, weight: .regular).foregroundStyle(PumColor.textSecondary)
     }
@@ -169,9 +168,10 @@ struct StaffListView: View {
     private func condition(_ m: StaffMember) -> some View {
         var t = Text(m.conditionText).font(run(.caption, .regular)).foregroundColor(PumColor.textSecondary)
         if let cert = m.healthCertText {
-            t = t + Text(" \u{00B7} ").font(run(.caption, .regular)).foregroundColor(PumColor.textSecondary)
-                + Text(cert).font(run(.caption, .semibold))
-                    .foregroundColor(m.healthCertWarning ? PumColor.statusAttention : PumColor.textSecondary)
+            let sep = Text(" \u{00B7} ").font(run(.caption, .regular)).foregroundColor(PumColor.textSecondary)
+            let certText = Text(cert).font(run(.caption, .semibold))
+                .foregroundColor(m.healthCertWarning ? PumColor.statusAttention : PumColor.textSecondary)
+            t = Text("\(t)\(sep)\(certText)")
         }
         return t.pumText(.caption, weight: .regular).fixedSize(horizontal: false, vertical: true)
     }
@@ -180,8 +180,7 @@ struct StaffListView: View {
         VStack(alignment: alignment, spacing: PumTokens.Space.s2) {
             if let wage = m.wageText {
                 // 17px 700 「12,000」 + 12px 500 「원/h」
-                (Text(wage).font(run(.headline, .bold)).foregroundColor(PumColor.textPrimary)
-                 + Text("원/h").font(run(.caption, .medium)).foregroundColor(PumColor.textSecondary))
+                Text("\(Text(wage).font(run(.headline, .bold)).foregroundColor(PumColor.textPrimary))\(Text("원/h").font(run(.caption, .medium)).foregroundColor(PumColor.textSecondary))")
                     .pumText(.headline, weight: .bold)
                     .fixedSize(horizontal: false, vertical: true) // 시급은 핵심 값 — 큰 글자에서 줄이지 않는다(좁으면 행이 세로로 바뀜)
             }
