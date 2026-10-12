@@ -132,6 +132,7 @@ struct ContentView: View {
             case "6d": ConsentsView(state: .sample)
             case "6c": PoliciesView(state: .sample)
             case "6e": LocationPermissionIntroView(state: .sample, isPresented: true)
+            case "6f": AppPermissionsView(state: .sample)
             case "gallery": ComponentGalleryView()
             default: DevMenu()
             }
@@ -261,6 +262,7 @@ private struct DevMenu: View {
                     NavigationLink("6d 내 동의 내역") { ConsentsView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("6c 약관 및 정책") { PoliciesView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("6e 위치 권한 안내") { LocationPermissionIntroView(state: .sample, isPresented: true).toolbar(.hidden, for: .navigationBar) }
+                    NavigationLink("6f 앱 권한") { AppPermissionsView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                 }
                 Section("디자인 시스템") {
                     NavigationLink("컴포넌트 갤러리") { ComponentGalleryView() }
