@@ -54,6 +54,8 @@ nonisolated struct ScheduleManualEditResult: Equatable, Sendable {
         var valueText: String
     }
 
+    /// 이 결과를 계산한 요일(요일 id) — 다른 날의 결과를 새 날짜 아래 보이지 않게
+    var day: Int
     /// 이 결과를 계산한 근무 상태(바뀐 사람 포함 전체)
     var basis: [ManualEditShiftValue]
     /// 「박서준 · 금 +3시간」
@@ -71,7 +73,7 @@ nonisolated struct ScheduleManualEditResult: Equatable, Sendable {
     var beforeText: String { PumFormat.amount(beforeWon) }
     var afterText: String { "\(PumFormat.amount(afterWon))원" }
     /// 부호는 서버가 준 증감 값의 부호
-    var deltaText: String { (deltaWon >= 0 ? "+" : "\u{2212}") + PumFormat.amount(abs(deltaWon)) }
+    var deltaText: String { (deltaWon > 0 ? "+" : deltaWon < 0 ? "\u{2212}" : "") + PumFormat.amount(abs(deltaWon)) }
     /// VoiceOver — 「1,241,000원에서 1,287,000원, 46,000원 늘어남」
     var spoken: String {
         let change = deltaWon >= 0 ? "늘어남" : "줄어듦"
@@ -108,7 +110,7 @@ nonisolated struct ScheduleManualEditState: Equatable, Sendable {
     var hasChange: Bool { changedShift != nil }
     var currentBasis: [ManualEditShiftValue] { shifts.map(\.value) }
     /// 결과가 있고 계산 조건이 지금 편집 상태와 같을 때만 true
-    var resultIsCurrent: Bool { result?.basis == currentBasis }
+    var resultIsCurrent: Bool { result?.day == selectedDay && result?.basis == currentBasis }
     var visibleResult: ScheduleManualEditResult? { resultIsCurrent ? result : nil }
     var displayedNeeds: [String] { visibleResult?.needs ?? needs }
 
@@ -131,7 +133,7 @@ nonisolated struct ScheduleManualEditState: Equatable, Sendable {
     /// 근무를 바꾼다. 시작 < 끝일 때만. 바뀌면 true
     @discardableResult
     mutating func setRange(employeeId: Int, start: Int, end: Int) -> Bool {
-        guard start < end, let i = shifts.firstIndex(where: { $0.employeeId == employeeId }) else { return false }
+        guard !isApplying, start < end, let i = shifts.firstIndex(where: { $0.employeeId == employeeId }) else { return false }
         guard shifts[i].startMinutes != start || shifts[i].endMinutes != end else { return false }
         shifts[i].startMinutes = start
         shifts[i].endMinutes = end
@@ -150,8 +152,9 @@ nonisolated struct ScheduleManualEditState: Equatable, Sendable {
     }
 
     mutating func select(day id: Int) {
-        guard days.contains(where: { $0.id == id }) else { return }
+        guard !isApplying, id != selectedDay, days.contains(where: { $0.id == id }) else { return }
         selectedDay = id
+        result = nil // 다른 날 결과는 버린다 — 새 날의 근무 · 결과는 서버가 다시 준다
     }
 
     /// 적용은 한 번만 — 처리 중이면 false
@@ -201,7 +204,7 @@ nonisolated struct ScheduleManualEditState: Equatable, Sendable {
         ]
         let needs = ["오전 1", "오후 2", "저녁 3 \u{2713}"]
         let result = ScheduleManualEditResult(
-            basis: shifts.map(\.value), title: "박서준 \u{00B7} 금 +3시간", rangeText: "12\u{2013}19 \u{2192} 12\u{2013}22",
+            day: 4, basis: shifts.map(\.value), title: "박서준 \u{00B7} 금 +3시간", rangeText: "12\u{2013}19 \u{2192} 12\u{2013}22",
             beforeWon: 1_241_000, afterWon: 1_287_000, deltaWon: 46_000,
             lines: [
                 .init(title: "근무 +3h \u{00B7} 휴게 30분 \u{2192} 1시간(8h 이상)", valueText: "인정 +2.5h"),

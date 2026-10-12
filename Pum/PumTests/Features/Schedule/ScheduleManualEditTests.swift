@@ -98,4 +98,26 @@ struct ScheduleManualEditTests {
         #expect(ScheduleManualEditState.tickFraction(hour: 9) == 0)
         #expect(ScheduleManualEditState.tickFraction(hour: 23) == 1)
     }
+
+    @Test func 요일을_바꾸면_이전_결과는_버린다() {
+        var s = ScheduleManualEditState.sample
+        #expect(s.resultIsCurrent)
+        s.select(day: 5)
+        #expect(!s.resultIsCurrent)
+        #expect(s.result == nil)
+    }
+
+    @Test func 적용_중에는_편집되지_않는다() {
+        var s = ScheduleManualEditState.sample
+        let began = s.beginApply()
+        let changed = s.setRange(employeeId: 1, start: 10 * 60, end: 15 * 60)
+        s.select(day: 5)
+        #expect(began && !changed && s.selectedDay == 4)
+    }
+
+    @Test func 차이가_0이면_부호_없음() {
+        var r = ScheduleManualEditState.sample.result!
+        r.deltaWon = 0
+        #expect(r.deltaText == "0")
+    }
 }

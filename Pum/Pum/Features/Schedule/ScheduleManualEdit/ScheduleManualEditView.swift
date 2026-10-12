@@ -63,8 +63,11 @@ struct ScheduleManualEditView: View {
                 .padding(.horizontal, PumTokens.Size.screenPad)
             ScrollView {
                 VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
-                    dayStrip
-                    timelineCard
+                    Group { // 적용을 보내는 동안은 보낸 값과 화면이 어긋나지 않게 잠근다
+                        dayStrip
+                        timelineCard
+                    }
+                    .disabled(state.isApplying)
                     if let title = state.cardTitle { changedCard(title) }
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
@@ -79,6 +82,7 @@ struct ScheduleManualEditView: View {
             state.selectedDay = new.selectedDay
             state.shifts = new.shifts
             state.needs = new.needs
+            state.result = nil // 서버가 근무를 새로 주면 이전 계산은 버린다
         }
         .pumTimeRangeSheet(isPresented: $pickerOpen, value: $pickerValue, options: pickerOptions) {
             guard let id = pickerEmployee else { return }
@@ -140,9 +144,9 @@ struct ScheduleManualEditView: View {
     private var timelineCard: some View {
         PumCard {
             VStack(spacing: 0) {
-                tickRow
-                ForEach(state.shifts) { shift in
-                    divider
+                tickRow // 원문: 눈금과 첫 행 사이에 선 없음
+                ForEach(Array(state.shifts.enumerated()), id: \.element.id) { i, shift in
+                    if i > 0 { divider }
                     shiftRow(shift)
                 }
                 divider
