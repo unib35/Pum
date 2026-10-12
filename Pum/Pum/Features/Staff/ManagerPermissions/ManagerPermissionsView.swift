@@ -41,10 +41,14 @@ struct ManagerPermissionsView: View {
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
                 .padding(.vertical, PumTokens.Space.s8)
+                .disabled(isSaving) // 저장 중엔 보낸 값과 화면이 어긋나지 않게 편집 잠금
             }
         }
         .background(PumColor.bgApp)
-        .onChange(of: serverState) { _, new in draft = new.initialDraft }
+        .onChange(of: serverState) { old, new in
+            // 손대지 않았거나(이전 서버 값 그대로) 저장이 끝나 새 서버 값과 같아졌을 때만 다시 받는다 — 편집 중 바꾼 값을 말없이 지우지 않게
+            if !old.hasChanges(draft) || !new.hasChanges(draft) { draft = new.initialDraft }
+        }
         .safeAreaInset(edge: .bottom, spacing: 0) { bottomBar }
     }
 
@@ -122,9 +126,9 @@ struct ManagerPermissionsView: View {
             set: { draft = serverState.setting(draft, id: item.id, isOn: $0) }
         )) {
             VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
-                // 원문: 꺼진 급여 묶음 글자는 한 단계 옅은 회색 — 켜짐은 먹색
+                // 원문: 꺼진 급여 묶음 글자는 gray700(91,97,112) — 켜짐은 먹색
                 Text(item.title).pumText(.callout, weight: .semibold)
-                    .foregroundStyle(on || item.group == .operations ? PumColor.textPrimary : PumColor.textSecondary)
+                    .foregroundStyle(on || item.group == .operations ? PumColor.textPrimary : PumTokens.ColorToken.gray700)
                     .multilineTextAlignment(.leading)
                 if locked, let note = item.lockedNote {
                     Text(note).pumText(.caption2, weight: .regular).foregroundStyle(PumColor.textTertiary)

@@ -78,7 +78,7 @@ nonisolated struct ManagerPermissionsState: Equatable, Sendable {
 
     func isOn(_ item: ManagerPermissionItem, in draft: ManagerPermissionsDraft) -> Bool { draft.enabled.contains(item.id) }
 
-    /// 저장된 값과 다른지 — 다르지 않으면 저장 버튼 비활성(원문 없음, 화면에서 정함)
+    /// 저장된 값과 다른지 — 서버 새 값이 왔을 때 초안을 다시 받을지 판단(원문 없음, 화면에서 정함)
     func hasChanges(_ draft: ManagerPermissionsDraft) -> Bool { draft != initialDraft }
 
     /// 저장에 보내는 권한 목록 — 화면 순서

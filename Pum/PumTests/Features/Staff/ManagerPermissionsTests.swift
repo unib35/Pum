@@ -33,8 +33,13 @@ struct ManagerPermissionsTests {
     @Test func 잠긴_행은_바뀌지_않는다() {
         let d = s.initialDraft
         #expect(s.setting(d, id: "payroll-confirm", isOn: true) == d)
-        let admin = s.changingRole(d, to: .admin)
-        #expect(!s.setting(admin, id: "payroll-confirm", isOn: false).enabled.contains("payroll-confirm"))
+        // 서버가 잠긴 항목을 켠 채로 준 경우에도 점장 초안에선 끌 수 없다
+        let lockedOn = ManagerPermissionsState(
+            targetName: s.targetName, subtitle: s.subtitle, sensitiveSuffix: s.sensitiveSuffix, items: s.items,
+            role: .manager, enabled: s.enabled.union(["payroll-confirm"]), roleDefaults: s.roleDefaults)
+        let draft = lockedOn.initialDraft
+        #expect(lockedOn.setting(draft, id: "payroll-confirm", isOn: false) == draft)
+        #expect(lockedOn.enabledIDs(draft).contains("payroll-confirm"))
     }
 
     @Test func 바뀐_것_판정과_저장_목록() {
