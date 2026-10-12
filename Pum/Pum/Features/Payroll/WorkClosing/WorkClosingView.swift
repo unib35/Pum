@@ -15,7 +15,7 @@ struct WorkClosingView: View {
     @State private var isClosing = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @ScaledMetric(relativeTo: .body) private var barHeight = PumTokens.Space.s8
-    @ScaledMetric(relativeTo: .body) private var badgeSize = PumLayout.avatar
+    @ScaledMetric(relativeTo: .body) private var badgeSize = PumLayout.avatar - PumTokens.Space.s12 // 원문 상태 원 약 24pt(7a 체크 원과 같은 값)
 
     var body: some View {
         VStack(spacing: 0) {
