@@ -182,7 +182,8 @@ struct ScheduleOptionDetailView: View {
         Rectangle().fill(PumColor.borderHairline).frame(height: 1) // 카드 끝까지
     }
 
-    /// 한 번만 — 누르는 즉시 잠그고, 실패일 때만 푼다
+    /// 한 번만 — 누르는 즉시 잠그고, 실패일 때만 푼다.
+    /// 성공 뒤 화면 이동(이전 화면 · 요청 완료 표시)은 부르는 쪽 몫. 실패 안내 문구는 원문 없음(결정 필요).
     private func send() {
         guard lock.begin(canClose: true) else { return }
         onSendRequests { success in lock.finish(success: success) }
