@@ -183,6 +183,7 @@ struct PayrollInquiryView: View {
 
     private var bottomBar: some View {
         PumButton(title: PayrollInquiryState.sendTitle, isLoading: isProcessing) {
+            bodyFocused = false // 키보드가 처리 중 표시를 가리지 않게 먼저 내린다
             onSend(serverState.submission(draft))
         }
         .disabled(!serverState.canSend(draft))
