@@ -174,7 +174,7 @@ struct OfflineBanner: View {
     var body: some View {
         HStack(spacing: PumTokens.Space.s8) {
             Text(offline.bannerTitle)
-                .pumText(.callout)
+                .pumText(.callout, weight: .semibold) // 원문 600
                 .foregroundStyle(Color.white)
                 .frame(maxWidth: .infinity, alignment: .leading)
             Button(action: onRetry) {
@@ -185,6 +185,7 @@ struct OfflineBanner: View {
                     .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
+            .accessibilityLabel(Text("연결 \(offline.retryTitle)")) // 무엇을 다시 하는지
         }
         .padding(.horizontal, PumTokens.Space.s16)
         .background(PumColor.surfaceInverse, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
