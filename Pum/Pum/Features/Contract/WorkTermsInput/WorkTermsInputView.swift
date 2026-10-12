@@ -35,7 +35,9 @@ struct WorkTermsInputView: View {
          onShowItems: @escaping () -> Void = {},
          onPreview: @escaping () -> Void = {},
          latestResult: WorkTermsResult? = nil) {
-        _state = State(initialValue: state)
+        var initial = state
+        if let r = latestResult, r.basis == state.inputs { initial.result = r }
+        _state = State(initialValue: initial)
         self.latestResult = latestResult
         self.onBack = onBack
         self.onEditWage = onEditWage
@@ -71,7 +73,8 @@ struct WorkTermsInputView: View {
             }
         }
         .background(PumColor.bgApp)
-        .onChange(of: latestResult) { _, new in if let new { state.result = new } } // 엔진 새 결과
+        // 엔진 새 결과 — 지금 입력으로 계산한 것만 받는다(늦게 온 이전 조건 응답이 새 결과를 덮지 않게)
+        .onChange(of: latestResult) { _, new in if let new, new.basis == state.inputs { state.result = new } }
         .pumTimeRangeSheet(isPresented: $pickerOpen, value: $pickerValue, options: pickerOptions) {
             state.apply(picked: pickerValue)
         }
@@ -313,7 +316,7 @@ struct WorkTermsInputView: View {
                 .buttonStyle(.plain)
                 .padding(.horizontal, -PumTokens.Space.s2)
                 .accessibilityElement(children: .ignore)
-                .accessibilityLabel(Text(on ? "\(day.long), 선택됨" : day.long))
+                .accessibilityLabel(Text(day.long)) // 선택 상태는 특성으로 한 번만
                 .accessibilityAddTraits(on ? [.isButton, .isSelected] : .isButton)
             }
         }
