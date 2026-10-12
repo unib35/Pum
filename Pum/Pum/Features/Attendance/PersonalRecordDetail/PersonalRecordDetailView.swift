@@ -1,5 +1,5 @@
 // UI-IOS-2g · REQ-005 · REQ-006 — 개인 기록 상세(하위 화면, 탭 바 없음)
-// 시간 휠(공통 #66)은 후속 — 지금은 시간 칸을 누르면 onPickStart / onPickEnd만 부른다.
+// 시간 칸을 누르면 C13 시간 선택 시트(#66)를 연다(onPickStart / onPickEnd도 함께 부른다).
 // 「삭제」는 onDelete만 부른다 — 확인 시트는 원문에 없어 만들지 않았다.
 import SwiftUI
 
@@ -15,6 +15,11 @@ struct PersonalRecordDetailView: View {
     var onRecordChange: (PersonalRecordDetailState) -> Void
     /// 저장 — 끝나면 done(성공 여부). 실패(false)면 잠금이 풀린다.
     var onSave: (PersonalRecordDetailState, @escaping (Bool) -> Void) -> Void
+
+    @State private var pickerField: PersonalRecordField?
+    @State private var pickerOpen = false
+    /// 시트용 복사본 — 「완료」에만 state에 반영
+    @State private var pickerValue = PumTimeRangeValue()
 
     // 화면 전용 상수 (DEC-005: 목업 px → 가까운 토큰 단계)
     /// 시간 칸 최소 너비 — 목업 약 81 (공통 후보: 1af와 같은 시간 칸)
@@ -63,12 +68,36 @@ struct PersonalRecordDetailView: View {
         }
         .background(PumColor.bgApp)
         .onChange(of: calc) { _, new in state.calc = new }
+        .pumTimeRangeSheet(isPresented: $pickerOpen, value: $pickerValue, options: pickerOptions, onDone: applyPicked)
         .safeAreaInset(edge: .bottom, spacing: 0) {
             PumButton(title: "저장", kind: .dark, isLoading: state.isSaving, action: save)
                 .padding(.horizontal, PumTokens.Size.screenPad)
                 .padding(.vertical, PumTokens.Space.s12)
                 .background(PumColor.bgApp)
         }
+    }
+
+    private var pickerOptions: PumTimeRangeOptions {
+        let field = pickerField ?? .start
+        return PumTimeRangeOptions(
+            title: PersonalRecordDetailState.pickerTitle(field), mode: field == .start ? .startOnly : .endOnly,
+            rangeLabel: state.pickerRowLabel(field),
+            showsDate: false, showsBreak: false, showsRepeat: false, showsEndDate: false,
+            intervalMinutes: PersonalRecordDetailState.pickerIntervalMinutes
+        )
+    }
+
+    /// 열 때의 값을 시트용 복사본에 담는다 — 「완료」 전에 닫으면 화면 값은 그대로
+    private func openPicker(_ field: PersonalRecordField, notify: () -> Void) {
+        notify()
+        if field == .start { pickerValue.startMinutes = state.startMinute } else { pickerValue.endMinutes = state.endMinute }
+        pickerField = field
+        pickerOpen = true
+    }
+
+    private func applyPicked() {
+        guard let field = pickerField else { return }
+        changed { $0 = $0.applying(picked: field == .start ? pickerValue.startMinutes : pickerValue.endMinutes, for: field) }
     }
 
     private func save() {
@@ -115,9 +144,9 @@ struct PersonalRecordDetailView: View {
 
     private var card: some View {
         PumCard {
-            timeRow(.start, label: "출근", onPick: onPickStart)
+            timeRow(.start, label: "출근") { openPicker(.start, notify: onPickStart) }
             divider
-            timeRow(.end, label: "퇴근", onPick: onPickEnd)
+            timeRow(.end, label: "퇴근") { openPicker(.end, notify: onPickEnd) }
             divider
             breakRow
             divider

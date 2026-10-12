@@ -62,4 +62,34 @@ struct PersonalTermsTests {
         s.workplace = "다른 곳" // 금액에 영향 없는 값은 그대로
         #expect(s.estimateText != nil)
     }
+
+    @Test func 시트에서_고른_같은_값이면_서버_예상_유지() {
+        let s = PersonalTermsState.sample
+        let r = s.applying(pickedStart: 17 * 60, end: 22 * 60, breakMinutes: 30)
+        #expect(r == s)
+        #expect(r.estimateText == "약 1,184,000원")
+    }
+
+    @Test func 시트에서_고른_값이_바뀌면_옛_예상_숨김() {
+        let s = PersonalTermsState.sample
+        let r = s.applying(pickedStart: 18 * 60 + 30, end: 23 * 60, breakMinutes: 60)
+        #expect(r.timeRangeText == "18:30 \u{2013} 23:00")
+        #expect(r.breakText == "60분")
+        #expect(r.estimateText == nil)
+        #expect(r.days == s.days && r.amount == s.amount && r.payday == s.payday)
+        let b = s.applying(pickedStart: 17 * 60, end: 22 * 60, breakMinutes: 0)
+        #expect(b.estimateText == nil)
+    }
+
+    @Test func 시트에서_고른_값_하루_경계() {
+        let s = PersonalTermsState.sample
+        let overnight = s.applying(pickedStart: 22 * 60, end: 6 * 60, breakMinutes: 30) // 끝이 시작보다 이르면 다음 날
+        #expect(overnight.startMinute == 1320 && overnight.endMinute == 360)
+        let low = s.applying(pickedStart: -30, end: 0, breakMinutes: 30)
+        #expect(low.startMinute == 0 && low.endMinute == 0)
+        let high = s.applying(pickedStart: 24 * 60, end: 24 * 60 + 30, breakMinutes: 30)
+        #expect(high.startMinute == 1439 && high.endMinute == 1439)
+        let badBreak = s.applying(pickedStart: 17 * 60, end: 22 * 60, breakMinutes: 45) // 알약에 없는 값은 무시
+        #expect(badBreak.breakMinutes == 30)
+    }
 }

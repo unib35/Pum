@@ -103,6 +103,20 @@ nonisolated struct PersonalRecordDetailState: Equatable, Sendable {
         if field == .start { startMinute = next } else { endMinute = next }
     }
 
+    /// C13 시트 설정 — 분 단위(원문 17:02 · 22:31)라 1분 간격. 제목은 2g 화면의 칸 이름
+    static let pickerIntervalMinutes = 1
+    static func pickerTitle(_ field: PersonalRecordField) -> String { field == .start ? "출근" : "퇴근" }
+    /// 시트 시간 행 이름 — 열기 전 기록(1i의 「기록 22:00」과 같은 방식)
+    func pickerRowLabel(_ field: PersonalRecordField) -> String { "기록 \(timeText(field))" }
+
+    /// C13 시트에서 고른 시각 반영(순수). 하루 안으로 붙인다. 값이 바뀌면 basis가 달라져 옛 인정 시간 · 예상 급여는 숨는다.
+    func applying(picked minutes: Int, for field: PersonalRecordField) -> PersonalRecordDetailState {
+        var s = self
+        let next = min(max(minutes, 0), 24 * 60 - 1)
+        if field == .start { s.startMinute = next } else { s.endMinute = next }
+        return s
+    }
+
     mutating func setBreak(_ option: PersonalRecordBreak) { breakOption = option }
 
     /// 저장은 한 번만 — 처리 중이면 false
