@@ -68,10 +68,11 @@ struct PaymentCheckRequestScreen: View {
                 Text("홈").pumText(.headline)
             }
             .foregroundStyle(PumColor.textPrimary)
-            .frame(minHeight: PumTokens.Size.tapMin)
+            .frame(minWidth: PumTokens.Size.tapMin, minHeight: PumTokens.Size.tapMin, alignment: .leading)
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        .disabled(lock.isConfirming) // 알리는 동안 떠나지 않게
         .accessibilityLabel(Text("홈"))
         .padding(.top, PumTokens.Space.s8)
     }
