@@ -4,6 +4,8 @@ import SwiftUI
 
 struct PayslipIssueView: View {
     @State private var state: PayslipIssueState
+    /// 서버가 준 원래 값 — 바뀌면 화면 값을 다시 받는다(보내는 때 선택만 화면에 남긴다)
+    private let serverState: PayslipIssueState
     var onBack: () -> Void
     var onTimingChanged: (PayslipSendTiming) -> Void
     var onRequestInfo: (String) -> Void   // 직원 ID
@@ -21,6 +23,7 @@ struct PayslipIssueView: View {
          onRequestInfo: @escaping (String) -> Void = { _ in },
          onIssue: @escaping (PayslipSendTiming) -> Void = { _ in }) {
         _state = State(initialValue: state)
+        self.serverState = state
         self.onBack = onBack
         self.onTimingChanged = onTimingChanged
         self.onRequestInfo = onRequestInfo
@@ -43,6 +46,11 @@ struct PayslipIssueView: View {
             }
         }
         .background(PumColor.bgApp)
+        .onChange(of: serverState) { _, new in
+            let picked = state.selectedTimingID
+            state = new
+            if new.timings.contains(where: { $0.id == picked }) { state.selectedTimingID = picked }
+        }
         .safeAreaInset(edge: .bottom, spacing: 0) { bottomBar }
     }
 
@@ -185,7 +193,7 @@ struct PayslipIssueView: View {
         if p.canRequestInfo {
             Button { onRequestInfo(p.id) } label: {
                 Text("요청 ›").pumText(.caption, weight: .semibold).foregroundStyle(PumColor.accent)
-                    .frame(minHeight: PumTokens.Size.tapMin)
+                    .frame(minWidth: PumTokens.Size.tapMin, minHeight: PumTokens.Size.tapMin)
                     .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
