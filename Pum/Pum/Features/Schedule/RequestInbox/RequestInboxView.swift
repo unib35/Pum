@@ -122,10 +122,10 @@ struct RequestInboxView: View {
     // MARK: 버튼
 
     private func buttons(_ item: RequestItem, locked: Bool) -> some View {
-        let reject = PumButton(title: item.rejectText, kind: .outline) { decide(item, .reject) }
+        let reject = PumButton(title: item.rejectText, kind: .outline, size: .small) { decide(item, .reject) } // 카드 안 버튼 — 원문 약 42
             .disabled(locked)
             .accessibilityLabel(Text(item.rejectAccessibility))
-        let approve = PumButton(title: item.approveText, kind: .primary, isLoading: locked) { decide(item, .approve) }
+        let approve = PumButton(title: item.approveText, kind: .primary, size: .small, isLoading: locked) { decide(item, .approve) }
             .accessibilityLabel(Text(item.approveAccessibility))
         return Group {
             if typeSize.isAccessibilitySize {
