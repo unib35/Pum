@@ -59,7 +59,7 @@ struct CheckInJudgingView: View {
                     Text(CheckInJudgingState.backTitle).pumText(.headline, weight: .semibold)
                 }
                 .foregroundStyle(PumColor.textPrimary)
-                .frame(minHeight: PumTokens.Size.tapMin)
+                .frame(minWidth: PumTokens.Size.tapMin, minHeight: PumTokens.Size.tapMin, alignment: .leading)
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)

@@ -1,26 +1,19 @@
 // UI-IOS-21m · REQ-022 · REQ-095 — 출근 판정 중(직원): QR은 완료 · 위치는 확인 중
-// 행 상태(done · checking)와 사업장 이름은 서버(판정 엔진) 값 그대로 — 화면은 계산하지 않는다.
+// 행 제목 · 설명 · 상태(done · checking)와 사업장 이름은 서버(판정 엔진) 값 그대로 — 화면은 계산하지 않는다.
 // 10초가 넘으면 「다시 확인 / 사장님 확인 요청」(10w)으로 바꾸는 일은 화면 밖(호출자) 책임이다.
 import Foundation
 
 nonisolated struct CheckInJudgingStep: Equatable, Sendable, Identifiable {
-    enum Kind: Equatable, Sendable { case qr, distance }
     enum Status: Equatable, Sendable { case done, checking }
 
-    var kind: Kind
-    var status: Status
-    /// 서버가 준 사업장 이름(QR 행 설명에 쓴다)
-    var workplaceName: String = ""
+    let id: String
+    /// 제목 · 설명은 서버(판정 엔진) 글자 그대로 — 사업장 이름 · 정확도 기준(100m)도 서버가 채운다
+    let title: String
+    let detail: String
+    let status: Status
 
-    var id: Kind { kind }
-    var title: String { kind == .qr ? "QR 확인" : "현재 거리 확인 중" }
-    var detail: String {
-        switch kind {
-        case .qr: "\(workplaceName) \u{00B7} 매장 QR"
-        case .distance: "정확도 100m 안이 될 때까지 기다려요"
-        }
-    }
-    var statusText: String { status == .done ? "완료" : "확인 중" }
+    /// 진행 중 행은 제목이 이미 「확인 중」이라 같은 말을 되풀이하지 않게 「진행 중」
+    var statusText: String { status == .done ? "완료" : "진행 중" }
     /// 「QR 확인, 종민김밥 본점 · 매장 QR, 완료」
     var accessibilityText: String { "\(title), \(detail), \(statusText)" }
 }
@@ -38,8 +31,8 @@ nonisolated struct CheckInJudgingState: Equatable, Sendable {
     static let sample = CheckInJudgingState(
         workplaceName: "종민김밥 본점",
         steps: [
-            CheckInJudgingStep(kind: .qr, status: .done, workplaceName: "종민김밥 본점"),
-            CheckInJudgingStep(kind: .distance, status: .checking),
+            CheckInJudgingStep(id: "qr", title: "QR 확인", detail: "종민김밥 본점 \u{00B7} 매장 QR", status: .done),
+            CheckInJudgingStep(id: "distance", title: "현재 거리 확인 중", detail: "정확도 100m 안이 될 때까지 기다려요", status: .checking),
         ]
     )
 }

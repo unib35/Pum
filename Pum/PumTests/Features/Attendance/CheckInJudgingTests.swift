@@ -18,20 +18,19 @@ struct CheckInJudgingTests {
 
     @Test func 읽기_문구() {
         #expect(s.steps[0].accessibilityText == "QR 확인, 종민김밥 본점 \u{00B7} 매장 QR, 완료")
-        #expect(s.steps[1].accessibilityText == "현재 거리 확인 중, 정확도 100m 안이 될 때까지 기다려요, 확인 중")
+        #expect(s.steps[1].accessibilityText == "현재 거리 확인 중, 정확도 100m 안이 될 때까지 기다려요, 진행 중")
     }
 
-    @Test func 행_상태는_서버_값_그대로() {
+    @Test func 행_글자_상태는_서버_값_그대로() {
         #expect(s.steps.map(\.status) == [.done, .checking])
-        let done = CheckInJudgingStep(kind: .distance, status: .done)
-        #expect(done.statusText == "완료")
-        #expect(s.steps[1].statusText == "확인 중")
+        let server = CheckInJudgingStep(id: "distance", title: "거리 확인", detail: "정확도 50m 안", status: .done)
+        #expect(server.title == "거리 확인")
+        #expect(server.detail == "정확도 50m 안")
+        #expect(server.accessibilityText == "거리 확인, 정확도 50m 안, 완료")
     }
 
     @Test func QR만_있어도_행은_목록_그대로() {
-        var x = s
-        x.steps = [s.steps[0]]
-        #expect(x.steps.count == 1)
-        #expect(x.steps[0].kind == .qr)
+        let x = CheckInJudgingState(workplaceName: s.workplaceName, steps: [s.steps[0]])
+        #expect(x.steps.map(\.id) == ["qr"])
     }
 }
