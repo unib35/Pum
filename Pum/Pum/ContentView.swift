@@ -105,6 +105,7 @@ struct ContentView: View {
             case "10t": CheckInPassedView(state: .sample)
             case "10w": CheckInLowAccuracyView(state: .sample)
             case "10v": LocationCheckInView(state: .sample)
+            case "10c": ContractChangeView(state: .sample)
             case "gallery": ComponentGalleryView()
             default: DevMenu()
             }
@@ -207,6 +208,7 @@ private struct DevMenu: View {
                     NavigationLink("10t 출근 판정 통과") { CheckInPassedView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("10w 위치 오차가 클 때") { CheckInLowAccuracyView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("10v 위치만 간편 출근") { LocationCheckInView(state: .sample).toolbar(.hidden, for: .navigationBar) }
+                    NavigationLink("10c 조건 변경") { ContractChangeView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                 }
                 Section("디자인 시스템") {
                     NavigationLink("컴포넌트 갤러리") { ComponentGalleryView() }
