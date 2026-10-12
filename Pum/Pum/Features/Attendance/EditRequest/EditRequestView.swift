@@ -1,14 +1,27 @@
 // UI-IOS-1i · REQ-006 · REQ-042 · REQ-071 — 근무기록 수정 요청 (하위 화면, 탭 바 없음)
-// 시간 선택 휠 · 전송은 후속 — 지금은 클로저만 호출한다.
+// 퇴근 시각 칸 → C13 시간 선택 시트(끝 휠만). 전송은 후속 — 지금은 클로저만 호출한다.
 import SwiftUI
 
 struct EditRequestView: View {
-    @State var draft: EditRequestDraft = .sample
+    @State var draft: EditRequestDraft
     var onClose: () -> Void = {}
     var onPickTime: () -> Void = {}
     var onSubmit: (EditRequestDraft) -> Void = { _ in }
 
     @FocusState private var reasonFocused: Bool
+    @State private var pickerOpen: Bool
+    @State private var pickerValue = PumTimeRangeValue()
+
+    init(draft: EditRequestDraft = .sample, pickerOpen: Bool = false,
+         onClose: @escaping () -> Void = {}, onPickTime: @escaping () -> Void = {},
+         onSubmit: @escaping (EditRequestDraft) -> Void = { _ in }) {
+        _draft = State(initialValue: draft)
+        _pickerOpen = State(initialValue: pickerOpen)
+        _pickerValue = State(initialValue: PumTimeRangeValue(endMinutes: draft.requestedEnd))
+        self.onClose = onClose
+        self.onPickTime = onPickTime
+        self.onSubmit = onSubmit
+    }
 
     // 화면 전용 상수 (DEC-005: 목업 px → 가까운 토큰 단계)
     /// 사유 입력칸 높이 — 디자인 캡처 약 140
@@ -45,6 +58,24 @@ struct EditRequestView: View {
                 .padding(.vertical, PumTokens.Space.s12)
                 .background(PumColor.bgApp)
         }
+        .pumTimeRangeSheet(isPresented: $pickerOpen, value: $pickerValue, options: pickerOptions) {
+            draft = draft.applying(pickedEnd: pickerValue.endMinutes)
+        }
+    }
+
+    private var pickerOptions: PumTimeRangeOptions {
+        PumTimeRangeOptions(
+            title: EditRequestDraft.pickerTitle, mode: .endOnly, rangeLabel: draft.pickerRowLabel,
+            showsDate: false, showsBreak: false, showsRepeat: false, showsEndDate: false,
+            intervalMinutes: EditRequestDraft.pickerIntervalMinutes
+        )
+    }
+
+    /// 열 때의 값을 시트용 복사본에 담는다 — 「완료」 전에 닫으면(막 · VoiceOver) 화면 값은 그대로
+    private func openPicker() {
+        onPickTime()
+        pickerValue.endMinutes = draft.requestedEnd
+        pickerOpen = true
     }
 
     /// 1f처럼 닫기(✕) — 왼쪽 원형 버튼 · 가운데 제목
@@ -107,7 +138,7 @@ struct EditRequestView: View {
         .accessibilityLabel(Text(draft.endRowAccessibility))
         .accessibilityAddTraits(.isButton)
         .accessibilityHint(Text("퇴근 시간을 골라요"))
-        .accessibilityAction(.default, onPickTime)
+        .accessibilityAction(.default, openPicker)
     }
 
     private var endLabel: some View {
@@ -124,7 +155,7 @@ struct EditRequestView: View {
                 .strikethrough().foregroundStyle(PumColor.textTertiary)
             Image(systemName: "arrow.right").font(.footnote.weight(.semibold))
                 .foregroundStyle(PumColor.textSecondary)
-            Button(action: onPickTime) {
+            Button(action: openPicker) {
                 // 목업 20px 700 → title3
                 Text(draft.requestedEndText).pumText(.title3).foregroundStyle(PumColor.accent)
                     .padding(.horizontal, PumTokens.Space.s12)
@@ -135,10 +166,14 @@ struct EditRequestView: View {
         }
     }
 
-    private var previewBox: some View {
+    @ViewBuilder private var previewBox: some View {
+        if let previewText = draft.previewText { previewBoxContent(previewText) }
+    }
+
+    private func previewBoxContent(_ previewText: String) -> some View {
         ViewThatFits(in: .horizontal) {
-            HStack(spacing: PumTokens.Space.s12) { previewLabel; Spacer(minLength: 0); previewValue }
-            VStack(alignment: .leading, spacing: PumTokens.Space.s4) { previewLabel; previewValue }
+            HStack(spacing: PumTokens.Space.s12) { previewLabel; Spacer(minLength: 0); previewValue(previewText) }
+            VStack(alignment: .leading, spacing: PumTokens.Space.s4) { previewLabel; previewValue(previewText) }
         }
         .padding(PumTokens.Space.s12)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -150,8 +185,8 @@ struct EditRequestView: View {
         Text("반영되면").pumText(.footnote).foregroundStyle(PumColor.textSecondary)
     }
 
-    private var previewValue: some View {
-        Text(draft.previewText).pumText(.footnote, weight: .semibold).foregroundStyle(PumColor.textPrimary)
+    private func previewValue(_ previewText: String) -> some View {
+        Text(previewText).pumText(.footnote, weight: .semibold).foregroundStyle(PumColor.textPrimary)
             .multilineTextAlignment(.trailing)
     }
 
@@ -187,4 +222,7 @@ struct EditRequestView: View {
 }
 
 #Preview("1i") { EditRequestView() }
+#Preview("1i · 시간 선택 시트") {
+    EditRequestView(pickerOpen: true)
+}
 #Preview("1i · 큰 글자") { EditRequestView().dynamicTypeSize(.xxxLarge) }
