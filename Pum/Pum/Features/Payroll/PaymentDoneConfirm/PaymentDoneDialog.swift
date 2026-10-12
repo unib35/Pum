@@ -77,7 +77,7 @@ struct PaymentDoneDialog: View {
             }
             .fixedSize(horizontal: false, vertical: true)
         }
-        .background(PumColor.bgApp, in: RoundedRectangle(cornerRadius: PumTokens.Radius.xl, style: .continuous))
+        .background(PumColor.surfaceCard, in: RoundedRectangle(cornerRadius: PumTokens.Radius.xl, style: .continuous)) // 원문 흰 상자
         .clipShape(RoundedRectangle(cornerRadius: PumTokens.Radius.xl, style: .continuous))
         .pumFloatShadow()
     }
@@ -91,7 +91,7 @@ struct PaymentDoneDialog: View {
         .padding(.horizontal, PumTokens.Space.s14)
         .padding(.vertical, PumTokens.Space.s12)
         .frame(maxWidth: .infinity)
-        .background(PumColor.surfaceFill, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
+        .background(PumColor.bgApp, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous)) // 원문 연회색 안쪽 상자
     }
 
     /// 키–값 행: 넓으면 한 줄, 좁으면(큰 글자) 값이 아래로. 행 하나가 한 덩어리로 읽힌다
