@@ -118,6 +118,7 @@ struct ContentView: View {
             case "10q": LeaveBalanceView(state: .sample)
             case "10r": OffboardingView(state: .notEligible)
             case "10s": OffboardingView(state: .dcPension)
+            case "10x": AdminConfirmCheckInView()
             case "21j": OwnerHomeView(isLoading: true)
             case "21k": EmployeeHomeView(isLoading: true)
             case "gallery": ComponentGalleryView()
@@ -235,6 +236,7 @@ private struct DevMenu: View {
                     NavigationLink("10q 연차 현황") { LeaveBalanceView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("10r 퇴사 정산 · 대상 아님") { OffboardingView(state: .notEligible).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("10s 퇴사 정산 · 퇴직연금 DC") { OffboardingView(state: .dcPension).toolbar(.hidden, for: .navigationBar) }
+                    NavigationLink("10x 관리자 확인 출근 대기") { AdminConfirmCheckInView().toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("21j 사장님 홈 로딩") { OwnerHomeView(isLoading: true).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("21k 직원 홈 로딩") { EmployeeHomeView(isLoading: true).toolbar(.hidden, for: .navigationBar) }
                 }
