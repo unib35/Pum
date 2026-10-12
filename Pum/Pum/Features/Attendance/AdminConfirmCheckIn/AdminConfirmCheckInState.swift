@@ -38,9 +38,10 @@ nonisolated struct AdminConfirmCheckInState: Equatable, Sendable {
     static let sectionTitle = "출근"
     static let cancelTitle = "요청 취소"
 
-    func stepSpoken(_ step: Step) -> String {
-        let n = (steps.firstIndex(where: { $0.id == step.id }) ?? 0) + 1
-        return "\(step.title), \(step.detail), \(step.status.spoken), \(steps.count)단계 중 \(n)번째"
+    /// 몇 번째인지는 목록 위치(index)로 받는다 — 같은 id를 찾지 못해 「1번째」로 잘못 읽는 일이 없게
+    func stepSpoken(at index: Int) -> String {
+        let step = steps[index]
+        return "\(step.title), \(step.detail), \(step.status.spoken), \(steps.count)단계 중 \(index + 1)번째"
     }
 
     var noticeAccessibilityLabel: String { "\(noticeTitle), \(noticeDetail), \(noticeValue)" }

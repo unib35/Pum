@@ -23,8 +23,20 @@ struct AdminConfirmCheckInTests {
     }
 
     @Test func 읽기_문구() {
-        #expect(s.stepSpoken(s.steps[1]) == "사장님 확인, 박민수 \u{00B7} 알림 보냄, 진행 중, 3단계 중 2번째")
-        #expect(s.stepSpoken(s.steps[0]) == "출근 요청, 16:58 \u{00B7} 매장에서 12m, 완료, 3단계 중 1번째")
+        #expect(s.stepSpoken(at: 0) == "출근 요청, 16:58 \u{00B7} 매장에서 12m, 완료, 3단계 중 1번째")
+        #expect(s.stepSpoken(at: 1) == "사장님 확인, 박민수 \u{00B7} 알림 보냄, 진행 중, 3단계 중 2번째")
+        #expect(s.stepSpoken(at: 2) == "출근 기록, 확인되면 16:58로 기록돼요, 아직, 3단계 중 3번째")
         #expect(s.noticeAccessibilityLabel == "확인 전에도, 근무시간은 요청 시각부터, 그대로 근무하면 돼요")
+    }
+
+    @Test func 서버_단계가_바뀌면_읽기도_따라감() {
+        var steps = s.steps
+        steps[1].status = .done
+        steps[2].status = .done
+        let confirmed = AdminConfirmCheckInState(
+            workplaceName: s.workplaceName, workplaceInitial: s.workplaceInitial, dateText: s.dateText,
+            shiftText: s.shiftText, statusText: s.statusText, steps: steps,
+            noticeTitle: s.noticeTitle, noticeDetail: s.noticeDetail, noticeValue: s.noticeValue)
+        #expect(confirmed.stepSpoken(at: 2) == "출근 기록, 확인되면 16:58로 기록돼요, 완료, 3단계 중 3번째")
     }
 }

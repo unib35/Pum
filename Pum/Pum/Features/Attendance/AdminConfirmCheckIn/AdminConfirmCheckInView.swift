@@ -129,12 +129,12 @@ struct AdminConfirmCheckInView: View {
         PumCard {
             ForEach(Array(state.steps.enumerated()), id: \.element.id) { i, step in
                 if i > 0 { divider }
-                stepRow(step)
+                stepRow(step, index: i)
             }
         }
     }
 
-    private func stepRow(_ s: AdminConfirmCheckInState.Step) -> some View {
+    private func stepRow(_ s: AdminConfirmCheckInState.Step, index: Int) -> some View {
         HStack(spacing: PumTokens.Space.s12) {
             stepCircle(s.status)
             VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
@@ -147,7 +147,7 @@ struct AdminConfirmCheckInView: View {
         .padding(.horizontal, PumTokens.Space.s16)
         .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin, alignment: .leading)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(Text(state.stepSpoken(s)))
+        .accessibilityLabel(Text(state.stepSpoken(at: index)))
     }
 
     /// 완료 = 회색 원 + 먹색 체크, 진행 중 = 원 테두리 위 회전 호(먹색), 아직 = 빈 원
@@ -256,6 +256,7 @@ private struct SpinningArc: View {
                        : .linear(duration: AdminConfirmCheckInView.Local.spinSeconds).repeatForever(autoreverses: false),
                        value: spinning)
             .onAppear { if !reduceMotion { spinning = true } }
+            .onChange(of: reduceMotion) { _, on in spinning = !on } // 화면이 떠 있는 동안 켜도 멈춤
     }
 }
 
