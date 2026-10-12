@@ -66,5 +66,6 @@ struct OffboardingTests {
         #expect(d.steps[3].detail == "\u{25CB}\u{25CB}은행 퇴직연금 \u{00B7} 11월 14일까지")
         #expect(d.steps[4].detail == "직접 신고 \u{00B7} 11월 15일까지")
         #expect(d.payItems[2].spoken == "퇴직급여, DC 계좌, 연금사업자가 지급 \u{00B7} 앱에서 계산 안 함")
+        #expect(d.stepSpoken(d.steps[3]) == "퇴직연금 미납 부담금 적립, \u{25CB}\u{25CB}은행 퇴직연금 \u{00B7} 11월 14일까지, 아직, 5단계 중 4번째")
     }
 }
