@@ -1,5 +1,6 @@
 // UI-IOS-1av · REQ-105 · REQ-024 — 직원 홈(근무 중) 화면 데이터와 계산
 // 예정 퇴근 시각이 지나도 화면 · 상태가 스스로 퇴근 처리하지 않는다(REQ-024). 퇴근은 사용자가 누를 때만.
+// UI-IOS-6q · REQ-029 · REQ-095 — 오프라인: 같은 화면의 상태. 오프라인 여부 · 전송 대기는 연결 계층이 주는 값(nil이면 1av 그대로).
 import Foundation
 
 nonisolated struct EmployeeHomeWorkingState: Equatable, Sendable {
@@ -9,10 +10,13 @@ nonisolated struct EmployeeHomeWorkingState: Equatable, Sendable {
     var clockInMinute: Int
     /// 지금 시각(하루 안의 분) — 화면이 주입받는다
     var nowMinute: Int
-    init(base: EmployeeHomeState, clockInMinute: Int, nowMinute: Int) {
+    /// 오프라인 표시(6q). nil이면 온라인 1av. 화면은 네트워크를 감지하지 않는다 — 호출자가 준다.
+    var offline: EmployeeHomeOffline?
+    init(base: EmployeeHomeState, clockInMinute: Int, nowMinute: Int, offline: EmployeeHomeOffline? = nil) {
         self.base = base
         self.clockInMinute = clockInMinute
         self.nowMinute = nowMinute
+        self.offline = offline
     }
 
     var plan: ShiftPlan { base.today }
@@ -73,5 +77,38 @@ extension EmployeeHomeWorkingState {
         base: .sample,
         clockInMinute: 16 * 60 + 58,
         nowMinute: 18 * 60 + 40
+    )
+}
+
+/// UI-IOS-6q — 오프라인 표시 값(문구는 연결 계층이 주며, 기본값은 디자인 원문)
+nonisolated struct EmployeeHomeOffline: Equatable, Sendable {
+    /// 전송 대기 기록 한 줄씩 — 예: 「출근 16:58 · 매장 QR · 위치 확인됨」
+    var pending: [String]
+    /// 오늘 카드 맨 아래 — 예: 「출근 16:58 · 이 기기에 저장됨」
+    var savedNote: String
+    var bannerTitle = "인터넷에 연결되어 있지 않아요"
+    var retryTitle = "다시 시도"
+    var badgeText = "전송 대기"
+    var pendingNote = "기록 시각은 누른 순간으로 저장돼요. 나중에 전송돼도 바뀌지 않아요."
+    var clockOutHint = "연결이 없어도 퇴근을 기록할 수 있어요"
+
+    var pendingTitle: String { "전송 대기 \(pending.count)건" }
+}
+
+extension EmployeeHomeOffline {
+    /// 디자인 6q 예시 값(가짜 데이터)
+    static let sample = EmployeeHomeOffline(
+        pending: ["출근 16:58 · 매장 QR · 위치 확인됨"],
+        savedNote: "출근 16:58 · 이 기기에 저장됨"
+    )
+}
+
+extension EmployeeHomeWorkingState {
+    /// 디자인 6q 예시 값: 출근 16:58, 지금 17:10(12분 근무)
+    static let offline = EmployeeHomeWorkingState(
+        base: .sample,
+        clockInMinute: 16 * 60 + 58,
+        nowMinute: 17 * 60 + 10,
+        offline: .sample
     )
 }
