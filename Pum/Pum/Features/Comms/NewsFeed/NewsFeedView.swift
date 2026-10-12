@@ -72,9 +72,15 @@ struct NewsFeedView: View {
             .accessibilityAddTraits(.isHeader)
     }
 
+    /// 서버가 준 색 번호 — 범위 밖 · 음수도 순환(크래시 방지)
+    private var storeColor: Color {
+        let stores = PumAvatarPalette.stores
+        return stores[((state.workplaceTileIndex % stores.count) + stores.count) % stores.count]
+    }
+
     private var chip: some View {
         PumWorkplaceChip(name: state.workplaceName, initial: state.workplaceInitial,
-                         tileColor: PumAvatarPalette.stores[state.workplaceTileIndex], action: onOpenWorkplaceSwitcher)
+                         tileColor: storeColor, action: onOpenWorkplaceSwitcher)
     }
 
     // MARK: 섹션
@@ -295,18 +301,19 @@ private struct InviteCard: View {
     }
 
     /// 글자가 커지면(접근성 크기) 버튼을 위아래로 쌓는다.
+    /// 처리 중엔 두 버튼 다 누를 수 없지만, 처리 중 모양은 누른 버튼에만(다른 버튼은 모양 그대로).
     @ViewBuilder private var buttons: some View {
         if typeSize.isAccessibilitySize {
             VStack(spacing: PumTokens.Space.s8) {
-                PumButton(title: "확인하기", size: .small, isLoading: action == .open, action: onOpen).disabled(action != nil)
-                PumButton(title: "거절", kind: .outline, size: .small, isLoading: action == .decline, action: onDecline).disabled(action != nil)
+                PumButton(title: "확인하기", size: .small, isLoading: action == .open, action: onOpen).allowsHitTesting(action == nil)
+                PumButton(title: "거절", kind: .outline, size: .small, isLoading: action == .decline, action: onDecline).allowsHitTesting(action == nil)
             }
         } else {
             InviteButtonRow(spacing: PumTokens.Space.s8) { // 원문 비율 약 2 : 3
                 PumButton(title: "거절", kind: .outline, size: .small, isLoading: action == .decline, action: onDecline)
-                    .disabled(action != nil)
+                    .allowsHitTesting(action == nil)
                 PumButton(title: "확인하기", size: .small, isLoading: action == .open, action: onOpen)
-                    .disabled(action != nil)
+                    .allowsHitTesting(action == nil)
             }
         }
     }
