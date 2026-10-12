@@ -75,10 +75,11 @@ struct PaymentNotReceivedScreen: View {
                 Text("급여").pumText(.headline)
             }
             .foregroundStyle(PumColor.textPrimary)
-            .frame(minHeight: PumTokens.Size.tapMin)
+            .frame(minWidth: PumTokens.Size.tapMin, minHeight: PumTokens.Size.tapMin, alignment: .leading)
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        .disabled(isSending) // 보내는 동안 떠나지 않게
         .padding(.top, PumTokens.Space.s8)
         .accessibilityLabel(Text("급여, 뒤로"))
     }
