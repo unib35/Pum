@@ -216,7 +216,7 @@ struct CheckInTooFarView: View {
                         .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
-                .disabled(lock.isChecking)
+                // 대체 경로는 다시 확인하는 중에도 막지 않는다(판정이 오래 걸려도 출근 기록 길이 남게 — REQ-029)
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel(Text(state.ownerRowAccessibilityLabel))
             }
@@ -282,7 +282,6 @@ struct CheckInTooFarView: View {
             PumButton(title: CheckInTooFarState.retryTitle, kind: .primary, isLoading: lock.isChecking,
                       loadingTitle: CheckInTooFarState.retryingTitle, action: retry)
             PumButton(title: CheckInTooFarState.ownerAction, kind: .text, action: requestOwner)
-                .disabled(lock.isChecking)
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
         .padding(.top, PumTokens.Space.s8)
@@ -297,7 +296,6 @@ struct CheckInTooFarView: View {
     }
 
     private func requestOwner() {
-        guard !lock.isChecking else { return }
         onRequestOwner()
     }
 }
