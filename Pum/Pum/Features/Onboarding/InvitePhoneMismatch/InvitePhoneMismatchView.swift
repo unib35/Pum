@@ -117,6 +117,7 @@ struct InvitePhoneMismatchView: View {
                       isLoading: state.isRequesting, action: onRequestConfirm)
             PumButton(title: InvitePhoneMismatchState.loginWithInvitedTitle, kind: .text,
                       action: onLoginWithInvitedNumber)
+                .disabled(state.isRequesting) // 확인 요청 중에 다른 번호로 로그인이 겹치지 않게
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
         .padding(.top, PumTokens.Space.s12)

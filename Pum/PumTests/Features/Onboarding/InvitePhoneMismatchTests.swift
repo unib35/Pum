@@ -28,5 +28,7 @@ struct InvitePhoneMismatchTests {
             isVerified: false, roleName: s.roleName, expiryDate: s.expiryDate)
         #expect(x.cardAccessibilityText == "종민김밥 본점, 서울 마포구 양화로 12 · 음식점")
         #expect(!x.isRequesting)
+        let stores = PumAvatarPalette.stores
+        #expect(x.tileColor == stores[((-3 % stores.count) + stores.count) % stores.count])
     }
 }
