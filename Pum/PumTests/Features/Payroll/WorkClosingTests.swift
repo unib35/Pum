@@ -34,4 +34,22 @@ struct WorkClosingTests {
         #expect(WorkClosingCategory.needsCheck.spokenTitle == "확인 필요, 연장, 지각, 예정 외")
         #expect(s.barAccessibilityText == "76건 중 정상 71건, 처리 필요 5건")
     }
+
+    @Test func 마감은_한_번만_실패일_때만_풀린다() {
+        var lock = WorkClosingLock()
+        let first = lock.begin(canClose: true)
+        let second = lock.begin(canClose: true)
+        #expect(first && !second && lock.isClosing)
+        lock.finish(success: false)
+        #expect(!lock.isClosing)
+        let again = lock.begin(canClose: true)
+        lock.finish(success: true)
+        #expect(again && lock.isClosing)
+    }
+
+    @Test func 처리_필요가_남으면_잠그지_않는다() {
+        var lock = WorkClosingLock()
+        let began = lock.begin(canClose: WorkClosingState.sample.canClose)
+        #expect(!began && !lock.isClosing)
+    }
 }

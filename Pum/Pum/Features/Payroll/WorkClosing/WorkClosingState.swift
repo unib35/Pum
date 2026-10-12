@@ -71,3 +71,15 @@ nonisolated struct WorkClosingState: Equatable, Sendable {
         needsCheckCount: 3, missingClockOutCount: 1, editRequestCount: 1,
         confirmedEmployeeCount: 3, confirmRequestTotal: 5)
 }
+
+/// 마감 한 번만 — 누르는 즉시 잠그고, 실패일 때만 푼다(성공이면 잠근 채).
+nonisolated struct WorkClosingLock: Equatable, Sendable {
+    private(set) var isClosing = false
+    /// 마감할 수 있으면 true를 돌려주고 잠근다. 처리 필요가 남았거나 이미 처리 중이면 false.
+    mutating func begin(canClose: Bool) -> Bool {
+        guard canClose, !isClosing else { return false }
+        isClosing = true
+        return true
+    }
+    mutating func finish(success: Bool) { if !success { isClosing = false } }
+}

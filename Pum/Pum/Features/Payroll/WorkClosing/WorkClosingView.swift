@@ -12,7 +12,8 @@ struct WorkClosingView: View {
     /// 마감 실행. 결과를 done(성공 여부)로 알린다. 연결 전 기본값은 실패(done(false)).
     var onClose: (_ done: @escaping (Bool) -> Void) -> Void = { done in done(false) }
 
-    @State private var isClosing = false
+    @State private var lock = WorkClosingLock()
+    private var isClosing: Bool { lock.isClosing }
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @ScaledMetric(relativeTo: .body) private var barHeight = PumTokens.Space.s8
     @ScaledMetric(relativeTo: .body) private var badgeSize = PumLayout.avatar - PumTokens.Space.s12 // 원문 상태 원 약 24pt(7a 체크 원과 같은 값)
@@ -25,8 +26,11 @@ struct WorkClosingView: View {
                 VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
                     titleBlock
                     summaryCard
-                    categoryCard
-                    confirmRequestCard
+                    Group { // 마감하는 동안은 다른 화면으로 가지 않게
+                        categoryCard
+                        confirmRequestCard
+                    }
+                    .disabled(isClosing)
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
                 .padding(.vertical, PumTokens.Space.s12)
@@ -222,11 +226,8 @@ struct WorkClosingView: View {
 
     /// 한 번만 — 누르는 즉시 잠그고, 실패일 때만 푼다
     private func close() {
-        guard state.canClose, !isClosing else { return }
-        isClosing = true
-        onClose { success in
-            if !success { isClosing = false }
-        }
+        guard lock.begin(canClose: state.canClose) else { return }
+        onClose { success in lock.finish(success: success) }
     }
 }
 
