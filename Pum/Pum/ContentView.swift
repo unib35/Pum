@@ -99,6 +99,7 @@ struct ContentView: View {
             case "10i": LeaveRequestView(state: .sample, reason: "병원 예약이 있어요")
             case "10k": RequestInboxView(state: .sample)
             case "10j": ShiftChangeRequestView(state: .sample, start: 18 * 60, end: 23 * 60, reason: "수요일 수업이 18시에 끝나요")
+            case "10l": CheckInMethodView(state: .sample)
             case "10m": CheckInQRView(state: .sample)
             case "gallery": ComponentGalleryView()
             default: DevMenu()
@@ -196,6 +197,7 @@ private struct DevMenu: View {
                     NavigationLink("10i 휴무 신청") { LeaveRequestView(state: .sample, reason: "병원 예약이 있어요").toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("10k 휴무 · 변경 요청 처리") { RequestInboxView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("10j 근무 변경 요청") { ShiftChangeRequestView(state: .sample, start: 18 * 60, end: 23 * 60, reason: "수요일 수업이 18시에 끝나요").toolbar(.hidden, for: .navigationBar) }
+                    NavigationLink("10l 출근 확인 방식") { CheckInMethodView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("10m 출근 QR") { CheckInQRView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                 }
                 Section("디자인 시스템") {
