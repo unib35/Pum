@@ -60,4 +60,14 @@ struct EditRequestTests {
         let s = String(repeating: flag, count: 201)
         #expect(EditRequestDraft.clampedReason(s) == String(repeating: flag, count: 200))
     }
+
+    @Test func 휠에서_고른_퇴근_시각_반영() {
+        let same = d.applying(pickedEnd: d.requestedEnd)
+        #expect(same.previewText == d.previewText) // 같은 값이면 서버 미리보기 유지
+        let changed = d.applying(pickedEnd: d.requestedEnd + 10)
+        #expect(changed.requestedEnd == d.requestedEnd + 10)
+        #expect(changed.previewText == nil) // 바뀌면 옛 서버 값 버림
+        #expect(d.applying(pickedEnd: -5).requestedEnd == 0)
+        #expect(d.applying(pickedEnd: 1440).requestedEnd == 1439)
+    }
 }

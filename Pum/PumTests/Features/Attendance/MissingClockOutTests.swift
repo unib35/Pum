@@ -83,4 +83,14 @@ struct MissingClockOutTests {
         x.step(.minute, by: -1)
         #expect(x.recognizedLine == nil)
     }
+
+    @Test func 휠에서_고른_퇴근_시각_반영() {
+        let same = s.applying(pickedMinute: s.inputMinute)
+        #expect(same.recognizedText == s.recognizedText)
+        let changed = s.applying(pickedMinute: s.inputMinute + 3)
+        #expect(changed.inputMinute == s.inputMinute + 3)
+        #expect(changed.recognizedText == nil)
+        #expect(changed.recognizedPay == nil)
+        #expect(s.applying(pickedMinute: 2000).inputMinute == 1439)
+    }
 }
