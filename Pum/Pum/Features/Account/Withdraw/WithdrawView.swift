@@ -74,8 +74,8 @@ struct WithdrawView: View {
 
     private var bottomBar: some View {
         VStack(spacing: 0) {
-            PumButton(title: state.withdrawTitle, action: onWithdraw)
-                .disabled(!state.canWithdraw)
+            PumButton(title: state.withdrawTitle, isLoading: state.isSubmitting, action: onWithdraw)
+                .disabled(!state.canWithdraw && !state.isSubmitting)
                 .accessibilityHint(Text(state.blockedReason ?? ""))
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
@@ -128,12 +128,16 @@ private struct WithdrawWorkplaceCard: View {
         if typeSize.isAccessibilitySize {
             VStack(spacing: PumTokens.Space.s8) {
                 PumButton(title: WithdrawState.transferTitle, size: .small, action: onTransfer)
+                    .accessibilityLabel(Text("\(workplace.name) \(WithdrawState.transferTitle)"))
                 PumButton(title: WithdrawState.closeTitle, kind: .outline, size: .small, action: onClose)
+                    .accessibilityLabel(Text("\(workplace.name) \(WithdrawState.closeTitle)"))
             }
         } else {
             WithdrawButtonRow(spacing: PumTokens.Space.s8) { // 원문 폭 비율 약 9 : 7(360 : 280)
                 PumButton(title: WithdrawState.transferTitle, size: .small, action: onTransfer)
+                    .accessibilityLabel(Text("\(workplace.name) \(WithdrawState.transferTitle)"))
                 PumButton(title: WithdrawState.closeTitle, kind: .outline, size: .small, action: onClose)
+                    .accessibilityLabel(Text("\(workplace.name) \(WithdrawState.closeTitle)"))
             }
         }
     }

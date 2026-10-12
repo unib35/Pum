@@ -54,12 +54,16 @@ nonisolated struct WithdrawState: Equatable, Sendable {
     var staffNote: String
     /// 하단 버튼 글자(서버 값). 비활성일 땐 이유 문장
     var withdrawTitle: String
+    /// 서버가 정리할 사업장 목록을 다 받았는지 — 받기 전 · 실패면 빈 목록이어도 탈퇴할 수 없다(되돌릴 수 없는 일)
+    var isLoaded: Bool = true
+    /// 탈퇴 요청을 보내는 중 — 두 번 보내지 않게 버튼을 잠근다
+    var isSubmitting: Bool = false
 
-    var canWithdraw: Bool { workplaces.isEmpty }
+    var canWithdraw: Bool { isLoaded && workplaces.isEmpty && !isSubmitting }
 
-    /// 비활성 버튼을 읽을 때 붙이는 이유
+    /// 비활성 버튼을 읽을 때 붙이는 이유(원문 없음 — 화면에 보이지 않는 VoiceOver 힌트만)
     var blockedReason: String? {
-        canWithdraw ? nil : "정리할 사업장이 \(workplaces.count)곳 남아 있어요"
+        workplaces.isEmpty ? nil : "정리할 사업장이 \(workplaces.count)곳 남아 있어요"
     }
 
     /// 원문 값

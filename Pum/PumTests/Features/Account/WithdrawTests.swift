@@ -38,4 +38,27 @@ struct WithdrawTests {
         let w = WithdrawState.sample.workplaces[0]
         #expect(w.spoken.hasPrefix("종민김밥 본점, 박민수님이 유일한 대표(Owner)예요, 계정을 삭제하기 전에"))
     }
+
+    private func with(loaded: Bool = true, submitting: Bool = false, workplaces: [WithdrawWorkplace] = []) -> WithdrawState {
+        WithdrawState(workplaces: workplaces, consequencesTitle: WithdrawState.cleared.consequencesTitle,
+                      consequences: WithdrawState.cleared.consequences, staffNote: WithdrawState.cleared.staffNote,
+                      withdrawTitle: WithdrawState.cleared.withdrawTitle, isLoaded: loaded, isSubmitting: submitting)
+    }
+
+    @Test func 목록을_받기_전이나_실패면_탈퇴할_수_없다() {
+        #expect(!with(loaded: false).canWithdraw)
+        #expect(with(loaded: true).canWithdraw)
+    }
+
+    @Test func 보내는_중엔_다시_누를_수_없다() {
+        #expect(!with(submitting: true).canWithdraw)
+    }
+
+    @Test func 사업장이_여러_곳이면_이유에_수가_들어간다() {
+        let two = with(workplaces: WithdrawState.sample.workplaces + WithdrawState.sample.workplaces.map {
+            WithdrawWorkplace(id: "second", initial: $0.initial, name: "B카페", statusText: $0.statusText, message: $0.message)
+        })
+        #expect(!two.canWithdraw)
+        #expect(two.blockedReason == "정리할 사업장이 2곳 남아 있어요")
+    }
 }
