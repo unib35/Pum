@@ -7,6 +7,7 @@ struct PaymentDoneDialog: View {
     var state: PaymentDoneConfirmState = .sample
     var onCancel: () -> Void = {}
     /// 지급 완료 처리. 결과를 done(성공 여부)로 알린다. 연결 전 기본값은 실패(done(false)).
+    /// 성공이면 잠근 채 두고, 다이얼로그를 닫는 것은 부르는 쪽(7a가 서버 새 상태로 다시 그리며 닫는다).
     var onConfirm: (_ done: @escaping (Bool) -> Void) -> Void = { done in done(false) }
 
     @State private var lock = WorkClosingLock() // 같은 의미(한 번만 · 실패일 때만 풀림)라 재사용
@@ -34,12 +35,12 @@ struct PaymentDoneDialog: View {
                     ScrollView { panel }.scrollBounceBehavior(.basedOnSize)
                 }
                 .frame(maxWidth: Self.maxWidth)
-                .frame(maxHeight: geo.size.height * 0.9)
+                .frame(maxHeight: geo.size.height * PumBottomSheetStyle.maxHeightRatio) // C9과 같은 상한
                 .padding(.horizontal, PumTokens.Size.screenPad)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
             .opacity(shown ? 1 : 0)
-            .scaleEffect(shown || reduceMotion ? 1 : 0.96)
+            .scaleEffect(shown || reduceMotion ? 1 : 0.96) // 나타남 크기 — 토큰 없음(공통 C10 만들 때 정함)
         }
         .accessibilityElement(children: .contain)
         .accessibilityAddTraits(.isModal)
@@ -141,7 +142,7 @@ struct PaymentDoneDialog: View {
     }
 
     private func cancel() {
-        guard !isProcessing else { return }
+        guard PaymentDoneConfirmState.allowsDismiss(isProcessing: isProcessing) else { return }
         onCancel()
     }
 
