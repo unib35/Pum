@@ -139,6 +139,7 @@ struct ContentView: View {
             case "6j": EmploymentStatusView(state: .sample)
             case "6k": DocumentBoxView(state: .sample)
             case "6l": ActivityLogView(state: .sample)
+            case "6n": PayrollInquiryView(state: .sample)
             case "gallery": ComponentGalleryView()
             default: DevMenu()
             }
@@ -275,6 +276,7 @@ private struct DevMenu: View {
                     NavigationLink("6j 재직 상태") { EmploymentStatusView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("6k 문서함") { DocumentBoxView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("6l 활동 기록") { ActivityLogView(state: .sample).toolbar(.hidden, for: .navigationBar) }
+                    NavigationLink("6n 급여 계산 문의") { PayrollInquiryView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                 }
                 Section("디자인 시스템") {
                     NavigationLink("컴포넌트 갤러리") { ComponentGalleryView() }
