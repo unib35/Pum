@@ -46,3 +46,37 @@ struct NewsFeedTests {
         #expect(e.isEmpty && e.unreadNoticeCount == 0 && !s.isEmpty)
     }
 }
+
+// UI-IOS-15d · REQ-002 · REQ-013 · REQ-041 — 소식 탭 초대
+struct NewsFeedInviteTests {
+    @Test func 초대는_기본_nil이고_3a_요청_수는_그대로() {
+        let s = NewsFeedState.sample
+        #expect(s.invite == nil)
+        #expect(s.requestCount == 2)
+        #expect(s.workplaceTileIndex == 0)
+    }
+
+    @Test func 원문_15d_값() {
+        let s = NewsFeedState.withInvite
+        #expect(s.workplaceName == "B카페 서면점" && s.workplaceInitial == "B")
+        let invite = s.invite
+        #expect(invite?.title == "종민김밥 본점 · 직원")
+        #expect(invite?.detail == "대표 박민수 · 인증됨 · 10월 14일까지")
+        #expect(invite?.ago == "방금")
+        #expect(s.notices.map(\.title) == ["10월 위생교육 안내"])
+        #expect(s.alerts.count == 2)
+    }
+
+    @Test func 요청_수에_초대가_포함된다() {
+        let s = NewsFeedState.withInvite
+        #expect(s.requestCount == 1) // 원문 「요청 1」
+        #expect(!s.isEmpty)
+        #expect(s.shows(.request, under: .request))
+    }
+
+    @Test func 인증_전_초대는_인증됨이_빠진다() {
+        let i = NewsInvite(id: "x", ago: "방금", workplaceName: "A", workplaceInitial: "A", role: "직원",
+                           ownerName: "김", isVerified: false, validUntil: "10월 14일까지")
+        #expect(i.detail == "대표 김 · 10월 14일까지")
+    }
+}

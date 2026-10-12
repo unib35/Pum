@@ -9,6 +9,14 @@ struct NewsFeedView: View {
     var onOpenContract: (ContractSignRequest) -> Void = { _ in }
     var onOpenNotice: (NewsNotice) -> Void = { _ in }
     var onOpenWorkplaceSwitcher: () -> Void = {}
+    // 15d 초대(거절 · 확인하기). 거절은 되돌릴 수 없어 확인 창이 필요할 수 있으나 원문이 없어 클로저만 둔다.
+    var onDeclineInvite: (NewsInvite) -> Void = { _ in }
+    var onOpenInvite: (NewsInvite) -> Void = { _ in }
+    /// 처리 중인 초대 버튼(누른 버튼에만 표시). 서버 상태를 부모가 내려준다.
+    var inviteAction: InviteAction? = nil
+
+    /// 15d 초대 카드에서 처리 중인 버튼
+    nonisolated enum InviteAction: Hashable, Sendable { case decline, open }
 
     @State private var filter: NewsFilter = .all
     @State private var tab = "news"
@@ -30,7 +38,7 @@ struct NewsFeedView: View {
             VStack(alignment: .leading, spacing: PumTokens.Space.s20) {
                 header
                 NewsFilterBar(selection: $filter, noticeCount: state.unreadNoticeCount, requestCount: state.requestCount)
-                if state.shows(.request, under: filter), !state.requests.isEmpty { requestSection }
+                if state.shows(.request, under: filter), !state.requests.isEmpty || state.invite != nil { requestSection }
                 if state.shows(.notice, under: filter), !state.notices.isEmpty { noticeSection }
                 if state.shows(.alert, under: filter), !state.alerts.isEmpty { alertSection }
             }
@@ -65,7 +73,8 @@ struct NewsFeedView: View {
     }
 
     private var chip: some View {
-        PumWorkplaceChip(name: state.workplaceName, initial: state.workplaceInitial, action: onOpenWorkplaceSwitcher)
+        PumWorkplaceChip(name: state.workplaceName, initial: state.workplaceInitial,
+                         tileColor: PumAvatarPalette.stores[state.workplaceTileIndex], action: onOpenWorkplaceSwitcher)
     }
 
     // MARK: 섹션
@@ -74,6 +83,10 @@ struct NewsFeedView: View {
         VStack(spacing: PumTokens.Space.s8) {
             PumSectionHeader(title: "결정이 필요해요", attention: true)
             VStack(spacing: PumTokens.Space.s12) { // 원문: 요청 카드 사이 약 12
+                if let invite = state.invite { // 15d: 결정 섹션 맨 위. 없으면 아무것도 그리지 않는다(3a 그대로)
+                    InviteCard(invite: invite, action: inviteAction,
+                               onDecline: { onDeclineInvite(invite) }, onOpen: { onOpenInvite(invite) })
+                }
                 ForEach(state.requests) { request in
                     switch request {
                     case .extraShift(let r): ExtraShiftCard(request: r, onAccept: { onAccept(r) }, onDecline: { onDecline(r) })
@@ -89,7 +102,11 @@ struct NewsFeedView: View {
             PumSectionHeader(title: "공지")
             PumCard {
                 ForEach(Array(state.notices.enumerated()), id: \.element.id) { index, notice in
-                    NoticeRow(notice: notice, isLast: index == state.notices.count - 1) { onOpenNotice(notice) }
+                    if state.invite == nil {
+                        NoticeRow(notice: notice, isLast: index == state.notices.count - 1) { onOpenNotice(notice) }
+                    } else { // 15d: 날짜가 제목 줄 오른쪽
+                        TrailingDateNoticeRow(notice: notice, isLast: index == state.notices.count - 1) { onOpenNotice(notice) }
+                    }
                 }
             }
         }
@@ -100,7 +117,11 @@ struct NewsFeedView: View {
             PumSectionHeader(title: "알림")
             PumCard {
                 ForEach(Array(state.alerts.enumerated()), id: \.element.id) { index, alert in
-                    AlertRow(alert: alert, isLast: index == state.alerts.count - 1)
+                    if alert.source == nil {
+                        AlertRow(alert: alert, isLast: index == state.alerts.count - 1)
+                    } else { // 15d: 시각이 제목 줄 오른쪽 · 아래 사업장 이름
+                        SourceAlertRow(alert: alert, isLast: index == state.alerts.count - 1)
+                    }
                 }
             }
         }
@@ -231,6 +252,66 @@ private struct ContractSignCard: View {
     }
 }
 
+// MARK: - 초대 카드 (15d)
+
+private struct InviteCard: View {
+    let invite: NewsInvite
+    let action: NewsFeedView.InviteAction?
+    let onDecline: () -> Void
+    let onOpen: () -> Void
+    @Environment(\.dynamicTypeSize) private var typeSize
+    @ScaledMetric private var tile = PumLayout.avatar + PumTokens.Space.s4 // 원문 타일 40
+
+    var body: some View {
+        PumCard(attention: true) {
+            VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+              VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+                HStack {
+                    PumBadge(text: "직원 초대", kind: .attention)
+                    Spacer(minLength: PumTokens.Space.s8)
+                    Text(invite.ago).pumText(.caption).foregroundStyle(PumColor.textSecondary)
+                }
+                HStack(spacing: PumTokens.Space.s12) {
+                    Text(invite.workplaceInitial)
+                        .pumText(.callout, weight: .bold)
+                        .foregroundStyle(.white)
+                        .frame(width: tile, height: tile)
+                        .background(PumColor.accent, in: RoundedRectangle(cornerRadius: tile * PumLayout.storeTileRadiusRatio, style: .continuous))
+                        .accessibilityHidden(true)
+                    VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
+                        Text(invite.title).pumText(.body, weight: .semibold).foregroundStyle(PumColor.textPrimary)
+                        Text(invite.detail).pumText(.caption).foregroundStyle(PumColor.textSecondary)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
+              }
+              .accessibilityElement(children: .ignore)
+              .accessibilityLabel(Text("직원 초대, \(invite.ago), \(invite.title), \(invite.detail)"))
+                buttons.padding(.top, PumTokens.Space.s4)
+            }
+            .padding(PumTokens.Space.s16)
+        }
+        .accessibilityElement(children: .contain)
+    }
+
+    /// 글자가 커지면(접근성 크기) 버튼을 위아래로 쌓는다.
+    @ViewBuilder private var buttons: some View {
+        if typeSize.isAccessibilitySize {
+            VStack(spacing: PumTokens.Space.s8) {
+                PumButton(title: "확인하기", size: .small, isLoading: action == .open, action: onOpen).disabled(action != nil)
+                PumButton(title: "거절", kind: .outline, size: .small, isLoading: action == .decline, action: onDecline).disabled(action != nil)
+            }
+        } else {
+            HStack(spacing: PumTokens.Space.s8) { // 원문 비율 약 1 : 1.5
+                PumButton(title: "거절", kind: .outline, size: .small, isLoading: action == .decline, action: onDecline)
+                    .disabled(action != nil).layoutPriority(2)
+                PumButton(title: "확인하기", size: .small, isLoading: action == .open, action: onOpen)
+                    .disabled(action != nil).layoutPriority(3)
+            }
+        }
+    }
+}
+
 // MARK: - 공지 · 알림 행
 
 private struct NoticeRow: View {
@@ -314,5 +395,64 @@ private struct AlertRow: View {
     }
 }
 
+/// 15d 공지 행 — 제목 오른쪽에 날짜, 아래 「사업장 · 읽음」
+private struct TrailingDateNoticeRow: View {
+    let notice: NewsNotice
+    let isLast: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
+                HStack(alignment: .firstTextBaseline, spacing: PumTokens.Space.s8) {
+                    Text(notice.title).pumText(.callout, weight: .semibold).foregroundStyle(PumColor.textPrimary)
+                    Spacer(minLength: PumTokens.Space.s8)
+                    Text(notice.date).pumText(.caption).foregroundStyle(PumTokens.ColorToken.gray500)
+                }
+                Text(notice.author + (notice.isRead ? " · 읽음" : "")).pumText(.caption).foregroundStyle(PumColor.textSecondary)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.vertical, PumTokens.Size.rowPadY)
+            .padding(.horizontal, PumTokens.Size.rowPadX)
+            .frame(minHeight: PumTokens.Size.tapMin)
+            .contentShape(Rectangle())
+            .overlay(alignment: .bottom) {
+                if !isLast { Rectangle().fill(PumColor.borderHairline).frame(height: 1) }
+            }
+        }
+        .buttonStyle(.plain)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(Text("\(notice.isRead ? "읽은 공지" : "안 읽은 공지"), \(notice.title), \(notice.author), \(notice.date)"))
+        .accessibilityHint(Text("공지를 열어요"))
+    }
+}
+
+/// 15d 알림 행 — 제목 오른쪽에 시각, 아래 사업장 이름
+private struct SourceAlertRow: View {
+    let alert: NewsAlert
+    let isLast: Bool
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
+            HStack(alignment: .firstTextBaseline, spacing: PumTokens.Space.s8) {
+                Text(alert.message).pumText(.callout, weight: .semibold).foregroundStyle(PumColor.textPrimary)
+                Spacer(minLength: PumTokens.Space.s8)
+                Text(alert.time).pumText(.caption).foregroundStyle(PumTokens.ColorToken.gray500)
+            }
+            if let source = alert.source {
+                Text(source).pumText(.caption).foregroundStyle(PumColor.textSecondary)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.vertical, PumTokens.Size.rowPadY)
+        .padding(.horizontal, PumTokens.Size.rowPadX)
+        .overlay(alignment: .bottom) {
+            if !isLast { Rectangle().fill(PumColor.borderHairline).frame(height: 1) }
+        }
+        .accessibilityElement(children: .combine)
+    }
+}
+
 #Preview("소식 3a") { NewsFeedView() }
 #Preview("소식 빈 상태") { NewsFeedView(state: .empty(workplaceName: "종민김밥 본점", workplaceInitial: "종")) }
+#Preview("소식 15d 초대") { NewsFeedView(state: .withInvite) }
