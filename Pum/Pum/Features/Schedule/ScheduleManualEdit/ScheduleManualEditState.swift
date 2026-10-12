@@ -190,14 +190,14 @@ nonisolated struct ScheduleManualEditState: Equatable, Sendable {
 
     /// 원문 캡처 값 — 금(16) 선택, 박서준 12–19 → 12–22로 바뀐 상태 · 결과 basis 일치
     static let sample: ScheduleManualEditState = {
-        func shift(_ id: Int, _ name: String, _ s: Int, _ e: Int, orig: Int? = nil) -> ManualEditShift {
-            ManualEditShift(employeeId: id, name: name, colorIndex: id, startMinutes: s * 60, endMinutes: e * 60,
+        func shift(_ id: Int, _ name: String, _ color: Int, _ s: Int, _ e: Int, orig: Int? = nil) -> ManualEditShift {
+            ManualEditShift(employeeId: id, name: name, colorIndex: color, startMinutes: s * 60, endMinutes: e * 60,
                             originalStart: s * 60, originalEnd: (orig ?? e) * 60)
         }
-        // 막대 위치는 원문 캡처 실측(최유나 9–15 · 이종민 김하늘 17–22)
+        // 막대 위치는 원문 캡처 실측(최유나 9–15 · 이종민 김하늘 17–22). 아바타 색은 7a · 9c와 같은 사람 색(서버 값)
         let shifts = [
-            shift(1, "최유나", 9, 15), shift(2, "박서준", 12, 22, orig: 19),
-            shift(3, "이종민", 17, 22), shift(4, "김하늘", 17, 22),
+            shift(1, "최유나", 2, 9, 15), shift(2, "박서준", 3, 12, 22, orig: 19),
+            shift(3, "이종민", 0, 17, 22), shift(4, "김하늘", 1, 17, 22),
         ]
         let needs = ["오전 1", "오후 2", "저녁 3 \u{2713}"]
         let result = ScheduleManualEditResult(
