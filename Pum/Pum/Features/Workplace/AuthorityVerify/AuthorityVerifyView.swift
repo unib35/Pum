@@ -89,7 +89,7 @@ struct AuthorityVerifyView: View {
     }
 
     private func cardTitle(_ s: String) -> some View {
-        Text(s).pumText(.body, weight: .bold).foregroundStyle(PumColor.textPrimary) // 16px 700
+        Text(s).pumText(.headline, weight: .bold).foregroundStyle(PumColor.textPrimary) // 16px 700 → headline(17), 2c와 같게
     }
 
     /// 이름만 굵게(13px 700)
@@ -104,9 +104,9 @@ struct AuthorityVerifyView: View {
         if state.namesMatch {
             part("가입한 이름 ", bold: false)
             part(state.signupName, bold: true)
-            part("와 사업자 대표자명 ", bold: false)
+            part("\(state.signupNameParticle) 사업자 대표자명 ", bold: false)
             part(state.representativeName, bold: true)
-            part("가 일치해요. ", bold: false)
+            part("\(state.representativeParticle) 일치해요. ", bold: false)
         }
         part(AuthorityVerifyState.representativeTail, bold: false)
         return Text(a).pumText(.footnote)

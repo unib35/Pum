@@ -29,10 +29,20 @@ nonisolated struct AuthorityVerifyState: Equatable, Sendable {
     static let previewLead = "완료되면 이렇게 표시돼요"
     static let noteBold = "이체"
 
+    /// 받침이 있으면 앞, 없으면 뒤 조사(「와/과」 · 「가/이」) — 문구는 원문 그대로, 이름에 맞는 조사만
+    static func particle(after word: String, withFinal: String, withoutFinal: String) -> String {
+        guard let last = word.unicodeScalars.last, (0xAC00...0xD7A3).contains(last.value) else { return withoutFinal }
+        return (last.value - 0xAC00) % 28 == 0 ? withoutFinal : withFinal
+    }
+    /// 「와」/「과」 — 가입한 이름 뒤
+    var signupNameParticle: String { Self.particle(after: signupName, withFinal: "과", withoutFinal: "와") }
+    /// 「가」/「이」 — 대표자명 뒤
+    var representativeParticle: String { Self.particle(after: representativeName, withFinal: "이", withoutFinal: "가") }
+
     /// 첫 카드 설명(굵기 없는 글자). 일치하지 않으면 첫 문장을 뺀다.
     var representativeDetailPlain: String {
         namesMatch
-            ? "가입한 이름 \(signupName)와 사업자 대표자명 \(representativeName)가 일치해요. \(Self.representativeTail)"
+            ? "가입한 이름 \(signupName)\(signupNameParticle) 사업자 대표자명 \(representativeName)\(representativeParticle) 일치해요. \(Self.representativeTail)"
             : Self.representativeTail
     }
 
@@ -41,7 +51,7 @@ nonisolated struct AuthorityVerifyState: Equatable, Sendable {
     }
 
     var previewAccessibilityText: String {
-        "완료되면, 본인 \(signupName) 확인, 사업자 \(businessStatus), 권한 \(authorityLabel)"
+        "\(Self.previewBadge), 완료되면, 본인 \(signupName) 확인, 사업자 \(businessStatus), 권한 \(authorityLabel). \(noteText)"
     }
 
     var canSubmit: Bool { !isSubmitting }

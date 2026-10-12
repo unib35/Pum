@@ -19,12 +19,18 @@ struct AuthorityVerifyTests {
     }
 
     @Test func 미리보기_음성_안내() {
-        #expect(AuthorityVerifyState.sample.previewAccessibilityText == "완료되면, 본인 박민수 확인, 사업자 영업 중, 권한 대표자")
+        #expect(AuthorityVerifyState.sample.previewAccessibilityText.hasPrefix("인증된 사업장, 완료되면, 본인 박민수 확인, 사업자 영업 중, 권한 대표자. 직원 초대"))
     }
 
     @Test func 처리_중에는_다시_보내지_않는다() {
         var s = AuthorityVerifyState.sample
         s.isSubmitting = true
         #expect(!s.canSubmit)
+    }
+
+    @Test func 조사는_받침에_맞게() {
+        #expect(AuthorityVerifyState.particle(after: "박민수", withFinal: "과", withoutFinal: "와") == "와")
+        #expect(AuthorityVerifyState.particle(after: "홍길동", withFinal: "과", withoutFinal: "와") == "과")
+        #expect(AuthorityVerifyState.particle(after: "홍길동", withFinal: "이", withoutFinal: "가") == "이")
     }
 }
