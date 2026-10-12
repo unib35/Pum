@@ -77,6 +77,7 @@ struct ContentView: View {
             case "5c": BusinessVerifyView(state: .sample)
             case "5e": AuthorityVerifyView(state: .sample)
             case "5d": DuplicateBusinessView(state: .sample)
+            case "5f": InviteOfferView(state: .sample)
             case "gallery": ComponentGalleryView()
             default: DevMenu()
             }
@@ -151,6 +152,7 @@ private struct DevMenu: View {
                     NavigationLink("5c 사업자 확인") { BusinessVerifyView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("5e 관리 권한 확인") { AuthorityVerifyView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("5d 사업자번호 중복") { DuplicateBusinessView(state: .sample).toolbar(.hidden, for: .navigationBar) }
+                    NavigationLink("5f 직원이 보는 초대") { InviteOfferView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                 }
                 Section("디자인 시스템") {
                     NavigationLink("컴포넌트 갤러리") { ComponentGalleryView() }
