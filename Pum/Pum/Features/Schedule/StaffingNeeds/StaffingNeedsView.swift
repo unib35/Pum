@@ -46,9 +46,12 @@ struct StaffingNeedsView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
                     weekRow
-                    dayStrip
-                    PumSectionHeader(title: state.sectionTitle)
-                    slotCard
+                    Group { // 추천을 요청하는 동안은 보낸 값과 화면이 어긋나지 않게 잠근다
+                        dayStrip
+                        PumSectionHeader(title: state.sectionTitle)
+                        slotCard
+                    }
+                    .disabled(state.isRecommending)
                     PumSectionHeader(title: StaffingNeedsState.conditionsHeading)
                     conditionChips
                     if let title = state.missingTitle { missingCard(title) }
@@ -59,6 +62,7 @@ struct StaffingNeedsView: View {
         }
         .background(PumColor.bgApp)
         .onChange(of: serverSlots) { _, new in if let new { state.slots = new } }
+        .onAppear { if state.isRecommending { state.endRecommend() } } // 9b에서 돌아오면 다시 누를 수 있게
         .pumTimeRangeSheet(isPresented: $pickerOpen, value: $pickerValue, options: pickerOptions) {
             let a = pickerValue.startMinutes, b = pickerValue.endMinutes
             guard a < b else { return } // 끝이 시작보다 늦을 때만 넘긴다(자정 넘김은 원문 근거 없음)
@@ -149,7 +153,6 @@ struct StaffingNeedsView: View {
                 .buttonStyle(.plain)
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel(Text(day.spoken))
-                .accessibilityValue(Text(on ? "선택됨" : ""))
                 .accessibilityAddTraits(on ? [.isButton, .isSelected] : .isButton)
             }
         }
@@ -193,6 +196,9 @@ struct StaffingNeedsView: View {
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(slot.spokenRange))
         .accessibilityValue(Text("\(slot.count)명"))
+        // 음성 제어 · 스위치 제어용 이름 있는 동작(조정 동작과 같은 규칙)
+        .accessibilityAction(named: Text("한 명 늘리기")) { step(slot, by: 1) }
+        .accessibilityAction(named: Text("한 명 줄이기")) { step(slot, by: -1) }
         .accessibilityAdjustableAction { direction in
             switch direction {
             case .increment: step(slot, by: 1)
