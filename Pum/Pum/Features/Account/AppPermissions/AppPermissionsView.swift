@@ -28,7 +28,7 @@ struct AppPermissionsView: View {
                     PumCard {
                         Text(AppPermissionsState.unrequestedBody)
                             .pumText(.footnote)
-                            .foregroundStyle(PumColor.textPrimary)
+                            .foregroundStyle(PumTokens.ColorToken.gray800)
                             .multilineTextAlignment(.leading)
                             .padding(.horizontal, PumTokens.Size.rowPadX).padding(.vertical, PumTokens.Space.s16)
                             .frame(maxWidth: .infinity, alignment: .leading)
