@@ -74,6 +74,20 @@ nonisolated struct MissingClockOutState: Equatable, Sendable {
         recognizedPay = nil
     }
 
+    /// 시간 선택 시트 설정 — 분 단위 입력(원문 1al은 20:32라 5 · 10분 간격으로도 못 맞춘다)
+    static let pickerIntervalMinutes = 1
+    /// 시트 제목 · 행 이름은 1al 화면의 기존 문구
+    static let pickerTitle = "실제 몇 시에 퇴근했나요?"
+    static let pickerRowLabel = "퇴근"
+
+    /// C13 시트에서 고른 퇴근 시각 반영(순수). 하루 밖이면 하루 안으로 붙이고, 값이 바뀌면 이전 서버 인정 값은 버린다(step과 같은 규칙)
+    func applying(pickedMinute minutes: Int) -> MissingClockOutState {
+        var s = self
+        s.inputMinute = min(max(minutes, 0), 24 * 60 - 1)
+        if s.inputMinute != inputMinute { s.recognizedText = nil; s.recognizedPay = nil }
+        return s
+    }
+
     var plannedEndText: String { MissingClockOutFormat.clock(plannedEndMinute) }
     var clockInText: String { MissingClockOutFormat.clock(clockInMinute) }
     var inputText: String { MissingClockOutFormat.clock(inputMinute) }

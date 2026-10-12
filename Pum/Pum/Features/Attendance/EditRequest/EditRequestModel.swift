@@ -14,7 +14,8 @@ nonisolated struct EditRequestDraft: Equatable, Sendable {
     /// 바꾸려는 퇴근 시각(분)
     var requestedEnd: Int
     /// 서버(엔진)가 준 미리보기 문구, 예: 「인정 근무 +30분 · 기본급 +6,000원」
-    var previewText: String
+    /// 시각을 바꾸면 이전 시각 기준 값이라 버린다(새 값은 서버 재조회 후 — 연결 후속). nil이면 「반영되면」 상자를 숨긴다
+    var previewText: String?
     var reason: String
 
     var subtitle: String {
@@ -34,6 +35,20 @@ nonisolated struct EditRequestDraft: Equatable, Sendable {
     var hasReason: Bool { !reason.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
     /// 사유가 비었거나(공백만) 시간이 기록과 같으면 보낼 수 없다
     var canSubmit: Bool { hasReason && isTimeChanged }
+
+    /// 시간 선택 시트 설정 — 분 단위 입력(기록이 16:55처럼 분 단위라 30분 간격으로는 못 맞춘다)
+    static let pickerIntervalMinutes = 1
+    /// 시트 제목 · 행 이름은 1i 화면의 기존 문구(「퇴근시간」 · 「기록 22:00」)
+    static let pickerTitle = "퇴근시간"
+    var pickerRowLabel: String { "기록 \(recordedEndText)" }
+
+    /// C13 시트에서 고른 퇴근 시각 반영(순수). 하루 밖이면 하루 안으로 붙이고, 값이 바뀌면 이전 서버 미리보기는 버린다
+    func applying(pickedEnd minutes: Int) -> EditRequestDraft {
+        var d = self
+        d.requestedEnd = min(max(minutes, 0), 24 * 60 - 1)
+        if d.requestedEnd != requestedEnd { d.previewText = nil }
+        return d
+    }
 
     /// 200자(사람이 보는 글자)를 넘으면 자른다
     static func clampedReason(_ s: String) -> String {

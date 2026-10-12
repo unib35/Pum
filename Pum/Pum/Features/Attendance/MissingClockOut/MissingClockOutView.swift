@@ -5,14 +5,18 @@ import SwiftUI
 struct MissingClockOutView: View {
     @State private var state: MissingClockOutState
     @State private var sheetOpen: Bool
+    @State private var pickerOpen: Bool
+    @State private var pickerValue = PumTimeRangeValue()
     var onSelectTimeField: (MissingClockOutField) -> Void
     var onRequest: (_ inputMinute: Int, _ reason: MissingClockOutReason) -> Void
 
-    init(state: MissingClockOutState = .initial, sheetOpen: Bool = true,
+    init(state: MissingClockOutState = .initial, sheetOpen: Bool = true, pickerOpen: Bool = false,
          onSelectTimeField: @escaping (MissingClockOutField) -> Void = { _ in },
          onRequest: @escaping (Int, MissingClockOutReason) -> Void = { _, _ in }) {
         _state = State(initialValue: state)
         _sheetOpen = State(initialValue: sheetOpen)
+        _pickerOpen = State(initialValue: pickerOpen)
+        _pickerValue = State(initialValue: PumTimeRangeValue(endMinutes: state.inputMinute))
         self.onSelectTimeField = onSelectTimeField
         self.onRequest = onRequest
     }
@@ -23,7 +27,7 @@ struct MissingClockOutView: View {
             .pumBottomSheet(isPresented: $sheetOpen) {
                 MissingClockOutSheet(
                     state: state,
-                    onSelectField: { state.selectedField = $0; onSelectTimeField($0) }, // 시 · 분 입력 휠은 후속
+                    onSelectField: { openPicker($0) },
                     onStep: { state.step($0, by: $1) },
                     onSelect: { state.selected = $0 },
                     onRequest: {
@@ -33,6 +37,26 @@ struct MissingClockOutView: View {
                     }
                 )
             }
+            // 시간 선택 시트(C13)는 이 시트 위에 겹쳐 뜬다. 퇴근 기록 요청 경로(onRequest)와 무관하다(REQ-029)
+            .pumTimeRangeSheet(isPresented: $pickerOpen, value: $pickerValue, options: pickerOptions) {
+                state = state.applying(pickedMinute: pickerValue.endMinutes)
+            }
+    }
+
+    private var pickerOptions: PumTimeRangeOptions {
+        PumTimeRangeOptions(
+            title: MissingClockOutState.pickerTitle, mode: .endOnly, rangeLabel: MissingClockOutState.pickerRowLabel,
+            showsDate: false, showsBreak: false, showsRepeat: false, showsEndDate: false,
+            intervalMinutes: MissingClockOutState.pickerIntervalMinutes
+        )
+    }
+
+    /// 열 때의 값을 시트용 복사본에 담는다 — 「완료」 전에 닫으면 화면 값은 그대로
+    private func openPicker(_ field: MissingClockOutField) {
+        state.selectedField = field
+        onSelectTimeField(field)
+        pickerValue.endMinutes = state.inputMinute
+        pickerOpen = true
     }
 
     private var background: some View {
@@ -109,4 +133,5 @@ struct MissingClockOutView: View {
 
 #Preview("1al") { MissingClockOutView() }
 #Preview("1al · 캡처 상태") { MissingClockOutView(state: .sample) }
+#Preview("1al · 시간 선택 시트") { MissingClockOutView(state: .sample, pickerOpen: true) }
 #Preview("1al · 큰 글자") { MissingClockOutView(state: .sample).dynamicTypeSize(.accessibility1) }
