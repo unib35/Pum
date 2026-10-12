@@ -89,6 +89,7 @@ struct ContentView: View {
             case "21e": PaymentSendScreen(state: .masked)
             case "8e": LaborSimulatorResultView(state: .sample)
             case "8d": LaborSimulatorView(state: .sample)
+            case "9b": ScheduleOptionsView(state: .sample)
             case "gallery": ComponentGalleryView()
             default: DevMenu()
             }
@@ -175,6 +176,7 @@ private struct DevMenu: View {
                     NavigationLink("21e 지급 시트 · 계좌 가림") { PaymentSendScreen(state: .masked).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("8e 시뮬레이션 결과") { LaborSimulatorResultView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("8d 인건비 시뮬레이터") { LaborSimulatorView(state: .sample).toolbar(.hidden, for: .navigationBar) }
+                    NavigationLink("9b 추천 3안") { ScheduleOptionsView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                 }
                 Section("디자인 시스템") {
                     NavigationLink("컴포넌트 갤러리") { ComponentGalleryView() }
