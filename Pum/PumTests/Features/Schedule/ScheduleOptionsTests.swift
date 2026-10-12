@@ -46,4 +46,9 @@ struct ScheduleOptionsTests {
         t.shortageText = nil
         #expect(t.currentAccessibilityText == "현재 스케줄 10/12 \u{2013} 18 주간, 1,284,000원")
     }
+
+    @Test func 없는_안은_찾지_않는다() {
+        #expect(ScheduleOptionsState.sample.option(id: "") == nil)
+        #expect(ScheduleOptionsState.sample.option(id: ScheduleOptionsState.sample.selectedID) != nil)
+    }
 }

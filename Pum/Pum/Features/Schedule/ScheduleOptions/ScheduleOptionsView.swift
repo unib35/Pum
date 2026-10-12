@@ -44,6 +44,7 @@ struct ScheduleOptionsView: View {
             bottomButton
         }
         .background(PumColor.bgApp)
+        .onChange(of: state.selectedID) { _, new in selectedID = new } // 서버가 선택을 바꾸면 따른다
         .animation(PumMotion.respecting(reduceMotion, PumMotion.fast), value: selectedID)
     }
 
@@ -156,12 +157,14 @@ struct ScheduleOptionsView: View {
 
     // MARK: 하단
 
-    private var bottomButton: some View {
-        let title = state.option(id: selectedID)?.detailTitle ?? ""
-        return PumButton(title: title, kind: .primary) { onShowDetail(selectedID) }
+    @ViewBuilder private var bottomButton: some View {
+        // 선택한 안이 없으면(안 0개 · 서버 선택 값 없음) 버튼을 그리지 않는다 — 빈 버튼 · 빈 id 전송 방지
+        if let option = state.option(id: selectedID) {
+            PumButton(title: option.detailTitle, kind: .primary) { onShowDetail(option.id) }
             .padding(.horizontal, PumTokens.Size.screenPad)
             .padding(.top, PumTokens.Space.s8)
             .padding(.bottom, PumTokens.Space.s12)
+        }
     }
 }
 
