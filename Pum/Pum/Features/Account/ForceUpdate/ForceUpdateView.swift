@@ -1,11 +1,9 @@
 // UI-IOS-6t · REQ-029 · REQ-094 — 업데이트 필수. 탭 바 · 머리 없음(뒤로 갈 수 없음).
-// 「퇴근만 기록」은 절대 잠그지 않는다(처리 중 표시만 이 버튼에). 앱 스토어 이동은 호출자가 한다.
+// 「퇴근만 기록」은 절대 잠그지 않는다 — 공통 PumButton의 처리 중 표시는 버튼을 잠그므로 쓰지 않고, 중복 탭은 호출자가 한 번만 처리한다(REQ-029). 앱 스토어 이동은 호출자가 한다.
 import SwiftUI
 
 struct ForceUpdateView: View {
     let state: ForceUpdateState
-    /// 퇴근 처리 중 — 표시만 바뀌고 버튼은 잠기지 않는다
-    var isClockingOut = false
     var onUpdate: () -> Void
     var onClockOutOnly: () -> Void
 
@@ -14,11 +12,9 @@ struct ForceUpdateView: View {
     private let checkRatio: CGFloat = 0.45
 
     init(state: ForceUpdateState = .sample,
-         isClockingOut: Bool = false,
          onUpdate: @escaping () -> Void = {},
          onClockOutOnly: @escaping () -> Void = {}) {
         self.state = state
-        self.isClockingOut = isClockingOut
         self.onUpdate = onUpdate
         self.onClockOutOnly = onClockOutOnly
     }
@@ -108,8 +104,8 @@ struct ForceUpdateView: View {
         VStack(spacing: PumTokens.Space.s8) {
             PumButton(title: ForceUpdateState.updateTitle, kind: .primary, action: onUpdate)
             if state.showsClockOut {
-                // 원문: 흰 바탕 · 옅은 테두리 → outline. isEnabled는 건드리지 않는다(절대 잠그지 않음)
-                PumButton(title: ForceUpdateState.clockOutTitle, kind: .outline, isLoading: isClockingOut, action: onClockOutOnly)
+                // 원문: 흰 바탕 · 옅은 테두리 → outline. 처리 중 표시(isLoading)를 넘기면 버튼이 잠기므로 넘기지 않는다
+                PumButton(title: ForceUpdateState.clockOutTitle, kind: .outline, action: onClockOutOnly)
             }
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
