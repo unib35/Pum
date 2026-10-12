@@ -115,6 +115,7 @@ struct ContentView: View {
             case "10h": CorrectedPayslipView(state: .sample)
             case "10p": LeaveRetirementView(state: .sample)
             case "10o": AfterLeavingView(state: .sample)
+            case "10q": LeaveBalanceView(state: .sample)
             case "gallery": ComponentGalleryView()
             default: DevMenu()
             }
@@ -227,6 +228,7 @@ private struct DevMenu: View {
                     NavigationLink("10h 정정 명세서") { CorrectedPayslipView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("10p 휴가 · 퇴직") { LeaveRetirementView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("10o 퇴사 후") { AfterLeavingView(state: .sample).toolbar(.hidden, for: .navigationBar) }
+                    NavigationLink("10q 연차 현황") { LeaveBalanceView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                 }
                 Section("디자인 시스템") {
                     NavigationLink("컴포넌트 갤러리") { ComponentGalleryView() }
