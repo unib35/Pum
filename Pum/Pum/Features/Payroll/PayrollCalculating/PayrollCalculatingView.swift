@@ -172,7 +172,7 @@ struct PayrollCalculatingView: View {
             .frame(width: circleSize, height: circleSize)
             .accessibilityHidden(true)
         case .waiting:
-            Circle().strokeBorder(PumColor.borderHairline, lineWidth: Local.emptyRingWidth)
+            Circle().strokeBorder(PumTokens.ColorToken.gray300, lineWidth: Local.emptyRingWidth)
                 .frame(width: circleSize, height: circleSize)
                 .accessibilityHidden(true)
         }
