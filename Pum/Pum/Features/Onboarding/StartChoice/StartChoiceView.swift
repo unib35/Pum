@@ -69,50 +69,25 @@ private struct StartChoiceCard: View {
     let state: StartChoiceState
     let action: () -> Void
 
-    /// 선택 테두리 두께(목업 2) — 토큰 밖 이름 상수(DEC-005)
-    private let selectedRing: CGFloat = 2
-    /// 카드 안쪽 여백(목업 약 18)
-    private let pad = PumTokens.Space.s18
-
     var body: some View {
-        let on = state.isSelected(choice)
-        let r = PumTokens.Radius.lg
-        Button(action: action) {
-            HStack(alignment: .top, spacing: PumTokens.Space.s12) {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
-                    // 16px 700 → headline(17) 근사
-                    Text(choice.title).pumText(.headline, weight: .bold).foregroundStyle(PumColor.textPrimary)
-                    Text(choice.detail).pumText(.footnote).foregroundStyle(PumColor.textSecondary) // 13px 400
-                        .fixedSize(horizontal: false, vertical: true)
-                    if !choice.tags.isEmpty {
-                        StartChoiceFlow(spacing: PumTokens.Space.s6) {
-                            ForEach(choice.tags, id: \.self) { StartChoiceTag(title: $0) }
-                        }
-                        .padding(.top, PumTokens.Space.s6)
+        // 카드 틀은 공통 PumChoiceCard(2c · 5e)
+        PumChoiceCard(isOn: state.isSelected(choice),
+                      accessibilityLabel: state.accessibilityLabel(for: choice),
+                      accessibilityValue: state.accessibilityValue(for: choice),
+                      action: action) {
+            VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
+                // 16px 700 → headline(17) 근사
+                Text(choice.title).pumText(.headline, weight: .bold).foregroundStyle(PumColor.textPrimary)
+                Text(choice.detail).pumText(.footnote).foregroundStyle(PumColor.textSecondary) // 13px 400
+                    .fixedSize(horizontal: false, vertical: true)
+                if !choice.tags.isEmpty {
+                    StartChoiceFlow(spacing: PumTokens.Space.s6) {
+                        ForEach(choice.tags, id: \.self) { StartChoiceTag(title: $0) }
                     }
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                PumRadioMark(isOn: on)
-            }
-            .padding(pad)
-            .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin, alignment: .leading)
-            .background(PumColor.surfaceCard, in: RoundedRectangle(cornerRadius: r, style: .continuous))
-            .overlay {
-                if on {
-                    RoundedRectangle(cornerRadius: r, style: .continuous)
-                        .strokeBorder(PumColor.accent, lineWidth: selectedRing)
-                } else {
-                    RoundedRectangle(cornerRadius: r, style: .continuous)
-                        .strokeBorder(PumColor.borderHairline, lineWidth: 1)
+                    .padding(.top, PumTokens.Space.s6)
                 }
             }
-            .contentShape(RoundedRectangle(cornerRadius: r, style: .continuous))
         }
-        .buttonStyle(.plain)
-        .accessibilityElement(children: .ignore) // 설명 · 태그를 카드 하나로 읽는다
-        .accessibilityLabel(Text(state.accessibilityLabel(for: choice)))
-        .accessibilityValue(Text(state.accessibilityValue(for: choice)))
-        .accessibilityAddTraits(on ? [.isButton, .isSelected] : .isButton)
     }
 }
 
