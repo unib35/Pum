@@ -1,5 +1,5 @@
 // UI-IOS-5f · REQ-013 — 직원이 보는 초대: 인증 배지 · 대표자 · 미인증이면 경고(확정). 탭 바 · 헤더 없음.
-// 원문의 주황 상자 「미인증이면 "…"」는 디자인 설명 — 인증됨(.sample)에선 숨기고 미인증일 때만 따옴표 안 문구를 보인다(충돌 #36).
+// 미인증은 21g 원문(InviteUnverifiedSections) — 인증됨(.sample) 모양은 그대로(충돌 #36).
 // 신고 흐름 디자인은 없다 — 클로저만.
 import SwiftUI
 
@@ -19,9 +19,12 @@ struct InviteOfferView: View {
                 Text(state.titleText).pumText(.title1).foregroundStyle(PumColor.textPrimary)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .accessibilityAddTraits(.isHeader)
-                workplaceCard
-                termsCard
-                warningBox
+                if state.isVerified {
+                    workplaceCard
+                    termsCard
+                } else {
+                    InviteUnverifiedSections(state: state) // 21g
+                }
             }
             .padding(.horizontal, PumTokens.Size.screenPad)
             .padding(.vertical, PumTokens.Space.s16)
@@ -165,17 +168,6 @@ struct InviteOfferView: View {
         Text(s).pumText(.callout, weight: .semibold).foregroundStyle(PumColor.textPrimary)
     }
 
-    // 4. 미인증 경고 — 미인증일 때만
-    @ViewBuilder private var warningBox: some View {
-        if let text = state.warningText {
-            // 공통 후보: 연한 주황 안내 상자(원문 12px 400, 글자는 진한 주황 근사)
-            Text(text).pumText(.caption, weight: .regular).foregroundStyle(PumColor.statusAttention)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(PumTokens.Space.s16)
-                .background(PumTokens.ColorToken.statusAttentionSoft, in: RoundedRectangle(cornerRadius: PumTokens.Radius.lg, style: .continuous))
-        }
-    }
-
     // 5. 하단 고정
     private var actions: some View {
         VStack(spacing: PumTokens.Space.s4) {
@@ -201,6 +193,6 @@ struct InviteOfferView: View {
 }
 
 #Preview("5f") { InviteOfferView(state: .sample) }
-#Preview("5f · 미인증") { InviteOfferView(state: .unverifiedSample) }
+#Preview("21g") { InviteOfferView(state: .unverifiedSample) }
 #Preview("5f · 큰 글자") { InviteOfferView(state: .sample).dynamicTypeSize(.xxxLarge) }
-#Preview("5f · 미인증 · 큰 글자") { InviteOfferView(state: .unverifiedSample).dynamicTypeSize(.xxxLarge) }
+#Preview("21g · 큰 글자") { InviteOfferView(state: .unverifiedSample).dynamicTypeSize(.xxxLarge) }

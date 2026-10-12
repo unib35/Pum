@@ -29,7 +29,9 @@ nonisolated struct InviteViewState: Equatable, Sendable {
         let n = PumAvatarPalette.stores.count
         return PumAvatarPalette.stores[((colorIndex % n) + n) % n] // 음수 · 범위 밖 번호 방어(서버 값)
     }
-    var initial: String { workplaceName.first.map(String.init) ?? "" }
+    /// 네모 안 글자 — 서버가 따로 주면 그 값(21g 「율」), 없으면 이름 첫 글자
+    var tileInitial: String?
+    var initial: String { tileInitial ?? workplaceName.first.map(String.init) ?? "" }
 
     var titleText: String { "\(workplaceName)에서\n직원으로 초대했어요" }
     var subtitleText: String { "\(category) · \(address)" }
@@ -41,9 +43,20 @@ nonisolated struct InviteViewState: Equatable, Sendable {
     var ownerTag: String? { isVerified && ownerIdentityVerified ? "본인확인" : nil }
     var operatingTag: String? { isVerified && isOperating ? "영업 중" : nil }
 
-    /// 미인증 경고 — 원문 주황 상자의 따옴표 안 문구(「미인증이면」 라벨 · 설명 꼬리는 디자인 설명이라 뺌)
-    static let unverifiedWarning = "아직 인증되지 않은 사업장이에요. 개인정보 제출과 계약 서명은 인증 후에 진행돼요"
-    var warningText: String? { isVerified ? nil : Self.unverifiedWarning }
+    /// 미인증(21g) 문구 — 상태 문구는 서버 값(여기선 미리보기 값)
+    static let unverifiedBadge = "인증 전"
+    static let unverifiedFact = "확인 전"
+    static let unverifiedNoticeTitle = "아직 인증되지 않은 사업장이에요"
+    static let unverifiedNoticeDetail = "개인정보 제출과 계약 서명은 인증 후에 진행돼요"
+    static let unverifiedAllowedNow = "지금은 초대 수락 · 출퇴근 기록"
+    static let unverifiedAfterVerify = "인증되면 계약 서명 알림"
+
+    /// 미인증 사업장 카드 VoiceOver — 「종민김밥 율하점, 인증 전」
+    var unverifiedCardAccessibility: String { "\(workplaceName), \(Self.unverifiedBadge)" }
+    /// 미인증 행 값 — 대표자 · 사업자등록은 확인 전, 초대한 사람은 이름만
+    var unverifiedOwnerValue: String { Self.unverifiedFact }
+    var unverifiedBusinessValue: String { Self.unverifiedFact }
+    var unverifiedInviterValue: String { inviterName }
 
     /// VoiceOver — 「대표자, 박민수, 본인확인」
     var ownerAccessibility: String { ["대표자", ownerName, ownerTag].compactMap { $0 }.joined(separator: ", ") }
@@ -56,10 +69,15 @@ nonisolated struct InviteViewState: Equatable, Sendable {
         inviterName: "박민수", inviterRole: "대표", staffCount: 4, operatingSince: "2024.03",
         hourlyWage: 12_000, schedule: "월·수·금 17:00 – 22:00", payday: "매월 10일")
 
-    /// 미인증 미리보기 — 대표자 · 사업자등록 확인 전
+    /// 미인증 미리보기(21g) — 대표자 · 사업자등록 확인 전
     static var unverifiedSample: InviteViewState {
         var s = sample
+        s.workplaceName = "종민김밥 율하점"
+        s.colorIndex = 2 // 남색
+        s.tileInitial = "율"
+        s.address = "김해시 율하로 40"
         s.isVerified = false
+        s.inviterName = "박민수"
         return s
     }
 }
