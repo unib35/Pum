@@ -143,7 +143,7 @@ struct PumTimeWheel: View {
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous)
-                .fill(PumTokens.ColorToken.gray100)
+                .fill(PumColor.surfaceFill) // 시트 바탕(bgApp) 위에서 보이게 — 원문은 흰 시트 위 연회색 상자
             // 가운데 흰 띠
             RoundedRectangle(cornerRadius: PumTokens.Radius.sm, style: .continuous)
                 .fill(PumColor.surfaceCard)
@@ -168,7 +168,8 @@ struct PumTimeWheel: View {
             }
             .contentMargins(.vertical, rowHeight, for: .scrollContent)
             .scrollTargetBehavior(.viewAligned)
-            .scrollPosition(id: $scrollID, anchor: .center)
+            // viewAligned는 위 여백 경계에 칸을 맞춘다 — 여백이 한 칸이라 그 칸이 곧 가운데 띠(anchor를 주면 한 칸 밀림)
+            .scrollPosition(id: $scrollID)
         }
         .frame(height: rowHeight * CGFloat(PumTimePickerStyle.visibleRows))
         .frame(minWidth: PumTimePickerStyle.wheelMinWidth)
