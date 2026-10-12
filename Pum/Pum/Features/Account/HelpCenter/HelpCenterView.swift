@@ -56,7 +56,7 @@ struct HelpCenterView: View {
                 .pumText(.body, weight: .regular)
                 .foregroundStyle(PumColor.textPrimary)
                 .submitLabel(.search)
-                .onSubmit { onSearch(query) } // 한글 조합 중 글자마다 보내지 않게 「검색」을 누를 때만
+                .onSubmit { let q = query.trimmingCharacters(in: .whitespaces); if !q.isEmpty { onSearch(q) } } // 한글 조합 중 글자마다 보내지 않게 「검색」을 누를 때만
                 .accessibilityLabel(Text(HelpCenterState.searchPlaceholder))
         }
         .padding(.horizontal, PumTokens.Space.s16)
@@ -190,7 +190,7 @@ struct HelpCenterView: View {
     }
 
     private var chevron: some View {
-        Image(systemName: "chevron.right").font(.body.weight(.semibold))
+        Image(systemName: "chevron.right").font(.footnote.weight(.semibold))
             .foregroundStyle(PumColor.textDisabled).accessibilityHidden(true)
     }
 }
