@@ -123,6 +123,7 @@ struct ContentView: View {
             case "21k": EmployeeHomeView(isLoading: true)
             case "21m": CheckInJudgingView(state: .sample)
             case "21n": OwnerHomeView(staleSince: OwnerHomeLoadFailed.sampleSince)
+            case "15c": InviteAfterSignupView(state: .sample)
             case "gallery": ComponentGalleryView()
             default: DevMenu()
             }
@@ -243,6 +244,7 @@ private struct DevMenu: View {
                     NavigationLink("21k 직원 홈 로딩") { EmployeeHomeView(isLoading: true).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("21m 출근 판정 중") { CheckInJudgingView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("21n 사장님 홈 불러오기 실패") { OwnerHomeView(staleSince: OwnerHomeLoadFailed.sampleSince).toolbar(.hidden, for: .navigationBar) }
+                    NavigationLink("15c 가입 직후 받은 초대") { InviteAfterSignupView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                 }
                 Section("디자인 시스템") {
                     NavigationLink("컴포넌트 갤러리") { ComponentGalleryView() }
