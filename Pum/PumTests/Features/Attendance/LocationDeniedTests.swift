@@ -22,4 +22,9 @@ struct LocationDeniedTests {
         let state = LocationDeniedState(workplaceName: "한강식당", radiusMeters: 250)
         #expect(state.message.hasPrefix("한강식당은 매장 반경 250m 안에서"))
     }
+
+    @Test func 사업장_이름_받침에_따라_은_는() {
+        #expect(LocationDeniedState.topicParticle("종민김밥 본점") == "은")
+        #expect(LocationDeniedState.topicParticle("B카페") == "는")
+    }
 }

@@ -31,7 +31,13 @@ nonisolated struct LocationDeniedState: Equatable, Sendable {
 
     /// 「종민김밥 본점은 매장 반경 100m 안에서 출근하도록 설정돼 있어요. 위치를 켜거나 매장 QR로 출근할 수 있어요.」
     var message: String {
-        "\(workplaceName)은 매장 반경 \(radiusMeters)m 안에서 출근하도록 설정돼 있어요. 위치를 켜거나 매장 QR로 출근할 수 있어요."
+        "\(workplaceName)\(Self.topicParticle(workplaceName)) 매장 반경 \(radiusMeters)m 안에서 출근하도록 설정돼 있어요. 위치를 켜거나 매장 QR로 출근할 수 있어요."
+    }
+
+    /// 이름 끝 글자 받침에 따라 「은」 · 「는」(「B카페는」). 한글이 아니면 「은」
+    static func topicParticle(_ name: String) -> String {
+        guard let last = name.unicodeScalars.last, (0xAC00...0xD7A3).contains(last.value) else { return "은" }
+        return (last.value - 0xAC00) % 28 == 0 ? "는" : "은"
     }
 
     static let sample = LocationDeniedState(workplaceName: "종민김밥 본점", radiusMeters: 100)
