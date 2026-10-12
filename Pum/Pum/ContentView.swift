@@ -92,6 +92,7 @@ struct ContentView: View {
             case "9a": StaffingNeedsView(state: .sample)
             case "9b": ScheduleOptionsView(state: .sample)
             case "9c": ScheduleOptionDetailView(state: .sample)
+            case "9d": ScheduleManualEditView(state: .sample)
             case "gallery": ComponentGalleryView()
             default: DevMenu()
             }
@@ -181,6 +182,7 @@ private struct DevMenu: View {
                     NavigationLink("9a 필요 인력 입력") { StaffingNeedsView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("9b 추천 3안") { ScheduleOptionsView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("9c 절감안 상세") { ScheduleOptionDetailView(state: .sample).toolbar(.hidden, for: .navigationBar) }
+                    NavigationLink("9d 직접 조정") { ScheduleManualEditView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                 }
                 Section("디자인 시스템") {
                     NavigationLink("컴포넌트 갤러리") { ComponentGalleryView() }
