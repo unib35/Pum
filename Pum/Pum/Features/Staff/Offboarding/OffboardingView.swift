@@ -163,7 +163,7 @@ struct OffboardingView: View {
     @ViewBuilder private func stepCircle(done: Bool) -> some View {
         if done {
             Image(systemName: "checkmark")
-                .font(.system(size: circleSize * 0.5, weight: .bold))
+                .font(.system(size: circleSize * 0.45, weight: .semibold)) // 10d와 같은 비율(원문 작은 체크)
                 .foregroundStyle(PumColor.textPrimary)
                 .frame(width: circleSize, height: circleSize)
                 .background(PumColor.surfaceFill, in: Circle())
