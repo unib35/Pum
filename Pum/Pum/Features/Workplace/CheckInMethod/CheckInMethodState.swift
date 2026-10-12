@@ -134,5 +134,6 @@ nonisolated struct CheckInMethodLock: Equatable, Sendable {
         isSaving = true
         return true
     }
-    mutating func finish(success: Bool) { if !success { isSaving = false } }
+    /// 끝나면 풀린다 — 설정 저장은 다시 해도 되는 일이라 성공 뒤에도 화면에 갇히지 않게(처리 중에만 한 번)
+    mutating func finish(success: Bool) { isSaving = false }
 }

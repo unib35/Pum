@@ -58,13 +58,13 @@ struct CheckInMethodTests {
         #expect(d.policy == CheckInPolicy(method: .locationOnly, radiusMeters: 200))
     }
 
-    @Test func 저장은_한_번만_실패일_때만_풀린다() {
+    @Test func 저장은_처리_중에만_한_번() {
         var lock = CheckInMethodLock()
         let first = lock.begin()
         let second = lock.begin()
         #expect(first && !second)
         lock.finish(success: true)
-        #expect(lock.isSaving)
+        #expect(!lock.isSaving) // 성공 뒤에도 풀린다
         lock.finish(success: false)
         #expect(!lock.isSaving)
         let again = lock.begin()
