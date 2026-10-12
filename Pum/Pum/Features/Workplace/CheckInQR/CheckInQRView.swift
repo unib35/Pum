@@ -13,6 +13,8 @@ struct CheckInQRView: View {
 
     @State private var lock = CheckInQRSaveLock()
     @State private var qrImage: CGImage?
+    /// 새로 만들기를 보낸 뒤 서버 새 QR이 오기 전까지 다시 누르지 않게(되돌릴 수 없는 일)
+    @State private var regenerating = false
 
     init(state: CheckInQRState = .sample,
          onBack: @escaping () -> Void = {},
@@ -55,7 +57,10 @@ struct CheckInQRView: View {
         }
         .background(PumColor.bgApp)
         .safeAreaInset(edge: .bottom, spacing: 0) { footer }
-        .onChange(of: state.token) { _, token in qrImage = CheckInQRImage.make(token: token) }
+        .onChange(of: state.token) { _, token in
+            qrImage = CheckInQRImage.make(token: token)
+            regenerating = false // 새 QR이 오면 다시 만들 수 있다
+        }
     }
 
     // MARK: QR 카드
@@ -108,7 +113,7 @@ struct CheckInQRView: View {
     private var actionCard: some View {
         PumCard {
             VStack(spacing: 0) {
-                row(label: state.regenerateAccessibilityLabel, isLast: false, action: onRegenerate) {
+                row(label: state.regenerateAccessibilityLabel, isLast: false, action: regenerate) {
                     VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
                         Text(CheckInQRState.regenerateTitle)
                             .font(PumTextStyle.body.font) // 원문 15px 600
@@ -184,6 +189,12 @@ struct CheckInQRView: View {
     }
 
     /// 한 번만 — 누르는 즉시 잠그고, 실패일 때만 푼다
+    private func regenerate() {
+        guard !regenerating else { return }
+        regenerating = true
+        onRegenerate()
+    }
+
     private func save() {
         guard lock.begin() else { return }
         onSavePDF { success in lock.finish(success: success) }

@@ -42,7 +42,7 @@ struct CheckInQRTests {
         var lock = CheckInQRSaveLock()
         _ = lock.begin()
         lock.finish(success: true)
-        #expect(lock.isSaving)
+        #expect(!lock.isSaving) // 성공 뒤에도 풀린다
         lock.finish(success: false)
         #expect(!lock.isSaving)
     }

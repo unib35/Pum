@@ -58,5 +58,6 @@ nonisolated struct CheckInQRSaveLock: Equatable, Sendable {
         isSaving = true
         return true
     }
-    mutating func finish(success: Bool) { if !success { isSaving = false } }
+    /// 끝나면 풀린다 — PDF 저장은 다시 해도 되는 일(처리 중에만 한 번)
+    mutating func finish(success: Bool) { isSaving = false }
 }
