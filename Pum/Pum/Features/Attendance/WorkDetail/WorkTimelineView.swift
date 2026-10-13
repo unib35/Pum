@@ -6,50 +6,59 @@ struct WorkTimelineView: View {
     var axis = WorkTimelineAxis()
 
     // 목업 막대 높이 · 점선 패턴을 이름 붙여 둔 값(DEC-005: 토큰 단계에 가장 가까운 값)
-    private let barHeight: CGFloat = PumTokens.Space.s16
+    private let barHeight: CGFloat = PumTokens.Space.s14
     private let dashPattern: [CGFloat] = [PumTokens.Space.s4, PumTokens.Space.s2]
     private let dashLine: CGFloat = 1.5
-    private let rowGap: CGFloat = PumTokens.Space.s8
+    /// 원문 트랙: 높이 40 · 예정 위 4 · 기준선 위 19(두께 2) · 실제 위 22
+    private let trackHeight = PumTokens.Space.s24 + PumTokens.Space.s16
+    private let plannedTop = PumTokens.Space.s4
+    private let baselineTop = PumTokens.Space.s18 + 1
+    private let actualTop = PumTokens.Space.s20 + PumTokens.Space.s2
+    private let barRadius = PumTokens.Radius.xs
 
     var body: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+        VStack(alignment: .leading, spacing: 0) {
             legend
-            VStack(spacing: rowGap) {
-                lane(record.plannedStart, record.plannedEnd, withBreak: false) { planned }
-                Rectangle().fill(PumColor.borderHairline).frame(height: 1)
-                lane(record.actualStart, record.actualEnd, withBreak: true) { actual }
-            }
+                .padding(.bottom, PumTokens.Space.s10)
+            track
             ticks
+                .padding(.top, PumTokens.Space.s4)
         }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(record.timelineLabel))
     }
 
     private var planned: some View {
-        Capsule().strokeBorder(PumColor.textDisabled, style: StrokeStyle(lineWidth: dashLine, dash: dashPattern))
+        RoundedRectangle(cornerRadius: barRadius, style: .continuous)
+            .strokeBorder(PumColor.textDisabled, style: StrokeStyle(lineWidth: dashLine, dash: dashPattern))
     }
 
-    private var actual: some View { Capsule().fill(PumColor.accent) }
+    private var actual: some View { RoundedRectangle(cornerRadius: barRadius, style: .continuous).fill(PumColor.accent) }
 
-    /// 축 위의 구간 하나. 폭에 비율을 곱해 놓는다.
-    private func lane<S: View>(_ start: Int, _ end: Int, withBreak: Bool, @ViewBuilder shape: () -> S) -> some View {
-        let sp = axis.span(start, end)
+    /// 예정(위) · 기준선 · 실제(아래) 한 트랙. 폭에 비율을 곱해 놓는다.
+    private var track: some View {
+        let sp = axis.span(record.plannedStart, record.plannedEnd)
+        let ac = axis.span(record.actualStart, record.actualEnd)
         let b = axis.span(record.breakStart, record.breakStart + record.breakMinutes)
-        let content = shape()
         return GeometryReader { geo in
-            ZStack(alignment: .leading) {
-                content
-                    .frame(width: geo.size.width * sp.length, height: barHeight)
-                    .offset(x: geo.size.width * sp.start)
-                if withBreak {
-                    // 디자인 1h: 휴게는 실제 막대 안을 네모로 끊은 구간
-                    Rectangle().fill(PumColor.accentOnInverse)
-                        .frame(width: geo.size.width * b.length, height: barHeight)
-                        .offset(x: geo.size.width * b.start)
-                }
+            let w = geo.size.width
+            ZStack(alignment: .topLeading) {
+                Rectangle().fill(PumColor.borderHairline)
+                    .frame(width: w, height: PumTokens.Space.s2)
+                    .offset(y: baselineTop)
+                planned
+                    .frame(width: w * sp.length, height: barHeight)
+                    .offset(x: w * sp.start, y: plannedTop)
+                actual
+                    .frame(width: w * ac.length, height: barHeight)
+                    .offset(x: w * ac.start, y: actualTop)
+                // 디자인 1h: 휴게는 실제 막대 안을 네모로 끊은 구간
+                Rectangle().fill(PumColor.accentOnInverse)
+                    .frame(width: w * b.length, height: barHeight)
+                    .offset(x: w * b.start, y: actualTop)
             }
         }
-        .frame(height: barHeight)
+        .frame(height: trackHeight)
     }
 
     private var ticks: some View {
@@ -76,7 +85,7 @@ struct WorkTimelineView: View {
     }
 
     private var legend: some View {
-        HStack(spacing: PumTokens.Space.s12) {
+        HStack(spacing: PumTokens.Space.s16) {
             legendItem("예정") { planned }
             legendItem("실제") { actual }
             legendItem("휴게") { Capsule().fill(PumColor.accentOnInverse) }
@@ -85,7 +94,7 @@ struct WorkTimelineView: View {
 
     private func legendItem<S: View>(_ title: String, @ViewBuilder swatch: () -> S) -> some View {
         HStack(spacing: PumTokens.Space.s6) {
-            swatch().frame(width: PumTokens.Space.s20, height: PumTokens.Space.s8)
+            swatch().frame(width: PumTokens.Space.s14, height: PumTokens.Space.s8)
             Text(title).pumText(.caption, weight: .regular).foregroundStyle(PumColor.textSecondary)
         }
     }

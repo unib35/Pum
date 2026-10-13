@@ -15,15 +15,15 @@ struct MultiWorkplacePayView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: PumTokens.Space.s16) {
+            VStack(spacing: PumTokens.Space.s14) {
                 header
                 summaryCard
-                VStack(spacing: PumTokens.Space.s12) {
+                VStack(spacing: PumTokens.Space.s10) {
                     ForEach(record.entries) { entryCard($0) }
                 }
             }
             .padding(.horizontal, PumTokens.Size.screenPad)
-            .padding(.vertical, PumTokens.Space.s12)
+            .padding(.bottom, PumTokens.Space.s12)
         }
         .background(PumColor.bgApp)
         .safeAreaInset(edge: .bottom, spacing: 0) {
@@ -42,23 +42,26 @@ struct MultiWorkplacePayView: View {
 
     private var summaryCard: some View {
         PumCard {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+            VStack(alignment: .leading, spacing: 0) {
                 Text(record.titleText).pumText(.footnote, weight: .medium).foregroundStyle(PumColor.textSecondary)
                 // 목업 실측 약 40px 700 → hero 32(52보다 가까운 단계, DEC-005), 「원」 20px 600 → title3
-                HStack(alignment: .firstTextBaseline, spacing: PumTokens.Space.s4) {
+                HStack(alignment: .firstTextBaseline, spacing: PumTokens.Space.s2) {
                     Text(record.totalText).pumText(.hero).foregroundStyle(PumColor.textPrimary)
                         .lineLimit(1).minimumScaleFactor(0.5)
                     Text("원").pumText(.title3, weight: .semibold).foregroundStyle(PumColor.textPrimary)
                 }
+                .padding(.top, PumTokens.Space.s6)
                 MultiWorkplaceBar(record: record)
+                    .padding(.top, PumTokens.Space.s14)
                 footer {
                     Text(record.totalWorkText).pumText(.caption, weight: .regular)
                     if !typeSize.isAccessibilitySize { Spacer(minLength: PumTokens.Space.s8) }
                     Text(record.countText).pumText(.caption, weight: .regular)
                 }
                 .foregroundStyle(PumColor.textSecondary)
+                .padding(.top, PumTokens.Space.s8)
             }
-            .padding(PumTokens.Space.s16)
+            .padding(PumTokens.Space.s18)
             .frame(maxWidth: .infinity, alignment: .leading)
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(Text(record.summaryAccessibilityText))
@@ -76,14 +79,14 @@ struct MultiWorkplacePayView: View {
         let big = typeSize.isAccessibilitySize
         let layout = big
             ? AnyLayout(VStackLayout(alignment: .leading, spacing: PumTokens.Space.s8))
-            : AnyLayout(HStackLayout(alignment: .center, spacing: PumTokens.Space.s12))
+            : AnyLayout(HStackLayout(alignment: .center, spacing: PumTokens.Space.s14))
         return Button { onEntry(e) } label: {
             PumCard {
                 layout {
-                    HStack(spacing: PumTokens.Space.s12) {
+                    HStack(spacing: PumTokens.Space.s14) {
                         Text(e.initial).pumText(.callout, weight: .bold).foregroundStyle(.white) // 15px 700
                             .frame(width: tileSize, height: tileSize)
-                            .background(e.tileColor, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
+                            .background(e.tileColor, in: RoundedRectangle(cornerRadius: PumTokens.Radius.lg, style: .continuous))
                         VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
                             Text(e.name).pumText(.body, weight: .semibold).foregroundStyle(PumColor.textPrimary)
                             Text(e.detailText).pumText(.caption, weight: .regular).foregroundStyle(PumColor.textSecondary)
@@ -96,7 +99,7 @@ struct MultiWorkplacePayView: View {
                         PumBadge(text: e.status.text, kind: e.badgeKind)
                     }
                 }
-                .padding(PumTokens.Space.s14)
+                                .padding(PumTokens.Space.s16)
                 .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin)
                 .contentShape(Rectangle())
             }

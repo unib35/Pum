@@ -6,6 +6,8 @@ struct SubstituteRequestSheet: View {
     var onCancelRequest: () -> Void = {}
 
     @AccessibilityFocusState private var titleFocused: Bool
+    /// 요청 사유 라벨 칸 폭 — 원문 60 (DEC-005 화면 전용)
+    @ScaledMetric(relativeTo: .footnote) private var reasonLabelWidth: CGFloat = 60
 
     var body: some View {
         content
@@ -18,38 +20,59 @@ struct SubstituteRequestSheet: View {
 
     private var content: some View {
         VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
-            HStack(alignment: .center, spacing: PumTokens.Space.s8) {
-                Text(SubstituteRequest.heading).pumText(.caption, weight: .medium)
-                    .foregroundStyle(PumColor.textSecondary)
-                    .accessibilityHidden(true) // 제목 라벨이 「대타 요청, …」으로 읽는다
-                Spacer(minLength: PumTokens.Space.s8)
-                PumBadge(text: request.statusText, kind: .attention)
+            // 원문: 「대타 요청」 · 제목은 2 간격으로 붙고, 배지는 둘 오른쪽 위. 좁거나 글자가 크면 배지를 작은 글자 줄로 올린다
+            ViewThatFits(in: .horizontal) {
+                HStack(alignment: .top, spacing: PumTokens.Space.s8) {
+                    VStack(alignment: .leading, spacing: PumTokens.Space.s2) { heading; titleText }
+                    Spacer(minLength: PumTokens.Space.s8)
+                    PumBadge(text: request.statusText, kind: .attention)
+                }
+                VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
+                    HStack(alignment: .center, spacing: PumTokens.Space.s8) {
+                        heading
+                        Spacer(minLength: PumTokens.Space.s8)
+                        PumBadge(text: request.statusText, kind: .attention)
+                    }
+                    titleText
+                }
             }
-            // 목업 22px 700 → title3(20): title2(24)와 2씩 같은 거리, 시트 안 다른 글자와 균형을 위해 작은 쪽
-            Text(request.title).pumText(.title3, weight: .bold)
-                .foregroundStyle(PumColor.textPrimary)
-                .accessibilityLabel(Text(request.titleAccessibility))
-                .accessibilityAddTraits(.isHeader)
-                .accessibilityFocused($titleFocused)
             applicantsCard
-            HStack(alignment: .firstTextBaseline, spacing: PumTokens.Space.s8) {
+            // 원문: 좌우 4 · 라벨 폭 60 · 간격 12
+            HStack(alignment: .firstTextBaseline, spacing: PumTokens.Space.s12) {
                 Text(SubstituteRequest.reasonLabel).pumText(.footnote).foregroundStyle(PumColor.textTertiary)
+                    .frame(minWidth: reasonLabelWidth, alignment: .leading)
                 Text(request.reason).pumText(.footnote).foregroundStyle(PumColor.textSecondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
+            .padding(.horizontal, PumTokens.Space.s4)
             .accessibilityElement(children: .combine)
             Text(request.notice).pumText(.caption).foregroundStyle(PumColor.textSecondary)
                 .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, PumTokens.Space.s4)
             PumButton(title: SubstituteRequest.cancelTitle, kind: .outline, action: onCancelRequest)
-                .padding(.top, PumTokens.Space.s4)
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
         .padding(.bottom, PumTokens.Space.s16)
     }
 
+    private var heading: some View {
+        Text(SubstituteRequest.heading).pumText(.caption, weight: .medium)
+            .foregroundStyle(PumColor.textSecondary)
+            .accessibilityHidden(true) // 제목 라벨이 「대타 요청, …」으로 읽는다
+    }
+
+    // 목업 22px 700 → title3(20): title2(24)와 2씩 같은 거리, 시트 안 다른 글자와 균형을 위해 작은 쪽
+    private var titleText: some View {
+        Text(request.title).pumText(.title3, weight: .bold)
+            .foregroundStyle(PumColor.textPrimary)
+            .accessibilityLabel(Text(request.titleAccessibility))
+            .accessibilityAddTraits(.isHeader)
+            .accessibilityFocused($titleFocused)
+    }
+
     private var applicantsCard: some View {
         PumCard {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+            VStack(alignment: .leading, spacing: PumTokens.Space.s10) { // 원문: 제목 아래 10
                 // 목업 13px 700 → footnote bold
                 Text(request.applicantsHeader).pumText(.footnote, weight: .bold)
                     .foregroundStyle(PumColor.textSecondary)
@@ -64,11 +87,11 @@ struct SubstituteRequestSheet: View {
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                     }
-                    .frame(minHeight: PumTokens.Size.tapMin)
                     .accessibilityElement(children: .combine)
                 }
             }
-            .padding(PumTokens.Space.s16)
+            .padding(.vertical, PumTokens.Space.s14)
+            .padding(.horizontal, PumTokens.Space.s16)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
     }

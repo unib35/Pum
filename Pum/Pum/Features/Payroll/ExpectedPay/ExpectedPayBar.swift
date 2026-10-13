@@ -21,7 +21,7 @@ struct ExpectedPayBar: View {
             }
         }
         .frame(height: Self.barHeight)
-        .clipShape(Capsule())
+        .clipShape(RoundedRectangle(cornerRadius: PumTokens.Radius.xs, style: .continuous)) // 원문 모서리 6
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(record.barAccessibilityText))
     }
@@ -32,7 +32,7 @@ struct ExpectedPayLegend: View {
     let record: ExpectedPayRecord
 
     /// 범례 네모 한 변(목업 약 8) — 토큰 간격 단계를 크기로 재사용
-    private let swatch: CGFloat = PumTokens.Space.s8
+    private let swatch: CGFloat = PumTokens.Space.s10
     /// 공제 네모 테두리 두께
     private let outlineWidth: CGFloat = 1.5
     /// 먹색 위 공제 글자 — statusDangerSoft(red-50). 원문은 더 진한 연빨강이나 먹색 위 빨강 토큰이 없음(충돌 #28)
@@ -41,12 +41,11 @@ struct ExpectedPayLegend: View {
     private let swatchRadius: CGFloat = PumTokens.Space.s2
 
     var body: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
-            ExpectedPayFlowRow(spacing: PumTokens.Space.s12) {
-                item(color: ExpectedPayBar.colors[0], "기본급 \(PumFormat.amount(record.basePay))")
-                item(color: ExpectedPayBar.colors[1], "주휴 \(PumFormat.amount(record.holidayPay))")
-                item(color: ExpectedPayBar.colors[2], "기타 \(PumFormat.amount(record.otherPay))")
-            }
+        // 원문: 한 줄 흐름(gap 16 — 가로 · 세로 같음) 안에 공제까지 네 개
+        ExpectedPayFlowRow(spacing: PumTokens.Space.s16, rowSpacing: PumTokens.Space.s16) {
+            item(color: ExpectedPayBar.colors[0], "기본급 \(PumFormat.amount(record.basePay))")
+            item(color: ExpectedPayBar.colors[1], "주휴 \(PumFormat.amount(record.holidayPay))")
+            item(color: ExpectedPayBar.colors[2], "기타 \(PumFormat.amount(record.otherPay))")
             HStack(spacing: PumTokens.Space.s6) {
                 RoundedRectangle(cornerRadius: swatchRadius, style: .continuous)
                     .stroke(Self.deductionTint, lineWidth: outlineWidth)
@@ -71,6 +70,8 @@ struct ExpectedPayLegend: View {
 /// 한 줄에 다 안 들어가면 다음 줄로 넘기는 가로 배치
 struct ExpectedPayFlowRow: Layout {
     var spacing: CGFloat
+    /// 줄 사이 간격(기본은 가로 간격의 절반)
+    var rowSpacing: CGFloat?
 
     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
         arrange(width: proposal.width ?? .infinity, subviews: subviews).size
@@ -88,7 +89,7 @@ struct ExpectedPayFlowRow: Layout {
         var x: CGFloat = 0, y: CGFloat = 0, rowH: CGFloat = 0, maxX: CGFloat = 0
         for s in subviews {
             let sz = s.sizeThatFits(.unspecified)
-            if x > 0, x + sz.width > width { x = 0; y += rowH + spacing / 2; rowH = 0 }
+            if x > 0, x + sz.width > width { x = 0; y += rowH + (rowSpacing ?? spacing / 2); rowH = 0 }
             origins.append(CGPoint(x: x, y: y))
             x += sz.width + spacing
             maxX = max(maxX, x - spacing)

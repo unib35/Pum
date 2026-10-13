@@ -57,7 +57,7 @@ struct SignatureCanvasView: View {
                 Text(SignaturePadContent.placeholder).pumText(.caption).foregroundStyle(PumColor.textTertiary)
             }
             .padding(.horizontal, Local.baselineInset)
-            .padding(.bottom, PumTokens.Space.s12)
+            .padding(.bottom, PumTokens.Space.s20) // 원문 글자 아래 22(기준선은 아래 44)
             .allowsHitTesting(false)
             .accessibilityHidden(true)
         }

@@ -14,12 +14,18 @@ struct ClockInView: View {
     private enum Local {
         /// 먹색 위 반투명 흰 원(목업 rgba 흰색 약 14%)
         static let circleFill = Color.white.opacity(0.14)
-        static let frameWidthRatio: CGFloat = 0.62
+        /// 스캔 틀 한 변 — 원문 240
+        static let frameSide: CGFloat = 240
+        /// 위 · 아래 둥근 버튼 지름 — 원문 40(누름 영역은 44 유지)
+        static let circleSize: CGFloat = 40
         static let frameStroke: CGFloat = 3
         static let checkCircle: CGFloat = 36
         /// 체크 표시 크기: 목업 원 36 안 약 13px
         static let checkGlyph: CGFloat = 14
     }
+
+    /// 「관리자에게 수동 기록 요청」 글자 한 줄 높이(원문 13px × 1.5) — 큰 글자에서 함께 커진다
+    @ScaledMetric(relativeTo: .footnote) private var manualLineHeight: CGFloat = 19.5
 
     var body: some View {
         VStack(spacing: 0) {
@@ -61,7 +67,6 @@ struct ClockInView: View {
             }
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
-        .padding(.top, PumTokens.Space.s8)
     }
 
     private func circleButton(_ systemImage: String, label: String, action: @escaping () -> Void) -> some View {
@@ -69,8 +74,12 @@ struct ClockInView: View {
             Image(systemName: systemImage)
                 .font(.system(size: PumLayout.navIcon, weight: .medium))
                 .foregroundStyle(.white)
-                .frame(width: PumTokens.Size.tapMin, height: PumTokens.Size.tapMin)
+                .frame(width: Local.circleSize, height: Local.circleSize)
                 .background(Local.circleFill, in: Circle())
+                // 누름 영역 44 유지, 배치는 원문 40
+                .frame(width: PumTokens.Size.tapMin, height: PumTokens.Size.tapMin)
+                .contentShape(Rectangle())
+                .padding(-(PumTokens.Size.tapMin - Local.circleSize) / 2)
         }
         .buttonStyle(.plain)
         .accessibilityLabel(Text(label))
@@ -79,7 +88,7 @@ struct ClockInView: View {
     // MARK: 스캔 틀 · 안내
 
     private func scanArea(width: CGFloat) -> some View {
-        let side = width * Local.frameWidthRatio
+        let side = min(Local.frameSide, width)
         return VStack(spacing: PumTokens.Space.s24) {
             ClockInScanFrame()
                 .stroke(.white, style: StrokeStyle(lineWidth: Local.frameStroke, lineCap: .round, lineJoin: .round))
@@ -108,12 +117,14 @@ struct ClockInView: View {
                     .foregroundStyle(PumColor.textSecondary)
                     .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin)
                     .contentShape(Rectangle())
+                    // 누름 영역 44 유지, 배치 높이는 글자 한 줄(원문)
+                    .padding(.vertical, -max(0, PumTokens.Size.tapMin - manualLineHeight) / 2)
             }
             .buttonStyle(.plain)
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
         .padding(.top, PumTokens.Space.s20)
-        .padding(.bottom, PumTokens.Space.s8 + bottomInset)
+        .padding(.bottom, PumTokens.Space.s10 + bottomInset) // 원문 아래 44 − 홈 막대 34
         .frame(maxWidth: .infinity)
         .background(
             UnevenRoundedRectangle(topLeadingRadius: PumTokens.Radius.xl, topTrailingRadius: PumTokens.Radius.xl, style: .continuous)
@@ -136,7 +147,8 @@ struct ClockInView: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .padding(PumTokens.Space.s14)
+            .padding(.vertical, PumTokens.Space.s14)
+            .padding(.horizontal, PumTokens.Space.s16)
         }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(state.locationAccessibilityText))

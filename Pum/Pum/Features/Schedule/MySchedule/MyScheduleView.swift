@@ -54,13 +54,13 @@ struct MyScheduleView: View {
 
     private var listScreen: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+            VStack(alignment: .leading, spacing: PumTokens.Space.s14) {
                 header
                 ForEach(state.sections) { section in
                     Text(section.title).pumText(.footnote, weight: .bold) // 목업 13px 700
                         .foregroundStyle(PumColor.textSecondary)
                         .padding(.horizontal, PumTokens.Space.s4)
-                        .padding(.top, PumTokens.Space.s8)
+                        .padding(.top, PumTokens.Space.s4) // 원문: 구역 제목 padding 4 4 0
                         .accessibilityAddTraits(.isHeader)
                     sectionCard(section)
                 }
@@ -86,7 +86,6 @@ struct MyScheduleView: View {
                 segment
             }
         }
-        .padding(.top, PumTokens.Space.s8)
     }
 
     private var title: some View {
@@ -104,16 +103,19 @@ struct MyScheduleView: View {
                     // 목업 13px 선택 600 먹색 / 500 보조색 → footnote
                     Text(m.title).pumText(.footnote, weight: selected ? .semibold : .medium)
                         .foregroundStyle(selected ? PumColor.textPrimary : PumColor.textSecondary)
-                        .padding(.horizontal, PumTokens.Space.s16)
-                        .frame(minWidth: PumTokens.Size.tapMin, minHeight: PumTokens.Size.tapMin)
+                        // 원문: 칸 padding 6 14 — 누름 영역 44는 음수 여백으로 유지하고 배치 높이만 원문에 맞춘다
+                        .padding(.horizontal, PumTokens.Space.s14)
+                        .padding(.vertical, PumTokens.Space.s6)
                         .background(selected ? PumColor.surfaceCard : .clear, in: Capsule())
-                        .contentShape(Capsule())
+                        .padding(.vertical, PumTokens.Space.s8)
+                        .contentShape(Rectangle())
+                        .padding(.vertical, -PumTokens.Space.s8)
                 }
                 .buttonStyle(.plain)
                 .accessibilityAddTraits(selected ? .isSelected : [])
             }
         }
-        .padding(PumTokens.Space.s2)
+        .padding(PumTokens.Space.s2) // 원문 3 — 토큰은 2·4
         .background(PumColor.surfaceFill, in: Capsule())
         .animation(PumMotion.respecting(reduceMotion, PumMotion.fast), value: mode)
     }
@@ -148,7 +150,7 @@ struct MyScheduleView: View {
     }
 
     private func rowContent(_ item: ScheduleItem, isLast: Bool) -> some View {
-        HStack(spacing: PumTokens.Space.s12) {
+        HStack(spacing: PumTokens.Space.s14) {
             dateColumn(item)
             VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
                 timeLine(item)
@@ -171,7 +173,6 @@ struct MyScheduleView: View {
         .overlay(alignment: .bottom) {
             if !isLast {
                 Rectangle().fill(PumColor.borderHairline).frame(height: 1)
-                    .padding(.horizontal, PumTokens.Size.rowPadX)
             }
         }
         .overlay {
