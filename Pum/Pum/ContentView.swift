@@ -150,6 +150,7 @@ struct ContentView: View {
             case "6u": EmployeeHomeNoShiftView(state: .updateAvailable)
             case "6v": EmployeeHomeNoShiftView(state: .maintenanceNotice)
             case "6w": MaintenanceView(state: .sample)
+            case "17e": PublishedScheduleView(state: .sample)
             case "gallery": ComponentGalleryView()
             default: DevMenu()
             }
@@ -297,6 +298,7 @@ private struct DevMenu: View {
                     NavigationLink("6u 업데이트 권장") { EmployeeHomeNoShiftView(state: .updateAvailable).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("6v 점검 예고") { EmployeeHomeNoShiftView(state: .maintenanceNotice).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("6w 점검 중") { MaintenanceView(state: .sample).toolbar(.hidden, for: .navigationBar) }
+                    NavigationLink("17e 게시 후 내 스케줄") { PublishedScheduleView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                 }
                 Section("디자인 시스템") {
                     NavigationLink("컴포넌트 갤러리") { ComponentGalleryView() }
