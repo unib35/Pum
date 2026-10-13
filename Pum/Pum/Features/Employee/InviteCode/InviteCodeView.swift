@@ -37,12 +37,11 @@ struct InviteCodeView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+            VStack(alignment: .leading, spacing: PumTokens.Space.s18) {
                 HStack {
                     PumIconButton(systemImage: "chevron.left", label: "뒤로", action: onBack)
                     Spacer()
                 }
-                .padding(.bottom, PumTokens.Space.s4)
                 heading
                 codeField
                 if let m = state.visibleMatch {
@@ -53,7 +52,6 @@ struct InviteCodeView: View {
             }
             .animation(PumMotion.respecting(reduceMotion, PumMotion.base), value: state.visibleMatch) // M22
             .padding(.horizontal, PumTokens.Size.screenPad)
-            .padding(.top, PumTokens.Space.s8)
             .padding(.bottom, PumTokens.Space.s16)
         }
         .scrollDismissesKeyboard(.never)
@@ -105,7 +103,8 @@ struct InviteCodeView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 Image(systemName: "checkmark").font(.body.weight(.semibold)).foregroundStyle(PumColor.statusDone)
             }
-            .padding(PumTokens.Space.s16)
+            .padding(.horizontal, PumTokens.Space.s16) // 원문 padding 14 16
+            .padding(.vertical, PumTokens.Space.s14)
         }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(m.accessibilityText))

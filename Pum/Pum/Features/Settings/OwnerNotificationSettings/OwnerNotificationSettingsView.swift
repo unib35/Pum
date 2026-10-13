@@ -24,10 +24,11 @@ struct OwnerNotificationSettingsView: View {
             }
             .padding(.horizontal, PumTokens.Size.screenPad)
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s20) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s10) {
                     ForEach(state.sections) { section in
-                        VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+                        VStack(alignment: .leading, spacing: PumTokens.Space.s4) { // 제목–카드 4(원문 10 − 6)
                             PumSectionHeader(title: section.title)
+                                .padding(.top, PumTokens.Space.s2)
                             PumCard {
                                 ForEach(Array(section.rows.enumerated()), id: \.element.id) { index, row in
                                     toggleRow(row, isLast: index == section.rows.count - 1)
@@ -37,7 +38,7 @@ struct OwnerNotificationSettingsView: View {
                     }
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.top, PumTokens.Space.s12)
+                .padding(.top, PumTokens.Space.s10)
                 .padding(.bottom, PumTokens.Space.s24)
             }
         }
@@ -47,7 +48,7 @@ struct OwnerNotificationSettingsView: View {
     private var workplaceButton: some View {
         Button(action: onPickWorkplace) {
             Text(state.workplaceName)
-                .pumText(.callout, weight: .semibold)
+                .pumText(.footnote, weight: .semibold)
                 .foregroundStyle(PumColor.accent)
                 .lineLimit(1)
                 .frame(minWidth: PumTokens.Size.tapMin, minHeight: PumTokens.Size.tapMin)
@@ -62,9 +63,9 @@ struct OwnerNotificationSettingsView: View {
     private func toggleRow(_ row: OwnerNotificationRow, isLast: Bool) -> some View {
         Toggle(isOn: Binding(get: { row.isOn }, set: { onToggle(row.id, $0) })) {
             VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
-                Text(row.title).pumText(.body, weight: .semibold).foregroundStyle(PumColor.textPrimary)
+                Text(row.title).pumText(.callout, weight: .semibold).foregroundStyle(PumColor.textPrimary)
                 if let subtitle = row.subtitle {
-                    Text(subtitle).pumText(.caption, weight: .regular).foregroundStyle(PumColor.textSecondary)
+                    Text(subtitle).pumText(.caption2, weight: .regular).foregroundStyle(PumColor.textSecondary)
                 }
             }
         }

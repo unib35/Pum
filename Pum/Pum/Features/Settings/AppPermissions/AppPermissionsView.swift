@@ -9,10 +9,9 @@ struct AppPermissionsView: View {
     var body: some View {
         VStack(spacing: 0) {
             PumNavHeader(title: AppPermissionsState.headerTitle, onBack: onBack)
-                .padding(.top, PumTokens.Space.s8)
                 .padding(.horizontal, PumTokens.Size.screenPad)
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s14) {
                     Text(AppPermissionsState.intro)
                         .pumText(.caption)
                         .foregroundStyle(PumColor.textSecondary)
@@ -23,19 +22,21 @@ struct AppPermissionsView: View {
                             permissionRow(row, isLast: row.id == state.rows.last?.id)
                         }
                     }
+                    VStack(alignment: .leading, spacing: PumTokens.Space.s8) { // 제목–카드 8(원문 14 − 6)
                     PumSectionHeader(title: AppPermissionsState.unrequestedHeader)
-                        .padding(.top, PumTokens.Space.s8)
                     PumCard {
                         Text(AppPermissionsState.unrequestedBody)
                             .pumText(.footnote)
                             .foregroundStyle(PumTokens.ColorToken.gray800)
                             .multilineTextAlignment(.leading)
-                            .padding(.horizontal, PumTokens.Size.rowPadX).padding(.vertical, PumTokens.Space.s16)
+                            .padding(.horizontal, PumTokens.Size.rowPadX).padding(.vertical, PumTokens.Space.s14)
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
+                    }
+                    .padding(.top, PumTokens.Space.s2)
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s12)
+                .padding(.vertical, PumTokens.Space.s14)
             }
         }
         .background(PumColor.bgApp)
@@ -94,8 +95,8 @@ struct AppPermissionsView: View {
     private var bottomBar: some View {
         PumButton(title: AppPermissionsState.openSettingsTitle, kind: .outline, action: onOpenSettings)
             .padding(.horizontal, PumTokens.Size.screenPad)
-            .padding(.top, PumTokens.Space.s8)
-            .padding(.bottom, PumTokens.Space.s8)
+            .padding(.top, PumTokens.Space.s12)
+            .padding(.bottom, PumTokens.Space.s10) // 원문 아래 44 − 홈 막대 34
             .background(PumColor.bgApp)
     }
 }

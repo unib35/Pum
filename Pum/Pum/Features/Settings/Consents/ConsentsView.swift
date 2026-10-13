@@ -10,25 +10,29 @@ struct ConsentsView: View {
     var onOpen: (String) -> Void = { _ in }
     var onToggleOptional: (String, Bool) -> Void = { _, _ in }
 
+    /// 행 위아래 안쪽 — 원문 11 → 토큰 12(DEC-009)
+    private let rowPadY = PumTokens.Size.rowPadY
+    /// 제목–안내 글자 — 원문 3 → 토큰 2
+    private let detailGap = PumTokens.Space.s2
+
     var body: some View {
         VStack(spacing: 0) {
             PumNavHeader(title: ConsentsState.headerTitle, onBack: onBack)
-                .padding(.top, PumTokens.Space.s8)
                 .padding(.horizontal, PumTokens.Size.screenPad)
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s10) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s14) {
                     if let change = state.pendingChange { changeCard(change) }
                     rowsCard(state.consents)
-                    VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
+                    VStack(alignment: .leading, spacing: PumTokens.Space.s8) { // 제목–카드 8(원문 14 − 6)
                         PumSectionHeader(title: ConsentsState.thirdPartyHeader)
                         rowsCard(state.thirdParties)
                     }
-                    .padding(.top, PumTokens.Space.s4)
+                    .padding(.top, PumTokens.Space.s2)
                     Text(ConsentsState.footnote).pumText(.caption).foregroundStyle(PumColor.textSecondary)
                         .padding(.horizontal, PumTokens.Space.s4)
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s12)
+                .padding(.vertical, PumTokens.Space.s14)
             }
         }
         .background(PumColor.bgApp)
@@ -40,7 +44,7 @@ struct ConsentsView: View {
         PumCard(attention: true) {
             Button(action: onOpenChange) {
                 ViewThatFits(in: .horizontal) {
-                    HStack(spacing: PumTokens.Space.s12) {
+                    HStack(spacing: PumTokens.Space.s10) {
                         changeText(change).frame(maxWidth: .infinity, alignment: .leading)
                         confirmLabel
                     }
@@ -98,7 +102,7 @@ struct ConsentsView: View {
                 rowText(row).frame(maxWidth: .infinity, alignment: .leading)
                 chevron
             }
-            .padding(.horizontal, PumTokens.Size.rowPadX).padding(.vertical, PumTokens.Size.rowPadY)
+            .padding(.horizontal, PumTokens.Size.rowPadX).padding(.vertical, rowPadY)
             .frame(minHeight: PumTokens.Size.tapMin)
             .contentShape(Rectangle())
             .overlay(alignment: .bottom) { if !isLast { hairline } }
@@ -114,16 +118,16 @@ struct ConsentsView: View {
             rowText(row)
         }
         .tint(PumColor.accent)
-        .padding(.horizontal, PumTokens.Size.rowPadX).padding(.vertical, PumTokens.Size.rowPadY)
+        .padding(.horizontal, PumTokens.Size.rowPadX).padding(.vertical, rowPadY)
         .frame(minHeight: PumTokens.Size.tapMin)
         .overlay(alignment: .bottom) { if !isLast { hairline } }
         .accessibilityLabel(Text(row.spoken))
     }
 
     private func rowText(_ row: ConsentRow) -> some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
+        VStack(alignment: .leading, spacing: detailGap) {
             ViewThatFits(in: .horizontal) {
-                HStack(spacing: PumTokens.Space.s8) { title(row); badge(row) }
+                HStack(spacing: PumTokens.Space.s6) { title(row); badge(row) }
                 VStack(alignment: .leading, spacing: PumTokens.Space.s4) { title(row); badge(row) }
             }
             Text(row.detail).pumText(.caption).foregroundStyle(PumColor.textSecondary)
