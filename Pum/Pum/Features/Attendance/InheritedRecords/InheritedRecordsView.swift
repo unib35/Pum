@@ -3,6 +3,7 @@
 import SwiftUI
 
 struct InheritedRecordsView: View {
+    @Environment(\.dynamicTypeSize) private var typeSize
     let state: InheritedRecordsState
 
     var onBack: () -> Void = {}
@@ -128,18 +129,23 @@ struct InheritedRecordsView: View {
 
     private var disputeCard: some View {
         PumCard {
-            ViewThatFits(in: .horizontal) {
-                HStack(spacing: PumTokens.Space.s12) {
-                    texts(title: InheritedRecordsState.disputeTitle, detail: InheritedRecordsState.disputeDetail)
-                    disputeChip
-                }
-                VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
-                    texts(title: InheritedRecordsState.disputeTitle, detail: InheritedRecordsState.disputeDetail)
-                    disputeChip
+            // 원문: 설명은 줄바꿈하고 칩은 오른쪽에 둔다 — 큰 글자(접근성 크기)에서만 칩을 아래로
+            Group {
+                if typeSize.isAccessibilitySize {
+                    VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+                        texts(title: InheritedRecordsState.disputeTitle, detail: InheritedRecordsState.disputeDetail)
+                        disputeChip
+                    }
+                } else {
+                    HStack(spacing: PumTokens.Space.s12) {
+                        texts(title: InheritedRecordsState.disputeTitle, detail: InheritedRecordsState.disputeDetail)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        disputeChip.fixedSize()
+                    }
                 }
             }
             .padding(.horizontal, PumTokens.Size.rowPadX)
-            .padding(.vertical, PumTokens.Space.s14)
+            .padding(.vertical, PumTokens.Space.s12) // 원문 padding 12 16
             .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
@@ -178,7 +184,7 @@ struct InheritedRecordsView: View {
         Text(InheritedRecordsState.ownerInputText)
             .pumText(.caption, weight: .semibold)
             .foregroundStyle(PumTokens.ColorToken.gray700)
-            .padding(.horizontal, PumTokens.Space.s8 + 1)
+            .padding(.horizontal, PumTokens.Space.s8)
             .padding(.vertical, PumTokens.Space.s4)
             .background(PumColor.surfaceFill,
                         in: RoundedRectangle(cornerRadius: PumTokens.Radius.sm, style: .continuous))
