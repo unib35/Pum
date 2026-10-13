@@ -35,23 +35,24 @@ struct DirectRegisterContractView: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
+        VStack(spacing: PumTokens.Space.s14) {
             backRow
             DirectRegisterStepBar(current: DirectRegisterContractState.currentStep)
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
-                    Text(DirectRegisterContractState.title).pumText(.title2).foregroundStyle(PumColor.textPrimary)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .padding(.horizontal, PumTokens.Space.s4)
-                        .accessibilityAddTraits(.isHeader)
-                    Text(DirectRegisterContractState.subtitle).pumText(.footnote).foregroundStyle(PumColor.textSecondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .padding(.horizontal, PumTokens.Space.s4)
+                VStack(alignment: .leading, spacing: PumTokens.Space.s14) {
+                    VStack(alignment: .leading, spacing: PumTokens.Space.s4) { // 부제 margin-top 3 → 4
+                        Text(DirectRegisterContractState.title).pumText(.title2).foregroundStyle(PumColor.textPrimary)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .accessibilityAddTraits(.isHeader)
+                        Text(DirectRegisterContractState.subtitle).pumText(.footnote).foregroundStyle(PumColor.textSecondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .padding(.horizontal, PumTokens.Space.s4)
+                    .padding(.top, PumTokens.Space.s6) // 원문 padding-top 2 + margin-top 4
                     card.disabled(isSending) // 보내는 중에는 보낸 값과 어긋나지 않게
-                        .padding(.top, PumTokens.Space.s12)
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s12)
+                .padding(.bottom, PumTokens.Space.s12)
             }
             .scrollBounceBehavior(.basedOnSize)
         }
@@ -189,7 +190,8 @@ struct DirectRegisterContractView: View {
             .accessibilityLabel(Text(DirectRegisterContractState.addLabel))
             .accessibilityAddTraits(.isButton)
         }
-        .padding(PumTokens.Size.rowPadX)
+        .padding(.horizontal, PumTokens.Size.rowPadX)
+        .padding(.vertical, PumTokens.Size.rowPadY)
     }
 
     private var thumbShape: RoundedRectangle {
@@ -199,7 +201,7 @@ struct DirectRegisterContractView: View {
     // MARK: 하단
 
     private var footer: some View {
-        VStack(spacing: PumTokens.Space.s12) {
+        VStack(spacing: PumTokens.Space.s8) {
             PumButton(title: DirectRegisterContractState.registerTitle, isLoading: isSending, action: register)
                 .disabled(!canRegister || isSending)
             Text(DirectRegisterContractState.footnote).pumText(.caption).foregroundStyle(PumColor.textSecondary)

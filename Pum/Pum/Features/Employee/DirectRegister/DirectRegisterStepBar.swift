@@ -18,8 +18,7 @@ struct DirectRegisterStepBar: View {
                     .frame(height: Self.barHeight)
             }
         }
-        .padding(.horizontal, PumTokens.Size.screenPad)
-        .padding(.vertical, PumTokens.Space.s8)
+        .padding(.horizontal, PumTokens.Size.screenPad + PumTokens.Space.s4) // 원문 바깥 20 + 안쪽 4
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(Self.readout(current: current)))
     }

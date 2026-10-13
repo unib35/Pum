@@ -39,13 +39,13 @@ struct WorkplaceSwitcherView: View {
 
     /// 뒤 화면: 열린 칩 + 알림 + 오늘 카드(시트에 덮여 어둡게)
     private var background: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s18) { // 원문 블록 사이 18
             HStack {
                 OpenWorkplaceChip(workplace: state.selected)
                 Spacer()
                 PumIconButton(systemImage: "bell", label: "알림", showsDot: state.hasUnreadNotification) {}
             }
-            .padding(.top, PumTokens.Space.s8)
+            .padding(.vertical, -(PumTokens.Size.tapMin - WorkplaceSwitcherLocal.topRowHeight) / 2) // 원문 줄 높이 40(누름 44 유지)
             todayCard
             Spacer(minLength: 0)
         }
@@ -55,7 +55,7 @@ struct WorkplaceSwitcherView: View {
 
     private var todayCard: some View {
         PumCard {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+            VStack(alignment: .leading, spacing: PumTokens.Space.s8) { // 원문 숫자 위 8
                 HStack {
                     Text(state.todayTitle).pumText(.footnote, weight: .medium).foregroundStyle(PumColor.textSecondary)
                     Spacer()
@@ -66,7 +66,7 @@ struct WorkplaceSwitcherView: View {
                     shiftRange(spacing: PumTokens.Space.s4).minimumScaleFactor(0.6)
                 }
             }
-            .padding(PumTokens.Space.s20)
+            .padding(PumTokens.Space.s18) // 원문 카드 padding 18
             .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
@@ -102,9 +102,11 @@ struct OpenWorkplaceChip: View {
         }
         .padding(.leading, PumTokens.Space.s8)
         .padding(.trailing, PumTokens.Space.s12)
-        .frame(minHeight: PumTokens.Size.tapMin)
+        .padding(.vertical, PumTokens.Space.s8) // 원문 7 → 가장 가까운 토큰
         .background(PumColor.surfaceCard, in: Capsule())
         .overlay(Capsule().strokeBorder(PumColor.accent, lineWidth: WorkplaceSwitcherLocal.openRingWidth))
+        .frame(minHeight: PumTokens.Size.tapMin)
+        .contentShape(Rectangle())
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text("사업장 선택, \(workplace?.name ?? ""), 펼쳐짐"))
     }

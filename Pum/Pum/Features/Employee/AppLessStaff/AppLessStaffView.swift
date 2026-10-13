@@ -66,16 +66,16 @@ struct AppLessStaffView: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
+        VStack(spacing: PumTokens.Space.s14) {
             backRow
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s14) {
                     header
                     workCard
                     actionCard
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s12)
+                .padding(.bottom, PumTokens.Space.s12)
             }
             .scrollBounceBehavior(.basedOnSize)
         }

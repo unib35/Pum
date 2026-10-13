@@ -38,14 +38,15 @@ struct DirectRegisterBasicView: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
+        VStack(spacing: PumTokens.Space.s14) {
             backRow
             stepBar
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s14) {
                     Text(DirectRegisterBasicState.title).pumText(.title2).foregroundStyle(PumColor.textPrimary)
                         .fixedSize(horizontal: false, vertical: true)
                         .padding(.horizontal, PumTokens.Space.s4)
+                        .padding(.top, PumTokens.Space.s6) // 원문 padding-top 2 + margin-top 4
                         .accessibilityAddTraits(.isHeader)
                     nameField
                     phoneField
@@ -56,7 +57,7 @@ struct DirectRegisterBasicView: View {
                             hint: nil, value: state.startDate, action: onPickStartDate)
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s12)
+                .padding(.bottom, PumTokens.Space.s12)
             }
             .scrollBounceBehavior(.basedOnSize)
             .scrollDismissesKeyboard(.interactively)
@@ -108,13 +109,14 @@ struct DirectRegisterBasicView: View {
 
     private func fieldLabel(_ title: String) -> some View {
         Text(title).pumText(.footnote, weight: .semibold).foregroundStyle(PumTokens.ColorToken.gray800)
+            .padding(.horizontal, PumTokens.Space.s2)
             .accessibilityHidden(true)
     }
 
     private func hintText(_ text: String) -> some View {
         Text(text).pumText(.caption, weight: .regular).foregroundStyle(PumColor.textSecondary)
             .fixedSize(horizontal: false, vertical: true)
-            .padding(.horizontal, PumTokens.Space.s4)
+            .padding(.horizontal, PumTokens.Space.s2)
             .accessibilityHidden(true)
     }
 
@@ -124,7 +126,7 @@ struct DirectRegisterBasicView: View {
             .pumText(.body, weight: .regular) // 원문 16px 400 → body(15) 근사
             .foregroundStyle(PumColor.textPrimary)
             .tint(PumColor.accent)
-            .padding(.horizontal, PumTokens.Space.s16)
+            .padding(.horizontal, PumTokens.Space.s14)
             .padding(.vertical, PumTokens.Space.s14)
             .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin, alignment: .leading)
             .background(PumColor.surfaceCard, in: RoundedRectangle(cornerRadius: PumTokens.Radius.lg, style: .continuous))
@@ -136,7 +138,7 @@ struct DirectRegisterBasicView: View {
     }
 
     private var nameField: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
             fieldLabel(DirectRegisterBasicState.nameTitle)
             box(.name) {
                 TextField("", text: Binding(get: { draft.name }, set: { touchedName = true; draft.name = $0 }))
@@ -153,7 +155,7 @@ struct DirectRegisterBasicView: View {
     }
 
     private var phoneField: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
             fieldLabel(DirectRegisterBasicState.phoneTitle)
             box(.phone) {
                 TextField("", text: Binding(get: { draft.phone }, set: {
@@ -179,7 +181,7 @@ struct DirectRegisterBasicView: View {
 
     private func dateRow(_ field: DirectRegisterBasicField, title: String, hint: String?,
                          value: String, action: @escaping () -> Void) -> some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
             fieldLabel(title)
             Button {
                 focus = nil

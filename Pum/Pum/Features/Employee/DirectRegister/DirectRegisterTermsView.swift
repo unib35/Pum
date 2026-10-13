@@ -45,25 +45,27 @@ struct DirectRegisterTermsView: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
+        VStack(spacing: PumTokens.Space.s14) {
             backRow
             DirectRegisterStepBar(current: DirectRegisterTermsState.currentStep)
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s14) {
                     Text(DirectRegisterTermsState.title).pumText(.title2).foregroundStyle(PumColor.textPrimary)
                         .fixedSize(horizontal: false, vertical: true)
                         .padding(.horizontal, PumTokens.Space.s4)
+                        .padding(.top, PumTokens.Space.s6) // 원문 padding-top 2 + margin-top 4
                         .accessibilityAddTraits(.isHeader)
                     wageField
-                    VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+                    VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
                         fieldLabel(DirectRegisterTermsState.workTitle)
+                            .padding(.horizontal, PumTokens.Space.s2)
                         weekdayChips
                         hoursCard
                     }
                     optionsCard
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s12)
+                .padding(.bottom, PumTokens.Space.s12)
             }
             .scrollBounceBehavior(.basedOnSize)
             .scrollDismissesKeyboard(.interactively)
@@ -116,7 +118,7 @@ struct DirectRegisterTermsView: View {
     // MARK: 시급
 
     private var wageField: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
             ViewThatFits(in: .horizontal) {
                 HStack(alignment: .firstTextBaseline) {
                     fieldLabel(DirectRegisterTermsState.wageTitle)
@@ -128,6 +130,7 @@ struct DirectRegisterTermsView: View {
                     minimumNote
                 }
             }
+            .padding(.horizontal, PumTokens.Space.s2)
             HStack(spacing: 0) {
                 TextField("", text: Binding(
                     get: { draft.hourlyWage == 0 ? "" : PumFormat.amount(draft.hourlyWage) },
@@ -153,7 +156,7 @@ struct DirectRegisterTermsView: View {
             }
             .pumText(.body, weight: .regular) // 원문 16px 400 → body(15) 근사
             .foregroundStyle(PumColor.textPrimary)
-            .padding(.horizontal, PumTokens.Space.s16)
+            .padding(.horizontal, PumTokens.Space.s14)
             .padding(.vertical, PumTokens.Space.s14)
             .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin, alignment: .leading)
             .background(PumColor.surfaceCard, in: RoundedRectangle(cornerRadius: PumTokens.Radius.lg, style: .continuous))
@@ -168,7 +171,7 @@ struct DirectRegisterTermsView: View {
                 Text(DirectRegisterTermsState.belowMinimumHint).pumText(.caption)
                     .foregroundStyle(PumColor.statusAttention)
                     .fixedSize(horizontal: false, vertical: true)
-                    .padding(.horizontal, PumTokens.Space.s4)
+                    .padding(.horizontal, PumTokens.Space.s2)
                     .accessibilityHidden(true)
             }
         }
@@ -194,7 +197,7 @@ struct DirectRegisterTermsView: View {
     }
 
     private func chipRow(_ days: [(id: Int, short: String, long: String)]) -> some View {
-        HStack(spacing: PumTokens.Space.s8) {
+        HStack(spacing: PumTokens.Space.s6) {
             ForEach(days, id: \.id) { day in
                 let on = draft.weekdays.contains(day.id)
                 Button {
@@ -203,7 +206,7 @@ struct DirectRegisterTermsView: View {
                 } label: {
                     Text(day.short).pumText(.callout, weight: .semibold) // 원문 15
                         .foregroundStyle(on ? Color.white : PumColor.textSecondary)
-                        .frame(maxWidth: .infinity, minHeight: chipSize + PumTokens.Space.s16)
+                        .frame(maxWidth: .infinity, minHeight: chipSize + PumTokens.Space.s10)
                         .background(on ? PumColor.surfaceInverse : PumColor.surfaceCard,
                                     in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
                         .overlay {
@@ -214,6 +217,7 @@ struct DirectRegisterTermsView: View {
                         }
                         .frame(minHeight: PumTokens.Size.tapMin)
                         .contentShape(Rectangle())
+                        .padding(.vertical, -PumTokens.Space.s2) // 원문 칩 높이 40(누름 영역은 44 유지)
                 }
                 .buttonStyle(.plain)
                 .accessibilityElement(children: .ignore)
@@ -231,7 +235,7 @@ struct DirectRegisterTermsView: View {
             } label: {
                 HStack(spacing: PumTokens.Space.s8) {
                     VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
-                        Text(state.timeRangeText).pumText(.body, weight: .semibold).foregroundStyle(PumColor.textPrimary)
+                        Text(state.timeRangeText).pumText(.callout, weight: .semibold).foregroundStyle(PumColor.textPrimary)
                         Text(state.breakAndDurationText).pumText(.caption).foregroundStyle(PumColor.textSecondary)
                     }
                     .fixedSize(horizontal: false, vertical: true)
@@ -285,12 +289,12 @@ struct DirectRegisterTermsView: View {
         } label: {
             HStack(spacing: PumTokens.Space.s8) {
                 VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
-                    Text(title).pumText(.body, weight: .semibold).foregroundStyle(PumColor.textPrimary)
+                    Text(title).pumText(.callout, weight: .semibold).foregroundStyle(PumColor.textPrimary)
                     if let subtitle { Text(subtitle).pumText(.caption).foregroundStyle(PumColor.textSecondary) }
                 }
                 .fixedSize(horizontal: false, vertical: true)
                 Spacer(minLength: PumTokens.Space.s8)
-                Text(value).pumText(.body, weight: .semibold)
+                Text(value).pumText(.callout, weight: .semibold)
                     .foregroundStyle(valueMuted ? PumColor.textSecondary : PumColor.textPrimary)
                     .multilineTextAlignment(.trailing)
                     .fixedSize(horizontal: false, vertical: true)

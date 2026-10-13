@@ -23,10 +23,10 @@ struct EarlyLeaveSheet: View {
                 .accessibilityAddTraits(.isHeader)
                 .padding(.horizontal, PumTokens.Space.s4) // 원문: 카드보다 약 4 안쪽
             reasonList
+                .padding(.top, -PumTokens.Space.s6) // 원문 사유 라벨과 목록 사이 6
             if state.needsOwnerCheck { notice }
             PumButtonPair(negative: "계속 근무", positive: state.recordTitle, negativeKind: .outline,
                           onNegative: onContinue, onPositive: onRecord)
-                .padding(.top, PumTokens.Space.s4)
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
         .padding(.bottom, PumTokens.Space.s16)
@@ -53,10 +53,11 @@ struct EarlyLeaveSheet: View {
     private var compareCards: some View {
         PumCard {
             ViewThatFits(in: .horizontal) {
-                HStack(spacing: PumTokens.Space.s8) { plannedCell; actualCell }
-                VStack(spacing: PumTokens.Space.s8) { plannedCell; actualCell }
+                HStack(spacing: PumTokens.Space.s10) { plannedCell; actualCell } // 원문 칸 사이 10
+                VStack(spacing: PumTokens.Space.s10) { plannedCell; actualCell }
             }
-            .padding(PumTokens.Space.s16) // 원문: 바깥 카드 안쪽 약 16
+            .padding(.vertical, PumTokens.Space.s14) // 원문 바깥 카드 padding 14 16
+            .padding(.horizontal, PumTokens.Space.s16)
         }
     }
 
@@ -71,12 +72,14 @@ struct EarlyLeaveSheet: View {
     }
 
     private func cell(label: String, range: String, line: String, background: Color, accent: Color) -> some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
+        VStack(alignment: .leading, spacing: 0) {
             Text(label).pumText(.caption2).foregroundStyle(accent)
-            Text(range).pumText(.callout, weight: .semibold).foregroundStyle(PumColor.textPrimary)
+            Text(range).pumText(.body, weight: .semibold).foregroundStyle(PumColor.textPrimary) // 원문 15px 600
+                .padding(.top, PumTokens.Space.s2)
             Text(line).pumText(.caption).foregroundStyle(accent)
         }
-        .padding(PumTokens.Space.s12)
+        .padding(.vertical, PumTokens.Space.s10) // 원문 칸 padding 10 12
+        .padding(.horizontal, PumTokens.Space.s12)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(background, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
         .accessibilityElement(children: .ignore)

@@ -60,7 +60,7 @@ struct MissingClockOutView: View {
     }
 
     private var background: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s16) { // 원문 블록 사이 16
             HStack {
                 PumWorkplaceChip(name: state.workplaceName, initial: state.workplaceInitial) {}
                 Spacer()
@@ -76,30 +76,36 @@ struct MissingClockOutView: View {
 
     private var card: some View {
         PumCard(attention: true) { // 주황 테두리 — 1j 강조 행과 같은 방식
-            VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+            // 원문: 카드 padding 16 18 · 제목 위 10 · 시각 상자 위 14 · 안내 위 12
+            VStack(alignment: .leading, spacing: 0) {
                 HStack(spacing: PumTokens.Space.s8) {
                     PumBadge(text: "퇴근 미확정", kind: .attention)
                     Text(state.dateText).pumText(.footnote).foregroundStyle(PumColor.textSecondary)
                 }
-                // 목업 약 20px 700 → title3
+                // 원문 17px 700 → headline 굵게
                 Text("어제 퇴근 기록이 없어요.\n실제 퇴근시간을 알려주세요")
-                    .pumText(.title3, weight: .bold).foregroundStyle(PumColor.textPrimary)
+                    .pumText(.headline, weight: .bold).foregroundStyle(PumColor.textPrimary)
                     .fixedSize(horizontal: false, vertical: true)
                     .accessibilityAddTraits(.isHeader)
+                    .padding(.top, PumTokens.Space.s10)
                 times
+                    .padding(.top, PumTokens.Space.s14)
                 notice
+                    .padding(.top, PumTokens.Space.s12)
             }
-            .padding(PumTokens.Space.s16)
+            .padding(.vertical, PumTokens.Space.s16)
+            .padding(.horizontal, PumTokens.Space.s18)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 
     private var times: some View {
         ViewThatFits(in: .horizontal) {
-            HStack(spacing: 0) { timeCells }
+            HStack(spacing: PumTokens.Space.s8) { timeCells } // 원문 칸 사이 8
             VStack(spacing: PumTokens.Space.s8) { timeCells }
         }
-        .padding(.vertical, PumTokens.Space.s12)
+        .padding(.vertical, PumTokens.Space.s12) // 원문 상자 padding 12 14
+        .padding(.horizontal, PumTokens.Space.s14)
         .background(PumColor.surfaceFill, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
         .accessibilityElement(children: .combine)
     }
@@ -117,7 +123,6 @@ struct MissingClockOutView: View {
             Text(value).pumText(.body, weight: .semibold).foregroundStyle(warn ? PumColor.statusAttention : PumColor.textPrimary)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.horizontal, PumTokens.Space.s12)
     }
 
     private var notice: some View {

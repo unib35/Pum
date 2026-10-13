@@ -3,9 +3,9 @@ import SwiftUI
 
 /// 화면 전용 상수 — 토큰에 없는 값
 enum MissingClockOutLocal {
-    /// 시간 칸 크기(목업 약 96×76). 큰 글자에서 커진다
-    static let timeCellWidth: CGFloat = 96
-    static let timeCellHeight: CGFloat = 76
+    /// 시간 칸 크기(원문 약 86×60). 큰 글자에서 커진다
+    static let timeCellWidth: CGFloat = 86
+    static let timeCellHeight: CGFloat = 60
 }
 
 struct MissingClockOutSheet: View {
@@ -33,7 +33,6 @@ struct MissingClockOutSheet: View {
                 .padding(.horizontal, PumTokens.Space.s4) // 원문: 카드보다 약 4 안쪽
             PumButton(title: "사장님께 확인 요청", action: onRequest)
                 .disabled(!state.canRequest)
-                .padding(.top, PumTokens.Space.s4)
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
         .padding(.bottom, PumTokens.Space.s16)
@@ -49,14 +48,14 @@ struct MissingClockOutSheet: View {
     private var timeCard: some View {
         VStack(spacing: PumTokens.Space.s12) {
             PumCard {
-                HStack(spacing: PumTokens.Space.s8) {
+                HStack(spacing: PumTokens.Space.s14) { // 원문 gap 14
                     timeCell(.hour, text: String(format: "%02d", state.hour), label: "시")
                     Text(":").pumText(.display).foregroundStyle(PumTokens.ColorToken.gray400)
                         .accessibilityHidden(true)
                     timeCell(.minute, text: String(format: "%02d", state.minute), label: "분")
                 }
                 .frame(maxWidth: .infinity)
-                .padding(PumTokens.Space.s16)
+                .padding(PumTokens.Space.s18) // 원문 카드 padding 18
             }
             ViewThatFits(in: .horizontal) {
                 HStack(alignment: .firstTextBaseline) { offsetLabel; Spacer(minLength: PumTokens.Space.s8); recognizedLabel }
