@@ -35,7 +35,7 @@ struct ExtraShiftOfferView: View {
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s12)
+                .padding(.vertical, PumTokens.Space.s16) // 머리 줄–제목 16(원문 gap)
             }
         }
         .background(PumColor.bgApp)
@@ -45,7 +45,8 @@ struct ExtraShiftOfferView: View {
                           negativeKind: .outline, onNegative: { respond(onDecline) }, onPositive: { respond(onAccept) })
                 .allowsHitTesting(!state.isResponding)
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s12)
+                .padding(.top, PumTokens.Space.s12)
+                .padding(.bottom, PumTokens.Space.s10) // 원문 아래 44 = 홈 막대 34 + 10
                 .background(PumColor.bgApp)
         }
     }
@@ -59,13 +60,12 @@ struct ExtraShiftOfferView: View {
     // MARK: 제목
 
     private var titleBlock: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s6) { // 원문 메타–제목 6
             Text(state.metaText).pumText(.footnote, weight: .medium).foregroundStyle(PumColor.textSecondary)
             Text(state.headline).pumText(.title1).foregroundStyle(PumColor.textPrimary)
                 .fixedSize(horizontal: false, vertical: true)
                 .accessibilityAddTraits(.isHeader)
         }
-        .padding(.horizontal, PumTokens.Space.s4)
     }
 
     // MARK: 요청 상세 카드
@@ -115,7 +115,7 @@ struct ExtraShiftOfferView: View {
 
     private var divider: some View {
         Rectangle().fill(PumColor.borderHairline).frame(height: 1)
-            .padding(.horizontal, PumTokens.Size.rowPadX)
+            .padding(.horizontal, PumTokens.Space.s18)
     }
 
     /// 좁거나 글자가 크면 라벨 아래로 값이 내려간다
@@ -127,7 +127,7 @@ struct ExtraShiftOfferView: View {
             VStack(alignment: .leading, spacing: PumTokens.Space.s4) { l; v }
         }
         .padding(.vertical, PumTokens.Size.rowPadY + PumTokens.Space.s2)
-        .padding(.horizontal, PumTokens.Size.rowPadX)
+        .padding(.horizontal, PumTokens.Space.s18) // 원문 padding 14 18
         .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin, alignment: .leading)
     }
 
@@ -147,7 +147,8 @@ struct ExtraShiftOfferView: View {
                 Text(state.weekSummary).pumText(.caption).foregroundStyle(PumColor.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
-            .padding(PumTokens.Space.s16)
+            .padding(.horizontal, PumTokens.Space.s16) // 원문 padding 14 16
+            .padding(.vertical, PumTokens.Space.s14)
         }
     }
 }
@@ -165,9 +166,10 @@ private struct WeekCell: View {
         .lineLimit(1)
         .minimumScaleFactor(0.5) // 7칸 한 줄 유지 — 큰 글자에서 넘치면 줄인다
         .frame(maxWidth: .infinity)
-        .padding(.vertical, PumTokens.Space.s6)
+        .padding(.vertical, PumTokens.Space.s2) // 원문 padding 2 0 · margin -2 0
         .background(isRequest ? PumColor.accentSoft : .clear,
                     in: RoundedRectangle(cornerRadius: PumTokens.Radius.sm, style: .continuous))
+        .padding(.vertical, -PumTokens.Space.s2)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(day.accessibilityText))
     }

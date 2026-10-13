@@ -21,7 +21,8 @@ struct InviteSwitchView: View {
                     .padding(.horizontal, PumTokens.Space.s4)
             }
             .padding(.horizontal, PumTokens.Size.screenPad)
-            .padding(.vertical, PumTokens.Space.s16)
+            .padding(.top, PumTokens.Space.s8) // 원문 본문 위 68 = 상태 막대 60 + 8
+            .padding(.bottom, PumTokens.Space.s16)
         }
         .background(PumColor.bgApp)
         .safeAreaInset(edge: .bottom, spacing: 0) { actions }
@@ -44,22 +45,23 @@ struct InviteSwitchView: View {
     private var changeCard: some View {
         PumCard {
             VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
-                Text("수락하면 이렇게 바뀌어요").pumText(.footnote, weight: .semibold).foregroundStyle(PumColor.textSecondary)
+                Text("수락하면 이렇게 바뀌어요").pumText(.footnote, weight: .bold).foregroundStyle(PumColor.textSecondary)
                     .accessibilityAddTraits(.isHeader)
                 comparison
                 Rectangle().fill(PumColor.borderHairline).frame(height: 1)
                 note
             }
-            .padding(PumTokens.Space.s16)
+            .padding(.horizontal, PumTokens.Space.s18) // 원문 padding 16 18
+            .padding(.vertical, PumTokens.Space.s16)
         }
     }
 
     /// 두 상자 — 좁으면(큰 글자) 위아래로 쌓고 화살표는 ↓
     private var comparison: some View {
         ViewThatFits(in: .horizontal) {
-            HStack(spacing: PumTokens.Space.s12) {
+            HStack(spacing: PumTokens.Space.s8) { // 원문 gap 8 · 화살표 칸 24
                 personalBox
-                arrow("arrow.right")
+                arrow("arrow.right").frame(width: PumTokens.Space.s24)
                 workplaceBox
             }
             VStack(spacing: PumTokens.Space.s8) {
@@ -79,7 +81,7 @@ struct InviteSwitchView: View {
     private var personalBox: some View {
         box(fill: PumColor.bgApp) { // 원문: 앱 바탕색과 같은 연회색
             PumMyRecordTag()
-            title(state.personalName)
+            title(state.personalName).padding(.top, PumTokens.Space.s6)
             detail(state.personalPeriod)
             detail(InviteSwitchState.personalDetail)
         }
@@ -90,9 +92,9 @@ struct InviteSwitchView: View {
             // 공통 후보: 연한 초록 바탕 위 흰 배지(PumBadge .done은 연초록 바탕이라 이 위에서 묻힘)
             Text("✓ " + InviteSwitchState.badgeText)
                 .pumText(.caption, weight: .semibold).foregroundStyle(PumColor.statusDone)
-                .padding(.vertical, PumTokens.Space.s4).padding(.horizontal, 9) // PumBadge와 같은 안쪽 여백
+                .padding(.vertical, PumTokens.Space.s2).padding(.horizontal, PumTokens.Space.s8) // 원문 padding 2 7 → 가장 가까운 토큰
                 .background(PumColor.surfaceCard, in: RoundedRectangle(cornerRadius: PumTokens.Radius.sm, style: .continuous))
-            title(state.workplaceName)
+            title(state.workplaceName).padding(.top, PumTokens.Space.s6) // 원문 배지–제목 8 = 2 + 6
             detail(state.startDate, color: PumColor.statusDone) // 원문: 초록 상자 안 보조 글자도 초록
             detail(InviteSwitchState.workplaceDetail, color: PumColor.statusDone)
         }
@@ -128,14 +130,15 @@ struct InviteSwitchView: View {
             VStack(spacing: 0) {
                 Text("사장님이 제안한 근로조건").pumText(.caption, weight: .bold).foregroundStyle(PumColor.textSecondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal, PumTokens.Size.rowPadX)
-                    .padding(.top, PumTokens.Space.s12)
+                    .padding(.horizontal, PumTokens.Space.s18) // 원문 padding 6 18 8 + 제목 8 0 4
+                    .padding(.top, PumTokens.Space.s14)
                     .padding(.bottom, PumTokens.Space.s4)
                     .accessibilityAddTraits(.isHeader)
                 termRow("시급", value: state.hourlyWage, match: state.wageMatchesMine, a11y: state.wageAccessibilityText)
                 termRow("근무", value: state.schedule, a11y: "근무, \(state.schedule)")
                 termRow("급여일", value: state.payday, isLast: true, a11y: "급여일, \(state.payday)")
             }
+            .padding(.bottom, PumTokens.Space.s8) // 원문 아래 8
         }
     }
 
@@ -153,13 +156,12 @@ struct InviteSwitchView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding(.vertical, PumTokens.Size.rowPadY)
-        .padding(.horizontal, PumTokens.Size.rowPadX)
-        .frame(minHeight: PumTokens.Size.tapMin)
+        .padding(.vertical, PumTokens.Space.s10) // 원문 padding 9 0 → 가장 가까운 토큰
+        .padding(.horizontal, PumTokens.Space.s18)
         .overlay(alignment: .bottom) {
             if !isLast {
                 Rectangle().fill(PumColor.borderHairline).frame(height: 1)
-                    .padding(.horizontal, PumTokens.Size.rowPadX)
+                    .padding(.horizontal, PumTokens.Space.s18)
             }
         }
         .accessibilityElement(children: .ignore)
@@ -181,19 +183,20 @@ struct InviteSwitchView: View {
 
     // 5. 하단 고정
     private var actions: some View {
-        VStack(spacing: PumTokens.Space.s4) {
+        VStack(spacing: PumTokens.Space.s10) { // 원문 gap 10
             PumButton(title: "초대 수락 · 계약서 보기", kind: .primary, isLoading: lock.isSending, loadingTitle: "수락하는 중", action: accept)
             Button(action: onDecline) {
                 Text("거절").pumText(.callout, weight: .regular).foregroundStyle(PumColor.textSecondary) // 14px 400
                     .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin)
                     .contentShape(Rectangle())
+                    .padding(.vertical, -2) // 원문 높이 40, 누름 영역만 44
             }
             .buttonStyle(.plain)
             .disabled(lock.isSending)
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
         .padding(.top, PumTokens.Space.s12)
-        .padding(.bottom, PumTokens.Space.s4)
+        .padding(.bottom, PumTokens.Space.s10) // 원문 아래 44 = 홈 막대 34 + 10
         .background(PumColor.bgApp)
     }
 

@@ -80,13 +80,13 @@ struct OwnerTransferView: View {
                 .foregroundStyle(PumColor.textPrimary)
                 .frame(minWidth: PumTokens.Size.tapMin, minHeight: PumTokens.Size.tapMin, alignment: .leading)
                 .contentShape(Rectangle())
+                .padding(.vertical, -PumTokens.Space.s2) // DEC-010: 원문 머리 줄 40(누름 영역은 44 유지)
             }
             .buttonStyle(.plain)
             .accessibilityLabel(Text(OwnerTransferState.backTitle))
             Spacer()
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
-        .padding(.top, PumTokens.Space.s8)
     }
 
     private func cardHeader(_ text: String) -> some View {

@@ -25,12 +25,13 @@ struct DocumentBoxView: View {
         let attention = state.attention(under: filter)
         let years = state.years(under: filter)
         ScrollView {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s20) {
+            VStack(alignment: .leading, spacing: PumTokens.Space.s12) { // 원문 gap 12
                 header
                 filterChips
                 if !attention.isEmpty {
-                    VStack(spacing: PumTokens.Space.s8) {
+                    VStack(spacing: PumTokens.Space.s6) { // 원문: gap 12 − 6
                         PumSectionHeader(title: DocumentBoxState.attentionHeader, attention: true)
+                            .padding(.top, PumTokens.Space.s2) // 원문 padding 2 4 0
                         PumCard(attention: true) {
                             ForEach(attention) { item in
                                 DocumentRow(item: item, isLast: item.id == attention.last?.id,
@@ -40,8 +41,9 @@ struct DocumentBoxView: View {
                     }
                 }
                 ForEach(years) { group in
-                    VStack(spacing: PumTokens.Space.s8) {
+                    VStack(spacing: PumTokens.Space.s6) {
                         PumSectionHeader(title: group.year)
+                            .padding(.top, PumTokens.Space.s2)
                         PumCard {
                             ForEach(group.items) { item in
                                 DocumentRow(item: item, isLast: item.id == group.items.last?.id,
@@ -77,7 +79,6 @@ struct DocumentBoxView: View {
                 workplaceChip
             }
         }
-        .padding(.top, PumTokens.Space.s8)
     }
 
     private var title: some View {
@@ -89,16 +90,17 @@ struct DocumentBoxView: View {
     private var workplaceChip: some View {
         Button(action: onPickWorkplace) {
             HStack(spacing: PumTokens.Space.s6) {
-                Text(DocumentBoxState.workplaceFilterTitle).pumText(.callout).foregroundStyle(PumColor.textPrimary)
+                Text(DocumentBoxState.workplaceFilterTitle).pumText(.footnote, weight: .semibold).foregroundStyle(PumColor.textPrimary)
                 Image(systemName: "chevron.down")
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(PumColor.textSecondary)
                     .accessibilityHidden(true)
             }
-            .padding(.horizontal, PumTokens.Space.s16)
+            .padding(.horizontal, PumTokens.Space.s14) // 원문 padding 8 14
             .frame(minHeight: PumTokens.Size.tapMin)
             .background(PumColor.surfaceCard, in: Capsule())
             .pumRing(.hairline, cornerRadius: PumTokens.Size.tapMin / 2)
+            .padding(.vertical, -PumTokens.Space.s6) // 보이는 높이 약 32, 누름은 44 유지
         }
         .buttonStyle(.plain)
         .accessibilityLabel(Text("사업장: \(DocumentBoxState.workplaceFilterTitle)"))

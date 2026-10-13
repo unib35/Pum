@@ -27,12 +27,13 @@ struct LocationDeniedView: View {
             PumNavHeader(title: LocationDeniedState.screenTitle, onBack: onBack)
                 .padding(.horizontal, PumTokens.Size.screenPad)
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s16) { // 원문 gap 16
                     titleBlock
                     stepsCard
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s16)
+                .padding(.top, PumTokens.Space.s16)
+                .padding(.bottom, PumTokens.Space.s16)
             }
             .scrollBounceBehavior(.basedOnSize)
         }
@@ -51,7 +52,7 @@ struct LocationDeniedView: View {
                 .fixedSize(horizontal: false, vertical: true)
         }
         .padding(.horizontal, PumTokens.Space.s4)
-        .padding(.bottom, PumTokens.Space.s8)
+        .padding(.top, PumTokens.Space.s20) // 원문 padding 20 4 0
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
@@ -66,7 +67,7 @@ struct LocationDeniedView: View {
     }
 
     private var footer: some View {
-        VStack(spacing: PumTokens.Space.s8) {
+        VStack(spacing: PumTokens.Space.s10) { // 원문 gap 10
             PumButton(title: LocationDeniedState.openSettingsTitle, action: onOpenSettings)
             PumButton(title: LocationDeniedState.useQRTitle, kind: .outline, action: onUseQR)
             Button(action: onRequestManual) {
@@ -74,11 +75,13 @@ struct LocationDeniedView: View {
                     .foregroundStyle(PumColor.textSecondary)
                     .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin)
                     .contentShape(Rectangle())
+                    .padding(.vertical, -PumTokens.Space.s4) // 원문 높이 36, 누름은 44 유지
             }
             .buttonStyle(.plain)
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
-        .padding(.vertical, PumTokens.Space.s8)
+        .padding(.top, PumTokens.Space.s12)
+        .padding(.bottom, PumTokens.Space.s10) // 원문 아래 44 − 홈 막대
         .background(PumColor.bgApp)
     }
 }

@@ -7,8 +7,8 @@ struct MaintenanceView: View {
     var onClockOut: () -> Void
     var onClockIn: () -> Void
 
-    /// 회색 원 지름 — 6t와 같은 값(원문 약 24)
-    @ScaledMetric(relativeTo: .body) private var circleSize: CGFloat = 24
+    /// 회색 원 지름 — 원문 26
+    @ScaledMetric(relativeTo: .body) private var circleSize: CGFloat = 26
     private let checkRatio: CGFloat = 0.45
 
     init(state: MaintenanceState = .sample,
@@ -22,6 +22,7 @@ struct MaintenanceView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+                Color.clear.frame(height: PumTokens.Space.s20) // 원문 높이 20 빈 칸
                 VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
                     Text(MaintenanceState.title).pumText(.title2).foregroundStyle(PumColor.textPrimary)
                         .accessibilityAddTraits(.isHeader)
@@ -33,7 +34,6 @@ struct MaintenanceView: View {
                 if let working = state.working { workingCard(working) }
             }
             .padding(.horizontal, PumTokens.Size.screenPad)
-            .padding(.top, PumTokens.Space.s24)
             .padding(.bottom, PumTokens.Space.s8)
         }
         .scrollBounceBehavior(.basedOnSize)
@@ -54,7 +54,7 @@ struct MaintenanceView: View {
 
     private func rowView(_ row: MaintenanceRow) -> some View {
         HStack(alignment: .top, spacing: PumTokens.Space.s12) {
-            Circle().fill(PumColor.surfaceFill)
+            Circle().fill(row.paused ? PumColor.bgApp : PumColor.surfaceFill) // 원문 #F3F4F7 / #EAECF1
                 .overlay {
                     Image(systemName: row.symbol)
                         .font(.system(size: circleSize * checkRatio, weight: .bold))
@@ -94,7 +94,7 @@ struct MaintenanceView: View {
 
     @ViewBuilder private var bottomBar: some View {
         if let action = state.action {
-            VStack(spacing: PumTokens.Space.s8) {
+            VStack(spacing: PumTokens.Space.s10) { // 원문 gap 10
                 // 원문: 먹색 버튼. isLoading을 넘기지 않는다(잠김 금지)
                 PumButton(title: action.title, kind: .dark, action: action.kind == .clockOut ? onClockOut : onClockIn)
                 Text(action.caption).pumText(.caption).foregroundStyle(PumColor.textSecondary)
@@ -102,7 +102,8 @@ struct MaintenanceView: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
             .padding(.horizontal, PumTokens.Size.screenPad)
-            .padding(.vertical, PumTokens.Space.s12)
+            .padding(.top, PumTokens.Space.s12)
+            .padding(.bottom, PumTokens.Space.s10) // 원문 아래 44 − 홈 막대
             .background(PumColor.bgApp)
         }
     }

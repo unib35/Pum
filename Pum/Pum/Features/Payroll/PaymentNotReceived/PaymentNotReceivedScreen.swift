@@ -77,10 +77,10 @@ struct PaymentNotReceivedScreen: View {
             .foregroundStyle(PumColor.textPrimary)
             .frame(minWidth: PumTokens.Size.tapMin, minHeight: PumTokens.Size.tapMin, alignment: .leading)
             .contentShape(Rectangle())
+            .padding(.vertical, -PumTokens.Space.s2) // DEC-010: 원문 머리 줄 40(누름 영역은 44 유지)
         }
         .buttonStyle(.plain)
         .disabled(isSending) // 보내는 동안 떠나지 않게
-        .padding(.top, PumTokens.Space.s8)
         .accessibilityLabel(Text("급여, 뒤로"))
     }
 

@@ -7,8 +7,8 @@ struct ForceUpdateView: View {
     var onUpdate: () -> Void
     var onClockOutOnly: () -> Void
 
-    /// 회색 원 지름 — 21l과 같은 값(원문 약 24)
-    @ScaledMetric(relativeTo: .body) private var circleSize: CGFloat = 24
+    /// 회색 원 지름 — 원문 26
+    @ScaledMetric(relativeTo: .body) private var circleSize: CGFloat = 26
     private let checkRatio: CGFloat = 0.45
 
     init(state: ForceUpdateState = .sample,
@@ -22,6 +22,7 @@ struct ForceUpdateView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+                Color.clear.frame(height: PumTokens.Space.s20) // 원문 높이 20 빈 칸
                 VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
                     Text(ForceUpdateState.title).pumText(.title2).foregroundStyle(PumColor.textPrimary)
                         .accessibilityAddTraits(.isHeader)
@@ -33,7 +34,6 @@ struct ForceUpdateView: View {
                 if let working = state.working { workingCard(working) }
             }
             .padding(.horizontal, PumTokens.Size.screenPad)
-            .padding(.top, PumTokens.Space.s24)
             .padding(.bottom, PumTokens.Space.s8)
         }
         .scrollBounceBehavior(.basedOnSize)
@@ -45,8 +45,7 @@ struct ForceUpdateView: View {
         PumCard {
             ForEach(Array(state.rows.enumerated()), id: \.element.id) { i, row in
                 if i > 0 {
-                    Rectangle().fill(PumColor.borderHairline).frame(height: 1)
-                        .padding(.horizontal, PumTokens.Size.rowPadX)
+                    Rectangle().fill(PumColor.borderHairline).frame(height: 1) // 원문: 카드 끝에서 끝까지
                 }
                 infoRow(row)
             }
@@ -101,7 +100,7 @@ struct ForceUpdateView: View {
     }
 
     private var bottomBar: some View {
-        VStack(spacing: PumTokens.Space.s8) {
+        VStack(spacing: PumTokens.Space.s10) { // 원문 gap 10
             PumButton(title: ForceUpdateState.updateTitle, kind: .primary, action: onUpdate)
             if state.showsClockOut {
                 // 원문: 흰 바탕 · 옅은 테두리 → outline. 처리 중 표시(isLoading)를 넘기면 버튼이 잠기므로 넘기지 않는다
@@ -109,7 +108,8 @@ struct ForceUpdateView: View {
             }
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
-        .padding(.vertical, PumTokens.Space.s12)
+        .padding(.top, PumTokens.Space.s12)
+        .padding(.bottom, PumTokens.Space.s10) // 원문 아래 44 − 홈 막대
         .background(PumColor.bgApp)
     }
 }
