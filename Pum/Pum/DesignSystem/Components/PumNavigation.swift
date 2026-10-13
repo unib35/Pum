@@ -101,13 +101,14 @@ struct PumNavHeader<Trailing: View>: View {
                 if let onBack {
                     PumIconButton(systemImage: "chevron.left", label: "뒤로", action: onBack)
                 } else {
-                    Color.clear.frame(width: PumTokens.Size.tapMin, height: PumTokens.Size.tapMin)
+                    Color.clear.frame(width: PumLayout.navRow, height: PumLayout.navRow)
                 }
                 Spacer()
                 trailing
             }
         }
-        .padding(.top, PumTokens.Space.s8)
+        // DEC-010: 원문 머리 줄은 40pt이고 위 여백이 없다(안전 영역 바로 아래). 누름 영역은 버튼이 44로 지킨다.
+        .frame(height: PumLayout.navRow)
     }
 }
 
@@ -129,9 +130,10 @@ struct PumIconButton: View {
             Image(systemName: systemImage)
                 .font(.system(size: PumLayout.navIcon, weight: .medium))
                 .foregroundStyle(PumColor.textPrimary)
-                .frame(width: PumTokens.Size.tapMin, height: PumTokens.Size.tapMin)
+                // DEC-010: 보이는 원은 원문 40pt, 누름 영역만 44pt(배치는 40)
+                .frame(width: PumLayout.navRow, height: PumLayout.navRow)
                 .background(PumColor.surfaceCard, in: Circle())
-                .pumRing(.hairline, cornerRadius: PumTokens.Size.tapMin / 2)
+                .pumRing(.hairline, cornerRadius: PumLayout.navRow / 2)
                 .overlay(alignment: .topTrailing) {
                     if showsDot {
                         Circle().fill(PumColor.statusAttentionDot)
@@ -139,6 +141,10 @@ struct PumIconButton: View {
                             .offset(x: -PumTokens.Space.s6, y: PumTokens.Space.s6)
                     }
                 }
+                // 누름 영역만 44로 키우고 배치는 40 그대로
+                .padding(PumTokens.Space.s2)
+                .contentShape(Circle())
+                .padding(-PumTokens.Space.s2)
         }
         .buttonStyle(.plain)
         .accessibilityLabel(Text(showsDot ? "\(label), 새 항목 있음" : label))
