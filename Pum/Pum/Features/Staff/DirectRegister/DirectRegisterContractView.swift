@@ -47,7 +47,8 @@ struct DirectRegisterContractView: View {
                     Text(DirectRegisterContractState.subtitle).pumText(.footnote).foregroundStyle(PumColor.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
                         .padding(.horizontal, PumTokens.Space.s4)
-                    card.padding(.top, PumTokens.Space.s12)
+                    card.disabled(isSending) // 보내는 중에는 보낸 값과 어긋나지 않게
+                        .padding(.top, PumTokens.Space.s12)
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
                 .padding(.vertical, PumTokens.Space.s12)
