@@ -23,6 +23,8 @@ struct StaffingNeedsView: View {
     @ScaledMetric(relativeTo: .body) private var dayCellHeight: CGFloat = 49
     /// 스테퍼 알약 최소 높이 — 원문 약 34
     @ScaledMetric(relativeTo: .body) private var stepperHeight: CGFloat = 34
+    /// 스테퍼 인원 글자 칸 최소 폭 — 원문 36
+    @ScaledMetric(relativeTo: .body) private var countMinWidth: CGFloat = 36
 
     init(state: StaffingNeedsState = .sample,
          serverSlots: [StaffingSlot]? = nil,
@@ -46,14 +48,10 @@ struct StaffingNeedsView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
                     weekRow
-                    Group { // 추천을 요청하는 동안은 보낸 값과 화면이 어긋나지 않게 잠근다
-                        dayStrip
-                        PumSectionHeader(title: state.sectionTitle)
-                        slotCard
-                    }
-                    .disabled(state.isRecommending)
-                    PumSectionHeader(title: StaffingNeedsState.conditionsHeading)
-                    conditionChips
+                    // 추천을 요청하는 동안은 보낸 값과 화면이 어긋나지 않게 잠근다
+                    dayStrip.disabled(state.isRecommending)
+                    section(state.sectionTitle) { slotCard }.disabled(state.isRecommending)
+                    section(StaffingNeedsState.conditionsHeading) { conditionChips }
                     if let title = state.missingTitle { missingCard(title) }
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
@@ -72,8 +70,17 @@ struct StaffingNeedsView: View {
             PumButton(title: StaffingNeedsState.recommendTitle, kind: .primary,
                       isLoading: state.isRecommending, action: recommend)
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s12)
+                .padding(.top, PumTokens.Space.s12) // 원문 위 12 · 아래 44 − 안전 영역 34 = 10
+                .padding(.bottom, PumTokens.Space.s10)
                 .background(PumColor.bgApp)
+        }
+    }
+
+    /// 구역 제목 + 내용 — 원문: 제목 위 2 · 제목~내용 6(블록 12 − 6)
+    private func section<C: View>(_ title: String, @ViewBuilder content: () -> C) -> some View {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
+            PumSectionHeader(title: title).padding(.top, PumTokens.Space.s2)
+            content()
         }
     }
 
@@ -109,7 +116,6 @@ struct StaffingNeedsView: View {
                 Spacer()
             }
         }
-        .padding(.top, PumTokens.Space.s8)
         .padding(.horizontal, PumTokens.Size.screenPad)
     }
 
@@ -145,7 +151,7 @@ struct StaffingNeedsView: View {
                     .frame(maxWidth: .infinity, minHeight: max(dayCellHeight, PumTokens.Size.tapMin))
                     .background {
                         if on {
-                            RoundedRectangle(cornerRadius: PumTokens.Radius.xl, style: .continuous).fill(PumColor.surfaceInverse)
+                            RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous).fill(PumColor.surfaceInverse) // 원문 12
                         }
                     }
                     .contentShape(Rectangle())
@@ -189,7 +195,7 @@ struct StaffingNeedsView: View {
             HStack(spacing: PumTokens.Space.s12) { time.fixedSize(); Spacer(minLength: 0); stepper(slot) }
             VStack(alignment: .leading, spacing: PumTokens.Space.s8) { time; stepper(slot) }
         }
-        .padding(.vertical, PumTokens.Space.s10)
+        .padding(.vertical, PumTokens.Size.rowPadY) // 원문 padding 12 16
         .padding(.horizontal, PumTokens.Size.rowPadX)
         .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin, alignment: .leading)
         // 시간대 + 인원을 한 번에 읽고, 위아래로 쓸어 조정한다
@@ -215,6 +221,7 @@ struct StaffingNeedsView: View {
             stepButton("minus", enabled: state.canDecrement(slot)) { step(slot, by: -1) }
             Text("\(slot.count)명").pumText(.body, weight: .bold).foregroundStyle(PumColor.textPrimary)
                 .lineLimit(1).fixedSize()
+                .frame(minWidth: countMinWidth)
             stepButton("plus", enabled: state.canIncrement(slot)) { step(slot, by: 1) }
         }
         .frame(minHeight: stepperHeight)
@@ -228,6 +235,7 @@ struct StaffingNeedsView: View {
                 .foregroundStyle(enabled ? PumTokens.ColorToken.gray700 : PumColor.textDisabled)
                 .frame(width: PumTokens.Size.tapMin, height: PumTokens.Size.tapMin)
                 .contentShape(Rectangle())
+                .padding(.horizontal, -(PumTokens.Size.tapMin - stepperHeight) / 2) // 배치는 원문 34 × 34
         }
         .buttonStyle(.plain)
         .disabled(!enabled)
@@ -237,12 +245,12 @@ struct StaffingNeedsView: View {
     // MARK: 조건 칩 — 읽기 전용 · 줄바꿈 흐름 배치(공통 후보)
 
     private var conditionChips: some View {
-        PumFlowLayout(spacing: PumTokens.Space.s8) {
+        PumFlowLayout(spacing: PumTokens.Space.s6) { // 원문 칩 사이 6
             ForEach(Array(state.conditions.enumerated()), id: \.offset) { _, text in
                 Text(text).pumText(.caption, weight: .semibold)
                     .foregroundStyle(PumTokens.ColorToken.gray700)
-                    .padding(.horizontal, PumTokens.Space.s12)
-                    .padding(.vertical, PumTokens.Space.s6)
+                    .padding(.horizontal, PumTokens.Space.s8) // 원문 padding 5 9 → 가까운 4 8
+                    .padding(.vertical, PumTokens.Space.s4)
                     .background(PumColor.surfaceFill, in: RoundedRectangle(cornerRadius: PumTokens.Radius.sm, style: .continuous))
             }
         }
@@ -267,10 +275,10 @@ struct StaffingNeedsView: View {
         .accessibilityLabel(Text("근무 가능 시간 요청"))
         return PumCard(attention: true) {
             ViewThatFits(in: .horizontal) {
-                HStack(spacing: PumTokens.Space.s8) { text.frame(maxWidth: .infinity, alignment: .leading); request }
+                HStack(spacing: PumTokens.Space.s10) { text.frame(maxWidth: .infinity, alignment: .leading); request } // 원문 칸 사이 10
                 VStack(alignment: .leading, spacing: PumTokens.Space.s4) { text; request }
             }
-            .padding(.vertical, PumTokens.Space.s10)
+            .padding(.vertical, PumTokens.Space.s12) // 원문 padding 12 16
             .padding(.horizontal, PumTokens.Space.s16)
             .frame(maxWidth: .infinity, alignment: .leading)
         }

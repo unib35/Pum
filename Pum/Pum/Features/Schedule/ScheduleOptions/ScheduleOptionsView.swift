@@ -53,7 +53,7 @@ struct ScheduleOptionsView: View {
     private var currentCard: some View {
         PumCard(attention: true) {
             ViewThatFits(in: .horizontal) {
-                HStack(alignment: .center, spacing: PumTokens.Space.s12) {
+                HStack(alignment: .center, spacing: PumTokens.Space.s10) { // 원문 칸 사이 10
                     currentLeading.frame(maxWidth: .infinity, alignment: .leading)
                     shortagePill
                 }
@@ -62,7 +62,8 @@ struct ScheduleOptionsView: View {
                     shortagePill
                 }
             }
-            .padding(PumTokens.Space.s16)
+            .padding(.horizontal, PumTokens.Space.s16) // 원문 padding 12 16
+            .padding(.vertical, PumTokens.Space.s12)
             .frame(maxWidth: .infinity, alignment: .leading)
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(Text(state.currentAccessibilityText))
@@ -81,9 +82,9 @@ struct ScheduleOptionsView: View {
             Text(text)
                 .pumText(.caption, weight: .semibold)
                 .foregroundStyle(PumColor.statusAttention)
-                .padding(.horizontal, PumTokens.Space.s12)
-                .padding(.vertical, PumTokens.Space.s6)
-                .background(PumColor.statusAttentionSoft, in: Capsule())
+                .padding(.horizontal, PumTokens.Space.s8) // 원문 padding 4 9
+                .padding(.vertical, PumTokens.Space.s4)
+                .background(PumColor.statusAttentionSoft, in: RoundedRectangle(cornerRadius: PumTokens.Radius.sm, style: .continuous)) // 원문 모서리 8
                 .fixedSize(horizontal: false, vertical: true)
         }
     }
@@ -99,7 +100,7 @@ struct ScheduleOptionsView: View {
             selectedID = option.id
             onSelect(option.id)
         } label: {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+            VStack(alignment: .leading, spacing: PumTokens.Space.s10) { // 원문 선 위아래 10
                 VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
                     HStack(alignment: .firstTextBaseline, spacing: PumTokens.Space.s8) {
                         Text(option.name).pumText(.footnote, weight: .bold)
@@ -109,12 +110,14 @@ struct ScheduleOptionsView: View {
                             .foregroundStyle(option.direction == .decrease ? PumColor.statusDone : PumTokens.ColorToken.gray700)
                     }
                     Text(option.totalText + "원").pumText(.title2).foregroundStyle(PumColor.textPrimary)
+                        .padding(.top, PumTokens.Space.s2) // 원문 금액 위 4 = 2 + 2
                     Text(option.changeText).pumText(.caption, weight: .regular).foregroundStyle(PumColor.textSecondary)
                 }
                 Rectangle().fill(PumColor.borderHairline).frame(height: 1)
                 checkRow(option)
             }
-            .padding(PumChoiceCardStyle.padding)
+            .padding(.horizontal, PumTokens.Space.s16) // 원문 padding 14 16
+            .padding(.vertical, PumTokens.Space.s14)
             .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin, alignment: .leading)
             .background(PumColor.surfaceCard, in: RoundedRectangle(cornerRadius: r, style: .continuous))
             .overlay {
@@ -135,7 +138,7 @@ struct ScheduleOptionsView: View {
     private func checkRow(_ option: ScheduleOption) -> some View {
         let items = option.checks
         return ViewThatFits(in: .horizontal) {
-            HStack(spacing: PumTokens.Space.s12) {
+            HStack(spacing: PumTokens.Space.s10) { // 원문 칸 사이 10
                 ForEach(items, id: \.title) { checkItem($0) }
             }
             VStack(alignment: .leading, spacing: PumTokens.Space.s4) {
@@ -162,8 +165,8 @@ struct ScheduleOptionsView: View {
         if let option = state.option(id: selectedID) {
             PumButton(title: option.detailTitle, kind: .primary) { onShowDetail(option.id) }
             .padding(.horizontal, PumTokens.Size.screenPad)
-            .padding(.top, PumTokens.Space.s8)
-            .padding(.bottom, PumTokens.Space.s12)
+            .padding(.top, PumTokens.Space.s12) // 원문 위 12 · 아래 44 − 안전 영역 34 = 10
+            .padding(.bottom, PumTokens.Space.s10)
         }
     }
 }
