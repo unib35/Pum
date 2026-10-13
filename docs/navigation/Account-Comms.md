@@ -1,6 +1,6 @@
 # 내 정보(Account) · 소식(Comms) 화면 연결
 
-요약: 이은 화면 21 / 전체 21 (Account 16 + Comms 5). 단, 화면 안에 남은 버튼 상당수는 흐름 지도에 다음 화면이 없어 잇지 못했다. 기준: 흐름 지도 J2 · J11 · J13 · J14 · J15와 화면 이름이 가리키는 목적지. 프로토타입이라 `done(true)` 후 다음 화면으로 간다. 탭 바 이동은 `AppShell`이 처리하므로 `onSelectTab`은 잇지 않았다. 코드: `Pum/Pum/Features/Account/AccountRoute.swift` · `Pum/Pum/Features/Comms/CommsRoute.swift`.
+요약: 이은 화면 21 / 전체 21 (Account 16 + Comms 5). 단, 화면 안에 남은 버튼 상당수는 흐름 지도에 다음 화면이 없어 잇지 못했다. 기준: 흐름 지도 J2 · J11 · J13 · J14 · J15와 화면 이름이 가리키는 목적지. 프로토타입이라 `done(true)` 후 다음 화면으로 간다. 탭 바 이동은 `AppShell`이 처리하므로 `onSelectTab`은 잇지 않았다. 코드: `Pum/Pum/Features/Settings/SettingsRoute.swift · Features/Employee/EmployeeRoute.swift · Features/Auth/AuthRoute.swift` · `Pum/Pum/Features/Notice/NoticeRoute.swift`.
 
 ## Account
 

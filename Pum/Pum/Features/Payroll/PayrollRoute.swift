@@ -217,7 +217,7 @@ enum PayrollRoute: String, CaseIterable, Hashable {
                 onBack: router.back,
                 onSend: { _, done in
                     done(true)
-                    router.replace(with: .contract(.wageChangeContract))
+                    router.replace(with: .employee(.wageChangeContract))
                 }
             )
         case .workClosingDirect:

@@ -27,20 +27,22 @@ API / Database
 
 ## 폴더
 
-기술 계층보다 **기능(Feature) 중심**으로 나눈다.
+기술 계층보다 **기능(Feature) 중심**으로 나눈다(2026-10-13 사용자 결정: 문서의 7개 + Home · Notice).
 
 ```text
-Features/
-├── Auth
-├── Workplace
-├── Employee
-├── Schedule
-├── Attendance
-├── Payroll
-└── Settings
+Pum/Pum/Features/
+├── Auth        시작 · 로그인 · 본인인증 · 약관 동의 · 탈퇴 · 계정 보안
+├── Workplace   사업장 만들기 · 인증 · 설정 · 출근 방식 · QR
+├── Employee    직원 목록 · 초대 · 초대 수락 · 계약서 · 관리자 · 퇴사 · 연차 · 재직증명서 · 문서함
+├── Schedule    스케줄 · 대타 · 추가 근무
+├── Attendance  출퇴근 · 근무기록 · 수정 요청 · 휴게
+├── Payroll     근무 마감 · 급여 · 명세서 · 지급
+├── Settings    내 정보 · 알림 · 권한 · 약관 보기 · 고객센터 · 업데이트 · 점검
+├── Home        직원 · 사장님 홈(어느 한 기능에 딱 맞지 않아 따로)
+└── Notice      소식 · 공지
 ```
 
-지금 저장소의 `Pum/Pum/Features/`는 Account · Attendance · Comms · Contract · Home · Onboarding · Payroll · Schedule · Staff · Workplace 10개다. 위 이름(Auth · Employee · Settings)과 맞출지는 아직 정하지 않았다 — 정해지기 전에는 폴더를 옮기지 않는다.
+테스트도 같은 이름으로 `Pum/PumTests/Features/<기능>/`에 둔다.
 
 ## 내비게이션
 
@@ -59,10 +61,11 @@ View
 
 ```text
 AppRoute (Pum/Pum/App/AppRoute.swift)
-├── AttendanceRoute (Features/Attendance/AttendanceRoute.swift)
+├── AuthRoute (Features/Auth/AuthRoute.swift)
+├── EmployeeRoute
+├── AttendanceRoute
 ├── PayrollRoute
-├── StaffRoute
-└── …
+└── … (기능 폴더마다 하나)
 ```
 
 - `AppRouter`(`Pum/Pum/App/AppRouter.swift`): 탭마다 쌓인 화면을 따로 기억하고 `navigate` · `back` · `backToRoot` · `replace` · `select(tab)`을 제공한다.
