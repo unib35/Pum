@@ -37,18 +37,19 @@ struct VerifyIntroView: View {
 
     /// 뒤 화면(시트에 덮여 어둡게): 머리 + QR 카드. 시트가 열리면 공통 C9가 VoiceOver에서 숨긴다.
     private var background: some View {
-        VStack(spacing: PumTokens.Space.s16) {
+        VStack(spacing: PumTokens.Space.s14) {
             PumNavHeader(title: VerifyIntroState.screenTitle, onBack: onBack)
             PumCard {
-                VStack(spacing: PumTokens.Space.s16) {
-                    RoundedRectangle(cornerRadius: PumTokens.Radius.xl, style: .continuous)
+                VStack(spacing: PumTokens.Space.s12) {
+                    RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous)
                         .fill(PumColor.surfaceFill)
                         .frame(width: qrBox, height: qrBox)
                         .accessibilityHidden(true)
                     Text(state.qrCaption).pumText(.headline, weight: .bold) // 16px 700 → 17
                         .foregroundStyle(PumColor.textPrimary)
                 }
-                .padding(PumTokens.Space.s24)
+                .padding(.vertical, PumTokens.Space.s24)
+                .padding(.horizontal, PumTokens.Space.s20)
                 .frame(maxWidth: .infinity)
             }
             Spacer(minLength: 0)
