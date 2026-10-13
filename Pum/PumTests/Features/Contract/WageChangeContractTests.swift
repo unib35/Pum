@@ -25,6 +25,7 @@ struct WageChangeContractTests {
     @Test func 읽기_문구() {
         let s = WageChangeContractState.sample
         #expect(s.wageSpoken == "시급, 2027년 1월 1일부터, 지금 10,320원, 1월부터 10,700원")
+        #expect(s.wageTilesSpoken == "지금 10,320원, 1월부터 10,700원")
         #expect(s.impactSpoken == "예상 월 급여, 9월 근무 기준 · 주휴 포함, +16,530원")
         #expect(s.sentSpoken == "결정 필요, 오늘 10:40")
     }

@@ -7,6 +7,8 @@ struct WageChangeContractView: View {
     var onBack: () -> Void
     var onOpenFull: () -> Void
     var onSign: () -> Void
+    /// 서명 처리 중 — 호출하는 쪽 값. 처리 중에는 「서명하기」에만 표시하고 다시 누를 수 없다.
+    let isSigning: Bool
 
     @Environment(\.dynamicTypeSize) private var typeSize
 
@@ -16,8 +18,10 @@ struct WageChangeContractView: View {
     init(state: WageChangeContractState,
          onBack: @escaping () -> Void = {},
          onOpenFull: @escaping () -> Void = {},
-         onSign: @escaping () -> Void = {}) {
+         onSign: @escaping () -> Void = {},
+         isSigning: Bool = false) {
         self.state = state
+        self.isSigning = isSigning
         self.onBack = onBack
         self.onOpenFull = onOpenFull
         self.onSign = onSign
@@ -87,12 +91,14 @@ struct WageChangeContractView: View {
 
     private var sender: some View {
         HStack(spacing: PumTokens.Space.s12) {
+            if !state.senderInitial.isEmpty {
             Text(state.senderInitial)
                 .font(PumFont.font(size: avatarSize * 0.42, weight: .bold, relativeTo: .caption))
                 .foregroundStyle(PumTokens.ColorToken.gray800)
                 .frame(width: avatarSize, height: avatarSize)
                 .background(PumTokens.ColorToken.gray200, in: Circle())
                 .accessibilityHidden(true)
+            }
             Text(state.senderText).pumText(.callout, weight: .regular)
                 .foregroundStyle(PumTokens.ColorToken.gray800)
                 .fixedSize(horizontal: false, vertical: true)
@@ -109,13 +115,14 @@ struct WageChangeContractView: View {
             Text(state.wageHeading).pumText(.body, weight: .bold).foregroundStyle(PumColor.textPrimary)
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.horizontal, PumTokens.Space.s4)
+                .accessibilityAddTraits(.isHeader)
             ViewThatFits(in: .horizontal) {
                 HStack(spacing: PumTokens.Space.s8) { currentTile; newTile }
                 VStack(spacing: PumTokens.Space.s8) { currentTile; newTile }
             }
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(Text(state.wageTilesSpoken))
         }
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(Text(state.wageSpoken))
     }
 
     private var currentTile: some View {
@@ -229,7 +236,7 @@ struct WageChangeContractView: View {
 
     @ViewBuilder private var buttons: some View {
         let full = PumButton(title: WageChangeContractState.fullTitle, kind: .outline, action: onOpenFull)
-        let sign = PumButton(title: WageChangeContractState.signTitle, action: onSign)
+        let sign = PumButton(title: WageChangeContractState.signTitle, isLoading: isSigning, action: onSign)
         if typeSize.isAccessibilitySize {
             VStack(spacing: PumTokens.Space.s8) { sign; full }
         } else {

@@ -58,6 +58,8 @@ nonisolated struct WageChangeContractState: Equatable, Sendable {
     var wageSpoken: String {
         "시급, \(effectiveDateText)부터, \(Self.nowLabel) \(currentWageText), \(newLabel) \(newWageText)"
     }
+    /// 두 칸만 — 제목은 따로 헤더로 읽는다. 「지금 10,320원, 1월부터 10,700원」
+    var wageTilesSpoken: String { "\(Self.nowLabel) \(currentWageText), \(newLabel) \(newWageText)" }
     /// 「예상 월 급여, 9월 근무 기준 · 주휴 포함, +16,530원」
     var impactSpoken: String { "\(Self.impactTitle), \(impactBasisText), \(impactDifferenceText)" }
     var workRowSpoken: String { "\(workRowTitle), \(workRowValue)" }
