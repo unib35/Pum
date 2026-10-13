@@ -27,14 +27,15 @@ struct CoverRequestReceivedView: View {
         VStack(spacing: 0) {
             backRow
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s14) { // 원문 블록 사이 14
                     header
                     shiftCard
                     impactCard
                     stepsCard
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s12)
+                .padding(.top, PumTokens.Space.s14) // 원문 머리 줄 아래 14
+                .padding(.bottom, PumTokens.Space.s12)
             }
         }
         .background(PumColor.bgApp)
@@ -70,15 +71,19 @@ struct CoverRequestReceivedView: View {
     }
 
     private var header: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
-            HStack(spacing: PumTokens.Space.s8) {
-                PumBadge(text: CoverRequestReceivedState.needsDecisionTitle, kind: .attention)
-                Text(state.sentAtText).pumText(.footnote, weight: .medium).foregroundStyle(PumColor.textSecondary)
+        // 원문: 배지 · 제목 묶음(padding 2 4 0, 제목 위 6) 다음 보낸 사람 줄이 블록 사이 14로 이어진다
+        VStack(alignment: .leading, spacing: PumTokens.Space.s14) {
+            VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
+                HStack(spacing: PumTokens.Space.s8) {
+                    PumBadge(text: CoverRequestReceivedState.needsDecisionTitle, kind: .attention)
+                    Text(state.sentAtText).pumText(.footnote, weight: .medium).foregroundStyle(PumColor.textSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                Text(CoverRequestReceivedState.title).pumText(.title2).foregroundStyle(PumColor.textPrimary)
                     .fixedSize(horizontal: false, vertical: true)
+                    .accessibilityAddTraits(.isHeader)
             }
-            Text(CoverRequestReceivedState.title).pumText(.title2).foregroundStyle(PumColor.textPrimary)
-                .fixedSize(horizontal: false, vertical: true)
-                .accessibilityAddTraits(.isHeader)
+            .padding(.top, PumTokens.Space.s2)
             HStack(spacing: PumTokens.Space.s10) {
                 Text(state.senderInitial)
                     .pumText(.caption2, weight: .bold).foregroundStyle(PumColor.accent)
@@ -99,7 +104,7 @@ struct CoverRequestReceivedView: View {
 
     private var shiftCard: some View {
         PumCard {
-            HStack(spacing: PumTokens.Space.s16) {
+            HStack(spacing: PumTokens.Space.s12) { // 원문 gap 12
                 VStack(spacing: 0) {
                     Text(state.weekdayText).pumText(.caption2, weight: .regular).foregroundStyle(PumColor.textSecondary)
                     Text(state.dayText).pumText(.headline, weight: .bold).foregroundStyle(PumColor.textPrimary)
@@ -113,7 +118,7 @@ struct CoverRequestReceivedView: View {
                 .fixedSize(horizontal: false, vertical: true)
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .padding(.vertical, PumTokens.Space.s16)
+            .padding(.vertical, PumTokens.Size.rowPadY) // 원문 padding 11 16 → 가까운 12
             .padding(.horizontal, PumTokens.Size.rowPadX)
             .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin, alignment: .leading)
         }
@@ -129,8 +134,8 @@ struct CoverRequestReceivedView: View {
                 .foregroundStyle(PumColor.textPrimary)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, PumTokens.Size.rowPadX)
-                .padding(.top, PumTokens.Size.rowPadY + PumTokens.Space.s2)
-                .padding(.bottom, PumTokens.Space.s2)
+                .padding(.top, PumTokens.Space.s14) // 원문 padding 14 16 4
+                .padding(.bottom, PumTokens.Space.s4)
                 .accessibilityAddTraits(.isHeader)
             impactRow(CoverRequestReceivedState.weekHoursLabel, state.weekHoursText, note: nil)
                 .accessibilityElement(children: .ignore)
@@ -160,9 +165,9 @@ struct CoverRequestReceivedView: View {
             }
             VStack(alignment: .leading, spacing: PumTokens.Space.s4) { l; v }
         }
-        .padding(.vertical, PumTokens.Size.rowPadY + PumTokens.Space.s2)
+        .padding(.vertical, PumTokens.Size.rowPadY) // 원문 padding 11 16 → 가까운 12
         .padding(.horizontal, PumTokens.Size.rowPadX)
-        .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin, alignment: .leading)
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     // MARK: 3단계
@@ -212,7 +217,7 @@ struct CoverRequestReceivedView: View {
             // 처리 중에는 눌러도 반응하지 않는다(모양은 그대로 — 두 번 보내지 않기)
             .allowsHitTesting(!state.isResponding)
             .padding(.horizontal, PumTokens.Size.screenPad)
-            .padding(.vertical, PumTokens.Space.s12)
+            .padding(.top, PumTokens.Space.s12) // 원문 padding 12 20 34 — 아래 34는 홈 표시 영역이 대신한다
             .background(PumColor.bgApp)
     }
 

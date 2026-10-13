@@ -25,14 +25,14 @@ struct DayFixSheet: View {
     private var locked: Bool { isSaving || isSaved }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s14) { // 원문 블록 사이 14
             header
             segments.disabled(locked)
             if DayFixState.showsTimes(draft) {
                 timeFields.disabled(locked)
             }
             if let p = state.visiblePreview(for: draft) { previewCard(p) }
-            VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+            VStack(alignment: .leading, spacing: PumTokens.Space.s6) { // 원문 라벨~칸 6
                 label(DayFixState.reasonTitle)
                 reasonField
             }
@@ -50,7 +50,7 @@ struct DayFixSheet: View {
     // MARK: 머리
 
     private var header: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s4) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s2) { // 원문 부제 위 2
             Text(state.dateTitle).pumText(.title3, weight: .bold).foregroundStyle(PumColor.textPrimary)
                 .fixedSize(horizontal: false, vertical: true)
                 .accessibilityAddTraits(.isHeader)
@@ -58,12 +58,13 @@ struct DayFixSheet: View {
                 .fixedSize(horizontal: false, vertical: true)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.top, PumTokens.Space.s4)
+        .padding(.horizontal, PumTokens.Space.s2) // 원문 padding 0 2
     }
 
     private func label(_ text: String) -> some View {
         Text(text).pumText(.footnote, weight: .semibold).foregroundStyle(PumTokens.ColorToken.gray800)
             .fixedSize(horizontal: false, vertical: true)
+            .padding(.horizontal, PumTokens.Space.s2) // 원문 라벨 padding 0 2
     }
 
     // MARK: 세그먼트
@@ -81,14 +82,19 @@ struct DayFixSheet: View {
                         .pumText(.callout, weight: selected ? .semibold : .medium)
                         .foregroundStyle(selected ? PumColor.textPrimary : PumColor.textSecondary)
                         .multilineTextAlignment(.center)
-                        .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin)
+                        .padding(.vertical, PumTokens.Space.s8) // 원문 칸 padding 8 6
+                        .padding(.horizontal, PumTokens.Space.s6)
+                        .frame(maxWidth: .infinity)
                         .background {
                             if selected {
-                                RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous)
+                                RoundedRectangle(cornerRadius: PumTokens.Radius.sm, style: .continuous)
                                     .fill(PumColor.surfaceCard)
                             }
                         }
+                        // 누름 영역만 44 이상으로 키우고 배치는 원문 칸 높이만 쓴다
+                        .padding(.vertical, PumTokens.Space.s6)
                         .contentShape(Rectangle())
+                        .padding(.vertical, -PumTokens.Space.s6)
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel(Text(kind.title)) // 「선택됨」은 .isSelected가 읽는다
@@ -96,18 +102,18 @@ struct DayFixSheet: View {
             }
         }
         .padding(PumTokens.Space.s2)
-        .background(PumColor.surfaceFill, in: RoundedRectangle(cornerRadius: PumTokens.Radius.lg, style: .continuous))
+        .background(PumColor.surfaceFill, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous)) // 원문 모서리 10 → 가까운 12
     }
 
     // MARK: 시간 칸
 
     private var timeFields: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s14) {
             ViewThatFits(in: .horizontal) {
-                HStack(alignment: .top, spacing: PumTokens.Space.s16) { startField; endField }
-                VStack(alignment: .leading, spacing: PumTokens.Space.s12) { startField; endField }
+                HStack(alignment: .top, spacing: PumTokens.Space.s8) { startField; endField } // 원문 칸 사이 8
+                VStack(alignment: .leading, spacing: PumTokens.Space.s14) { startField; endField }
             }
-            VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+            VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
                 label(DayFixState.breakTitle)
                 breakMenu
             }
@@ -123,7 +129,7 @@ struct DayFixSheet: View {
     }
 
     private func timeField(title: String, minutes: Int, field: DayFixField, action: @escaping () -> Void) -> some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s6) { // 원문 라벨~칸 6
             label(title)
             Button(action: action) {
                 fieldBox(ring: focusedField == field ? Self.focusRing : .hairline) {
@@ -162,8 +168,8 @@ struct DayFixSheet: View {
         content()
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, PumTokens.Space.s14) // 원문 padding 0 14
+            .padding(.vertical, PumTokens.Space.s14) // 원문 상자 높이 50(글자 한 줄 + 14 × 2)
             .frame(minHeight: PumTokens.Size.tapMin)
-            .padding(.vertical, PumTokens.Space.s4) // 원문 상자 높이 50(44 + 4 + 4 ≈ 52)
             .background(PumColor.surfaceCard, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
             .pumRing(ring, cornerRadius: PumTokens.Radius.md)
             .contentShape(Rectangle())
@@ -200,7 +206,7 @@ struct DayFixSheet: View {
         }
         .padding(.horizontal, PumTokens.Size.rowPadX)
         .padding(.vertical, PumTokens.Size.rowPadY)
-        .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin, alignment: .leading)
+        .frame(maxWidth: .infinity, alignment: .leading)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(readout))
     }
@@ -216,8 +222,8 @@ struct DayFixSheet: View {
             .disabled(locked)
             .onChange(of: draft.reason) { if reasonFocused { onEdit() } } // 서버 값으로 바뀐 것은 손댄 것이 아님
             .padding(.horizontal, PumTokens.Space.s14) // 원문 padding 0 14
+            .padding(.vertical, PumTokens.Space.s14) // 원문 상자 높이 50(글자 한 줄 + 14 × 2)
             .frame(minHeight: PumTokens.Size.tapMin)
-            .padding(.vertical, PumTokens.Space.s4) // 원문 상자 높이 50
             .background(PumColor.surfaceCard, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
             .pumRing(reasonFocused ? Self.focusRing : .hairline, cornerRadius: PumTokens.Radius.md)
             .accessibilityLabel(Text(DayFixState.reasonTitle))
@@ -237,7 +243,6 @@ struct DayFixSheet: View {
             }
         }
         .disabled(isSaved)
-        .padding(.top, PumTokens.Space.s4)
     }
 }
 

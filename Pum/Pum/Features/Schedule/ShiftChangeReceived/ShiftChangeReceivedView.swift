@@ -26,16 +26,18 @@ struct ShiftChangeReceivedView: View {
         VStack(spacing: 0) {
             backRow
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s14) { // 원문 블록 사이 14
                     header
                     Text(state.dateText).pumText(.body, weight: .bold).foregroundStyle(PumColor.textPrimary)
                         .padding(.horizontal, PumTokens.Space.s4)
+                        .padding(.top, PumTokens.Space.s4) // 원문 padding 4 4 0
                     timesPair
                     reasonCard
                     impactCard
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s12)
+                .padding(.top, PumTokens.Space.s14) // 원문 머리 줄 아래 14
+                .padding(.bottom, PumTokens.Space.s12)
             }
         }
         .background(PumColor.bgApp)
@@ -71,17 +73,21 @@ struct ShiftChangeReceivedView: View {
     }
 
     private var header: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
-            HStack(spacing: PumTokens.Space.s8) {
-                PumBadge(text: ShiftChangeReceivedState.needsDecisionTitle, kind: .attention)
-                Text(state.sentAtText).pumText(.footnote, weight: .medium).foregroundStyle(PumColor.textSecondary)
+        // 원문: 배지 · 제목 묶음(padding 2 4 0, 제목 위 6) 다음 보낸 사람 줄이 블록 사이 14로 이어진다
+        VStack(alignment: .leading, spacing: PumTokens.Space.s14) {
+            VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
+                HStack(spacing: PumTokens.Space.s8) {
+                    PumBadge(text: ShiftChangeReceivedState.needsDecisionTitle, kind: .attention)
+                    Text(state.sentAtText).pumText(.footnote, weight: .medium).foregroundStyle(PumColor.textSecondary)
+                }
+                Text(ShiftChangeReceivedState.title).pumText(.title2).foregroundStyle(PumColor.textPrimary)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .accessibilityAddTraits(.isHeader)
             }
-            Text(ShiftChangeReceivedState.title).pumText(.title2).foregroundStyle(PumColor.textPrimary)
-                .fixedSize(horizontal: false, vertical: true)
-                .accessibilityAddTraits(.isHeader)
+            .padding(.top, PumTokens.Space.s2)
             HStack(spacing: PumTokens.Space.s10) {
                 Text(state.senderInitial)
-                    .pumText(.caption2, weight: .bold).foregroundStyle(PumColor.textSecondary)
+                    .pumText(.caption2, weight: .bold).foregroundStyle(PumTokens.ColorToken.gray800) // 원문 #3A4150
                     .frame(width: senderSize, height: senderSize)
                     .background(PumColor.surfaceFill, in: Circle())
                     .accessibilityHidden(true)
@@ -115,7 +121,7 @@ struct ShiftChangeReceivedView: View {
         .lineLimit(1)
         .fixedSize()
         .padding(.vertical, PumTokens.Space.s12)
-        .padding(.horizontal, PumTokens.Space.s16)
+        .padding(.horizontal, PumTokens.Space.s14) // 원문 padding 12 14
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
@@ -127,9 +133,9 @@ struct ShiftChangeReceivedView: View {
         .lineLimit(1)
         .fixedSize()
         .padding(.vertical, PumTokens.Space.s12)
-        .padding(.horizontal, PumTokens.Space.s16)
+        .padding(.horizontal, PumTokens.Space.s14)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(PumColor.accentSoft, in: RoundedRectangle(cornerRadius: PumTokens.Radius.lg, style: .continuous))
+        .background(PumColor.accentSoft, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
     }
 
     // MARK: 카드
@@ -146,8 +152,8 @@ struct ShiftChangeReceivedView: View {
                 .foregroundStyle(PumColor.textPrimary)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, PumTokens.Size.rowPadX)
-                .padding(.top, PumTokens.Size.rowPadY + PumTokens.Space.s2)
-                .padding(.bottom, PumTokens.Space.s2)
+                .padding(.top, PumTokens.Space.s14) // 원문 padding 14 16 4
+                .padding(.bottom, PumTokens.Space.s4)
                 .accessibilityAddTraits(.isHeader)
             row(ShiftChangeReceivedState.creditedLabel, state.creditedText)
                 .accessibilityElement(children: .ignore)
@@ -167,15 +173,15 @@ struct ShiftChangeReceivedView: View {
             HStack(alignment: .firstTextBaseline, spacing: PumTokens.Space.s12) { l.fixedSize(); Spacer(minLength: 0); v }
             VStack(alignment: .leading, spacing: PumTokens.Space.s4) { l; v }
         }
-        .padding(.vertical, PumTokens.Size.rowPadY + PumTokens.Space.s2)
+        .padding(.vertical, PumTokens.Size.rowPadY) // 원문 padding 11 16 → 가까운 12
         .padding(.horizontal, PumTokens.Size.rowPadX)
-        .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin, alignment: .leading)
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     // MARK: 하단
 
     private var footer: some View {
-        VStack(spacing: PumTokens.Space.s12) {
+        VStack(spacing: PumTokens.Space.s10) { // 원문 버튼~안내 10
             buttons
                 // 처리 중에는 눌러도 반응하지 않는다(모양은 그대로 — 두 번 보내지 않기)
                 .allowsHitTesting(!state.isResponding)
@@ -184,7 +190,7 @@ struct ShiftChangeReceivedView: View {
                 .fixedSize(horizontal: false, vertical: true)
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
-        .padding(.vertical, PumTokens.Space.s12)
+        .padding(.top, PumTokens.Space.s12) // 원문 padding 12 20 34 — 아래 34는 홈 표시 영역이 대신한다
         .background(PumColor.bgApp)
     }
 
