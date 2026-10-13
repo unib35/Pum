@@ -14,31 +14,29 @@ struct StaffAddSheet: View {
     }
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
-                Text(StaffAddState.title).pumText(.title3, weight: .bold).foregroundStyle(PumColor.textPrimary)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .padding(.top, PumTokens.Space.s4)
-                    .accessibilityAddTraits(.isHeader)
-                PumCard {
-                    ForEach(Array(StaffAddMethod.allCases.enumerated()), id: \.element.id) { i, m in
-                        if i > 0 { Divider().overlay(PumColor.borderHairline) }
-                        row(m)
-                    }
-                }
-                Text(StaffAddState.notice).pumText(.footnote).foregroundStyle(PumColor.textSecondary)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .padding(.horizontal, PumTokens.Space.s4)
-                PumButton(title: StaffAddState.nextTitle) {
-                    if let selection { onNext(selection) }
-                }
-                .disabled(!state.canNext(selection))
+        // 스크롤은 공통 시트 판이 한다 — 여기서 ScrollView를 겹치면 시트가 화면 끝까지 늘어난다
+        VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+            Text(StaffAddState.title).pumText(.title3, weight: .bold).foregroundStyle(PumColor.textPrimary)
+                .fixedSize(horizontal: false, vertical: true)
                 .padding(.top, PumTokens.Space.s4)
+                .accessibilityAddTraits(.isHeader)
+            PumCard {
+                ForEach(Array(StaffAddMethod.allCases.enumerated()), id: \.element.id) { i, m in
+                    if i > 0 { Divider().overlay(PumColor.borderHairline) }
+                    row(m)
+                }
             }
-            .padding(.horizontal, PumTokens.Size.screenPad)
-            .padding(.bottom, PumTokens.Space.s16)
+            Text(StaffAddState.notice).pumText(.footnote).foregroundStyle(PumColor.textSecondary)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.horizontal, PumTokens.Space.s4)
+            PumButton(title: StaffAddState.nextTitle) {
+                if let selection { onNext(selection) }
+            }
+            .disabled(!state.canNext(selection))
+            .padding(.top, PumTokens.Space.s4)
         }
-        .scrollBounceBehavior(.basedOnSize)
+        .padding(.horizontal, PumTokens.Size.screenPad)
+        .padding(.bottom, PumTokens.Space.s16)
     }
 
     private func row(_ m: StaffAddMethod) -> some View {
