@@ -4,8 +4,10 @@ import SwiftUI
 
 /// 화면 전용 상수 — 토큰에 없는 값(DEC-005)
 enum RecordReviewRequestViewLocal {
-    /// 회신 막대 높이(목업 약 14) — space-14
-    static let barHeight: CGFloat = PumTokens.Space.s14
+    /// 회신 막대 높이 — 원문 8
+    static let barHeight: CGFloat = PumTokens.Space.s8
+    /// 월 알약 높이 — 원문 padding 8 + 글자 16(누름 44 유지)
+    static let monthPillHeight: CGFloat = PumTokens.Space.s8 * 2 + PumTokens.Space.s16
 }
 
 struct RecordReviewRequestView: View {
@@ -51,7 +53,7 @@ struct RecordReviewRequestView: View {
 
     /// 뒤 화면(시트에 덮여 어둡게): 머리 + 직원 확인 현황 카드
     private var background: some View {
-        VStack(spacing: PumTokens.Space.s16) {
+        VStack(spacing: PumTokens.Space.s14) { // 원문 블록 사이 14
             HStack {
                 Text("급여").pumText(.title1).foregroundStyle(PumColor.textPrimary) // 28px 700
                     .accessibilityAddTraits(.isHeader)
@@ -62,12 +64,13 @@ struct RecordReviewRequestView: View {
                     .frame(minHeight: PumTokens.Size.tapMin)
                     .background(PumColor.surfaceCard, in: Capsule())
                     .pumRing(.hairline, cornerRadius: PumTokens.Radius.pill)
+                    .padding(.vertical, -(PumTokens.Size.tapMin - RecordReviewRequestViewLocal.monthPillHeight) / 2)
             }
             statusCard
             Spacer(minLength: 0)
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
-        .padding(.vertical, PumTokens.Space.s12)
+        .padding(.bottom, PumTokens.Space.s12) // 위 여백 없음(원문 머리 줄이 안전 영역 바로 아래)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
     }
 
@@ -103,7 +106,8 @@ struct RecordReviewRequestView: View {
                     }
                 }
             }
-            .padding(PumTokens.Space.s16)
+            .padding(.horizontal, PumTokens.Space.s18) // 원문 padding 16 18
+            .padding(.vertical, PumTokens.Space.s16)
             .frame(maxWidth: .infinity, alignment: .leading)
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(Text(state.statusAccessibilityLabel))

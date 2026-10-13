@@ -31,14 +31,15 @@ struct AttendancePolicyView: View {
             PumNavHeader(title: "근태 정책", onBack: onBack)
                 .padding(.horizontal, PumTokens.Size.screenPad)
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s14) { // 원문 블록 사이 14
                     heading
                     policySection
                     reminderSection
                     note
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s16)
+                .padding(.top, PumTokens.Space.s14) // 머리 줄 아래 14
+                .padding(.bottom, PumTokens.Space.s16)
             }
         }
         .background(PumColor.bgApp)
@@ -46,11 +47,10 @@ struct AttendancePolicyView: View {
 
     // 2. 사업장 이름 · 설명
     private var heading: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s4) { // 원문 제목~설명 4
             Text(record.workplaceName).pumText(.title2).foregroundStyle(PumColor.textPrimary) // 24px 700
             Text(record.subtitle).pumText(.footnote).foregroundStyle(PumColor.textSecondary) // 13px
         }
-        .padding(.horizontal, PumTokens.Space.s4)
     }
 
     private func sectionHead(_ text: String, suffix: String? = nil) -> some View {
@@ -60,6 +60,7 @@ struct AttendancePolicyView: View {
         }
         .foregroundStyle(PumColor.textSecondary)
         .padding(.horizontal, PumTokens.Space.s4)
+        .padding(.top, PumTokens.Space.s4) // 원문 padding 4 4 0
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(suffix == nil ? text : text + ", 직원에게"))
         .accessibilityAddTraits(.isHeader)
@@ -100,7 +101,7 @@ struct AttendancePolicyView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 .padding(.horizontal, PumTokens.Size.rowPadX)
-                .padding(.vertical, PumTokens.Size.rowPadY)
+                .padding(.vertical, PumTokens.Space.s14) // 원문 padding 14 0
                 .frame(minHeight: PumTokens.Size.tapMin)
                 .contentShape(Rectangle())
             }
@@ -115,12 +116,12 @@ struct AttendancePolicyView: View {
 
     /// 자동 인정 기준 — B 선택 시에만. 알약은 B 행 바로 다음에 읽힌다.
     private var thresholdPicker: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s8) { // 원문 라벨~알약 8
             Text("자동 인정 기준 · 조기퇴근·지각·연장 공통")
                 .pumText(.caption).foregroundStyle(PumColor.textSecondary)
             let all = AutoApproveThreshold.allCases
             ViewThatFits(in: .horizontal) {
-                HStack(spacing: PumTokens.Space.s8) { pills(all) }
+                HStack(spacing: PumTokens.Space.s6) { pills(all) } // 원문 gap 6
                 VStack(alignment: .leading, spacing: PumTokens.Space.s2) { pills(all) }
             }
         }
@@ -128,7 +129,8 @@ struct AttendancePolicyView: View {
         // 라디오 원 + 간격만큼 안쪽으로(제목 글자 시작에 맞춤)
         .padding(.leading, PumTokens.Size.rowPadX + PumSelectionStyle.markSize + PumTokens.Space.s12)
         .padding(.trailing, PumTokens.Size.rowPadX)
-        .padding(.bottom, PumTokens.Size.rowPadY)
+        .padding(.top, -(PumTokens.Space.s14 - PumTokens.Space.s10)) // 원문 설명 아래 10(위 행 아래 padding 14 안으로)
+        .padding(.bottom, PumTokens.Space.s14)
         // 알약이 「15분」만 들리지 않게 묶음 이름을 준다
         .accessibilityElement(children: .contain)
         .accessibilityLabel(Text("자동 인정 기준"))
@@ -202,7 +204,8 @@ struct AttendancePolicyView: View {
         Text("\(Text(record.noteLead).foregroundStyle(PumColor.textSecondary))\(Text(record.noteStrong).fontWeight(.bold).foregroundStyle(noteStrongColor))\(Text(record.noteTail).foregroundStyle(PumColor.textSecondary))")
             .pumText(.caption)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(PumTokens.Space.s14)
+            .padding(.horizontal, PumTokens.Space.s16) // 원문 padding 12 16
+            .padding(.vertical, PumTokens.Space.s12)
             .background(PumColor.surfaceFill, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(Text(record.noteLead + record.noteStrong + record.noteTail))

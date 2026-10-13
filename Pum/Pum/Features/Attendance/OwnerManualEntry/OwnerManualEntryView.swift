@@ -48,14 +48,15 @@ struct OwnerManualEntryView: View {
         VStack(spacing: 0) {
             header
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s14) { // 원문 블록 사이 14
                     card
                     if draft.preview != nil { previewBox }
                     reasonSection
                     notice
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s12)
+                .padding(.top, PumTokens.Space.s14) // 머리 줄 아래 14
+                .padding(.bottom, PumTokens.Space.s14)
             }
             .scrollDismissesKeyboard(.interactively)
         }
@@ -68,7 +69,8 @@ struct OwnerManualEntryView: View {
             PumButton(title: OwnerManualEntryDraft.submitTitle, kind: .primary, isLoading: draft.isSending, action: submit)
                 .disabled(!draft.canSubmit)
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s12)
+                .padding(.top, PumTokens.Space.s12) // 위 12 · 아래 10(원문 44 − 안전 영역 34)
+                .padding(.bottom, PumTokens.Space.s10)
                 .background(PumColor.bgApp)
         }
     }
@@ -108,7 +110,6 @@ struct OwnerManualEntryView: View {
                 Spacer()
             }
         }
-        .padding(.top, PumTokens.Space.s8)
         .padding(.horizontal, PumTokens.Size.screenPad)
     }
 
@@ -130,7 +131,7 @@ struct OwnerManualEntryView: View {
 
     private var divider: some View {
         Rectangle().fill(PumColor.borderHairline).frame(height: 1)
-            .padding(.horizontal, PumTokens.Size.rowPadX)
+            .padding(.horizontal, PumTokens.Space.s18) // 원문 카드 padding 0 18
     }
 
     /// 좁거나 글자가 크면 라벨 아래로 값이 내려간다
@@ -140,8 +141,8 @@ struct OwnerManualEntryView: View {
             HStack(spacing: PumTokens.Space.s12) { l.fixedSize(); Spacer(minLength: 0); v }
             VStack(alignment: .leading, spacing: PumTokens.Space.s8) { l; v }
         }
-        .padding(.vertical, PumTokens.Size.rowPadY)
-        .padding(.horizontal, PumTokens.Size.rowPadX)
+        .padding(.vertical, PumTokens.Space.s14) // 원문 padding 14 0 (카드 좌우 18)
+        .padding(.horizontal, PumTokens.Space.s18)
         .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin, alignment: .leading)
     }
 
@@ -234,7 +235,7 @@ struct OwnerManualEntryView: View {
         return rowLayout {
             rowLabel("휴게")
         } value: {
-            HStack(spacing: PumTokens.Space.s8) {
+            HStack(spacing: PumTokens.Space.s6) { // 원문 gap 6
                 ForEach(Array(all.enumerated()), id: \.offset) { index, option in
                     pill(option.title, selected: draft.breakOption == option, filledWhenOff: true,
                          index: index, count: all.count) {
@@ -259,7 +260,8 @@ struct OwnerManualEntryView: View {
             HStack(spacing: PumTokens.Space.s12) { previewWork; Spacer(minLength: 0); previewPay }
             VStack(alignment: .leading, spacing: PumTokens.Space.s4) { previewWork; previewPay }
         }
-        .padding(PumTokens.Space.s12)
+        .padding(.horizontal, PumTokens.Space.s16) // 원문 padding 12 16
+        .padding(.vertical, PumTokens.Space.s12)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(PumColor.surfaceFill, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
         .accessibilityElement(children: .ignore)
@@ -289,7 +291,7 @@ struct OwnerManualEntryView: View {
                 .accessibilityLabel(Text("사유, 필수"))
                 .accessibilityAddTraits(.isHeader)
                 .padding(.horizontal, PumTokens.Space.s4)
-            OwnerManualEntryFlow(spacing: PumTokens.Space.s8) {
+            OwnerManualEntryFlow(spacing: PumTokens.Space.s6) { // 원문 gap 6
                 ForEach(Array(all.enumerated()), id: \.offset) { index, reason in
                     pill(reason.title, selected: draft.reasonChip == reason, filledWhenOff: false,
                          index: index, count: all.count) {

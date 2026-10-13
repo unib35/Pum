@@ -13,6 +13,10 @@ private enum StaffInviteLayout {
     static let restLine: CGFloat = 1
     /// 초대 코드 글자 간격 — 목업 17px 700, 글자 간격 넓게(토큰 밖)
     static let codeTracking: CGFloat = 2
+    /// 보내는 방법 칸 높이 — 원문 padding 8 0 + 글자 16
+    static let segmentItemHeight: CGFloat = PumTokens.Space.s8 * 2 + PumTokens.Space.s16
+    /// 미리보기 줄 높이 — 원문 위 2 + 글자 16
+    static let previewRowHeight: CGFloat = PumTokens.Space.s2 + PumTokens.Space.s16
     /// 수락 대기 아바타 — 가까운 PumLayout.avatar 36
     static let avatar: CGFloat = PumLayout.avatar
 }
@@ -54,14 +58,15 @@ struct StaffInviteView: View {
             PumNavHeader(title: "직원 초대", onBack: onBack)
                 .padding(.horizontal, PumTokens.Size.screenPad)
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s14) { // 원문 블록 사이 14
                     verifiedLine
                     inputCard
                     frontCard
                     ForEach(draft.pending) { pendingCard($0) }
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s12)
+                .padding(.top, PumTokens.Space.s14) // 머리 줄 아래 14
+                .padding(.bottom, PumTokens.Space.s14)
             }
             .scrollDismissesKeyboard(.interactively)
         }
@@ -71,7 +76,8 @@ struct StaffInviteView: View {
             PumButton(title: draft.sendTitle, kind: .primary) { onSend(draft) }
                 .disabled(!draft.canSend)
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s12)
+                .padding(.top, PumTokens.Space.s12) // 위 12 · 아래 10(원문 44 − 안전 영역 34)
+                .padding(.bottom, PumTokens.Space.s10)
                 .background(PumColor.bgApp)
         }
         // 원문 캡처는 번호 칸에 포커스 테두리만 있고 키보드는 없다 — 테두리만 보여 준다(실제 포커스는 주지 않음)
@@ -98,7 +104,7 @@ struct StaffInviteView: View {
 
     private var inputCard: some View {
         PumCard {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+            VStack(alignment: .leading, spacing: PumTokens.Space.s14) { // 원문 gap 14
                 field("이름") {
                     TextField("", text: $draft.name)
                         // 자동 채움이 사장님 본인 정보를 제안하지 않게 내용 종류를 지정하지 않는다
@@ -135,15 +141,15 @@ struct StaffInviteView: View {
     private func field<F: View>(_ label: String, @ViewBuilder input: () -> F) -> some View {
         let key: InviteField = label == "이름" ? .name : .phone
         let focused = focus == key || (initialFocus && focus == nil && key == .phone)
-        return VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+        return VStack(alignment: .leading, spacing: PumTokens.Space.s6) { // 원문 gap 6
             // 목업 13px 600 gray800 → footnote semibold
-            Text(label).pumText(.footnote, weight: .semibold).foregroundStyle(PumColor.textPrimary)
+            Text(label).pumText(.footnote, weight: .semibold).foregroundStyle(PumTokens.ColorToken.gray800)
                 .accessibilityHidden(true)
             input()
                 .pumText(.body, weight: .regular) // 목업 16px 400 → body(15)
                 .foregroundStyle(PumColor.textPrimary)
                 .tint(PumColor.accent)
-                .padding(.horizontal, PumTokens.Space.s12)
+                .padding(.horizontal, PumTokens.Space.s14) // 원문 padding 0 14
                 .frame(minHeight: fieldHeight)
                 .background(PumColor.surfaceCard, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
                 .overlay {
@@ -159,8 +165,8 @@ struct StaffInviteView: View {
     // MARK: 보내는 방법
 
     private var methodBlock: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
-            Text("보내는 방법").pumText(.footnote, weight: .semibold).foregroundStyle(PumColor.textPrimary)
+        VStack(alignment: .leading, spacing: PumTokens.Space.s6) { // 원문 gap 6
+            Text("보내는 방법").pumText(.footnote, weight: .semibold).foregroundStyle(PumTokens.ColorToken.gray800)
                 .accessibilityAddTraits(.isHeader)
             segment
             Text(draft.guideText).pumText(.caption, weight: .regular).foregroundStyle(PumColor.textSecondary)
@@ -182,6 +188,8 @@ struct StaffInviteView: View {
                         .background(selected ? PumColor.surfaceCard : .clear,
                                     in: RoundedRectangle(cornerRadius: PumTokens.Radius.sm, style: .continuous))
                         .contentShape(Rectangle())
+                        // 원문 칸 padding 8 0 → 높이 32(누름 44 유지)
+                        .padding(.vertical, -(PumTokens.Size.tapMin - StaffInviteLayout.segmentItemHeight) / 2)
                 }
                 .buttonStyle(.plain)
                 .accessibilityAddTraits(selected ? .isSelected : [])
@@ -201,6 +209,7 @@ struct StaffInviteView: View {
             }
             .frame(minHeight: PumTokens.Size.tapMin)
             .contentShape(Rectangle())
+            .padding(.vertical, -(PumTokens.Size.tapMin - StaffInviteLayout.previewRowHeight) / 2) // 원문 높이(누름 44 유지)
         }
         .buttonStyle(.plain)
         .accessibilityLabel(Text("보낼 메시지 미리보기"))
@@ -220,7 +229,8 @@ struct StaffInviteView: View {
             Text("앞에 있는 직원").pumText(.body, weight: .bold).foregroundStyle(PumColor.textPrimary)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, PumTokens.Size.rowPadX)
-                .padding(.top, PumTokens.Space.s16)
+                .padding(.top, PumTokens.Space.s14) // 원문 padding 14 16 4
+                .padding(.bottom, PumTokens.Space.s4)
                 .accessibilityAddTraits(.isHeader)
             qrRow
             Rectangle().fill(PumColor.borderHairline).frame(height: 1) // 전폭 hairline
