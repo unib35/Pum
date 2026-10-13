@@ -103,8 +103,8 @@ struct EmploymentCertIssueView: View {
     private var documentCard: some View {
         PumCard {
             VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
-                Text(EmploymentCertIssueState.documentTitle).pumText(.headline, weight: .bold)
-                    .tracking(PumTokens.Space.s4)
+                Text(EmploymentCertIssueState.documentTitle).tracking(PumTokens.Space.s4) // 원문 넓은 자간 — pumText보다 안쪽에
+                    .pumText(.headline, weight: .bold)
                     .foregroundStyle(PumColor.textPrimary)
                     .frame(maxWidth: .infinity)
                     .accessibilityAddTraits(.isHeader)

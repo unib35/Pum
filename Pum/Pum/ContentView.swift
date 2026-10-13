@@ -165,6 +165,7 @@ struct ContentView: View {
             case "19a": WageYearTransitionView(state: .sample, sheet: .sample)
             case "19b": WageYearTransitionView(state: .sample, sheet: .sample, startsWithSheetOpen: true)
             case "19d": EmploymentCertRequestView(state: .sample)
+            case "19e": EmploymentCertIssueView(state: .sample)
             case "gallery": ComponentGalleryView()
             default: DevMenu()
             }
@@ -327,6 +328,7 @@ private struct DevMenu: View {
                     NavigationLink("19a 연도 전환") { WageYearTransitionView(state: .sample, sheet: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("19b 새 시급 정하기") { WageYearTransitionView(state: .sample, sheet: .sample, startsWithSheetOpen: true).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("19d 재직증명서 요청") { EmploymentCertRequestView(state: .sample).toolbar(.hidden, for: .navigationBar) }
+                    NavigationLink("19e 재직증명서 발급") { EmploymentCertIssueView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                 }
                 Section("디자인 시스템") {
                     NavigationLink("컴포넌트 갤러리") { ComponentGalleryView() }
