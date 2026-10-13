@@ -163,6 +163,7 @@ private struct PersonalTodayCard: View {
     private var nowClock: some View {
         Text(HomeFormat.clock(state.nowMinute))
             .pumText(.display)
+            .pumBigNumberLineHeight()
             .foregroundStyle(PumColor.textPrimary)
             .accessibilityLabel(Text("지금 \(HomeFormat.clock(state.nowMinute))"))
     }

@@ -152,7 +152,7 @@ struct WorkingTodayCard: View {
     }
 
     private func number(_ s: String) -> some View {
-        Text(s).pumText(.display).foregroundStyle(PumColor.textPrimary)
+        Text(s).pumText(.display).pumBigNumberLineHeight().foregroundStyle(PumColor.textPrimary)
     }
 
     private func unit(_ s: String) -> some View {
