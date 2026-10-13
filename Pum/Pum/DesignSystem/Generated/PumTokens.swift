@@ -130,7 +130,7 @@ nonisolated enum PumTokens {
         static let tapMin: CGFloat = 44
         static let buttonH: CGFloat = 54
         static let buttonHSm: CGFloat = 44
-        static let rowPadY: CGFloat = 13
+        static let rowPadY: CGFloat = 12
         static let rowPadX: CGFloat = 16
     }
 
