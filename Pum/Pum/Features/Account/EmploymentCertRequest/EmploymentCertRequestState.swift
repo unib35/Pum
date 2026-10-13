@@ -60,10 +60,6 @@ nonisolated struct EmploymentCertRequestState: Equatable, Sendable {
 
     /// 읽기 문구 — 「생년월일, 켬」
     func toggleReadout(_ title: String, isOn: Bool) -> String { "\(title), \(isOn ? "켬" : "끔")" }
-    /// 읽기 문구 — 「금융기관, 선택됨」
-    func purposeReadout(_ purpose: EmploymentCertPurpose, draft: EmploymentCertRequestDraft) -> String {
-        draft.purpose == purpose ? "\(purpose.title), 선택됨" : purpose.title
-    }
     func infoReadout(_ row: EmploymentCertRequestInfoRow) -> String { "\(row.title), \(row.value)" }
 
     static let sample = EmploymentCertRequestState(

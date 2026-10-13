@@ -44,7 +44,7 @@ struct EmploymentCertRequestView: View {
         .background(PumColor.bgApp)
         .safeAreaInset(edge: .bottom, spacing: 0) { footer }
         .onChange(of: state.initialDraft) { _, new in
-            if !touched { draft = new }
+            if !touched && !locked { draft = new } // 보낸 뒤에는 보낸 값 그대로
         }
     }
 
@@ -124,7 +124,7 @@ struct EmploymentCertRequestView: View {
             divider
             toggleRow(EmploymentCertRequestState.addressTitle, $draft.includesAddress)
         }
-        .allowsHitTesting(!locked)
+        .disabled(locked) // VoiceOver · 스위치 제어도 막는다
     }
 
     private func toggleRow(_ title: String, _ isOn: Binding<Bool>) -> some View {
@@ -149,7 +149,7 @@ struct EmploymentCertRequestView: View {
                 .padding(.horizontal, PumTokens.Space.s4)
                 .accessibilityAddTraits(.isHeader)
             segments
-                .allowsHitTesting(!locked)
+                .disabled(locked)
         }
     }
 
@@ -175,7 +175,7 @@ struct EmploymentCertRequestView: View {
                         .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel(Text(state.purposeReadout(p, draft: draft)))
+                .accessibilityLabel(Text(p.title)) // 「선택됨」은 .isSelected가 읽는다
                 .accessibilityAddTraits(selected ? [.isButton, .isSelected] : .isButton)
             }
         }

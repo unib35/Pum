@@ -28,8 +28,6 @@ struct EmploymentCertRequestTests {
         let s = EmploymentCertRequestState.sample
         #expect(s.toggleReadout("생년월일", isOn: true) == "생년월일, 켬")
         #expect(s.toggleReadout("주소", isOn: false) == "주소, 끔")
-        #expect(s.purposeReadout(.financial, draft: s.initialDraft) == "금융기관, 선택됨")
-        #expect(s.purposeReadout(.government, draft: s.initialDraft) == "관공서")
         #expect(s.infoReadout(s.rows[0]) == "이름, 김하늘")
     }
 }
