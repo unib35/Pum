@@ -44,39 +44,86 @@ enum AccountRoute: String, CaseIterable, Hashable {
     func view(_ router: AppRouter) -> some View {
         switch self {
         case .notificationSettings:
-            NotificationSettingsView(state: .sample)
+            NotificationSettingsView(state: .sample, onBack: router.back)
         case .myInfo:
-            MyInfoView(state: .sample)
+            MyInfoView(
+                state: .sample,
+                onOpenAccount: { router.navigate(.account(.accountSecurity)) },
+                onAddInviteCode: { router.navigate(.onboarding(.inviteCode)) },
+                onOpenPersonalTerms: { router.navigate(.onboarding(.personalTerms)) },
+                onOpenContracts: { router.navigate(.contract(.contractList)) },
+                onOpenDocuments: { router.navigate(.account(.documentBox)) },
+                onOpenNotifications: { router.navigate(.account(.notificationSettings)) },
+                onStartOwnerMode: { router.navigate(.workplace(.workplaceCreate)) },
+                onOpenSupport: { router.navigate(.account(.helpCenter)) }
+            )
         case .afterLeaving:
-            AfterLeavingView(state: .sample)
+            AfterLeavingView(
+                state: .sample,
+                onBack: router.back,
+                onRequestCertificate: { router.navigate(.account(.employmentCertRequest)) }
+            )
         case .accountSecurity:
-            AccountSecurityView(state: .sample)
+            AccountSecurityView(
+                state: .sample,
+                onBack: router.back,
+                onWithdraw: { router.navigate(.account(.withdraw)) }
+            )
         case .withdraw:
-            WithdrawView(state: .sample)
+            WithdrawView(
+                state: .sample,
+                onBack: router.back,
+                onTransferOwnership: { _ in router.navigate(.staff(.ownerTransfer)) }
+            )
         case .consents:
-            ConsentsView(state: .sample)
+            ConsentsView(state: .sample, onBack: router.back)
         case .policies:
-            PoliciesView(state: .sample)
+            PoliciesView(
+                state: .sample,
+                onBack: router.back,
+                onOpenConsents: { router.navigate(.account(.consents)) }
+            )
         case .appPermissions:
-            AppPermissionsView(state: .sample)
+            AppPermissionsView(state: .sample, onBack: router.back)
         case .ownerNotificationSettings:
-            OwnerNotificationSettingsView(state: .sample)
+            OwnerNotificationSettingsView(state: .sample, onBack: router.back)
         case .documentBox:
-            DocumentBoxView(state: .sample)
+            DocumentBoxView(
+                state: .sample,
+                onIssue: { _ in router.navigate(.account(.employmentCertRequest)) }
+            )
         case .helpCenter:
-            HelpCenterView(state: .sample)
+            HelpCenterView(state: .sample, onBack: router.back)
         case .privacyAppInfo:
-            PrivacyAppInfoView(state: .sample)
+            PrivacyAppInfoView(state: .sample, onBack: router.back)
         case .forceUpdate:
-            ForceUpdateView(state: .sample)
+            ForceUpdateView(
+                state: .sample,
+                onClockOutOnly: { router.navigate(.attendance(.clockOutDone)) }
+            )
         case .maintenance:
-            MaintenanceView(state: .sample)
+            MaintenanceView(
+                state: .sample,
+                onClockOut: { router.navigate(.attendance(.clockOutDone)) },
+                onClockIn: { router.navigate(.attendance(.clockIn)) }
+            )
         case .employmentCertRequest:
-            EmploymentCertRequestView(state: .sample)
+            EmploymentCertRequestView(
+                state: .sample,
+                onBack: router.back,
+                onRequest: { _, done in
+                    done(true)
+                    router.navigate(.staff(.employmentCertIssue))
+                }
+            )
         case .employmentCertIssued:
-            EmploymentCertIssuedView(state: .sample)
+            EmploymentCertIssuedView(state: .sample, onBack: router.back)
         }
     }
 
-    static let connected: Set<Self> = []
+    static let connected: Set<Self> = [
+        .notificationSettings, .myInfo, .afterLeaving, .accountSecurity, .withdraw, .consents,
+        .policies, .appPermissions, .ownerNotificationSettings, .documentBox, .helpCenter,
+        .privacyAppInfo, .forceUpdate, .maintenance, .employmentCertRequest, .employmentCertIssued,
+    ]
 }
