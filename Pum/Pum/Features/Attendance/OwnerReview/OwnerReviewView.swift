@@ -6,6 +6,8 @@ import SwiftUI
 private enum OwnerReviewLayout {
     /// 세그먼트 「확인 필요」 옆 숫자 배지 지름(목업 18px 원 → 토큰 크기 중 가장 가까운 tapMin의 절반인 22 대신 s18)
     static let countBadge: CGFloat = PumTokens.Space.s18
+    /// 사람 아바타(목업 34)
+    static let avatar: CGFloat = 34
 }
 
 struct OwnerReviewView: View {
@@ -14,6 +16,7 @@ struct OwnerReviewView: View {
     var onAction: (OwnerReviewAction, OwnerReviewItem) -> Void = { _, _ in }
     @State private var tab = "work"
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @ScaledMetric(relativeTo: .callout) private var avatarSize = OwnerReviewLayout.avatar
 
     var body: some View {
         ScrollView {
@@ -25,7 +28,7 @@ struct OwnerReviewView: View {
                     .foregroundStyle(PumColor.textSecondary)
                     .multilineTextAlignment(.center)
                     .frame(maxWidth: .infinity)
-                    .padding(.top, PumTokens.Space.s8)
+                    .padding(.top, PumTokens.Space.s2) // 원문 안내 글 위 2
             }
             .padding(.horizontal, PumTokens.Size.screenPad)
             .padding(.bottom, PumTokens.Space.s24)
@@ -50,7 +53,6 @@ struct OwnerReviewView: View {
                 segment
             }
         }
-        .padding(.top, PumTokens.Space.s8)
     }
 
     private var title: some View {
@@ -79,9 +81,12 @@ struct OwnerReviewView: View {
                         }
                     }
                     .padding(.horizontal, PumTokens.Space.s12)
-                    .frame(minWidth: PumTokens.Size.tapMin, minHeight: PumTokens.Size.tapMin)
+                    .padding(.vertical, PumTokens.Space.s6) // 원문 칸 padding 6 12
                     .background(selected ? PumColor.surfaceCard : .clear, in: Capsule())
+                    // 누름 영역은 44 유지, 배치는 원문 칸 높이만
+                    .frame(minWidth: PumTokens.Size.tapMin, minHeight: PumTokens.Size.tapMin)
                     .contentShape(Capsule())
+                    .padding(.vertical, -(PumTokens.Size.tapMin - (PumTokens.Space.s6 * 2 + PumTokens.Space.s16)) / 2)
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel(Text(f == .needsReview ? "확인 필요 \(state.needsReviewCount)건" : f == .processed ? "\(title(of: f))건" : title(of: f)))
@@ -109,7 +114,8 @@ struct OwnerReviewView: View {
                 summary(item)
                 bottom(item)
             }
-            .padding(PumTokens.Space.s16)
+            .padding(.vertical, PumTokens.Space.s14) // 원문 카드 padding 14 16
+            .padding(.horizontal, PumTokens.Space.s16)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
@@ -118,7 +124,7 @@ struct OwnerReviewView: View {
     private func summary(_ item: OwnerReviewItem) -> some View {
         VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
             ViewThatFits(in: .horizontal) {
-                HStack(spacing: PumTokens.Space.s12) {
+                HStack(spacing: PumTokens.Space.s10) { // 원문 gap 10
                     person(item).frame(maxWidth: .infinity, alignment: .leading)
                     PumBadge(text: item.badgeText, kind: item.kind.badgeKind)
                 }
@@ -134,8 +140,8 @@ struct OwnerReviewView: View {
     }
 
     private func person(_ item: OwnerReviewItem) -> some View {
-        HStack(spacing: PumTokens.Space.s12) {
-            PumAvatar(name: item.name, colorIndex: item.colorIndex)
+        HStack(spacing: PumTokens.Space.s10) { // 원문 gap 10
+            PumAvatar(name: item.name, colorIndex: item.colorIndex, size: avatarSize)
             Text("\(Text(item.name).pumFontBold)\(Text(" \u{00B7} \(item.dateText)").font(PumFont.font(size: PumTokens.FontToken.caption.size, weight: .medium, relativeTo: .caption)).foregroundColor(PumColor.textSecondary))")
         }
     }
@@ -188,7 +194,7 @@ struct OwnerReviewView: View {
 
     private func bottom(_ item: OwnerReviewItem) -> some View {
         ViewThatFits(in: .horizontal) {
-            HStack(spacing: PumTokens.Space.s8) {
+            HStack(spacing: PumTokens.Space.s10) { // 원문 설명~버튼 gap 10
                 explanation(item).frame(maxWidth: .infinity, alignment: .leading)
                 buttons(item)
             }
@@ -230,8 +236,8 @@ struct OwnerReviewView: View {
 }
 
 private extension Text {
-    /// 이름: 목업 17px 700 → headline(17) bold
-    var pumFontBold: Text { self.font(PumFont.font(size: PumTokens.FontToken.headline.size, weight: .bold, relativeTo: .headline)).foregroundColor(PumColor.textPrimary) }
+    /// 이름: 목업 15px 600 → body(15) semibold
+    var pumFontBold: Text { self.font(PumFont.font(size: PumTokens.FontToken.body.size, weight: .semibold, relativeTo: .body)).foregroundColor(PumColor.textPrimary) }
 }
 
 #Preview("1r") { OwnerReviewView() }
