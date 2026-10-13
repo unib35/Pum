@@ -14,6 +14,8 @@ struct WageYearTransitionView: View {
     @State private var touched = false
     @State private var isSending = false
     @State private var isSent = false
+    /// 시트 값이 오기 전에 「새 시급 정하기」를 눌렀다 — 값이 오면 연다
+    @State private var pendingOpen = false
 
     var onBack: () -> Void
     /// 「새 시급 정하기」 — 시트 값을 불러오는 것은 호출자 몫
@@ -48,9 +50,9 @@ struct WageYearTransitionView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
                     titleBlock
-                    belowCard
+                    if !state.below.isEmpty { belowCard }
                     if !state.thin.isEmpty { thinCard }
-                    fineCard
+                    if !state.fine.isEmpty || !state.excluded.isEmpty { fineCard }
                     holidayCard
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
@@ -76,12 +78,13 @@ struct WageYearTransitionView: View {
         .onChange(of: sheet) { _, new in
             if !touched { draft = new?.initialWages ?? [:] }
             if new == nil { sheetOpen = false }
+            if new != nil && pendingOpen { pendingOpen = false; sheetOpen = true }
         }
     }
 
     private func openSheet() {
         onSetWages()
-        if sheet != nil { sheetOpen = true }
+        if sheet != nil { sheetOpen = true } else { pendingOpen = true }
     }
 
     private func send() {
@@ -179,28 +182,30 @@ struct WageYearTransitionView: View {
     private var fineCard: some View {
         PumCard {
             cardHeader(WageYearTransitionState.fineHeader)
-            Button(action: onShowFine) {
-                HStack(spacing: PumTokens.Space.s12) {
-                    VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
-                        Text(state.fineNames).pumText(.callout, weight: .semibold).foregroundStyle(PumColor.textPrimary)
-                        Text(state.fineWages).pumText(.caption).foregroundStyle(PumColor.textSecondary)
+            if !state.fine.isEmpty {
+                Button(action: onShowFine) {
+                    HStack(spacing: PumTokens.Space.s12) {
+                        VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
+                            Text(state.fineNames).pumText(.callout, weight: .semibold).foregroundStyle(PumColor.textPrimary)
+                            Text(state.fineWages).pumText(.caption).foregroundStyle(PumColor.textSecondary)
+                        }
+                        .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        Image(systemName: "chevron.right").pumText(.callout, weight: .semibold)
+                            .foregroundStyle(PumColor.textTertiary)
+                            .accessibilityHidden(true)
                     }
-                    .multilineTextAlignment(.leading)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    Image(systemName: "chevron.right").pumText(.callout, weight: .semibold)
-                        .foregroundStyle(PumColor.textTertiary)
-                        .accessibilityHidden(true)
+                    .padding(.horizontal, PumTokens.Size.rowPadX)
+                    .padding(.vertical, PumTokens.Size.rowPadY)
+                    .frame(minHeight: PumTokens.Size.tapMin)
+                    .contentShape(Rectangle())
                 }
-                .padding(.horizontal, PumTokens.Size.rowPadX)
-                .padding(.vertical, PumTokens.Size.rowPadY)
-                .frame(minHeight: PumTokens.Size.tapMin)
-                .contentShape(Rectangle())
+                .buttonStyle(.plain)
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(Text(state.fineReadout))
+                .accessibilityAddTraits(.isButton)
             }
-            .buttonStyle(.plain)
-            .accessibilityElement(children: .ignore)
-            .accessibilityLabel(Text(state.fineReadout))
-            .accessibilityAddTraits(.isButton)
             ForEach(state.excluded) { e in
                 Divider().overlay(PumColor.borderHairline)
                 VStack(alignment: .leading, spacing: PumTokens.Space.s2) {

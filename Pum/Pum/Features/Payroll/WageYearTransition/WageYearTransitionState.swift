@@ -130,8 +130,12 @@ nonisolated struct NewWageSheetState: Equatable, Sendable {
     func canSend(_ draft: [String: Int]) -> Bool {
         !rows.isEmpty && !rows.contains { isRowBelowMinimum($0, in: draft) }
     }
+    /// 시급이 바뀌는 직원만 — 「바뀌는 직원에게만」 변경 계약서
     func inputs(_ draft: [String: Int]) -> [NewWageInput] {
-        rows.map { NewWageInput(employeeID: $0.id, wage: wage($0.id, in: draft)) }
+        rows.compactMap { e in
+            let w = wage(e.id, in: draft)
+            return w == e.currentWage ? nil : NewWageInput(employeeID: e.id, wage: w)
+        }
     }
     /// 「최유나, 지금 10,320원, 새 시급」 — 입력 행 라벨. 값은 입력칸이 읽는다
     func inputLabel(_ e: WageEmployee) -> String { "\(e.name), 지금 \(WageYearTransitionState.won(e.currentWage)), 새 시급" }

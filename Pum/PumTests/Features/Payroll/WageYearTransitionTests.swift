@@ -32,7 +32,8 @@ struct WageYearTransitionTests {
     @Test func 초안이_최저_이상이면_보낼_수_있다() {
         #expect(sheet.canSend(sheet.initialWages))
         let inputs = sheet.inputs(sheet.initialWages)
-        #expect(inputs.map(\.wage) == [10_700, 10_700, 10_800])
+        #expect(inputs.map(\.wage) == [10_700, 10_700]) // 그대로인 오세진은 보내지 않는다
+        #expect(inputs.map(\.employeeID) == ["yuna", "daeun"])
     }
 
     @Test func 최저_미만이면_보내기_불가() {
