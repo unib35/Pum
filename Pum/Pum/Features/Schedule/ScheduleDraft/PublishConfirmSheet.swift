@@ -88,7 +88,7 @@ struct PublishConfirmSheet: View {
     private let state: PublishConfirmSheetState
     private let onCancel: () -> Void
     private let onConfirm: () -> Void
-    @ScaledMetric(relativeTo: .body) private var circleSize: CGFloat = 24
+    @ScaledMetric(relativeTo: .body) private var circleSize: CGFloat = 26
     @Environment(\.dynamicTypeSize) private var typeSize
 
     init(state: PublishConfirmSheetState, onCancel: @escaping () -> Void = {}, onConfirm: @escaping () -> Void = {}) {
@@ -98,12 +98,13 @@ struct PublishConfirmSheet: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s12) { // 원문 블록 사이 12
             VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
                 Text(state.title).pumText(.title3).foregroundStyle(PumColor.textPrimary) // 20px 700
                     .accessibilityAddTraits(.isHeader)
                 Text(state.summary).pumText(.footnote).foregroundStyle(PumColor.textSecondary) // 13px 400
             }
+            .padding(.top, PumTokens.Space.s4) // 원문 손잡이 아래 여백 4
             changesCard
             checksCard
             buttons
@@ -112,7 +113,6 @@ struct PublishConfirmSheet: View {
                 .frame(maxWidth: .infinity)
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
-        .padding(.bottom, PumTokens.Space.s16)
     }
 
     // MARK: 바뀐 것
@@ -120,8 +120,8 @@ struct PublishConfirmSheet: View {
     private var changesCard: some View {
         PumCard {
             cardTitle(state.changesTitle)
-            ForEach(state.changes) { change in
-                Rectangle().fill(PumColor.borderHairline).frame(height: 1)
+            ForEach(Array(state.changes.enumerated()), id: \.element.id) { index, change in
+                if index > 0 { Rectangle().fill(PumColor.borderHairline).frame(height: 1) }
                 changeRow(change)
             }
         }
@@ -130,8 +130,8 @@ struct PublishConfirmSheet: View {
     private func cardTitle(_ text: String) -> some View {
         Text(text).pumText(.body, weight: .bold).foregroundStyle(PumColor.textPrimary) // 15px 700
             .padding(.horizontal, PumTokens.Space.s16)
-            .padding(.top, PumTokens.Space.s16)
-            .padding(.bottom, PumTokens.Space.s12)
+            .padding(.top, PumTokens.Space.s14) // 원문 머리 14 16 4
+            .padding(.bottom, PumTokens.Space.s4)
             .frame(maxWidth: .infinity, alignment: .leading)
             .accessibilityAddTraits(.isHeader)
     }
@@ -163,8 +163,8 @@ struct PublishConfirmSheet: View {
     private var checksCard: some View {
         PumCard {
             cardTitle(state.checksTitle)
-            ForEach(state.checks) { check in
-                Rectangle().fill(PumColor.borderHairline).frame(height: 1)
+            ForEach(Array(state.checks.enumerated()), id: \.element.id) { index, check in
+                if index > 0 { Rectangle().fill(PumColor.borderHairline).frame(height: 1) }
                 checkRow(check)
             }
         }

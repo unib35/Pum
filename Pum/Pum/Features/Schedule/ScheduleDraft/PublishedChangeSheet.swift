@@ -71,7 +71,7 @@ struct PublishedChangeSheet: View {
     private let onSend: (String) -> Void
     @State private var reason: String
     @FocusState private var reasonFocused: Bool
-    @ScaledMetric(relativeTo: .callout) private var avatar: CGFloat = 40
+    @ScaledMetric(relativeTo: .callout) private var avatar: CGFloat = 30 // 원문 30
 
     init(state: PublishedChangeSheetState, onSend: @escaping (String) -> Void = { _ in }) {
         self.state = state
@@ -80,7 +80,7 @@ struct PublishedChangeSheet: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s12) { // 원문 블록 사이 12
             header
             person
             timeBlock
@@ -93,7 +93,6 @@ struct PublishedChangeSheet: View {
                 .frame(maxWidth: .infinity)
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
-        .padding(.bottom, PumTokens.Space.s16)
         // 서버가 새 사유 바탕을 주면, 손대지 않았을 때만 다시 받는다 — 입력 중인 글을 말없이 지우지 않게
         .onChange(of: state.initialReason) { old, new in
             if reason == old { reason = new }
@@ -114,6 +113,7 @@ struct PublishedChangeSheet: View {
                 PumBadge(text: state.badge, kind: .done)
             }
         }
+        .padding(.top, PumTokens.Space.s4) // 원문 손잡이 아래 여백 4
     }
 
     private var title: some View {
@@ -122,7 +122,7 @@ struct PublishedChangeSheet: View {
     }
 
     private var person: some View {
-        HStack(spacing: PumTokens.Space.s12) {
+        HStack(spacing: PumTokens.Space.s10) { // 원문 아바타 옆 10
             PumAvatar(name: state.staffName, colorIndex: state.colorIndex, size: avatar)
             VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
                 Text(state.rowTitle).pumText(.callout).foregroundStyle(PumColor.textPrimary)   // 14px 600
@@ -153,7 +153,8 @@ struct PublishedChangeSheet: View {
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)
         }
-        .padding(PumTokens.Space.s12)
+        .padding(.horizontal, PumTokens.Space.s14) // 원문 12 14
+        .padding(.vertical, PumTokens.Space.s12)
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
@@ -165,7 +166,8 @@ struct PublishedChangeSheet: View {
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)
         }
-        .padding(PumTokens.Space.s12)
+        .padding(.horizontal, PumTokens.Space.s14)
+        .padding(.vertical, PumTokens.Space.s12)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(PumColor.accentSoft, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
     }
@@ -195,14 +197,14 @@ struct PublishedChangeSheet: View {
             }
         }
         .padding(.horizontal, PumTokens.Size.rowPadX)
+        .padding(.vertical, PumTokens.Size.rowPadY) // 원문 행 11 16 → 토큰 12
         .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin, alignment: .leading)
-        .padding(.vertical, PumTokens.Space.s8)
     }
 
     // MARK: 사유
 
     private var reasonBlock: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s6) { // 원문 라벨 아래 6
             Text(state.reasonLabel).pumText(.footnote, weight: .semibold)
                 .foregroundStyle(PumTokens.ColorToken.gray800) // 13px 600
             TextField("", text: $reason)
@@ -211,8 +213,8 @@ struct PublishedChangeSheet: View {
                 .focused($reasonFocused)
                 .submitLabel(.done)
                 .onSubmit { reasonFocused = false }
-                .padding(.horizontal, PumTokens.Space.s16)
-                .frame(maxWidth: .infinity, minHeight: PumTokens.Size.buttonH, alignment: .leading)
+                .padding(.horizontal, PumTokens.Space.s14) // 원문 칸 안쪽 0 14
+                .frame(maxWidth: .infinity, minHeight: PumTokens.Space.s24 * 2, alignment: .leading) // 원문 높이 48
                 .background(PumColor.surfaceCard, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
                 .overlay {
                     RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous)

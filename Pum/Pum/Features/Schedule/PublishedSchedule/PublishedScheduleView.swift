@@ -10,7 +10,7 @@ struct PublishedScheduleView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+            VStack(alignment: .leading, spacing: PumTokens.Space.s14) { // 원문 카드 사이 14
                 header
                 NextWeekCard(state: state)
                 SummaryCard(state: state)
@@ -40,7 +40,6 @@ struct PublishedScheduleView: View {
                 chip
             }
         }
-        .padding(.top, PumTokens.Space.s8)
     }
 
     private var title: some View {
@@ -72,7 +71,7 @@ private struct NextWeekCard: View {
                 }
             }
             .padding(.horizontal, PumTokens.Space.s16)
-            .padding(.top, PumTokens.Space.s16)
+            .padding(.top, PumTokens.Space.s14) // 원문 머리 14 16 4
             .padding(.bottom, PumTokens.Space.s4)
             ForEach(Array(state.shifts.enumerated()), id: \.element.id) { index, shift in
                 ShiftRow(shift: shift, showsDivider: index > 0)
@@ -96,7 +95,7 @@ private struct ShiftRow: View {
     let shift: PublishedShift
     let showsDivider: Bool
     // 날짜 칸 고정 폭 — 토큰에 없는 값(DEC-005). 큰 글자에서는 글자와 함께 커진다
-    @ScaledMetric private var dateWidth: CGFloat = 56
+    @ScaledMetric private var dateWidth: CGFloat = 48 // 원문 날짜 칸 48
 
     var body: some View {
         ViewThatFits(in: .horizontal) {
@@ -117,7 +116,7 @@ private struct ShiftRow: View {
             }
         }
         .padding(.horizontal, PumTokens.Space.s16)
-        .padding(.vertical, PumTokens.Space.s10)
+        .padding(.vertical, PumTokens.Size.rowPadY) // 원문 행 11 → 토큰 12
         .frame(minHeight: PumTokens.Size.tapMin)
         .overlay(alignment: .top) { Rectangle().fill(PumColor.borderHairline).frame(height: showsDivider ? 1 : 0) }
         .accessibilityElement(children: .ignore)
@@ -141,7 +140,7 @@ private struct ShiftRow: View {
     }
 
     private var trailing: some View {
-        HStack(spacing: PumTokens.Space.s8) {
+        HStack(spacing: PumTokens.Space.s12) { // 원문 칸 사이 12
             holiday
             hours
         }
@@ -184,13 +183,18 @@ private struct SummaryCard: View {
     }
 
     private func cell(label: String, value: String, footer: String?) -> some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s4) {
+        VStack(alignment: .leading, spacing: 0) {
             Text(label).pumText(.caption, weight: .medium).foregroundStyle(PumColor.textSecondary)
             Text(value).pumText(.title3).foregroundStyle(PumColor.textPrimary).minimumScaleFactor(0.8).lineLimit(1)
-            if let footer { Text(footer).pumText(.caption).foregroundStyle(PumColor.textSecondary) }
+                .padding(.top, PumTokens.Space.s4) // 원문 값 위 4
+            if let footer {
+                Text(footer).pumText(.caption).foregroundStyle(PumColor.textSecondary)
+                    .padding(.top, PumTokens.Space.s2) // 원문 아래 글 위 2
+            }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(PumTokens.Space.s16)
+        .padding(.horizontal, PumTokens.Space.s16)
+        .padding(.vertical, PumTokens.Space.s14) // 원문 칸 14 16
     }
 }
 

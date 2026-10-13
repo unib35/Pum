@@ -12,7 +12,7 @@ struct RoleOfferReceivedView: View {
 
     @Environment(\.dynamicTypeSize) private var typeSize
     /// 회색 원 지름 — 6t와 같은 값(원문 약 26)
-    @ScaledMetric(relativeTo: .body) private var circleSize: CGFloat = 24
+    @ScaledMetric(relativeTo: .body) private var circleSize: CGFloat = 26
     private let markRatio: CGFloat = 0.45
 
     init(state: RoleOfferReceivedState,
@@ -29,7 +29,7 @@ struct RoleOfferReceivedView: View {
         VStack(spacing: 0) {
             backRow
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s14) { // 원문 블록 사이 14
                     header
                     ForEach(Array(state.sections.enumerated()), id: \.offset) { _, section in
                         sectionCard(section)
@@ -37,7 +37,7 @@ struct RoleOfferReceivedView: View {
                     if !state.pairs.isEmpty { pairsCard }
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s12)
+                .padding(.top, PumTokens.Space.s14) // 원문 머리 줄 아래 14 · 아래 여백 없음
             }
         }
         .background(PumColor.bgApp)
@@ -73,14 +73,18 @@ struct RoleOfferReceivedView: View {
     }
 
     private var header: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
-            ViewThatFits(in: .horizontal) {
-                HStack(spacing: PumTokens.Space.s8) { needsDecision; sent }
-                VStack(alignment: .leading, spacing: PumTokens.Space.s6) { needsDecision; sent }
+        VStack(alignment: .leading, spacing: PumTokens.Space.s14) {
+            // 원문: 배지 줄 + 제목은 위 2 · 사이 6, 인증 줄은 블록 사이 14
+            VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
+                ViewThatFits(in: .horizontal) {
+                    HStack(spacing: PumTokens.Space.s8) { needsDecision; sent }
+                    VStack(alignment: .leading, spacing: PumTokens.Space.s6) { needsDecision; sent }
+                }
+                Text(state.title).pumText(.title2).foregroundStyle(PumColor.textPrimary)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .accessibilityAddTraits(.isHeader)
             }
-            Text(state.title).pumText(.title2).foregroundStyle(PumColor.textPrimary)
-                .fixedSize(horizontal: false, vertical: true)
-                .accessibilityAddTraits(.isHeader)
+            .padding(.top, PumTokens.Space.s2)
             ViewThatFits(in: .horizontal) {
                 HStack(spacing: PumTokens.Space.s8) { verified; business }
                 VStack(alignment: .leading, spacing: PumTokens.Space.s6) { verified; business }
@@ -113,8 +117,8 @@ struct RoleOfferReceivedView: View {
             Text(section.title).pumText(.body, weight: .bold).foregroundStyle(PumColor.textPrimary)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, PumTokens.Size.rowPadX)
-                .padding(.top, PumTokens.Size.rowPadY + PumTokens.Space.s2)
-                .padding(.bottom, PumTokens.Space.s2)
+                .padding(.top, PumTokens.Space.s14) // 원문 머리 14 16 4
+                .padding(.bottom, PumTokens.Space.s4)
                 .accessibilityAddTraits(.isHeader)
             ForEach(Array(section.rows.enumerated()), id: \.offset) { index, row in
                 if index > 0 { Rectangle().fill(PumColor.borderHairline).frame(height: 1) }
@@ -166,7 +170,7 @@ struct RoleOfferReceivedView: View {
             HStack(alignment: .firstTextBaseline, spacing: PumTokens.Space.s12) { l.fixedSize(); Spacer(minLength: 0); v }
             VStack(alignment: .leading, spacing: PumTokens.Space.s4) { l; v }
         }
-        .padding(.vertical, PumTokens.Size.rowPadY + PumTokens.Space.s2)
+        .padding(.vertical, PumTokens.Size.rowPadY) // 원문 행 11 16 → 토큰 12
         .padding(.horizontal, PumTokens.Size.rowPadX)
         .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin, alignment: .leading)
     }
@@ -174,7 +178,7 @@ struct RoleOfferReceivedView: View {
     // MARK: 하단
 
     private var footer: some View {
-        VStack(spacing: PumTokens.Space.s12) {
+        VStack(spacing: PumTokens.Space.s10) { // 원문 버튼-안내 10
             buttons
                 // 처리 중에는 눌러도 반응하지 않는다(모양은 그대로 — 두 번 보내지 않기)
                 .allowsHitTesting(!state.isResponding)
@@ -183,7 +187,7 @@ struct RoleOfferReceivedView: View {
                 .fixedSize(horizontal: false, vertical: true)
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
-        .padding(.vertical, PumTokens.Space.s12)
+        .padding(.top, PumTokens.Space.s12) // 원문 12 20 34 — 아래 34는 홈 막대 안전 영역
         .background(PumColor.bgApp)
     }
 
