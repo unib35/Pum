@@ -153,6 +153,8 @@ struct ContentView: View {
             case "17e": PublishedScheduleView(state: .sample)
             case "17a": ScheduleDraftView(state: .sample)
             case "17b": ScheduleDraftView(state: .addingShift)
+            case "17c": ScheduleDraftView(state: .confirmingPublish)
+            case "17d": ScheduleDraftView(state: .changingPublished)
             case "gallery": ComponentGalleryView()
             default: DevMenu()
             }
@@ -303,6 +305,8 @@ private struct DevMenu: View {
                     NavigationLink("17e 게시 후 내 스케줄") { PublishedScheduleView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("17a 다음 주 초안") { ScheduleDraftView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("17b 근무 추가 시트") { ScheduleDraftView(state: .addingShift).toolbar(.hidden, for: .navigationBar) }
+                    NavigationLink("17c 게시 확인") { ScheduleDraftView(state: .confirmingPublish).toolbar(.hidden, for: .navigationBar) }
+                    NavigationLink("17d 게시 후 변경") { ScheduleDraftView(state: .changingPublished).toolbar(.hidden, for: .navigationBar) }
                 }
                 Section("디자인 시스템") {
                     NavigationLink("컴포넌트 갤러리") { ComponentGalleryView() }

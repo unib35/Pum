@@ -137,6 +137,17 @@ nonisolated struct ScheduleDraftState: Equatable, Sendable {
     var workTabBadge: Int
     /// 근무 추가 시트(있으면 처음부터 열림)
     var sheet: AddShiftSheetState?
+    /// 주간 카드 배지(서버 글자 · 종류) — 기본은 초안 배지
+    var weekBadge: DraftWeekBadge = .draft
+    /// 하단 「지난주 복사 · 게시」 줄 — 게시된 주(17d)는 서버가 숨김
+    var showsBottomBar = true
+    /// 17c 게시 확인 시트(있으면 처음부터 열림)
+    var publishSheet: PublishConfirmSheetState?
+    /// 17d 게시 후 변경 시트(있으면 처음부터 열림)
+    var changeSheet: PublishedChangeSheetState?
+
+    /// 어떤 시트든 서버가 값을 줬는지 — 값이 있을 때만 열고, 사라지면 닫는다
+    var hasSheet: Bool { sheet != nil || publishSheet != nil || changeSheet != nil }
 
     var selectedDay: DraftDay? { days.first { $0.id == selectedID } }
 
@@ -172,6 +183,45 @@ nonisolated struct ScheduleDraftState: Equatable, Sendable {
     static let addingShift: ScheduleDraftState = {
         var s = sample
         s.sheet = .sample
+        return s
+    }()
+}
+
+/// 주간 카드 배지 — 초안(회색) · 게시됨(연초록)
+nonisolated struct DraftWeekBadge: Equatable, Sendable {
+    let text: String
+    let kind: PumBadge.Kind
+
+    static let draft = DraftWeekBadge(text: ScheduleDraftState.draftBadge, kind: .waiting)
+    static let published = DraftWeekBadge(text: "게시됨 \u{00B7} 10월 3일", kind: .done)
+}
+
+nonisolated extension ScheduleDraftState {
+    /// 17c — 17a 위에 게시 확인 시트가 열린 상태
+    static let confirmingPublish: ScheduleDraftState = {
+        var s = sample
+        s.publishSheet = .sample
+        return s
+    }()
+
+    /// 17d 바탕 — 게시된 주(직원에게 보임 · 근무 줄에 바뀜 배지 없음)
+    static let published: ScheduleDraftState = {
+        var s = sample
+        s.weekBadge = .published
+        s.shifts = [
+            .init(id: 1, start: "10:00", end: "15:00", name: "최유나", colorIndex: 2, note: "휴게 30분", badge: nil),
+            .init(id: 2, start: "17:00", end: "22:00", name: "김하늘", colorIndex: 1, note: "휴게 30분", badge: nil),
+            .init(id: 3, start: "17:00", end: "22:00", name: "이종민", colorIndex: 0, note: "휴게 30분", badge: nil),
+        ]
+        s.footnote = ""
+        s.showsBottomBar = false
+        return s
+    }()
+
+    /// 17d — 게시된 주 위에 게시 후 변경 시트가 열린 상태
+    static let changingPublished: ScheduleDraftState = {
+        var s = published
+        s.changeSheet = .sample
         return s
     }()
 }
