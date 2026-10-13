@@ -21,7 +21,7 @@ struct WorkClosingDirectView: View {
         VStack(spacing: 0) {
             backRow
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s14) { // 원문 블록 사이 14
                     titleBlock
                     summaryCard
                     ForEach(state.people) { person in
@@ -29,7 +29,8 @@ struct WorkClosingDirectView: View {
                     }
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s12)
+                .padding(.top, PumTokens.Space.s14) // 원문 머리 줄 아래 14
+                .padding(.bottom, PumTokens.Space.s12)
                 .disabled(lock.isClosing) // 마감하는 동안은 다른 화면으로 가지 않게
             }
             .scrollBounceBehavior(.basedOnSize)
@@ -67,6 +68,7 @@ struct WorkClosingDirectView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, PumTokens.Space.s4)
+        .padding(.top, PumTokens.Space.s2) // 원문 padding 2 4 0
     }
 
     // MARK: 요약 카드
@@ -89,7 +91,7 @@ struct WorkClosingDirectView: View {
             rowTexts(title: "앱 출퇴근 기록", subtitle: state.appRecordSubtitle)
         }
         .padding(.horizontal, PumTokens.Size.rowPadX)
-        .padding(.vertical, PumTokens.Space.s10)
+        .padding(.vertical, PumTokens.Size.rowPadY) // 원문 padding 12 16
         .frame(minHeight: PumTokens.Size.tapMin)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text("앱 출퇴근 기록, \(state.appRecordSubtitle)"))
@@ -109,7 +111,7 @@ struct WorkClosingDirectView: View {
                        spoken: "\(person.name) 기록 확인") { confirm(person.id) }
         }
         .padding(.horizontal, PumTokens.Size.rowPadX)
-        .padding(.vertical, PumTokens.Space.s10)
+        .padding(.vertical, PumTokens.Size.rowPadY) // 원문 padding 12 16
         .frame(minHeight: PumTokens.Size.tapMin)
         .accessibilityElement(children: .contain)
     }
@@ -129,7 +131,7 @@ struct WorkClosingDirectView: View {
             Text(person.editedTitle).pumText(.body, weight: .bold).foregroundStyle(PumColor.textPrimary) // 원문 15px 700
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, PumTokens.Size.rowPadX)
-                .padding(.top, PumTokens.Space.s16)
+                .padding(.top, PumTokens.Space.s14) // 원문 padding 14 16 4
                 .padding(.bottom, PumTokens.Space.s4)
                 .accessibilityAddTraits(.isHeader)
             ForEach(person.editedDays) { day in
@@ -198,7 +200,7 @@ struct WorkClosingDirectView: View {
             .pumText(.headline)
             .foregroundStyle(active ? Color.white : PumColor.textTertiary)
             .frame(maxWidth: .infinity)
-            .frame(height: PumTokens.Size.buttonHSm) // 원문 약 39pt → 터치 44pt 토큰
+            .frame(height: PumTokens.Size.buttonH) // 원문 54
             .background(active ? PumColor.accent : PumColor.surfaceFill,
                         in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
             .contentShape(Rectangle())
@@ -209,8 +211,7 @@ struct WorkClosingDirectView: View {
         .accessibilityHint(Text(state.closeHint ?? ""))
         .accessibilityValue(lock.isClosing ? Text("마감하는 중") : Text(""))
         .padding(.horizontal, PumTokens.Size.screenPad)
-        .padding(.top, PumTokens.Space.s8)
-        .padding(.bottom, PumTokens.Space.s12)
+        .padding(.top, PumTokens.Space.s12) // 원문 padding 12 20 34 — 아래 34는 홈 표시 영역이 대신한다
     }
 
     private func confirm(_ id: String) {

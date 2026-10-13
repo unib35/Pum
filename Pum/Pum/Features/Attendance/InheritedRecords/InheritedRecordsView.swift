@@ -25,7 +25,8 @@ struct InheritedRecordsView: View {
                     disputeCard
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s12)
+                .padding(.top, PumTokens.Space.s14) // 원문 머리 줄 아래 14
+                .padding(.bottom, PumTokens.Space.s12)
             }
             .scrollBounceBehavior(.basedOnSize)
         }
@@ -65,6 +66,7 @@ struct InheritedRecordsView: View {
         .fixedSize(horizontal: false, vertical: true)
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, PumTokens.Space.s4)
+        .padding(.top, PumTokens.Space.s2) // 원문 padding 2 4 0
     }
 
     // MARK: 카드

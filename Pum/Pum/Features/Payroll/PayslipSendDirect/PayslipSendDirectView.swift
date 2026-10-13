@@ -23,7 +23,8 @@ struct PayslipSendDirectView: View {
                     ForEach(state.pdfRecipients) { pdfCard($0) }
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s12)
+                .padding(.top, PumTokens.Space.s14) // 원문 머리 줄 아래 14
+                .padding(.bottom, PumTokens.Space.s12)
             }
             .scrollBounceBehavior(.basedOnSize)
             bottomBar
@@ -60,6 +61,7 @@ struct PayslipSendDirectView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, PumTokens.Space.s4)
+        .padding(.top, PumTokens.Space.s2) // 원문 padding 2 4 0
     }
 
     // MARK: 받는 직원 카드
@@ -193,8 +195,7 @@ struct PayslipSendDirectView: View {
                 .frame(maxWidth: .infinity)
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
-        .padding(.top, PumTokens.Space.s12)
-        .padding(.bottom, PumTokens.Space.s12) // 원문 34는 홈 표시 막대 자리 — 안전 영역이 대신한다
+        .padding(.top, PumTokens.Space.s12) // 원문 padding 12 20 34 — 아래 34는 홈 표시 영역이 대신한다
     }
 
     /// 한 번만 — 누르는 즉시 잠그고, 성공이면 잠근 채 둔다
