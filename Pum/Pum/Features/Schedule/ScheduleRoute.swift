@@ -50,41 +50,133 @@ enum ScheduleRoute: String, CaseIterable, Hashable {
         case .mySchedule:
             MyScheduleView()
         case .ownerSchedule:
-            OwnerScheduleView()
+            OwnerScheduleView(
+                onChangeWorkplace: { router.navigate(.home(.workplaceSwitcher)) }
+            )
         case .extraShiftRequest:
-            ExtraShiftRequestView(state: .sample)
+            ExtraShiftRequestView(
+                state: .sample,
+                onClose: router.back,
+                onSend: { _, done in
+                    done(true)
+                    router.replace(with: .schedule(.extraShiftOffer))
+                }
+            )
         case .extraShiftOffer:
-            ExtraShiftOfferView(state: .sample)
+            ExtraShiftOfferView(
+                state: .sample,
+                onBack: router.back,
+                onAccept: { done in done(true); router.back() },
+                onDecline: { done in done(true); router.back() }
+            )
         case .staffingNeeds:
-            StaffingNeedsView(state: .sample)
+            StaffingNeedsView(
+                state: .sample,
+                onClose: router.back,
+                onRecommend: { _, done in
+                    done(true)
+                    router.navigate(.schedule(.scheduleOptions))
+                }
+            )
         case .scheduleOptions:
-            ScheduleOptionsView(state: .sample)
+            ScheduleOptionsView(
+                state: .sample,
+                onBack: router.back,
+                onShowDetail: { _ in router.navigate(.schedule(.scheduleOptionDetail)) }
+            )
         case .scheduleOptionDetail:
-            ScheduleOptionDetailView(state: .sample)
+            ScheduleOptionDetailView(
+                state: .sample,
+                onBack: router.back,
+                onSendRequests: { done in
+                    done(true)
+                    router.navigate(.schedule(.scheduleDraft))
+                }
+            )
         case .scheduleManualEdit:
-            ScheduleManualEditView(state: .sample)
+            ScheduleManualEditView(
+                state: .sample,
+                onBack: router.back,
+                onApply: { done in
+                    done(true)
+                    router.navigate(.schedule(.scheduleChangeAfterPublish))
+                }
+            )
         case .leaveRequest:
-            LeaveRequestView(state: .sample, reason: "병원 예약이 있어요")
+            LeaveRequestView(
+                state: .sample,
+                reason: "병원 예약이 있어요",
+                onClose: router.back,
+                onChangeShift: { router.replace(with: .schedule(.shiftChangeRequest)) },
+                onSend: { _, done in
+                    done(true)
+                    router.back()
+                }
+            )
         case .requestInbox:
-            RequestInboxView(state: .sample)
+            RequestInboxView(state: .sample, onBack: router.back)
         case .shiftChangeRequest:
-            ShiftChangeRequestView(state: .sample, start: 18 * 60, end: 23 * 60, reason: "수요일 수업이 18시에 끝나요")
+            ShiftChangeRequestView(
+                state: .sample,
+                start: 18 * 60,
+                end: 23 * 60,
+                reason: "수요일 수업이 18시에 끝나요",
+                onClose: router.back,
+                onSend: { _, done in
+                    done(true)
+                    router.back()
+                }
+            )
         case .publishedSchedule:
-            PublishedScheduleView(state: .sample)
+            PublishedScheduleView(
+                state: .sample,
+                onOpenThisWeek: { router.navigate(.schedule(.mySchedule)) },
+                onRequestCover: { router.navigate(.schedule(.mySchedule)) }
+            )
         case .scheduleDraft:
-            ScheduleDraftView(state: .sample)
+            ScheduleDraftView(
+                state: .sample,
+                onChangeWorkplace: { router.navigate(.home(.workplaceSwitcher)) },
+                onAddShift: { _ in router.navigate(.schedule(.scheduleAddShift)) },
+                onPublish: { router.navigate(.schedule(.schedulePublishConfirm)) }
+            )
         case .scheduleAddShift:
             ScheduleDraftView(state: .addingShift)
         case .schedulePublishConfirm:
-            ScheduleDraftView(state: .confirmingPublish)
+            ScheduleDraftView(
+                state: .confirmingPublish,
+                onConfirmPublish: { router.replace(with: .schedule(.publishedSchedule)) }
+            )
         case .scheduleChangeAfterPublish:
-            ScheduleDraftView(state: .changingPublished)
+            ScheduleDraftView(
+                state: .changingPublished,
+                onSendChangeRequest: { _ in router.navigate(.schedule(.shiftChangeReceived)) }
+            )
         case .shiftChangeReceived:
-            ShiftChangeReceivedView(state: .sample)
+            ShiftChangeReceivedView(
+                state: .sample,
+                onBack: router.back,
+                onAccept: { done in done(true); router.back() },
+                onDecline: { done in done(true); router.back() }
+            )
         case .coverRequestReceived:
-            CoverRequestReceivedView(state: .sample)
+            CoverRequestReceivedView(
+                state: .sample,
+                onBack: router.back,
+                onAccept: { done in
+                    done(true)
+                    router.navigate(.schedule(.requestInbox))
+                },
+                onDecline: { done in done(true); router.back() }
+            )
         }
     }
 
-    static let connected: Set<Self> = []
+    static let connected: Set<Self> = [
+        .ownerSchedule, .extraShiftRequest, .extraShiftOffer, .staffingNeeds,
+        .scheduleOptions, .scheduleOptionDetail, .scheduleManualEdit, .leaveRequest,
+        .requestInbox, .shiftChangeRequest, .publishedSchedule, .scheduleDraft,
+        .schedulePublishConfirm, .scheduleChangeAfterPublish, .shiftChangeReceived,
+        .coverRequestReceived,
+    ]
 }
