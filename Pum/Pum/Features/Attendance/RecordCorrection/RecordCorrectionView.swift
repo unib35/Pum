@@ -35,7 +35,7 @@ struct RecordCorrectionView: View {
             PumNavHeader(title: RecordCorrectionState.title, onBack: onBack)
                 .padding(.horizontal, PumTokens.Size.screenPad)
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
                     headCard
                     section(RecordCorrectionState.contentSection) { timeCard }
                     section(RecordCorrectionState.reasonSection) { reasonEditor }
@@ -52,7 +52,7 @@ struct RecordCorrectionView: View {
             state = state.applying(picked: picked, field: pickerField)
         }
         .safeAreaInset(edge: .bottom, spacing: 0) {
-            VStack(spacing: PumTokens.Space.s8) {
+            VStack(spacing: PumTokens.Space.s10) {
                 PumButton(title: RecordCorrectionState.submitTitle, kind: .primary, isLoading: state.isSending, action: submit)
                     .disabled(!state.canRecalculate(reason: reason))
                 Text(RecordCorrectionState.footnote).pumText(.caption).foregroundStyle(PumColor.textTertiary)
@@ -92,7 +92,7 @@ struct RecordCorrectionView: View {
     }
 
     private func section<C: View>(_ title: String, @ViewBuilder content: () -> C) -> some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
             Text(title).pumText(.caption, weight: .bold).foregroundStyle(PumColor.textSecondary)
                 .padding(.horizontal, PumTokens.Space.s4)
                 .accessibilityAddTraits(.isHeader)
@@ -112,7 +112,7 @@ struct RecordCorrectionView: View {
                 }
                 VStack(alignment: .leading, spacing: PumTokens.Space.s8) { headTexts; lockBadge }
             }
-            .padding(.vertical, PumTokens.Size.rowPadY)
+            .padding(.vertical, PumTokens.Space.s14)
             .padding(.horizontal, PumTokens.Size.rowPadX)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
@@ -132,8 +132,8 @@ struct RecordCorrectionView: View {
             Text(state.lockText).pumText(.caption, weight: .semibold)
         }
         .foregroundStyle(PumColor.textSecondary)
-        .padding(.vertical, PumTokens.Space.s6)
-        .padding(.horizontal, PumTokens.Space.s12)
+        .padding(.vertical, PumTokens.Space.s4)
+        .padding(.horizontal, PumTokens.Space.s8)
         .background(PumColor.surfaceFill, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(state.lockAccessibility))
@@ -145,7 +145,6 @@ struct RecordCorrectionView: View {
         PumCard {
             timeRow(.start)
             Rectangle().fill(PumColor.borderHairline).frame(height: 1)
-                .padding(.horizontal, PumTokens.Size.rowPadX)
             timeRow(.end)
         }
     }
@@ -156,7 +155,7 @@ struct RecordCorrectionView: View {
         let before = field == .start ? state.originalStartText : state.originalEndText
         let after = field == .start ? state.startText : state.endText
         let key = Text(label).pumText(.callout, weight: changed ? .semibold : .regular)
-            .foregroundStyle(changed ? PumColor.textPrimary : PumColor.textSecondary)
+            .foregroundStyle(changed ? PumColor.textPrimary : PumTokens.ColorToken.gray800)
         let value = Group {
             if changed {
                 HStack(spacing: PumTokens.Space.s8) {

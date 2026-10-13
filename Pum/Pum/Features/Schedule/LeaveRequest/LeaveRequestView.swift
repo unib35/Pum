@@ -39,7 +39,7 @@ struct LeaveRequestView: View {
         VStack(spacing: 0) {
             header
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
                     shiftCard
                     section(LeaveRequestState.methodHeader) { methodCard }
                     substituteCard
@@ -75,7 +75,7 @@ struct LeaveRequestView: View {
     }
 
     private var footer: some View {
-        VStack(spacing: PumTokens.Space.s8) {
+        VStack(spacing: PumTokens.Space.s10) {
             PumButton(title: LeaveRequestState.sendTitle, kind: .primary, isLoading: isSending,
                       loadingTitle: LeaveRequestState.sendingTitle, action: send)
             Text(LeaveRequestState.notice).pumText(.caption).foregroundStyle(PumColor.textTertiary)
@@ -88,7 +88,7 @@ struct LeaveRequestView: View {
     }
 
     private func section<Content: View>(_ title: String, @ViewBuilder content: () -> Content) -> some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
             PumSectionHeader(title: title)
             content()
         }
@@ -119,7 +119,7 @@ struct LeaveRequestView: View {
                 .accessibilityLabel(Text("쉬려는 근무 변경"))
             }
             .padding(.horizontal, PumTokens.Size.rowPadX)
-            .padding(.vertical, PumTokens.Space.s12)
+            .padding(.vertical, PumTokens.Space.s14)
         }
     }
 
@@ -130,7 +130,6 @@ struct LeaveRequestView: View {
                     .overlay(alignment: .bottom) {
                         if index < state.methods.count - 1 {
                             Rectangle().fill(PumColor.borderHairline).frame(height: 1)
-                                .padding(.horizontal, PumTokens.Size.rowPadX)
                         }
                     }
             }
@@ -179,7 +178,7 @@ struct LeaveRequestView: View {
             .tint(PumColor.accent)
             .disabled(isSending)
             .padding(.horizontal, PumTokens.Size.rowPadX)
-            .padding(.vertical, PumTokens.Space.s10)
+            .padding(.vertical, PumTokens.Size.rowPadY)
             .frame(minHeight: PumTokens.Size.tapMin)
         }
         // 시스템 Toggle이 스위치로 읽힌다(제목 · 동료 수 · 켬/끔)

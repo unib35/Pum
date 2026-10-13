@@ -43,7 +43,7 @@ struct ShiftChangeRequestView: View {
         VStack(spacing: 0) {
             header
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
                     section(ShiftChangeRequestState.currentHeader) { currentCard }
                     section(ShiftChangeRequestState.changeHeader) { changeCard }
                     if let previewText { previewBox(previewText) }
@@ -86,7 +86,7 @@ struct ShiftChangeRequestView: View {
     }
 
     private func section<Content: View>(_ title: String, @ViewBuilder content: () -> Content) -> some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
             PumSectionHeader(title: title)
             content()
         }
@@ -195,7 +195,8 @@ struct ShiftChangeRequestView: View {
             HStack(spacing: PumTokens.Space.s12) { label; Spacer(minLength: 0); value }
             VStack(alignment: .leading, spacing: PumTokens.Space.s4) { label; value }
         }
-        .padding(PumTokens.Space.s12)
+        .padding(.vertical, PumTokens.Space.s12)
+        .padding(.horizontal, PumTokens.Space.s16)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(PumColor.surfaceFill, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
         .accessibilityElement(children: .combine)

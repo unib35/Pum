@@ -61,10 +61,11 @@ struct CheckInPassedView: View {
                 .accessibilityFocused($titleFocused)
         }
         .padding(.horizontal, PumTokens.Space.s4)
+        .padding(.top, PumTokens.Space.s4)
     }
 
     private var checksSection: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
             PumSectionHeader(title: CheckInPassedState.sectionTitle)
             PumCard {
                 ForEach(Array(state.checks.enumerated()), id: \.element.id) { index, check in
@@ -75,7 +76,7 @@ struct CheckInPassedView: View {
     }
 
     private func checkRow(_ check: CheckInPassedCheck, isLast: Bool) -> some View {
-        HStack(spacing: PumTokens.Space.s14) {
+        HStack(spacing: PumTokens.Space.s12) {
             // 체크리스트 규칙: 회색 원 + 먹색 체크
             Circle().fill(PumColor.surfaceFill)
                 .overlay { Image(systemName: "checkmark").pumText(.caption2, weight: .bold).foregroundStyle(PumColor.textPrimary) }
@@ -105,9 +106,12 @@ struct CheckInPassedView: View {
                 Text(state.clockInText).pumText(.display)
                     .foregroundStyle(PumColor.textPrimary)
                     .lineLimit(1).minimumScaleFactor(0.5)
-                Text(state.plannedLine).pumText(.footnote).foregroundStyle(PumColor.textSecondary)
+                Text(state.plannedLine).pumText(.footnote).foregroundStyle(PumTokens.ColorToken.gray800)
+                    .padding(.top, PumTokens.Space.s2)
             }
-            .padding(PumTokens.Space.s16)
+            .padding(.top, PumTokens.Space.s18)
+            .padding(.horizontal, PumTokens.Space.s18)
+            .padding(.bottom, PumTokens.Space.s16)
             .frame(maxWidth: .infinity, alignment: .leading)
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(Text("\(state.clockInAccessibility), \(state.plannedLine)"))
@@ -130,7 +134,7 @@ struct CheckInPassedView: View {
 
     private var clockOutKey: some View {
         VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
-            Text(CheckInPassedState.clockOutTitle).pumText(.body, weight: .regular).foregroundStyle(PumColor.textSecondary)
+            Text(CheckInPassedState.clockOutTitle).pumText(.body, weight: .regular).foregroundStyle(PumTokens.ColorToken.gray800)
             Text(state.clockOutNotice).pumText(.caption).foregroundStyle(PumColor.textSecondary)
         }
         .frame(maxWidth: .infinity, alignment: .leading)

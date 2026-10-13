@@ -32,10 +32,10 @@ struct CheckInTooFarView: View {
         /// 길 위치 비율(원문 가로 길 x 30% · 세로 길 y 46%)
         static let verticalRoadX: CGFloat = 0.30
         static let horizontalRoadY: CGFloat = 0.46
-        /// 사업장 표시 지름 · 파랑 테두리 · 안쪽 먹색 네모 — 원문 약 40 · 2 · 13
+        /// 사업장 표시 지름 · 파랑 테두리 · 안쪽 먹색 네모 — 원문 40 · 2 · 12
         static let pinSize: CGFloat = 40
         static let pinStroke: CGFloat = 2
-        static let pinInner: CGFloat = 14
+        static let pinInner: CGFloat = 12
         /// 내 위치 점 지름 · 흰 테두리 — 원문 약 20 · 3
         static let dotSize: CGFloat = 14
         static let dotRing: CGFloat = 3
@@ -54,8 +54,10 @@ struct CheckInTooFarView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
                     titleBlock
-                    PumSectionHeader(title: CheckInTooFarState.sectionTitle)
-                    checkCard
+                    VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
+                        PumSectionHeader(title: CheckInTooFarState.sectionTitle)
+                        checkCard
+                    }
                     mapCard
                     infoCard
                 }
@@ -101,7 +103,7 @@ struct CheckInTooFarView: View {
                 .accessibilityFocused($titleFocused)
         }
         .padding(.horizontal, PumTokens.Space.s4)
-        .padding(.bottom, PumTokens.Space.s8)
+        .padding(.top, PumTokens.Space.s4)
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
@@ -157,7 +159,7 @@ struct CheckInTooFarView: View {
                 Text(CheckInTooFarState.mapMessage).pumText(.callout, weight: .semibold)
                     .foregroundStyle(PumColor.textPrimary)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.vertical, PumTokens.Space.s14)
+                    .padding(.vertical, PumTokens.Space.s12)
                     .padding(.horizontal, PumTokens.Size.rowPadX)
             }
         }
@@ -278,14 +280,13 @@ struct CheckInTooFarView: View {
     // MARK: 바닥
 
     private var footer: some View {
-        VStack(spacing: PumTokens.Space.s4) {
+        VStack(spacing: PumTokens.Space.s10) {
             PumButton(title: CheckInTooFarState.retryTitle, kind: .primary, isLoading: lock.isChecking,
                       loadingTitle: CheckInTooFarState.retryingTitle, action: retry)
             PumButton(title: CheckInTooFarState.ownerAction, kind: .text, action: requestOwner)
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
-        .padding(.top, PumTokens.Space.s8)
-        .padding(.bottom, PumTokens.Space.s8)
+        .padding(.vertical, PumTokens.Space.s12)
         .background(PumColor.bgApp)
     }
 

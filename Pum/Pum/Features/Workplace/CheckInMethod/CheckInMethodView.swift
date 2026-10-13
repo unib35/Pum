@@ -42,7 +42,7 @@ struct CheckInMethodView: View {
                 .padding(.top, PumTokens.Space.s8)
                 .padding(.horizontal, PumTokens.Size.screenPad)
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
                     section(CheckInMethodState.methodHeader) { methodCard }
                     section(CheckInMethodState.locationHeader) { locationCard }
                     otherCard
@@ -57,7 +57,7 @@ struct CheckInMethodView: View {
     }
 
     private var footer: some View {
-        VStack(spacing: PumTokens.Space.s8) {
+        VStack(spacing: PumTokens.Space.s10) {
             PumButton(title: CheckInMethodState.saveTitle, kind: .dark, isLoading: isSaving, action: save)
             Text(CheckInMethodState.notice).pumText(.caption).foregroundStyle(PumColor.textTertiary)
                 .multilineTextAlignment(.center)
@@ -69,7 +69,7 @@ struct CheckInMethodView: View {
     }
 
     private func section<Content: View>(_ title: String, @ViewBuilder content: () -> Content) -> some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
             PumSectionHeader(title: title)
             content()
         }
@@ -77,7 +77,6 @@ struct CheckInMethodView: View {
 
     private func divider(show: Bool) -> some View {
         Rectangle().fill(show ? PumColor.borderHairline : Color.clear).frame(height: 1)
-            .padding(.horizontal, PumTokens.Size.rowPadX)
     }
 
     // MARK: 방식
@@ -160,7 +159,7 @@ struct CheckInMethodView: View {
     }
 
     private var radiusKey: some View {
-        Text(CheckInMethodState.radiusTitle).pumText(.callout).foregroundStyle(PumColor.textSecondary)
+        Text(CheckInMethodState.radiusTitle).pumText(.callout).foregroundStyle(PumTokens.ColorToken.gray800)
             .accessibilityHidden(true)
     }
 
@@ -239,7 +238,7 @@ struct CheckInMethodView: View {
     }
 
     private func keyText(_ s: String) -> some View {
-        Text(s).pumText(.callout).foregroundStyle(PumColor.textSecondary)
+        Text(s).pumText(.callout).foregroundStyle(PumTokens.ColorToken.gray800)
     }
 
     private func valueText(_ s: String) -> some View {
