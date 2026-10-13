@@ -12,7 +12,7 @@ struct PaymentCheckRequestSheet: View {
     private var isConfirming: Bool { lock.isConfirming }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s14) {
             head
             infoCard
             buttons
@@ -21,7 +21,7 @@ struct PaymentCheckRequestSheet: View {
                 .multilineTextAlignment(.center)
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
-        .padding(.bottom, PumTokens.Space.s8)
+        .padding(.bottom, PumTokens.Space.s10)
     }
 
     private var head: some View {
@@ -33,6 +33,7 @@ struct PaymentCheckRequestSheet: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
+        .padding(.horizontal, PumTokens.Space.s2)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(state.headSpoken))
         .accessibilityAddTraits(.isHeader)

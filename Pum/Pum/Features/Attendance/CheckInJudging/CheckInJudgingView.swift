@@ -31,7 +31,7 @@ struct CheckInJudgingView: View {
         VStack(spacing: 0) {
             backRow
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s14) {
                     titleBlock
                     PumCard {
                         ForEach(Array(state.steps.enumerated()), id: \.element.id) { index, step in
@@ -40,7 +40,7 @@ struct CheckInJudgingView: View {
                     }
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.top, PumTokens.Space.s8)
+                .padding(.top, PumTokens.Space.s16) // 원문 gap 14 + 제목 위 2
                 .padding(.bottom, PumTokens.Space.s16)
             }
             .scrollBounceBehavior(.basedOnSize)
@@ -79,7 +79,6 @@ struct CheckInJudgingView: View {
                 .accessibilityAddTraits(.isHeader)
         }
         .padding(.horizontal, PumTokens.Space.s4)
-        .padding(.bottom, PumTokens.Space.s8)
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
@@ -89,14 +88,13 @@ struct CheckInJudgingView: View {
         HStack(spacing: PumTokens.Space.s12) {
             statusMark(step.status)
             VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
-                Text(step.title).pumText(.body, weight: .semibold).foregroundStyle(PumColor.textPrimary)
+                Text(step.title).pumText(.callout, weight: .semibold).foregroundStyle(PumColor.textPrimary)
                 Text(step.detail).pumText(.caption).foregroundStyle(PumColor.textSecondary)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding(.vertical, PumTokens.Size.rowPadY)
         .padding(.horizontal, PumTokens.Size.rowPadX)
-        .frame(minHeight: PumTokens.Size.tapMin)
         .overlay(alignment: .bottom) {
             if !isLast { Rectangle().fill(PumColor.borderHairline).frame(height: 1) }
         }
@@ -133,13 +131,14 @@ struct CheckInJudgingView: View {
     // MARK: 하단 고정
 
     private var footer: some View {
-        VStack(spacing: PumTokens.Space.s12) {
+        VStack(spacing: PumTokens.Space.s8) {
             PumButton(title: CheckInJudgingState.buttonTitle, kind: .primary, isLoading: true, action: {})
             Text(CheckInJudgingState.footnote).pumText(.caption).foregroundStyle(PumColor.textSecondary)
                 .multilineTextAlignment(.center)
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
-        .padding(.vertical, PumTokens.Space.s12)
+        .padding(.top, PumTokens.Space.s12)
+        .padding(.bottom, PumTokens.Space.s10)
         .background(PumColor.bgApp)
     }
 }

@@ -5,12 +5,12 @@ import SwiftUI
 struct InviteUnverifiedSections: View {
     let state: InviteViewState
 
-    @ScaledMetric(relativeTo: .headline) private var workplaceTile: CGFloat = 52
+    @ScaledMetric(relativeTo: .headline) private var workplaceTile: CGFloat = 44
     /// 안내 목록 원 24 — 글자와 함께 커진다(공통 후보: 5a StepCircle과 같은 모양)
     @ScaledMetric(relativeTo: .callout) private var circle = PumTokens.Space.s24
 
     var body: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s14) {
             workplaceCard
             noticeCard
         }
@@ -31,7 +31,8 @@ struct InviteUnverifiedSections: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     PumBadge(text: InviteViewState.unverifiedBadge, kind: .attention)
                 }
-                .padding(PumTokens.Space.s16)
+                .padding(.vertical, PumTokens.Size.rowPadY)
+                .padding(.horizontal, PumTokens.Size.rowPadX)
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel(Text(state.unverifiedCardAccessibility))
                 row("대표자", state.unverifiedOwnerValue, muted: true)
@@ -56,9 +57,8 @@ struct InviteUnverifiedSections: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding(.vertical, PumTokens.Space.s10)
-        .padding(.horizontal, PumTokens.Space.s16)
-        .frame(minHeight: PumTokens.Size.tapMin)
+        .padding(.vertical, PumTokens.Size.rowPadY)
+        .padding(.horizontal, PumTokens.Size.rowPadX)
         .overlay(alignment: .top) { Rectangle().fill(PumColor.borderHairline).frame(height: 1) }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text("\(label), \(value)"))
@@ -79,8 +79,8 @@ struct InviteUnverifiedSections: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .padding(.vertical, PumTokens.Space.s14)
-                .padding(.horizontal, PumTokens.Space.s16)
+                .padding(.vertical, PumTokens.Size.rowPadY)
+                .padding(.horizontal, PumTokens.Size.rowPadX)
                 .accessibilityElement(children: .combine)
                 listRow(InviteViewState.unverifiedAllowedNow, allowed: true)
                 listRow(InviteViewState.unverifiedAfterVerify, allowed: false)
@@ -104,9 +104,8 @@ struct InviteUnverifiedSections: View {
             Text(text).pumText(.callout, weight: .medium).foregroundStyle(PumColor.textPrimary)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding(.vertical, PumTokens.Space.s12)
-        .padding(.horizontal, PumTokens.Space.s16)
-        .frame(minHeight: PumTokens.Size.tapMin)
+        .padding(.vertical, PumTokens.Size.rowPadY)
+        .padding(.horizontal, PumTokens.Size.rowPadX)
         .overlay(alignment: .top) { Rectangle().fill(PumColor.borderHairline).frame(height: 1) }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(text)) // 문구 자체가 「지금은 …」 · 「인증되면 …」이라 꼬리표를 붙이지 않는다

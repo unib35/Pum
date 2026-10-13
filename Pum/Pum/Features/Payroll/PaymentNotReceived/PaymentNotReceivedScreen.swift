@@ -52,13 +52,15 @@ struct PaymentNotReceivedScreen: View {
     // MARK: 뒤 화면
 
     private var background: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s14) {
             backButton
             VStack(alignment: .leading, spacing: PumTokens.Space.s4) {
                 Text(state.summaryText).pumText(.footnote, weight: .medium).foregroundStyle(PumColor.textSecondary)
                 Text(state.netPayText).pumText(.title1).foregroundStyle(PumColor.textPrimary) // 원문 26px 700 → title1 28
                 Text("실지급액").pumText(.footnote, weight: .regular).foregroundStyle(PumColor.textSecondary)
             }
+            .padding(.top, PumTokens.Space.s2)
+            .padding(.horizontal, PumTokens.Space.s4)
             .accessibilityElement(children: .combine)
             paidCard
             Spacer(minLength: 0)
@@ -94,8 +96,8 @@ struct PaymentNotReceivedScreen: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .padding(PumTokens.Space.s16)
-            .frame(minHeight: PumTokens.Size.tapMin)
+            .padding(.vertical, PumTokens.Size.rowPadY)
+            .padding(.horizontal, PumTokens.Size.rowPadX)
         }
         .accessibilityElement(children: .combine)
     }

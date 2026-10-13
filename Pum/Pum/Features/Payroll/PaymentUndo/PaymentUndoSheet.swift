@@ -19,11 +19,12 @@ struct PaymentUndoSheet: View {
                 Text(target.summaryText).pumText(.footnote, weight: .regular).foregroundStyle(PumColor.textSecondary)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, PumTokens.Space.s2)
             notesCard
             buttons
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
-        .padding(.bottom, PumTokens.Space.s16) // 원문 34는 홈 표시 막대 자리 — 안전 영역이 대신한다
+        .padding(.bottom, PumTokens.Space.s10) // 원문 아래 34 − 안전 영역(공통 시트가 더함)
     }
 
     private var notesCard: some View {
