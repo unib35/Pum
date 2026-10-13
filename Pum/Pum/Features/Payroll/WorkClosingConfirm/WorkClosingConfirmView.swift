@@ -47,7 +47,7 @@ struct WorkClosingConfirmView: View {
     // MARK: 뒤 화면
 
     private var background: some View {
-        VStack(spacing: PumTokens.Space.s12) {
+        VStack(spacing: PumTokens.Space.s14) { // 원문 블록 사이 14
             PumNavHeader(title: "근무 마감", onBack: onBack) { EmptyView() }
             checkedCard
             Spacer(minLength: 0)
@@ -68,8 +68,9 @@ struct WorkClosingConfirmView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding(PumTokens.Space.s16)
-        .background(PumColor.statusDoneSoft, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
+        .padding(.vertical, PumTokens.Space.s14) // 원문 padding 14 16
+        .padding(.horizontal, PumTokens.Space.s16)
+        .background(PumColor.statusDoneSoft, in: RoundedRectangle(cornerRadius: PumTokens.Radius.lg, style: .continuous))
         .accessibilityElement(children: .combine)
     }
 
@@ -87,16 +88,15 @@ struct WorkClosingConfirmView: View {
                 .accessibilityLabel(Text(state.lockNoticeSpoken))
                 bullet { Text(state.calcNotice) }
             }
-            .padding(.top, PumTokens.Space.s4)
             VStack(spacing: PumTokens.Space.s4) {
                 PumButton(title: state.confirmTitle, kind: .primary, isLoading: isClosing, loadingTitle: "마감하는 중", action: confirm)
                     .disabled(isClosing || !state.canClose)
                 PumButton(title: "취소", kind: .text, action: cancel)
                     .disabled(isClosing)
             }
-            .padding(.top, PumTokens.Space.s4)
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
+        .padding(.bottom, PumTokens.Space.s10) // 원문 아래 44 − 안전 영역 34
     }
 
     private var summaryCard: some View {
@@ -123,7 +123,6 @@ struct WorkClosingConfirmView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding(.vertical, PumTokens.Size.rowPadY)
-        .frame(minHeight: PumTokens.Size.tapMin)
         .padding(.horizontal, PumTokens.Size.rowPadX)
         .overlay(alignment: .bottom) {
             if !isLast {
@@ -145,7 +144,7 @@ struct WorkClosingConfirmView: View {
 
     /// 공통 후보: 점 목록 행(원문 점 + 13px 400 gray800)
     private func bullet<C: View>(@ViewBuilder _ text: () -> C) -> some View {
-        HStack(alignment: .firstTextBaseline, spacing: PumTokens.Space.s8) {
+        HStack(alignment: .firstTextBaseline, spacing: PumTokens.Space.s10) { // 원문 점~글 10
             Circle().fill(PumColor.textPrimary).frame(width: PumTokens.Space.s4, height: PumTokens.Space.s4)
                 .accessibilityHidden(true)
             text().pumText(.footnote, weight: .regular).foregroundStyle(PumTokens.ColorToken.gray800)

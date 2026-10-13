@@ -18,8 +18,6 @@ struct LaborSimulatorView: View {
     var latestResult: LaborSimulatorResult?
 
     // 화면 전용 상수 (DEC-005)
-    /// 세그먼트 칸 높이 — 원문 약 36(누름 영역은 위아래로 넓혀 44)
-    @ScaledMetric(relativeTo: .callout) private var segmentHeight: CGFloat = 36
     /// 요일 칩 지름 — 원문 30
     @ScaledMetric(relativeTo: .caption) private var chipSize = PumTimePickerStyle.weekdayChip
     /// 값 알약 최소 높이 — 원문 약 28
@@ -47,13 +45,14 @@ struct LaborSimulatorView: View {
         VStack(spacing: 0) {
             header
             ScrollView {
-                VStack(spacing: PumTokens.Space.s12) {
+                VStack(spacing: PumTokens.Space.s14) { // 원문 블록 사이 14
                     segments
                     inputCard
                     resultCard
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s12)
+                .padding(.top, PumTokens.Space.s14) // 원문 머리 줄 아래 14
+                .padding(.bottom, PumTokens.Space.s12)
             }
         }
         .background(PumColor.bgApp)
@@ -65,7 +64,8 @@ struct LaborSimulatorView: View {
             PumButton(title: LaborSimulatorState.detailTitle, kind: .primary, action: onShowResult)
                 .disabled(!state.canShowDetail)
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s12)
+                .padding(.top, PumTokens.Space.s12) // 원문 위 12 · 아래 44 − 안전 영역 34 = 10
+                .padding(.bottom, PumTokens.Space.s10)
                 .background(PumColor.bgApp)
         }
         .onChange(of: state.inputs) { _, new in onInputsChanged(new) }
@@ -93,7 +93,6 @@ struct LaborSimulatorView: View {
                 Spacer()
             }
         }
-        .padding(.top, PumTokens.Space.s8)
         .padding(.horizontal, PumTokens.Size.screenPad)
     }
 
@@ -108,22 +107,26 @@ struct LaborSimulatorView: View {
                         .pumText(.footnote, weight: selected ? .semibold : .medium)
                         .foregroundStyle(selected ? PumColor.textPrimary : PumColor.textSecondary)
                         .multilineTextAlignment(.center)
-                        .frame(maxWidth: .infinity, minHeight: segmentHeight)
+                        .padding(.vertical, PumTokens.Space.s8) // 원문 칸 padding 7 0
+                        .frame(maxWidth: .infinity)
                         .background {
                             if selected {
-                                RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous)
+                                RoundedRectangle(cornerRadius: PumTokens.Radius.pill, style: .continuous)
                                     .fill(PumColor.surfaceCard)
                             }
                         }
-                        .contentShape(Rectangle().inset(by: -PumTokens.Space.s4))
+                        // 누름 영역만 44 이상으로 키우고 배치는 원문 칸 높이만 쓴다
+                        .padding(.vertical, PumTokens.Space.s6)
+                        .contentShape(Rectangle())
+                        .padding(.vertical, -PumTokens.Space.s6)
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel(Text(mode.title))
                 .accessibilityAddTraits(selected ? [.isButton, .isSelected] : .isButton)
             }
         }
-        .padding(PumTokens.Space.s2)
-        .background(PumColor.surfaceFill, in: RoundedRectangle(cornerRadius: PumTokens.Radius.lg, style: .continuous))
+        .padding(PumTokens.Space.s2) // 원문 3 → 가까운 2
+        .background(PumColor.surfaceFill, in: RoundedRectangle(cornerRadius: PumTokens.Radius.pill, style: .continuous))
     }
 
     // MARK: 입력 카드
@@ -177,7 +180,7 @@ struct LaborSimulatorView: View {
                 .padding(.horizontal, PumTokens.Space.s12)
                 .frame(minHeight: pillHeight)
                 .background(tint == .blue ? PumColor.accentSoft : PumColor.surfaceFill,
-                            in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
+                            in: RoundedRectangle(cornerRadius: PumTokens.Radius.sm, style: .continuous))
                 .contentShape(Rectangle().inset(by: -PumTokens.Space.s8))
         }
         .buttonStyle(.plain)
@@ -215,9 +218,10 @@ struct LaborSimulatorView: View {
                         .foregroundStyle(on ? Color.white : PumColor.textPrimary)
                         .frame(width: chipSize, height: chipSize)
                         .background(on ? PumColor.surfaceInverse : PumColor.surfaceFill, in: Circle())
-                        // 누름 영역: 세로 44pt, 가로는 칩 + 간격(이웃과 겹치지 않게)
+                        // 누름 영역: 세로 44pt(배치는 칩 높이만), 가로는 칩 + 간격(이웃과 겹치지 않게)
                         .frame(minWidth: chipSize + PumTokens.Space.s4, minHeight: PumTokens.Size.tapMin)
                         .contentShape(Rectangle())
+                        .padding(.vertical, -max(0, PumTokens.Size.tapMin - chipSize) / 2)
                 }
                 .buttonStyle(.plain)
                 .padding(.horizontal, -PumTokens.Space.s2)
@@ -232,9 +236,9 @@ struct LaborSimulatorView: View {
 
     private var resultCard: some View {
         PumCard {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
-                HStack(spacing: PumTokens.Space.s8) {
-                    Text(LaborSimulatorState.resultHeading).pumText(.callout, weight: .medium)
+            VStack(alignment: .leading, spacing: 0) {
+                HStack(spacing: PumTokens.Space.s4) { // 원문 배지 왼쪽 4
+                    Text(LaborSimulatorState.resultHeading).pumText(.footnote, weight: .medium)
                         .foregroundStyle(PumColor.textSecondary)
                     estimatePill
                     Spacer(minLength: 0)
@@ -246,18 +250,20 @@ struct LaborSimulatorView: View {
                     Text(LaborSimulatorState.totalText(result.expectedWon))
                         .pumText(.hero).foregroundStyle(PumColor.textPrimary)
                         .minimumScaleFactor(0.6).lineLimit(2)
+                        .padding(.top, PumTokens.Space.s4) // 원문 금액 위 4
                         .accessibilityHidden(true)
                     Rectangle().fill(PumColor.borderHairline).frame(height: 1)
-                        .padding(.vertical, PumTokens.Space.s4)
-                    VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+                        .padding(.top, PumTokens.Space.s12) // 원문 내역 위 12 · 선 위 12
+                    VStack(alignment: .leading, spacing: PumTokens.Space.s6) { // 원문 줄 사이 6
                         ForEach(Array(result.lines.enumerated()), id: \.offset) { _, line in
                             lineRow(line)
                         }
                     }
+                    .padding(.top, PumTokens.Space.s12)
                 }
             }
-            .padding(.horizontal, PumTokens.Space.s16)
-            .padding(.vertical, PumTokens.Space.s14)
+            .padding(.horizontal, PumTokens.Space.s18) // 원문 padding 16 18
+            .padding(.vertical, PumTokens.Space.s16)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
@@ -265,7 +271,7 @@ struct LaborSimulatorView: View {
     /// 「예상」 회색 알약 — 공통 C2 배지는 읽을 때 「상태:」가 붙어 화면 전용(공통 후보)
     private var estimatePill: some View {
         Text(LaborSimulatorState.estimateBadge).pumText(.caption2, weight: .bold)
-            .foregroundStyle(PumColor.textSecondary)
+            .foregroundStyle(PumTokens.ColorToken.gray700) // 원문 #5B6170
             .padding(.vertical, PumTokens.Space.s2)
             .padding(.horizontal, PumTokens.Space.s6)
             .background(PumColor.surfaceFill, in: RoundedRectangle(cornerRadius: PumTokens.Radius.xs, style: .continuous))

@@ -26,10 +26,10 @@ struct ScheduleManualEditView: View {
     // 화면 전용 상수 (DEC-005)
     /// 요일 칸 높이 — 원문 약 49 (9a와 같은 값)
     @ScaledMetric(relativeTo: .body) private var dayCellHeight: CGFloat = 49
-    /// 막대 트랙 높이 — 원문 약 16
-    @ScaledMetric(relativeTo: .body) private var trackHeight: CGFloat = 16
-    /// 직원 이름 칸 폭 — 원문 약 84
-    @ScaledMetric(relativeTo: .body) private var nameColumn: CGFloat = 84
+    /// 막대 트랙 높이 — 원문 22
+    @ScaledMetric(relativeTo: .body) private var trackHeight: CGFloat = 22
+    /// 직원 이름 칸 폭 — 원문 62
+    @ScaledMetric(relativeTo: .body) private var nameColumn: CGFloat = 62
     /// 타임라인 작은 아바타 — 원문 약 24
     @ScaledMetric(relativeTo: .body) private var smallAvatar: CGFloat = 24
     /// 바뀐 사람 카드 아바타 — 원문 약 28
@@ -126,7 +126,7 @@ struct ScheduleManualEditView: View {
                     .frame(maxWidth: .infinity, minHeight: max(dayCellHeight, PumTokens.Size.tapMin))
                     .background {
                         if on {
-                            RoundedRectangle(cornerRadius: PumTokens.Radius.xl, style: .continuous).fill(PumColor.surfaceInverse)
+                            RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous).fill(PumColor.surfaceInverse) // 원문 12
                         }
                     }
                     .contentShape(Rectangle())
@@ -152,7 +152,7 @@ struct ScheduleManualEditView: View {
                 divider
                 needsRow
             }
-            .padding(.horizontal, PumTokens.Size.rowPadX)
+            .padding(.horizontal, PumTokens.Space.s14) // 원문 padding 12 14
             .padding(.vertical, PumTokens.Space.s12)
         }
     }
@@ -175,12 +175,11 @@ struct ScheduleManualEditView: View {
             }
             .frame(height: tickHeight)
         }
-        .padding(.bottom, PumTokens.Space.s8)
         .accessibilityHidden(true)
     }
 
     private func shiftRow(_ shift: ManualEditShift) -> some View {
-        let name = HStack(spacing: PumTokens.Space.s8) {
+        let name = HStack(spacing: PumTokens.Space.s6) { // 원문 아바타~이름 6
             PumAvatar(name: shift.name, colorIndex: shift.colorIndex, size: smallAvatar)
             Text(shift.name).pumText(.footnote, weight: .semibold).foregroundStyle(PumColor.textPrimary)
                 .multilineTextAlignment(.leading)
@@ -197,9 +196,9 @@ struct ScheduleManualEditView: View {
                     }
                 }
             }
-            .padding(.vertical, PumTokens.Space.s10)
-            .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin, alignment: .leading)
-            .contentShape(Rectangle())
+            .padding(.vertical, PumTokens.Space.s8) // 원문 행 padding 8 0
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .contentShape(Rectangle().inset(by: -PumTokens.Space.s2)) // 배치는 원문 높이, 누름 영역만 44 이상
         }
         .buttonStyle(.plain)
         .accessibilityElement(children: .ignore)
@@ -213,7 +212,7 @@ struct ScheduleManualEditView: View {
         GeometryReader { geo in
             let w = geo.size.width
             ZStack(alignment: .leading) {
-                RoundedRectangle(cornerRadius: PumTokens.Radius.sm, style: .continuous).fill(PumColor.surfaceFill)
+                RoundedRectangle(cornerRadius: PumTokens.Radius.xs, style: .continuous).fill(PumColor.surfaceFill) // 원문 모서리 6
                 // 원래 근무와 겹치는 구간은 진한 파랑
                 let solidStart = max(shift.startMinutes, shift.originalStart)
                 let solidEnd = min(shift.endMinutes, shift.originalEnd)
@@ -238,6 +237,7 @@ struct ScheduleManualEditView: View {
             .fill(filled ? PumColor.accent : PumTokens.ColorToken.blue300)
             .overlay { if !filled { shape.stroke(PumColor.accent, lineWidth: PumTokens.Shadow.hairline.spread) } }
             .frame(width: max((f.upperBound - f.lowerBound) * width, 0))
+            .padding(.vertical, PumTokens.Space.s2) // 원문 막대 위아래 3 → 가까운 2
             .offset(x: f.lowerBound * width)
     }
 
@@ -246,11 +246,13 @@ struct ScheduleManualEditView: View {
         let label = Text(ScheduleManualEditState.needLabel).pumText(.caption2, weight: .regular).foregroundStyle(PumColor.textSecondary)
         let items = state.displayedNeeds
         return ViewThatFits(in: .horizontal) {
-            HStack(spacing: 0) {
-                label
-                ForEach(Array(items.enumerated()), id: \.offset) { _, t in
-                    Spacer(minLength: PumTokens.Space.s8)
-                    Text(t).pumText(.caption2, weight: .regular).foregroundStyle(PumColor.textSecondary)
+            HStack(spacing: PumTokens.Space.s8) { // 원문: 이름 칸 62 + 간격 8 + 나머지에 양끝 정렬
+                label.frame(width: nameColumn, alignment: .leading)
+                HStack(spacing: 0) {
+                    ForEach(Array(items.enumerated()), id: \.offset) { i, t in
+                        if i > 0 { Spacer(minLength: PumTokens.Space.s8) }
+                        Text(t).pumText(.caption2, weight: .regular).foregroundStyle(PumColor.textSecondary)
+                    }
                 }
             }
             .lineLimit(1)
@@ -261,7 +263,7 @@ struct ScheduleManualEditView: View {
                 }
             }
         }
-        .padding(.top, PumTokens.Space.s10)
+        .padding(.top, PumTokens.Space.s8) // 원문 위 8
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text("\(ScheduleManualEditState.needLabel), " + items.joined(separator: ", ")))
     }
@@ -273,7 +275,7 @@ struct ScheduleManualEditView: View {
         let name = state.changedShift?.name ?? ""
         let index = state.changedShift?.colorIndex ?? 0
         return PumCard {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+            VStack(alignment: .leading, spacing: PumTokens.Space.s10) { // 원문 머리~금액~선~내역 10
                 HStack(alignment: .firstTextBaseline, spacing: PumTokens.Space.s8) {
                     PumAvatar(name: name, colorIndex: index, size: cardAvatar)
                     // 이름 줄 + 시간 범위: 한 줄에 안 들어가면 시간이 아래로
@@ -290,7 +292,8 @@ struct ScheduleManualEditView: View {
                     }
                 }
             }
-            .padding(PumTokens.Space.s16)
+            .padding(.horizontal, PumTokens.Space.s16) // 원문 padding 14 16
+            .padding(.vertical, PumTokens.Space.s14)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         .overlay {
@@ -304,7 +307,7 @@ struct ScheduleManualEditView: View {
     }
 
     private func titleText(_ s: String) -> some View {
-        Text(s).pumText(.callout, weight: .bold).foregroundStyle(PumColor.textPrimary)
+        Text(s).pumText(.body, weight: .bold).foregroundStyle(PumColor.textPrimary) // 원문 15px 700
     }
 
     @ViewBuilder private var rangeText: some View {
@@ -315,12 +318,12 @@ struct ScheduleManualEditView: View {
 
     /// 취소선 이전 값 · 큰 새 값 · 증감 — 모두 서버 값. 한 줄에 안 들어가면 세로
     private func amountRow(_ res: ScheduleManualEditResult) -> some View {
-        let before = Text(res.beforeText).pumText(.footnote, weight: .regular).strikethrough()
+        let before = Text(res.beforeText).pumText(.callout, weight: .regular).strikethrough()
             .foregroundStyle(PumColor.textTertiary)
         let after = Text(res.afterText).pumText(.title2).foregroundStyle(PumColor.textPrimary)
         let delta = Text(res.deltaText).pumText(.footnote, weight: .bold).foregroundStyle(PumTokens.ColorToken.gray700)
         return ViewThatFits(in: .horizontal) {
-            HStack(alignment: .firstTextBaseline, spacing: PumTokens.Space.s8) { before; after; delta }
+            HStack(alignment: .firstTextBaseline, spacing: PumTokens.Space.s10) { before; after; delta } // 원문 칸 사이 10
             VStack(alignment: .leading, spacing: PumTokens.Space.s2) { before; after; delta }
         }
     }
@@ -344,22 +347,23 @@ struct ScheduleManualEditView: View {
     private var buttons: some View {
         Group {
             if isLarge {
-                VStack(spacing: PumTokens.Space.s8) { applyButton; revertButton }
+                VStack(spacing: PumTokens.Space.s10) { applyButton; revertButton }
             } else {
-                // 되돌리기 : 적용 = 1 : 1.5 (C1 PAIR와 같은 비율)
+                // 되돌리기 : 적용 = 1 : 1.6 (원문 grid 1fr 1.6fr), 사이 10
                 GeometryReader { geo in
-                    let gap = PumTokens.Space.s8
-                    let unit = (geo.size.width - gap) / 2.5
+                    let gap = PumTokens.Space.s10
+                    let unit = (geo.size.width - gap) / 2.6
                     HStack(spacing: gap) {
                         revertButton.frame(width: unit)
-                        applyButton.frame(width: unit * 1.5)
+                        applyButton.frame(width: unit * 1.6)
                     }
                 }
                 .frame(height: PumTokens.Size.buttonH)
             }
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
-        .padding(.vertical, PumTokens.Space.s12)
+        .padding(.top, PumTokens.Space.s12) // 원문 위 12 · 아래 44 − 안전 영역 34 = 10
+        .padding(.bottom, PumTokens.Space.s10)
         .background(PumColor.bgApp)
     }
 

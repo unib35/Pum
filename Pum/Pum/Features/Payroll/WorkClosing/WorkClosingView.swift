@@ -23,7 +23,7 @@ struct WorkClosingView: View {
             PumNavHeader(title: "근무 마감", onBack: onBack) { EmptyView() }
                 .padding(.horizontal, PumTokens.Size.screenPad)
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s14) { // 원문 블록 사이 14
                     titleBlock
                     summaryCard
                     Group { // 마감하는 동안은 다른 화면으로 가지 않게
@@ -33,7 +33,8 @@ struct WorkClosingView: View {
                     .disabled(isClosing)
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s12)
+                .padding(.top, PumTokens.Space.s14) // 원문 머리 줄 아래 14
+                .padding(.bottom, PumTokens.Space.s12)
             }
             bottomButtons
         }
@@ -49,16 +50,15 @@ struct WorkClosingView: View {
                 .accessibilityAddTraits(.isHeader)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.horizontal, PumTokens.Space.s4)
     }
 
     // MARK: 요약 카드
 
     private var summaryCard: some View {
         PumCard {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+            VStack(alignment: .leading, spacing: 0) {
                 ViewThatFits(in: .horizontal) {
-                    HStack(alignment: .top, spacing: PumTokens.Space.s12) {
+                    HStack(alignment: .top, spacing: PumTokens.Space.s8) { // 원문 칸 사이 8
                         stat("직원", state.employeeText)
                         stat("근무기록", state.recordText)
                         stat("총 근무", state.totalWorkText)
@@ -70,6 +70,7 @@ struct WorkClosingView: View {
                     }
                 }
                 bar
+                    .padding(.top, PumTokens.Space.s14) // 원문 막대 위 14
                     .accessibilityElement(children: .ignore)
                     .accessibilityLabel(Text(state.barAccessibilityText))
                 ViewThatFits(in: .horizontal) {
@@ -85,9 +86,11 @@ struct WorkClosingView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 .pumText(.caption, weight: .semibold) // 원문 12px 600
+                .padding(.top, PumTokens.Space.s8) // 원문 줄 위 8
                 .accessibilityHidden(true) // 막대 라벨이 같은 내용을 읽는다
             }
-            .padding(PumTokens.Space.s16)
+            .padding(.vertical, PumTokens.Space.s16)
+            .padding(.horizontal, PumTokens.Space.s18) // 원문 padding 16 18
             .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
@@ -144,8 +147,7 @@ struct WorkClosingView: View {
             Text("\(state.normalCount)건").pumText(.headline, weight: .bold).foregroundStyle(PumColor.statusDone)
         }
         .padding(.horizontal, PumTokens.Size.rowPadX)
-        .padding(.vertical, PumTokens.Space.s10)
-        .frame(minHeight: PumTokens.Size.tapMin)
+        .padding(.vertical, PumTokens.Size.rowPadY) // 원문 13 → 12
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text("정상 기록, \(state.normalCount)건"))
     }
@@ -169,8 +171,7 @@ struct WorkClosingView: View {
                     .foregroundStyle(PumColor.textTertiary).accessibilityHidden(true)
             }
             .padding(.horizontal, PumTokens.Size.rowPadX)
-            .padding(.vertical, PumTokens.Space.s10)
-            .frame(minHeight: PumTokens.Size.tapMin)
+            .padding(.vertical, PumTokens.Size.rowPadY) // 원문 13 → 12
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
@@ -212,7 +213,7 @@ struct WorkClosingView: View {
     // MARK: 하단 버튼
 
     private var bottomButtons: some View {
-        VStack(spacing: PumTokens.Space.s8) {
+        VStack(spacing: PumTokens.Space.s10) { // 원문 버튼 사이 10
             PumButton(title: state.reviewTitle, kind: .primary, action: onReviewProblems)
                 .disabled(isClosing)
             PumButton(title: state.closeTitle, kind: .primary, isLoading: isClosing, loadingTitle: "마감하는 중", action: close)
@@ -220,8 +221,8 @@ struct WorkClosingView: View {
                 .accessibilityLabel(Text(state.closeAccessibilityLabel))
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
-        .padding(.top, PumTokens.Space.s8)
-        .padding(.bottom, PumTokens.Space.s12)
+        .padding(.top, PumTokens.Space.s12)
+        .padding(.bottom, PumTokens.Space.s10) // 원문 아래 44 − 안전 영역 34
     }
 
     /// 한 번만 — 누르는 즉시 잠그고, 실패일 때만 푼다

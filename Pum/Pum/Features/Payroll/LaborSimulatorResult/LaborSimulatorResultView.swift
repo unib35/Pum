@@ -16,14 +16,19 @@ struct LaborSimulatorResultView: View {
             PumNavHeader(title: state.title, onBack: onBack) { EmptyView() }
                 .padding(.horizontal, PumTokens.Size.screenPad)
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s14) { // 원문 블록 사이 14
                     compareCard
-                    PumSectionHeader(title: state.weekdayHeader)
-                    weekdayCard
+                    // 원문: 제목 위 2 · 제목~카드 8(블록 14 − 6)
+                    VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+                        PumSectionHeader(title: state.weekdayHeader)
+                            .padding(.top, PumTokens.Space.s2)
+                        weekdayCard
+                    }
                     recommendCard
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s12)
+                .padding(.top, PumTokens.Space.s14) // 원문 머리 줄 아래 14
+                .padding(.bottom, PumTokens.Space.s12)
             }
             bottomButtons
         }
@@ -38,9 +43,9 @@ struct LaborSimulatorResultView: View {
                 Text(state.compareTitle).pumText(.footnote, weight: .medium).foregroundStyle(PumColor.textSecondary)
                 ViewThatFits(in: .horizontal) {
                     // 원문: 두 열 같은 폭 · 화살표는 카드 가운데
-                    HStack(alignment: .bottom, spacing: PumTokens.Space.s12) {
+                    HStack(alignment: .bottom, spacing: PumTokens.Space.s10) { // 원문 칸 사이 10
                         currentColumn.frame(maxWidth: .infinity, alignment: .leading)
-                        arrow(systemName: "arrow.right").padding(.bottom, PumTokens.Space.s4)
+                        arrow(systemName: "arrow.right").padding(.bottom, PumTokens.Space.s6)
                         afterColumn.frame(maxWidth: .infinity, alignment: .leading)
                     }
                     VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
@@ -51,8 +56,10 @@ struct LaborSimulatorResultView: View {
                 }
                 Text("\(Text(state.deltaAmountText).foregroundStyle(PumColor.textPrimary))\(Text(state.deltaPercentSuffix).foregroundStyle(PumColor.textSecondary))")
                     .pumText(.footnote)
+                    .padding(.top, PumTokens.Space.s2) // 원문 위 10 = 칸 간격 8 + 2
             }
-            .padding(PumTokens.Space.s16)
+            .padding(.horizontal, PumTokens.Space.s18) // 원문 padding 16 18
+            .padding(.vertical, PumTokens.Space.s16)
             .frame(maxWidth: .infinity, alignment: .leading)
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(Text(state.compareAccessibilityText))
@@ -85,14 +92,14 @@ struct LaborSimulatorResultView: View {
     private var weekdayCard: some View {
         PumCard {
             ViewThatFits(in: .horizontal) {
-                HStack(alignment: .top, spacing: 0) {
+                HStack(alignment: .top, spacing: PumTokens.Space.s4) { // 원문 칸 사이 4
                     ForEach(state.weekdays) { weekdayColumn($0) }
                 }
                 VStack(spacing: PumTokens.Space.s12) { // 넓은 글자에서는 두 줄(4 + 3), 축소하지 않는다
-                    HStack(alignment: .top, spacing: 0) {
+                    HStack(alignment: .top, spacing: PumTokens.Space.s4) {
                         ForEach(state.weekdays.prefix(4)) { weekdayColumn($0) }
                     }
-                    HStack(alignment: .top, spacing: 0) {
+                    HStack(alignment: .top, spacing: PumTokens.Space.s4) {
                         ForEach(state.weekdays.dropFirst(4)) { weekdayColumn($0) }
                         ForEach(0..<max(0, 4 - state.weekdays.dropFirst(4).count), id: \.self) { _ in
                             Color.clear.frame(maxWidth: .infinity, minHeight: 1).accessibilityHidden(true)
@@ -106,11 +113,12 @@ struct LaborSimulatorResultView: View {
     }
 
     private func weekdayColumn(_ day: LaborSimulatorWeekday) -> some View {
-        VStack(spacing: PumTokens.Space.s2) {
+        VStack(spacing: PumTokens.Space.s2) { // 원문 인원 위 6 · 변화 위 2
             Text(day.name).pumText(.caption2, weight: .regular).foregroundStyle(PumColor.textSecondary) // 원문 11px
             Text(day.headcountText).pumText(.body, weight: .bold) // 원문 15px 700
                 .foregroundStyle(day.isChanged ? PumColor.accent : PumColor.textPrimary)
                 .lineLimit(1).fixedSize()
+                .padding(.top, PumTokens.Space.s4) // 이름~인원 6 = 2 + 4
             Text(day.changeText).pumText(.caption2, weight: .regular).foregroundStyle(PumColor.textTertiary) // 원문 10px → 11px 근사
         }
         .frame(maxWidth: .infinity)
@@ -146,7 +154,7 @@ struct LaborSimulatorResultView: View {
     // MARK: 하단
 
     private var bottomButtons: some View {
-        VStack(spacing: PumTokens.Space.s8) {
+        VStack(spacing: PumTokens.Space.s10) { // 원문 버튼 사이 10
             PumButton(title: state.addTitle, kind: .primary, action: onAddToSchedule)
             // 원문은 한 줄 전체가 회색 글자 — 「저장만 하기」만 눌리는 글자 버튼, 뒤는 안내
             ViewThatFits(in: .horizontal) {
@@ -158,8 +166,8 @@ struct LaborSimulatorResultView: View {
             .multilineTextAlignment(.center)
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
-        .padding(.top, PumTokens.Space.s8)
-        .padding(.bottom, PumTokens.Space.s12)
+        .padding(.top, PumTokens.Space.s12) // 원문 위 12 · 아래 44 − 안전 영역 34 = 10
+        .padding(.bottom, PumTokens.Space.s10)
     }
 
     private var saveOnlyButton: some View {
@@ -167,6 +175,7 @@ struct LaborSimulatorResultView: View {
             Text(state.saveOnlyTitle)
                 .frame(minHeight: PumTokens.Size.tapMin)
                 .contentShape(Rectangle())
+                .padding(.vertical, -PumTokens.Space.s2) // 누름 44 · 배치 40(원문 줄 높이)
         }
         .buttonStyle(.plain)
         .accessibilityAddTraits(.isButton)

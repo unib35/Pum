@@ -37,7 +37,7 @@ struct PaymentSendSheet: View {
             }
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
-        .padding(.bottom, PumTokens.Space.s8)
+        .padding(.bottom, PumTokens.Space.s10) // 원문 아래 44 − 안전 영역 34
         .animation(PumMotion.respecting(reduceMotion, PumMotion.base), value: model.toastMessage)
         .animation(PumMotion.respecting(reduceMotion, PumMotion.fast), value: model.isRevealed) // M27
         .onChange(of: model.toastMessage) { _, message in
@@ -60,7 +60,6 @@ struct PaymentSendSheet: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding(.vertical, PumTokens.Space.s4)
     }
 
     // MARK: 카드
@@ -129,9 +128,8 @@ struct PaymentSendSheet: View {
                 button.fixedSize()
             }
         }
-        .padding(.vertical, PumTokens.Size.rowPadY)
+        .padding(.vertical, PumTokens.Space.s14) // 원문 칸 padding 14 0
         .padding(.horizontal, PumTokens.Size.rowPadX)
-        .frame(minHeight: PumTokens.Size.tapMin)
         .overlay(alignment: .bottom) {
             if !isLast {
                 Rectangle().fill(PumColor.borderHairline).frame(height: 1)
