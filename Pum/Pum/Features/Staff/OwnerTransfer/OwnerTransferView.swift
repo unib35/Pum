@@ -40,9 +40,12 @@ struct OwnerTransferView: View {
                         .padding(.horizontal, PumTokens.Space.s4)
                         .accessibilityAddTraits(.isHeader)
                     currentCard
-                    recipientCard
-                    myRoleCard
-                    delegateCard
+                    Group {
+                        recipientCard
+                        myRoleCard
+                    }
+                    .allowsHitTesting(!(isSending || isSent)) // 보내는 중 · 보낸 뒤엔 받을 사람 · 나는을 바꿀 수 없음
+                    if state.recipient(draft) != nil { delegateCard } // 받을 사람이 없으면 빈 이름 안내를 보이지 않음
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
                 .padding(.vertical, PumTokens.Space.s12)
