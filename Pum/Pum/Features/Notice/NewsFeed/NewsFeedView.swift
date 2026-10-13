@@ -35,7 +35,7 @@ struct NewsFeedView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s20) {
+            VStack(alignment: .leading, spacing: PumTokens.Space.s14) { // 원문 블록 사이 14
                 header
                 NewsFilterBar(selection: $filter, noticeCount: state.unreadNoticeCount, requestCount: state.requestCount)
                 if state.shows(.request, under: filter), !state.requests.isEmpty || state.invite != nil { requestSection }
@@ -64,7 +64,6 @@ struct NewsFeedView: View {
                 chip
             }
         }
-        .padding(.top, PumTokens.Space.s8)
     }
 
     private var title: some View {
@@ -88,7 +87,7 @@ struct NewsFeedView: View {
     private var requestSection: some View {
         VStack(spacing: PumTokens.Space.s8) {
             PumSectionHeader(title: "결정이 필요해요", attention: true)
-            VStack(spacing: PumTokens.Space.s12) { // 원문: 요청 카드 사이 약 12
+            VStack(spacing: PumTokens.Space.s14) { // 원문: 요청 카드 사이 14
                 if let invite = state.invite { // 15d: 결정 섹션 맨 위. 없으면 아무것도 그리지 않는다(3a 그대로)
                     InviteCard(invite: invite, action: inviteAction,
                                onDecline: { onDeclineInvite(invite) }, onOpen: { onOpenInvite(invite) })
@@ -101,6 +100,7 @@ struct NewsFeedView: View {
                 }
             }
         }
+        .padding(.top, PumTokens.Space.s2) // 원문 섹션 제목 위 2
     }
 
     private var noticeSection: some View {
@@ -116,6 +116,7 @@ struct NewsFeedView: View {
                 }
             }
         }
+        .padding(.top, PumTokens.Space.s2)
     }
 
     private var alertSection: some View {
@@ -131,6 +132,7 @@ struct NewsFeedView: View {
                 }
             }
         }
+        .padding(.top, PumTokens.Space.s2)
     }
 }
 
@@ -219,7 +221,8 @@ private struct ExtraShiftCard: View {
                               onNegative: onDecline, onPositive: onAccept)
                     .padding(.top, PumTokens.Space.s4)
             }
-            .padding(PumTokens.Space.s16)
+            .padding(.vertical, PumTokens.Space.s14) // 원문 padding 14 16
+            .padding(.horizontal, PumTokens.Space.s16)
         }
     }
 }
@@ -248,7 +251,8 @@ private struct ContractSignCard: View {
                         .foregroundStyle(PumColor.textDisabled)
                         .accessibilityHidden(true)
                 }
-                .padding(PumTokens.Space.s16)
+                .padding(.vertical, PumTokens.Space.s14)
+                .padding(.horizontal, PumTokens.Space.s16)
                 .frame(minHeight: PumTokens.Size.tapMin)
             }
         }
@@ -354,7 +358,7 @@ private struct NoticeRow: View {
                 Circle().fill(notice.isRead ? .clear : PumColor.accent)
                     .frame(width: dot, height: dot)
                     .accessibilityHidden(true)
-                VStack(alignment: .leading, spacing: PumTokens.Space.s4) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s4) { // 원문 제목–본문 3 → 4
                     Text(notice.title)
                         .pumText(.body, weight: notice.isRead ? .semibold : .bold)
                         .foregroundStyle(notice.isRead ? PumTokens.ColorToken.gray700 : PumColor.textPrimary)
@@ -362,11 +366,11 @@ private struct NoticeRow: View {
                         Text(body).pumText(.footnote).foregroundStyle(PumTokens.ColorToken.gray800)
                             .lineLimit(2)
                     }
-                    meta
+                    meta.padding(.top, notice.body == nil ? 0 : PumTokens.Space.s2) // 원문 본문 있을 때 위 6
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .padding(.vertical, PumTokens.Size.rowPadY)
+            .padding(.vertical, PumTokens.Space.s14) // 원문 padding 14 16
             .padding(.horizontal, PumTokens.Size.rowPadX)
             .frame(minHeight: PumTokens.Size.tapMin)
             .contentShape(Rectangle())

@@ -34,7 +34,6 @@ struct MyInfoView: View {
             VStack(alignment: .leading, spacing: PumTokens.Space.s10) { // 원문: 카드 사이 약 10
                 Text("내 정보").pumText(.title1).foregroundStyle(PumColor.textPrimary)
                     .accessibilityAddTraits(.isHeader)
-                    .padding(.top, PumTokens.Space.s8)
                 accountCard
                 workplaceSection
                 PumCard {
@@ -64,7 +63,7 @@ struct MyInfoView: View {
     private var accountCard: some View {
         Button(action: onOpenAccount) {
             PumCard {
-                HStack(spacing: PumTokens.Space.s16) {
+                HStack(spacing: PumTokens.Space.s14) { // 원문 gap 14
                     PumAvatar(name: state.name, colorIndex: 0, size: PumTokens.Size.buttonH) // 원문 약 52 → 54로 근사
                     VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
                         Text(state.name).pumText(.headline, weight: .bold).foregroundStyle(PumColor.textPrimary) // 원문 18px 700 → headline 17
@@ -73,7 +72,8 @@ struct MyInfoView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     chevron
                 }
-                .padding(PumTokens.Space.s16)
+                .padding(.vertical, PumTokens.Space.s16) // 원문 padding 16 18
+                .padding(.horizontal, PumTokens.Space.s18)
                 .frame(minHeight: PumTokens.Size.tapMin)
             }
         }
@@ -105,6 +105,7 @@ struct MyInfoView: View {
                 }
             }
         }
+        .padding(.top, PumTokens.Space.s2) // 원문 섹션 제목 위 2
     }
 
     private var addButton: some View {
@@ -159,7 +160,7 @@ private struct WorkplaceRow: View {
                     .foregroundStyle(PumColor.textDisabled)
                     .accessibilityHidden(true)
             }
-            .padding(.vertical, PumTokens.Size.rowPadY)
+            .padding(.vertical, PumTokens.Space.s10) // 원문 사업장 행 padding 10 16
             .padding(.horizontal, PumTokens.Size.rowPadX)
             .frame(minHeight: PumTokens.Size.tapMin)
             .contentShape(Rectangle())

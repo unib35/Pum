@@ -22,14 +22,15 @@ struct NoticeDetailView: View {
             PumNavHeader(title: "공지", onBack: onBack)
                 .padding(.horizontal, PumTokens.Size.screenPad)
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s14) { // 원문 블록 사이 14
                     noticeCard
                     if let rec = state.recruitment {
                         requestSection(rec)
                     }
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s16)
+                .padding(.top, PumTokens.Space.s14) // 머리 줄과 첫 카드 사이 14
+                .padding(.bottom, PumTokens.Space.s16)
             }
         }
         .background(PumColor.bgApp)
@@ -39,20 +40,26 @@ struct NoticeDetailView: View {
     // 2. 본문 카드
     private var noticeCard: some View {
         PumCard {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s14) {
+            VStack(alignment: .leading, spacing: 0) {
                 badges
                 Text(state.title)
                     .pumText(.title3) // 원문 22px 700 → 토큰 단계 20px(title3)·24px(title2) 중 줄바꿈 여유가 있는 title3
                     .foregroundStyle(PumColor.textPrimary)
                     .fixedSize(horizontal: false, vertical: true)
                     .accessibilityAddTraits(.isHeader)
+                    .padding(.top, PumTokens.Space.s12) // 원문 배지–제목 12
                 author
+                    .padding(.top, PumTokens.Space.s12) // 제목–작성자 12
                 divider
+                    .padding(.top, PumTokens.Space.s16) // 작성자–구분선 16
                 bodyText
+                    .padding(.top, PumTokens.Space.s16) // 구분선–본문 16
                 divider
+                    .padding(.top, PumTokens.Space.s16) // 본문–구분선 16
                 readStatus
+                    .padding(.top, PumTokens.Space.s12) // 구분선–확인 줄 12
             }
-            .padding(PumTokens.Space.s20)
+            .padding(PumTokens.Space.s18) // 원문 padding 18
         }
     }
 
@@ -76,7 +83,7 @@ struct NoticeDetailView: View {
     }
 
     private var author: some View {
-        HStack(spacing: PumTokens.Space.s12) {
+        HStack(spacing: PumTokens.Space.s10) { // 원문 아바타–이름 10
             // 먹색 원 + 흰 글자(팔레트 먹색 항목 = index 5). 원문 지름 32pt → 공통 아바타 36pt 근사
             PumAvatar(name: state.authorName, colorIndex: 5)
             VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
@@ -141,14 +148,15 @@ struct NoticeDetailView: View {
             Text("공지는 읽기만 하면 돼요. 근무 신청은 별도 요청으로 처리되어 수락 시 스케줄에 추가돼요.")
                 .pumText(.caption).foregroundStyle(PumColor.textSecondary)
                 .padding(.horizontal, PumTokens.Space.s4)
-                .padding(.top, PumTokens.Space.s8) // 원문: 카드와 안내 사이 약 16
+                .padding(.top, PumTokens.Space.s6) // 원문: 카드와 안내 사이 14 = 8 + 6
                 .fixedSize(horizontal: false, vertical: true)
         }
+        .padding(.top, PumTokens.Space.s2) // 원문 섹션 제목 위 2
     }
 
     private func recruitCard(_ rec: NoticeRecruitment) -> some View {
         PumCard(attention: true) {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
+            VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
                 ViewThatFits(in: .horizontal) {
                     HStack(alignment: .center) {
                         recruitBadge
@@ -160,14 +168,17 @@ struct NoticeDetailView: View {
                         count(rec)
                     }
                 }
-                Text(rec.dateTimeText).pumText(.body, weight: .semibold).foregroundStyle(PumColor.textPrimary)
-                    .fixedSize(horizontal: false, vertical: true)
-                Text(rec.detailText).pumText(.caption).foregroundStyle(PumColor.textSecondary)
-                    .fixedSize(horizontal: false, vertical: true)
+                VStack(alignment: .leading, spacing: PumTokens.Space.s2) { // 원문 제목–설명 2
+                    Text(rec.dateTimeText).pumText(.body, weight: .semibold).foregroundStyle(PumColor.textPrimary)
+                        .fixedSize(horizontal: false, vertical: true)
+                    Text(rec.detailText).pumText(.caption).foregroundStyle(PumColor.textSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
                 buttons
-                    .padding(.top, PumTokens.Space.s6)
+                    .padding(.top, PumTokens.Space.s4) // 원문 버튼 위 12 = 8 + 4
             }
-            .padding(PumTokens.Space.s16)
+            .padding(.vertical, PumTokens.Space.s14) // 원문 padding 14 16
+            .padding(.horizontal, PumTokens.Space.s16)
         }
         .accessibilityElement(children: .contain)
     }

@@ -45,14 +45,15 @@ struct NoticeComposeView: View {
         VStack(spacing: 0) {
             header
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s14) { // 원문 블록 사이 14
                     categoryChips
                     writeCard
                     settingsCard
                     notice
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s12)
+                .padding(.top, PumTokens.Space.s14) // 머리 줄과 첫 블록 사이 14
+                .padding(.bottom, PumTokens.Space.s12)
             }
             .scrollDismissesKeyboard(.interactively)
         }
@@ -61,7 +62,8 @@ struct NoticeComposeView: View {
             PumButton(title: state.sendTitle, kind: .primary, isLoading: state.isSending, action: send)
                 .disabled(!state.canSend && !state.isSending)
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s12)
+                .padding(.top, PumTokens.Space.s12) // 원문 버튼 위 12 · 아래 44(안전 영역 포함 → 10)
+                .padding(.bottom, PumTokens.Space.s10)
                 .background(PumColor.bgApp)
         }
     }
@@ -86,7 +88,7 @@ struct NoticeComposeView: View {
                 Spacer()
             }
         }
-        .padding(.top, PumTokens.Space.s8)
+        .padding(.vertical, -PumTokens.Space.s2) // 원문 머리 줄 40, 위 여백 없음(누름 영역은 44 유지)
         .padding(.horizontal, PumTokens.Size.screenPad)
     }
 
@@ -94,7 +96,7 @@ struct NoticeComposeView: View {
 
     private var categoryChips: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: PumTokens.Space.s8) {
+            HStack(spacing: PumTokens.Space.s6) { // 원문 칩 사이 6
                 ForEach(Array(NoticeCategory.allCases.enumerated()), id: \.element.id) { i, c in
                     PumChoicePill(title: c.title, isOn: state.category == c, offStyle: .outlined,
                                   position: (i, NoticeCategory.allCases.count)) { select(category: c) }
@@ -120,7 +122,8 @@ struct NoticeComposeView: View {
                     .foregroundStyle(PumColor.textPrimary)
                     .tint(PumColor.accent)
                     .focused($focus, equals: .title)
-                    .padding(.vertical, PumTokens.Space.s18)
+                    .padding(.top, PumTokens.Space.s16) // 원문 카드 padding 16 18
+                    .padding(.bottom, PumTokens.Space.s12) // 제목–구분선 12
                     .accessibilityLabel(Text("제목"))
                 divider
                 // 원문은 날짜만 굵게 보이는 샘플. TextEditor는 일부 굵기를 못 줘서 일반 글자로 둔다(차이 보고).
@@ -132,14 +135,17 @@ struct NoticeComposeView: View {
                     .focused($focus, equals: .body)
                     .frame(minHeight: bodyMinHeight, maxHeight: bodyMaxHeight)
                     .padding(.horizontal, -editorInset)
-                    .padding(.vertical, PumTokens.Space.s12)
+                    .padding(.top, PumTokens.Space.s12) // 구분선–본문 12
+                    .padding(.bottom, PumTokens.Space.s10) // 본문–구분선 10
                     .accessibilityLabel(Text("본문"))
                 divider
-                HStack(spacing: PumTokens.Space.s16) {
+                HStack(spacing: PumTokens.Space.s10) { // 원문 사진–파일 10
                     attach("photo", NoticeComposeState.photoTitle, onAttachPhoto)
                     attach("paperclip", NoticeComposeState.fileTitle, onAttachFile)
                     Spacer(minLength: 0)
                 }
+                .padding(.top, PumTokens.Space.s12) // 구분선–첨부 12
+                .padding(.bottom, PumTokens.Space.s16) // 카드 아래 16
             }
             .padding(.horizontal, cardPad)
         }
@@ -149,11 +155,12 @@ struct NoticeComposeView: View {
         Button(action: action) {
             HStack(spacing: PumTokens.Space.s6) {
                 Image(systemName: icon).font(.system(size: PumLayout.navIcon)).accessibilityHidden(true)
-                Text(title).pumText(.body, weight: .regular)
+                Text(title).pumText(.footnote, weight: .regular) // 원문 13px
             }
             .foregroundStyle(PumColor.textSecondary)
             .frame(minHeight: PumTokens.Size.tapMin)
             .contentShape(Rectangle())
+            .padding(.vertical, -(PumTokens.Size.tapMin - PumTokens.Space.s16) / 2) // 원문 줄 높이 약 16, 누름은 44 유지
         }
         .buttonStyle(.plain)
         .accessibilityLabel(Text("\(title) 첨부"))
@@ -191,7 +198,7 @@ struct NoticeComposeView: View {
             VStack(alignment: .leading, spacing: PumTokens.Space.s8) { label; pills }
         }
         .padding(.horizontal, PumTokens.Size.rowPadX)
-        .padding(.vertical, PumTokens.Space.s10)
+        .padding(.vertical, PumTokens.Size.rowPadY) // 원문 13 → 12
         .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin, alignment: .leading)
     }
 
@@ -211,7 +218,7 @@ struct NoticeComposeView: View {
         }
         .tint(PumColor.accent)
         .padding(.horizontal, PumTokens.Size.rowPadX)
-        .padding(.vertical, PumTokens.Space.s10)
+        .padding(.vertical, PumTokens.Size.rowPadY) // 원문 13 → 12
         .frame(minHeight: PumTokens.Size.tapMin)
         .accessibilityLabel(Text("\(NoticeComposeState.readReceiptTitle), \(state.reminderText)"))
     }
@@ -231,7 +238,7 @@ struct NoticeComposeView: View {
                     .foregroundStyle(PumColor.textDisabled).accessibilityHidden(true)
             }
             .padding(.horizontal, PumTokens.Size.rowPadX)
-            .padding(.vertical, PumTokens.Space.s10)
+            .padding(.vertical, PumTokens.Size.rowPadY) // 원문 13 → 12
             .frame(minHeight: PumTokens.Size.tapMin)
             .contentShape(Rectangle())
         }
