@@ -48,10 +48,9 @@ struct BusinessVerifyView: View {
                 Text("국세청 사업자등록 상태를 조회해 실제 영업 중인 사업자인지 확인해요. 대표자가 아니어도 다음 단계에서 관리 권한을 확인할 수 있어요.")
                     .pumText(.caption)
                     .foregroundStyle(PumColor.textSecondary)
-                    .padding(.horizontal, PumTokens.Space.s8)
+                    .padding(.horizontal, PumTokens.Space.s4) // 원문 padding 0 4
             }
             .padding(.horizontal, PumTokens.Size.screenPad)
-            .padding(.top, PumTokens.Space.s8)
             .padding(.bottom, PumTokens.Space.s16)
         }
         .scrollDismissesKeyboard(.interactively)
@@ -72,12 +71,11 @@ struct BusinessVerifyView: View {
             Text("사업장 인증 2 / 3").pumText(.footnote).foregroundStyle(PumColor.textSecondary) // 13px 400
                 .multilineTextAlignment(.trailing)
         }
-        .padding(.bottom, PumTokens.Space.s4)
     }
 
     // 2. 제목
     private var heading: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s6) { // 원문 제목–설명 6
             Text("사업자 정보를 입력해주세요")
                 .pumText(.title2) // 24px 700
                 .foregroundStyle(PumColor.textPrimary)
@@ -117,6 +115,7 @@ struct BusinessVerifyView: View {
                         .foregroundStyle(state.openDate.isEmpty ? PumColor.textTertiary : PumColor.textPrimary)
                         .frame(minHeight: PumTokens.Size.tapMin)
                         .contentShape(Rectangle())
+                        .padding(.vertical, -PumTokens.Space.s12) // 누름 영역만 44, 배치는 원문 줄 높이
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel(Text("개업일"))
@@ -128,8 +127,8 @@ struct BusinessVerifyView: View {
 
     // 큰 등록번호 입력 — 숫자 키패드 · 숫자만 10자리 · 3-2-5 하이픈 자동
     private var numberField: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s4) {
-            Text("사업자등록번호").pumText(.footnote, weight: .semibold).foregroundStyle(PumColor.textSecondary) // 원문 12px 600 → 13 근사
+        VStack(alignment: .leading, spacing: PumTokens.Space.s6) { // 원문 라벨–숫자 6
+            Text("사업자등록번호").pumText(.caption, weight: .semibold).foregroundStyle(PumColor.textSecondary) // 12px 600
                 .accessibilityHidden(true)
             TextField("", text: Binding(
                 get: { state.formattedNumber },
@@ -142,11 +141,13 @@ struct BusinessVerifyView: View {
                 .foregroundStyle(PumColor.textPrimary)
                 .tint(PumColor.accent) // 파랑 커서
                 .frame(minHeight: PumTokens.Size.tapMin)
+                .contentShape(Rectangle())
+                .padding(.vertical, -PumTokens.Space.s8) // 누름 영역만 44, 배치는 숫자 줄 높이
                 .accessibilityLabel(Text("사업자등록번호"))
                 .accessibilityValue(Text(state.numberAccessibilityValue)) // 하이픈 없이 숫자 하나씩
         }
         .padding(.horizontal, cardPadX)
-        .padding(.vertical, PumTokens.Space.s12)
+        .padding(.vertical, PumTokens.Space.s14) // 원문 padding 14 0
     }
 
     // 4. 사업자등록증 촬영 행
@@ -169,11 +170,11 @@ struct BusinessVerifyView: View {
                     .foregroundStyle(PumColor.textDisabled)
                     .accessibilityHidden(true)
             }
-            .padding(.horizontal, PumTokens.Space.s14)
+            .padding(.horizontal, PumTokens.Space.s16) // 원문 padding 12 16
             .padding(.vertical, PumTokens.Space.s12)
             .frame(minHeight: PumTokens.Size.tapMin)
-            .background(PumColor.surfaceCard, in: RoundedRectangle(cornerRadius: PumTokens.Radius.lg, style: .continuous))
-            .pumRing(.hairline, cornerRadius: PumTokens.Radius.lg)
+            .background(PumColor.surfaceCard, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
+            .pumRing(.hairline, cornerRadius: PumTokens.Radius.md) // 원문 모서리 12
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
@@ -216,8 +217,7 @@ struct BusinessVerifyView: View {
             VStack(alignment: .leading, spacing: PumTokens.Space.s4) { k; v.frame(maxWidth: .infinity, alignment: .leading) }
         }
         .padding(.horizontal, cardPadX)
-        .padding(.vertical, PumTokens.Space.s6)
-        .frame(minHeight: PumTokens.Size.tapMin)
+        .padding(.vertical, PumTokens.Space.s14) // 원문 padding 14 0
     }
 }
 

@@ -27,7 +27,8 @@ struct InviteOfferView: View {
                 }
             }
             .padding(.horizontal, PumTokens.Size.screenPad)
-            .padding(.vertical, PumTokens.Space.s16)
+            .padding(.top, PumTokens.Space.s8) // 원문 본문 위 68 = 상태 막대 60 + 8
+            .padding(.bottom, PumTokens.Space.s16)
         }
         .background(PumColor.bgApp)
         .safeAreaInset(edge: .bottom, spacing: 0) { actions }
@@ -37,25 +38,30 @@ struct InviteOfferView: View {
     private var workplaceCard: some View {
         PumCard {
             VStack(spacing: 0) {
-                HStack(spacing: PumTokens.Space.s12) {
+                HStack(spacing: PumTokens.Space.s14) { // 원문 gap 14
                     Text(state.initial).pumText(.headline, weight: .bold).foregroundStyle(.white)
                         .frame(width: workplaceTile, height: workplaceTile)
                         .background(state.tileColor, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
                         .accessibilityHidden(true)
                     VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
                         ViewThatFits(in: .horizontal) {
-                            HStack(spacing: PumTokens.Space.s8) { name; badge }
+                            HStack(spacing: PumTokens.Space.s6) { name; badge } // 원문 gap 6
                             VStack(alignment: .leading, spacing: PumTokens.Space.s4) { name; badge }
                         }
                         Text(state.subtitleText).pumText(.caption).foregroundStyle(PumColor.textSecondary)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .padding(PumTokens.Space.s16)
+                .padding(.horizontal, PumTokens.Space.s18) // 원문 padding 16 18
+                .padding(.top, PumTokens.Space.s16)
                 .accessibilityElement(children: .combine)
-                Rectangle().fill(PumColor.borderHairline).frame(height: 1)
-                    .padding(.horizontal, PumTokens.Space.s16)
-                facts
+                VStack(alignment: .leading, spacing: PumTokens.Space.s14) { // 원문 선 위 14 · 아래 14
+                    Rectangle().fill(PumColor.borderHairline).frame(height: 1)
+                    facts
+                }
+                .padding(.horizontal, PumTokens.Space.s18)
+                .padding(.top, PumTokens.Space.s14)
+                .padding(.bottom, PumTokens.Space.s16)
             }
         }
     }
@@ -72,14 +78,13 @@ struct InviteOfferView: View {
     /// 2열 정보 4칸 — 넘치면 1열
     private var facts: some View {
         ViewThatFits(in: .horizontal) {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
-                HStack(alignment: .top, spacing: PumTokens.Space.s12) { owner; business }
-                HStack(alignment: .top, spacing: PumTokens.Space.s12) { inviter; staff }
+            VStack(alignment: .leading, spacing: PumTokens.Space.s8) { // 원문 grid gap 8
+                HStack(alignment: .top, spacing: PumTokens.Space.s8) { owner; business }
+                HStack(alignment: .top, spacing: PumTokens.Space.s8) { inviter; staff }
             }
-            VStack(alignment: .leading, spacing: PumTokens.Space.s12) { owner; business; inviter; staff }
+            VStack(alignment: .leading, spacing: PumTokens.Space.s8) { owner; business; inviter; staff }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(PumTokens.Space.s16)
     }
 
     private var owner: some View {
@@ -97,8 +102,8 @@ struct InviteOfferView: View {
 
     private func fact(_ label: String, _ value: String, tag: String?, spoken: String) -> some View {
         VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
-            Text(label).pumText(.footnote, weight: .regular).foregroundStyle(PumColor.textSecondary) // 13px 400
-            // 값 16px 600 → body(15), 작은 초록 표시는 값 옆(좁으면 아래)
+            Text(label).pumText(.caption2, weight: .regular).foregroundStyle(PumColor.textSecondary) // 11px 400
+            // 값 14px 600, 작은 초록 표시(11px 600)는 값 옆(좁으면 아래)
             ViewThatFits(in: .horizontal) {
                 HStack(alignment: .firstTextBaseline, spacing: PumTokens.Space.s4) { valueText(value); tagText(tag) }
                 VStack(alignment: .leading, spacing: PumTokens.Space.s2) { valueText(value); tagText(tag) }
@@ -110,11 +115,11 @@ struct InviteOfferView: View {
     }
 
     private func valueText(_ s: String) -> some View {
-        Text(s).pumText(.body, weight: .semibold).foregroundStyle(PumColor.textPrimary)
+        Text(s).pumText(.callout, weight: .semibold).foregroundStyle(PumColor.textPrimary)
     }
 
     @ViewBuilder private func tagText(_ s: String?) -> some View {
-        if let s { Text(s).pumText(.caption, weight: .semibold).foregroundStyle(PumColor.statusDone) }
+        if let s { Text(s).pumText(.caption2, weight: .semibold).foregroundStyle(PumColor.statusDone) }
     }
 
     // 3. 제안된 근로조건 — 2h와 같은 모양
@@ -123,14 +128,15 @@ struct InviteOfferView: View {
             VStack(spacing: 0) {
                 Text("제안된 근로조건").pumText(.caption, weight: .bold).foregroundStyle(PumColor.textSecondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal, PumTokens.Size.rowPadX)
-                    .padding(.top, PumTokens.Space.s12)
+                    .padding(.horizontal, PumTokens.Space.s18) // 원문 padding 6 18 8 + 제목 8 0 4
+                    .padding(.top, PumTokens.Space.s14)
                     .padding(.bottom, PumTokens.Space.s4)
                     .accessibilityAddTraits(.isHeader)
                 termRow("시급", state.wageText, isLast: false)
                 termRow("근무", state.schedule, isLast: false)
                 termRow("급여일", state.payday, isLast: true)
             }
+            .padding(.bottom, PumTokens.Space.s8) // 원문 아래 8
         }
     }
 
@@ -148,13 +154,12 @@ struct InviteOfferView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding(.vertical, PumTokens.Size.rowPadY)
-        .padding(.horizontal, PumTokens.Size.rowPadX)
-        .frame(minHeight: PumTokens.Size.tapMin)
+        .padding(.vertical, PumTokens.Space.s10) // 원문 padding 9 0 → 가장 가까운 토큰
+        .padding(.horizontal, PumTokens.Space.s18)
         .overlay(alignment: .bottom) {
             if !isLast {
                 Rectangle().fill(PumColor.borderHairline).frame(height: 1)
-                    .padding(.horizontal, PumTokens.Size.rowPadX)
+                    .padding(.horizontal, PumTokens.Space.s18)
             }
         }
         .accessibilityElement(children: .ignore)
@@ -170,19 +175,20 @@ struct InviteOfferView: View {
 
     // 5. 하단 고정
     private var actions: some View {
-        VStack(spacing: PumTokens.Space.s4) {
+        VStack(spacing: PumTokens.Space.s10) { // 원문 gap 10
             PumButton(title: "참여하기", kind: .primary, isLoading: lock.isSending, loadingTitle: "참여하는 중", action: join)
             Button(action: onReport) {
                 Text("모르는 사업장이에요 · 신고").pumText(.callout, weight: .regular).foregroundStyle(PumColor.textSecondary)
                     .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin)
                     .contentShape(Rectangle())
+                    .padding(.vertical, -2) // 원문 높이 40, 누름 영역만 44
             }
             .buttonStyle(.plain)
             .disabled(lock.isSending)
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
         .padding(.top, PumTokens.Space.s12)
-        .padding(.bottom, PumTokens.Space.s4)
+        .padding(.bottom, PumTokens.Space.s10) // 원문 아래 44 = 홈 막대 34 + 10
         .background(PumColor.bgApp)
     }
 
