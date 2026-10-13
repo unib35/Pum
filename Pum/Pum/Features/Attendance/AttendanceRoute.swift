@@ -68,9 +68,15 @@ enum AttendanceRoute: String, CaseIterable, Hashable {
     func view(_ router: AppRouter) -> some View {
         switch self {
         case .workDetail:
-            WorkDetailView()
+            WorkDetailView(
+                onBack: router.back,
+                onRequestEdit: { router.navigate(.attendance(.editRequest)) }
+            )
         case .workCalendar:
-            WorkCalendarView()
+            WorkCalendarView(
+                onOpenDetail: { router.navigate(.attendance(.workDetail)) },
+                onOpenSchedule: { router.navigate(.schedule(.mySchedule)) }
+            )
         case .clockOutDone:
             ClockOutDoneView(onClose: router.backToRoot)
         case .clockIn:
@@ -80,23 +86,61 @@ enum AttendanceRoute: String, CaseIterable, Hashable {
                 onClockInByLocation: { router.navigate(.attendance(.locationCheckIn)) }
             )
         case .editRequest:
-            EditRequestView()
+            EditRequestView(
+                onClose: router.back,
+                onSubmit: { _ in router.back() }
+            )
         case .earlyLeave:
             EarlyLeaveView(onContinue: router.back, onRecord: { _ in router.replace(with: .attendance(.clockOutDone)) })
         case .missingClockOut:
             MissingClockOutView(state: .sample, onRequest: { _, _ in router.backToRoot() })
         case .recordReview:
-            RecordReviewView()
+            RecordReviewView(
+                onBack: router.back,
+                onConfirm: { router.navigate(.payroll(.workClosing)) }
+            )
         case .ownerReview:
-            OwnerReviewView()
+            OwnerReviewView(onAction: { action, _ in
+                switch action {
+                case .edit: router.navigate(.attendance(.editApproval))
+                case .manualInput: router.navigate(.attendance(.ownerManualEntry))
+                case .approve, .confirm, .recordPlannedEnd, .reject: break
+                }
+            })
         case .editApproval:
-            EditApprovalView()
+            EditApprovalView(
+                onBack: router.back,
+                onReject: router.back,
+                onApprove: router.back,
+                onEditDirectly: { router.navigate(.attendance(.ownerManualEntry)) }
+            )
         case .ownerManualEntry:
-            OwnerManualEntryView(draft: .sample)
+            OwnerManualEntryView(
+                draft: .sample,
+                onClose: router.back,
+                onSubmit: { _ in router.back() }
+            )
         case .ownerRecordActions:
-            OwnerRecordActionsView()
+            OwnerRecordActionsView(
+                onBack: router.back,
+                onAction: { action in
+                    switch action {
+                    case .editTime: router.navigate(.attendance(.ownerManualEntry))
+                    case .markAbsent, .delete: router.back()
+                    }
+                },
+                onCancel: router.back
+            )
         case .personalRecordDetail:
-            PersonalRecordDetailView(state: .sample)
+            PersonalRecordDetailView(
+                state: .sample,
+                onBack: router.back,
+                onDelete: router.back,
+                onSave: { _, done in
+                    done(true)
+                    router.back()
+                }
+            )
         case .timePickerSheet:
             PumTimePickerDemo()
         case .checkInTooFar:
@@ -111,27 +155,77 @@ enum AttendanceRoute: String, CaseIterable, Hashable {
                 router.replace(with: .attendance(.checkInPassed))
             })
         case .recordCorrection:
-            RecordCorrectionView(state: .sample, reason: RecordCorrectionState.sampleReason)
+            RecordCorrectionView(
+                state: .sample,
+                reason: RecordCorrectionState.sampleReason,
+                onBack: router.back,
+                onRecalculate: { _, done in
+                    done(true)
+                    router.navigate(.payroll(.correctionRecalc))
+                }
+            )
         case .adminConfirmCheckIn:
-            AdminConfirmCheckInView()
+            AdminConfirmCheckInView(onCancelRequest: router.back)
         case .checkInJudging:
-            CheckInJudgingView(state: .sample)
+            CheckInJudgingView(state: .sample, onBack: router.back)
         case .locationPermissionIntro:
-            LocationPermissionIntroView(state: .sample, isPresented: true)
+            LocationPermissionIntroView(
+                state: .sample,
+                isPresented: true,
+                onContinue: { router.replace(with: .attendance(.locationCheckIn)) },
+                onUseQROnly: router.back
+            )
         case .workCalendarEmpty:
-            WorkCalendarView(state: .empty)
+            WorkCalendarView(
+                state: .empty,
+                onOpenSchedule: { router.navigate(.schedule(.mySchedule)) }
+            )
         case .locationDenied:
-            LocationDeniedView(state: .sample)
+            LocationDeniedView(
+                state: .sample,
+                onBack: router.back,
+                onUseQR: router.back
+            )
         case .myLeave:
-            MyLeaveView(state: .sample)
+            MyLeaveView(
+                state: .sample,
+                onBack: router.back,
+                onRequestLeave: { router.navigate(.schedule(.leaveRequest)) }
+            )
         case .breakReview:
-            BreakReviewView(state: .sample)
+            BreakReviewView(
+                state: .sample,
+                onBack: router.back,
+                onOtherTime: { router.navigate(.attendance(.ownerManualEntry)) },
+                onApprove: { done in
+                    done(true)
+                    router.back()
+                }
+            )
         case .breakReport:
-            BreakReportView(state: .sample, sheet: .sample, startsWithSheetOpen: true)
+            BreakReportView(
+                state: .sample,
+                sheet: .sample,
+                startsWithSheetOpen: true,
+                onBack: router.back,
+                onSend: { _, _, done in
+                    done(true)
+                    router.back()
+                }
+            )
         case .inheritedRecords:
-            InheritedRecordsView(state: .sample)
+            InheritedRecordsView(
+                state: .sample,
+                onBack: router.back,
+                onOpenAppRecords: { router.navigate(.attendance(.workCalendar)) }
+            )
         }
     }
 
-    static let connected: Set<Self> = [.clockIn, .locationCheckIn, .checkInPassed, .clockOutDone, .checkInTooFar, .checkInLowAccuracy, .earlyLeave, .missingClockOut]
+    static let connected: Set<Self> = [
+        .clockIn, .locationCheckIn, .checkInPassed, .clockOutDone, .checkInTooFar, .checkInLowAccuracy, .earlyLeave, .missingClockOut,
+        .workDetail, .workCalendar, .editRequest, .recordReview, .ownerReview, .editApproval, .ownerManualEntry, .ownerRecordActions,
+        .personalRecordDetail, .recordCorrection, .adminConfirmCheckIn, .checkInJudging, .locationPermissionIntro,
+        .workCalendarEmpty, .locationDenied, .myLeave, .breakReview, .breakReport, .inheritedRecords
+    ]
 }
