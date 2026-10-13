@@ -45,8 +45,7 @@ struct MaintenanceView: View {
         PumCard {
             ForEach(Array(state.rows.enumerated()), id: \.element.id) { i, row in
                 if i > 0 {
-                    Rectangle().fill(PumColor.borderHairline).frame(height: 1)
-                        .padding(.horizontal, PumTokens.Size.rowPadX)
+                    Rectangle().fill(PumColor.borderHairline).frame(height: 1) // 원문: 카드 끝에서 끝까지
                 }
                 rowView(row)
             }
