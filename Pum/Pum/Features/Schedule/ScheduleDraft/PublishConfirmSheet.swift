@@ -220,12 +220,13 @@ struct PublishConfirmSheet: View {
 
     private var cancelButton: some View {
         PumButton(title: PublishConfirmSheetState.cancelTitle, kind: .outline, action: onCancel)
+            .allowsHitTesting(!state.isPublishing) // 게시 중엔 모양은 그대로 두고 누르기만 막음
     }
 
     private var publishButton: some View {
         PumButton(title: PublishConfirmSheetState.publishTitle, isLoading: state.isPublishing,
                   loadingTitle: PublishConfirmSheetState.publishingTitle, action: onConfirm)
-            .disabled(state.isBlocking)
+            .disabled(!state.canPublish && !state.isPublishing)
     }
 }
 

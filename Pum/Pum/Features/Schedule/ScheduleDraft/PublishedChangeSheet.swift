@@ -210,6 +210,7 @@ struct PublishedChangeSheet: View {
                 .foregroundStyle(PumColor.textPrimary)
                 .focused($reasonFocused)
                 .submitLabel(.done)
+                .onSubmit { reasonFocused = false }
                 .padding(.horizontal, PumTokens.Space.s16)
                 .frame(maxWidth: .infinity, minHeight: PumTokens.Size.buttonH, alignment: .leading)
                 .background(PumColor.surfaceCard, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
