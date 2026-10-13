@@ -23,7 +23,7 @@ struct AfterLeavingView: View {
             PumNavHeader(title: state.workplaceName, onBack: onBack)
                 .padding(.horizontal, PumTokens.Size.screenPad)
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
                     headerCard
                     section(AfterLeavingState.payTitle) { payCard }
                     section(AfterLeavingState.documentsTitle) { documentsCard }
@@ -40,7 +40,7 @@ struct AfterLeavingView: View {
     }
 
     private func section<C: View>(_ title: String, @ViewBuilder content: () -> C) -> some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
             PumSectionHeader(title: title)
             content()
         }
@@ -66,7 +66,7 @@ struct AfterLeavingView: View {
                 Text(state.periodText).pumText(.footnote).foregroundStyle(PumColor.textSecondary)
             }
             ViewThatFits(in: .horizontal) {
-                HStack(spacing: PumTokens.Space.s8) {
+                HStack(spacing: PumTokens.Space.s12) {
                     texts.frame(maxWidth: .infinity, alignment: .leading)
                     PumBadge(text: state.statusText, kind: .waiting).fixedSize()
                 }
@@ -75,7 +75,8 @@ struct AfterLeavingView: View {
                     PumBadge(text: state.statusText, kind: .waiting)
                 }
             }
-            .padding(PumTokens.Space.s16)
+            .padding(.vertical, PumTokens.Space.s14)
+            .padding(.horizontal, PumTokens.Size.rowPadX)
             .frame(maxWidth: .infinity, alignment: .leading)
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(Text(state.headerSpoken))
@@ -149,7 +150,7 @@ struct AfterLeavingView: View {
             Button(action: onRequestCertificate) {
                 HStack(spacing: PumTokens.Space.s12) {
                     VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
-                        Text(AfterLeavingState.certificateTitle).pumText(.callout, weight: .bold)
+                        Text(AfterLeavingState.certificateTitle).pumText(.callout, weight: .semibold)
                             .foregroundStyle(PumColor.textPrimary)
                         Text(AfterLeavingState.certificateDetail).pumText(.caption)
                             .foregroundStyle(PumColor.textSecondary)

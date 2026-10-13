@@ -62,7 +62,7 @@ struct ContractChangeView: View {
     // MARK: 바닥
 
     private var footer: some View {
-        VStack(spacing: PumTokens.Space.s8) {
+        VStack(spacing: PumTokens.Space.s10) {
             PumButton(title: ContractChangeState.sendTitle, kind: .primary, isLoading: isSending,
                       loadingTitle: "보내는 중", action: send)
                 // 바뀐 조건이 있고, 지금 선택으로 계산한 영향을 본 뒤에만 보낸다(영향이 숨겨진 동안은 잠금)
@@ -79,7 +79,7 @@ struct ContractChangeView: View {
     }
 
     private func section<Content: View>(_ title: String, @ViewBuilder content: () -> Content) -> some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
             PumSectionHeader(title: title)
             content()
         }
@@ -87,7 +87,6 @@ struct ContractChangeView: View {
 
     private var divider: some View {
         Rectangle().fill(PumColor.borderHairline).frame(height: 1)
-            .padding(.horizontal, PumTokens.Size.rowPadX)
     }
 
     // MARK: 직원 카드
@@ -111,7 +110,7 @@ struct ContractChangeView: View {
                     badge
                 }
             }
-            .padding(.vertical, PumTokens.Space.s14)
+            .padding(.vertical, PumTokens.Space.s12)
             .padding(.horizontal, PumTokens.Space.s16)
             .frame(maxWidth: .infinity, alignment: .leading)
             .accessibilityElement(children: .combine)
@@ -163,7 +162,7 @@ struct ContractChangeView: View {
     }
 
     private var unchangedRow: some View {
-        let key = Text(state.unchangedTitle).pumText(.body).foregroundStyle(PumColor.textSecondary)
+        let key = Text(state.unchangedTitle).pumText(.body).foregroundStyle(PumTokens.ColorToken.gray800)
         let summary = Text(state.unchangedSummary).pumText(.body, weight: .semibold)
             .foregroundStyle(PumColor.textPrimary).lineLimit(1)
         let chev = Image(systemName: "chevron.right").font(.footnote.weight(.semibold))
@@ -244,7 +243,7 @@ struct ContractChangeView: View {
 
     private var estimateRow: some View {
         let left = VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
-            Text(state.impactTitle).pumText(.body).foregroundStyle(PumColor.textSecondary)
+            Text(state.impactTitle).pumText(.body).foregroundStyle(PumTokens.ColorToken.gray800)
             if let detail = impact?.detailText {
                 Text(detail).pumText(.caption).foregroundStyle(PumColor.textSecondary)
             }
@@ -267,7 +266,7 @@ struct ContractChangeView: View {
     }
 
     private var fixedRow: some View {
-        let key = Text(ContractChangeState.beforeSignTitle).pumText(.body).foregroundStyle(PumColor.textSecondary)
+        let key = Text(ContractChangeState.beforeSignTitle).pumText(.body).foregroundStyle(PumTokens.ColorToken.gray800)
         let value = Text(ContractChangeState.beforeSignValue).pumText(.body, weight: .semibold)
             .foregroundStyle(PumColor.textPrimary).multilineTextAlignment(.trailing)
         return ViewThatFits(in: .horizontal) {
