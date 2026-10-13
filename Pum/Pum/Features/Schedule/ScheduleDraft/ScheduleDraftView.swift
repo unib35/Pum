@@ -59,6 +59,7 @@ struct ScheduleDraftView: View {
                 }
             }
             .onChange(of: state.selectedID) { _, new in selectedID = new }
+            .onChange(of: state.sheet != nil) { _, hasSheet in isSheetOpen = hasSheet }
     }
 
     private var content: some View {
@@ -145,8 +146,9 @@ struct ScheduleDraftView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .accessibilityAddTraits(.isHeader)
             Button {
-                isSheetOpen = true
+                // 시트는 서버가 시트 값(직원 · 계산)을 줄 때 연다 — 값 없이 열면 빈 시트가 올라온다
                 if let day = state.days.first(where: { $0.id == selectedID }) { onAddShift(day) }
+                if state.sheet != nil { isSheetOpen = true }
             } label: {
                 Text(ScheduleDraftState.addShiftTitle).pumText(.footnote, weight: .semibold) // 13px 600
                     .foregroundStyle(PumColor.accent)
