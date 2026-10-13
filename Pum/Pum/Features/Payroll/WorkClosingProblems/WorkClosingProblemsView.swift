@@ -14,6 +14,7 @@ struct WorkClosingProblemsView: View {
     @State private var lock = WorkClosingRowLock()
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @ScaledMetric(relativeTo: .body) private var barHeight = PumTokens.Space.s8
+    @ScaledMetric(relativeTo: .body) private var rowAvatar = PumLayout.avatar - PumTokens.Space.s4 // 남은 행 아바타 원문 약 32pt
     @ScaledMetric(relativeTo: .body) private var smallAvatar = PumLayout.avatar - PumTokens.Space.s8 // 처리됨 행 아바타 약 28pt
 
     var body: some View {
@@ -80,7 +81,7 @@ struct WorkClosingProblemsView: View {
         // 원문: 위 줄은 아바타 옆 이름 · 배지, 아래 줄(설명 · 버튼)은 아바타 아래까지 카드 폭 전체
         return VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
             HStack(alignment: .center, spacing: PumTokens.Space.s12) {
-                PumAvatar(name: item.name, colorIndex: item.colorIndex)
+                PumAvatar(name: item.name, colorIndex: item.colorIndex, size: rowAvatar)
                 ViewThatFits(in: .horizontal) {
                     HStack(alignment: .firstTextBaseline, spacing: PumTokens.Space.s8) {
                         nameDate(item)
@@ -227,7 +228,7 @@ private struct ProblemPill: View {
                 .foregroundStyle(style == .outline ? PumColor.textPrimary : .white)
                 .lineLimit(1)
                 .padding(.horizontal, PumTokens.Space.s14)
-                .padding(.vertical, PumTokens.Space.s6)
+                .padding(.vertical, PumTokens.Space.s8) // 원문 알약 높이 약 31
                 .background(fill, in: Capsule())
                 .overlay { if style == .outline { Capsule().strokeBorder(PumColor.textPrimary, lineWidth: PumTokens.Shadow.outline.spread) } }
                 // 누름 영역: 키운 뒤 같은 만큼 음수 padding으로 되돌려 배치는 그대로
