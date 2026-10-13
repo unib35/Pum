@@ -8,7 +8,7 @@ struct PayrollCalculatingView: View {
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @ScaledMetric(relativeTo: .body) private var circleSize = Local.stepCircle
-    @ScaledMetric(relativeTo: .body) private var barHeight = PumTokens.Space.s8
+    @ScaledMetric(relativeTo: .body) private var barHeight = PumTokens.Space.s6
     /// 아바타 지름 — 원문 실측 약 30(공통 기본 36보다 작음)
     @ScaledMetric(relativeTo: .body) private var avatarSize: CGFloat = 30
 
@@ -34,8 +34,10 @@ struct PayrollCalculatingView: View {
         VStack(spacing: 0) {
             backRow
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s14) {
                     titleBlock
+                    bar.padding(.horizontal, PumTokens.Space.s4)
+                        .accessibilityHidden(true) // 위 진행 문구가 같은 내용을 읽음
                     PumCard {
                         ForEach(Array(state.rows.enumerated()), id: \.element.id) { index, row in
                             rowView(row, isLast: index == state.rows.count - 1)
@@ -44,7 +46,7 @@ struct PayrollCalculatingView: View {
                     .animation(PumMotion.respecting(reduceMotion, PumMotion.fast), value: state.rows) // M37 행 fast
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.top, PumTokens.Space.s8)
+                .padding(.top, PumTokens.Space.s16) // 원문 gap 14 + 제목 위 2
                 .padding(.bottom, PumTokens.Space.s16)
             }
             .scrollBounceBehavior(.basedOnSize)
@@ -83,11 +85,8 @@ struct PayrollCalculatingView: View {
                 .accessibilityAddTraits(.isHeader)
             Text(state.progressText).pumText(.footnote).foregroundStyle(PumColor.textSecondary)
                 .accessibilityLabel(Text(state.progressAccessibilityText))
-            bar.padding(.top, PumTokens.Space.s8)
-                .accessibilityHidden(true) // 위 진행 문구가 같은 내용을 읽음
         }
         .padding(.horizontal, PumTokens.Space.s4)
-        .padding(.bottom, PumTokens.Space.s8)
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
@@ -126,7 +125,6 @@ struct PayrollCalculatingView: View {
         }
         .padding(.vertical, PumTokens.Size.rowPadY)
         .padding(.horizontal, PumTokens.Size.rowPadX)
-        .frame(minHeight: PumTokens.Size.tapMin)
         .overlay(alignment: .bottom) {
             if !isLast { Rectangle().fill(PumColor.borderHairline).frame(height: 1) }
         }
@@ -184,7 +182,8 @@ struct PayrollCalculatingView: View {
         PumButton(title: PayrollCalculatingState.buttonTitle, kind: .primary, isLoading: true,
                   loadingTitle: PayrollCalculatingState.buttonTitle, action: {})
             .padding(.horizontal, PumTokens.Size.screenPad)
-            .padding(.vertical, PumTokens.Space.s12)
+            .padding(.top, PumTokens.Space.s12)
+            .padding(.bottom, PumTokens.Space.s10)
             .background(PumColor.bgApp)
     }
 }
