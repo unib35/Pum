@@ -113,7 +113,7 @@ enum AccountRoute: String, CaseIterable, Hashable {
                 onBack: router.back,
                 onRequest: { _, done in
                     done(true)
-                    router.navigate(.staff(.employmentCertIssue))
+                    router.back()
                 }
             )
         case .employmentCertIssued:
