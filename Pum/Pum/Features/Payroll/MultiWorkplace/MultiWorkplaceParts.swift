@@ -33,11 +33,11 @@ struct MultiWorkplaceAllChip: View {
     var colors: [Color] = PumAvatarPalette.stores
     let action: () -> Void
 
-    /// 목업 네모 약 20×24 — 토큰에 없어 이름을 붙임(DEC-005)
-    private let tileWidth: CGFloat = 20
-    private let tileHeight: CGFloat = 24
-    /// 겹침 정도(목업 살짝 겹침) — space-6
-    private let overlap: CGFloat = PumTokens.Space.s6
+    /// 원문 네모 22×22 — 토큰에 없어 이름을 붙임(DEC-005)
+    private let tileWidth: CGFloat = 22
+    private let tileHeight: CGFloat = 22
+    /// 겹침 정도(목업 살짝 겹침) — space-8
+    private let overlap: CGFloat = PumTokens.Space.s8
 
     var body: some View {
         Button(action: action) {
@@ -47,16 +47,20 @@ struct MultiWorkplaceAllChip: View {
                         RoundedRectangle(cornerRadius: PumTokens.Radius.sm, style: .continuous).fill(c)
                             .frame(width: tileWidth, height: tileHeight)
                             .overlay(RoundedRectangle(cornerRadius: PumTokens.Radius.sm, style: .continuous)
-                                .strokeBorder(PumColor.surfaceInverse, lineWidth: 1))
+                                .strokeBorder(PumColor.surfaceInverse, lineWidth: 2))
                     }
                 }
-                Text(title).pumText(.footnote, weight: .semibold).foregroundStyle(.white) // 14px 600
+                Text(title).pumText(.callout, weight: .semibold).foregroundStyle(.white) // 14px 600
                 Image(systemName: "chevron.down").font(.caption.weight(.semibold)).foregroundStyle(.white)
             }
             .padding(.leading, PumTokens.Space.s8)
             .padding(.trailing, PumTokens.Space.s12)
-            .frame(minHeight: PumTokens.Size.tapMin)
+            .padding(.vertical, PumTokens.Space.s8)
             .background(PumColor.surfaceInverse, in: Capsule())
+            // 누름 영역 44 유지, 배치 높이는 토큰에 7이 없어 8로 38(원문 36)
+            .frame(minHeight: PumTokens.Size.tapMin)
+            .contentShape(Rectangle())
+            .padding(.vertical, -(PumTokens.Size.tapMin - 38) / 2)
         }
         .buttonStyle(.plain)
         .accessibilityLabel(Text("사업장: \(title)"))

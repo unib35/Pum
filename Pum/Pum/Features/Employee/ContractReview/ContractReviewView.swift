@@ -33,14 +33,14 @@ struct ContractReviewView: View {
             PumNavHeader(title: "근로계약서", onBack: onBack)
                 .padding(.horizontal, PumTokens.Size.screenPad)
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s14) {
                     heading
                     termsCard
                     fullTextRow
                     consentRow
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s16)
+                .padding(.vertical, PumTokens.Space.s14)
             }
         }
         .background(PumColor.bgApp)
@@ -49,9 +49,9 @@ struct ContractReviewView: View {
 
     // 2. 제목 · 배지 · 문서 종류 · 보낸 사람
     private var heading: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s10) { // 원문: 제목 · 문서 종류 · 부제 사이가 넉넉하다(캡처 실측)
+        VStack(alignment: .leading, spacing: 0) { // 원문: 제목 · 문서 종류는 붙어 있고 부제만 6 아래
             ViewThatFits(in: .horizontal) {
-                HStack(alignment: .center, spacing: PumTokens.Space.s8) {
+                HStack(alignment: .top, spacing: PumTokens.Space.s8) {
                     docTitle
                     Spacer(minLength: 0)
                     badge
@@ -67,8 +67,8 @@ struct ContractReviewView: View {
             .accessibilityAddTraits(.isHeader)
             Text(record.kindText).pumText(.body, weight: .medium).foregroundStyle(PumColor.textSecondary) // 16px 500 → body(15)
             Text(record.subtitleText).pumText(.footnote).foregroundStyle(PumColor.textSecondary)
+                .padding(.top, PumTokens.Space.s6)
         }
-        .padding(.horizontal, PumTokens.Space.s4)
     }
 
     private var docTitle: some View {
@@ -85,14 +85,15 @@ struct ContractReviewView: View {
             VStack(spacing: 0) {
                 Text("계약 조건").pumText(.caption, weight: .bold).foregroundStyle(PumColor.textSecondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal, PumTokens.Size.rowPadX)
-                    .padding(.top, PumTokens.Space.s12)
+                    .padding(.horizontal, PumTokens.Space.s18)
+                    .padding(.top, PumTokens.Space.s16) // 원문 카드 6 + 제목 10
                     .padding(.bottom, PumTokens.Space.s4)
                     .accessibilityAddTraits(.isHeader)
                 let terms = record.terms
                 ForEach(Array(terms.enumerated()), id: \.element.id) { i, t in
                     termRow(t, isLast: i == terms.count - 1)
                 }
+                Color.clear.frame(height: PumTokens.Space.s4) // 원문 아래 4
             }
         }
     }
@@ -111,13 +112,12 @@ struct ContractReviewView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding(.vertical, PumTokens.Size.rowPadY)
-        .padding(.horizontal, PumTokens.Size.rowPadX)
-        .frame(minHeight: PumTokens.Size.tapMin)
+        .padding(.vertical, PumTokens.Space.s10) // 원문 11 — 가까운 토큰
+        .padding(.horizontal, PumTokens.Space.s18)
         .overlay(alignment: .bottom) {
             if !isLast {
                 Rectangle().fill(PumColor.borderHairline).frame(height: 1)
-                    .padding(.horizontal, PumTokens.Size.rowPadX)
+                    .padding(.horizontal, PumTokens.Space.s18) // 원문: 안쪽 18에서 시작
             }
         }
         .accessibilityElement(children: .ignore)
@@ -159,7 +159,8 @@ struct ContractReviewView: View {
                         .foregroundStyle(PumColor.textDisabled)
                         .accessibilityHidden(true)
                 }
-                .padding(PumTokens.Space.s16)
+                .padding(.vertical, PumTokens.Space.s14)
+                .padding(.horizontal, PumTokens.Space.s16)
                 .frame(minHeight: PumTokens.Size.tapMin)
                 .contentShape(Rectangle())
             }
@@ -172,11 +173,13 @@ struct ContractReviewView: View {
     // 5. 동의 체크 — 공통 체크박스 행(PumCheckboxRow). 무엇에 동의하는지 문구 전체를 VoiceOver 라벨로
     private var consentRow: some View {
         PumCheckboxRow(title: record.consentText, isOn: agreed, textColor: consentColor) { agreed.toggle() } // 13px 400
+            // 공통 체크박스 행의 위아래 10 · 최소 44가 줄을 키워서, 배치만 원문(위아래 0)에 맞추고 누름 영역은 그대로 둔다
+            .padding(.vertical, -PumTokens.Space.s10)
     }
 
     // 6. 하단 고정
     private var actions: some View {
-        VStack(spacing: PumTokens.Space.s4) {
+        VStack(spacing: PumTokens.Space.s10) {
             PumButton(title: "서명하기", kind: .primary, action: onSign)
                 .disabled(!ContractReviewRecord.canSign(agreed: agreed))
             // 글자 버튼: 15px 500 보조색, 밑줄 없음, 터치 44
@@ -189,7 +192,7 @@ struct ContractReviewView: View {
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
         .padding(.top, PumTokens.Space.s12)
-        .padding(.bottom, PumTokens.Space.s4)
+        .padding(.bottom, PumTokens.Space.s10) // 원문 아래 44 − 홈 막대 34
         .background(PumColor.bgApp)
     }
 }
