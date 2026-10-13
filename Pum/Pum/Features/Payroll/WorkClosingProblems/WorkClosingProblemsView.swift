@@ -13,7 +13,7 @@ struct WorkClosingProblemsView: View {
 
     @State private var lock = WorkClosingRowLock()
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @ScaledMetric(relativeTo: .body) private var barHeight = PumTokens.Space.s8
+    @ScaledMetric(relativeTo: .body) private var barHeight = PumTokens.Space.s6 // 원문 막대 높이 6
     @ScaledMetric(relativeTo: .body) private var rowAvatar = PumLayout.avatar - PumTokens.Space.s4 // 남은 행 아바타 원문 약 32pt
     @ScaledMetric(relativeTo: .body) private var smallAvatar = PumLayout.avatar - PumTokens.Space.s8 // 처리됨 행 아바타 약 28pt
 
@@ -22,7 +22,7 @@ struct WorkClosingProblemsView: View {
             PumNavHeader(title: state.title, onBack: onBack) { EmptyView() }
                 .padding(.horizontal, PumTokens.Size.screenPad)
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s14) { // 원문 블록 사이 14
                     progressRow
                     if !state.remaining.isEmpty { remainingSection }
                     if !state.resolved.isEmpty { resolvedSection }
@@ -32,7 +32,8 @@ struct WorkClosingProblemsView: View {
                         .padding(.horizontal, PumTokens.Space.s4)
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s12)
+                .padding(.top, PumTokens.Space.s14) // 원문 머리 줄 아래 14
+                .padding(.bottom, PumTokens.Space.s12)
             }
         }
         .background(PumColor.bgApp)
@@ -42,7 +43,7 @@ struct WorkClosingProblemsView: View {
     // MARK: 진행 막대
 
     private var progressRow: some View {
-        HStack(spacing: PumTokens.Space.s12) {
+        HStack(spacing: PumTokens.Space.s10) { // 원문 막대~숫자 10
             bar
             Text(state.progressText).pumText(.footnote, weight: .bold).foregroundStyle(PumColor.textPrimary)
         }
@@ -66,7 +67,7 @@ struct WorkClosingProblemsView: View {
 
     private var remainingSection: some View {
         VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
-            PumSectionHeader(title: state.remainingHeader, attention: true)
+            PumSectionHeader(title: state.remainingHeader, attention: true).padding(.top, PumTokens.Space.s2) // 원문 padding 2 4 0
             PumCard {
                 ForEach(Array(state.remaining.enumerated()), id: \.element.id) { i, item in
                     if i > 0 { divider }
@@ -79,8 +80,8 @@ struct WorkClosingProblemsView: View {
     private func problemRow(_ item: WorkClosingProblemItem) -> some View {
         let locked = lock.isLocked(item.id)
         // 원문: 위 줄은 아바타 옆 이름 · 배지, 아래 줄(설명 · 버튼)은 아바타 아래까지 카드 폭 전체
-        return VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
-            HStack(alignment: .center, spacing: PumTokens.Space.s12) {
+        return VStack(alignment: .leading, spacing: PumTokens.Space.s10) { // 원문 두 줄 사이 10
+            HStack(alignment: .center, spacing: PumTokens.Space.s10) { // 원문 아바타~이름 10
                 PumAvatar(name: item.name, colorIndex: item.colorIndex, size: rowAvatar)
                 ViewThatFits(in: .horizontal) {
                     HStack(alignment: .firstTextBaseline, spacing: PumTokens.Space.s8) {
@@ -96,7 +97,7 @@ struct WorkClosingProblemsView: View {
             }
             .accessibilityHidden(true) // 행 라벨이 한 번에 읽는다
             ViewThatFits(in: .horizontal) {
-                HStack(alignment: .center, spacing: PumTokens.Space.s8) {
+                HStack(alignment: .center, spacing: PumTokens.Space.s10) {
                     detail(item)
                     Spacer(minLength: PumTokens.Space.s8)
                     buttons(item, locked: locked)
@@ -131,7 +132,7 @@ struct WorkClosingProblemsView: View {
         return Text(item.badgeText).pumText(.caption2, weight: .bold).foregroundStyle(c.fg)
             .padding(.vertical, PumTokens.Space.s4)
             .padding(.horizontal, PumTokens.Space.s8)
-            .background(c.bg, in: RoundedRectangle(cornerRadius: PumTokens.Radius.sm, style: .continuous))
+            .background(c.bg, in: RoundedRectangle(cornerRadius: PumTokens.Radius.xs, style: .continuous)) // 원문 모서리 6
             .fixedSize(horizontal: false, vertical: true)
     }
 
@@ -164,7 +165,7 @@ struct WorkClosingProblemsView: View {
 
     private var resolvedSection: some View {
         VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
-            PumSectionHeader(title: state.resolvedHeader)
+            PumSectionHeader(title: state.resolvedHeader).padding(.top, PumTokens.Space.s2)
             PumCard {
                 ForEach(Array(state.resolved.enumerated()), id: \.element.id) { i, item in
                     if i > 0 { divider }
@@ -175,7 +176,7 @@ struct WorkClosingProblemsView: View {
     }
 
     private func resolvedRow(_ item: WorkClosingResolvedItem) -> some View {
-        HStack(spacing: PumTokens.Space.s12) {
+        HStack(spacing: PumTokens.Space.s10) { // 원문 아바타~이름 10
             PumAvatar(name: item.name, colorIndex: item.colorIndex, size: smallAvatar)
             ViewThatFits(in: .horizontal) {
                 HStack(spacing: PumTokens.Space.s8) {
@@ -192,7 +193,7 @@ struct WorkClosingProblemsView: View {
         }
         .padding(.horizontal, PumTokens.Size.rowPadX)
         .padding(.vertical, PumTokens.Space.s12)
-        .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin, alignment: .leading)
+        .frame(maxWidth: .infinity, alignment: .leading)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(item.accessibilityText))
     }
