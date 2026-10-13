@@ -1,4 +1,5 @@
 // UI-IOS-1au — 확정 · 근무 없는 날: 하단 버튼 없음(출근하기 없음), 탭 바만 하단 고정
+// UI-IOS-6u 업데이트 권장 시트 · UI-IOS-6v 점검 예고 한 줄(REQ-094) — 둘 다 호출자가 준 값이 있을 때만
 // 순서: 칩 → 주간 스트립 → 오늘(근무 없음 · 다음 근무) → 그다음 근무 → 이번 달
 import SwiftUI
 
@@ -192,9 +193,9 @@ private struct UpdateNoticeSheetContent: View {
                             .foregroundStyle(PumColor.textPrimary)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.vertical, PumTokens.Space.s16)
+                            .padding(.horizontal, PumTokens.Space.s16) // 구분선은 카드 끝까지(원문)
                     }
                 }
-                .padding(.horizontal, PumTokens.Space.s16)
             }
             // 버튼 둘: 받은 폭을 1 : 1.5로 나눈다. 큰 글자에서는 위아래로
             if typeSize.isAccessibilitySize {
