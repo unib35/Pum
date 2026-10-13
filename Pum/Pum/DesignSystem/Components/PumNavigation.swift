@@ -159,16 +159,23 @@ struct PumTabItem: Identifiable, Hashable {
     var badge: Int = 0
 }
 
+extension EnvironmentValues {
+    /// 탭 바를 누르면 불리는 동작 — 앱 연결(프로토타입) 껍데기가 탭 화면을 바꾸는 데 쓴다. 기본은 없음.
+    @Entry var pumTabSelect: ((String) -> Void)? = nil
+}
+
 /// 하단 탭 바 — 디자인 1at 기준 4개(홈 · 근무 · 급여 · 내 정보). 탭 구성은 README 충돌 #9 참고.
 struct PumTabBar: View {
     let items: [PumTabItem]
     @Binding var selection: String
+    /// 앱 연결(프로토타입)에서 탭 전환을 알려 받는 곳 — 모양은 바뀌지 않는다
+    @Environment(\.pumTabSelect) private var tabSelect
 
     var body: some View {
         HStack(spacing: 0) {
             ForEach(items) { item in
                 let active = item.id == selection
-                Button { selection = item.id } label: {
+                Button { selection = item.id; tabSelect?(item.id) } label: {
                     VStack(spacing: PumLayout.tabLabelGap) {
                         Image(systemName: item.systemImage).font(.system(size: PumLayout.tabIcon, weight: .regular))
                             .symbolVariant(.none) // F8: 채운 아이콘 없음(선택돼도 외곽선)

@@ -8,7 +8,7 @@
 2. 디자인 원문 — Claude Design 프로젝트 「근무 관리 급여 시스템」, 정리본 `docs/design/README.md`
 3. 화면 — `docs/design/screen-index.md` (UI-IOS-1a 형식)
 4. 요구사항 — `docs/requirements/traceability.md` (REQ-nnn)
-5. 이 저장소 규칙 — `docs/conventions/code.md`, `docs/conventions/git.md`
+5. 이 저장소 규칙 — `docs/conventions/architecture.md`(아키텍처 · 내비게이션 · 에이전트 역할), `docs/conventions/code.md`, `docs/conventions/git.md`
 
 ## 기술 스택 (DEC-008)
 
