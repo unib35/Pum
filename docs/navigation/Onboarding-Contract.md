@@ -1,6 +1,6 @@
 # 시작(Onboarding) · 계약서(Contract) 화면 연결
 
-요약: 이은 화면 23 / 전체 23 (시작 15 · 계약서 8). 화면마다 이을 수 있는 버튼은 이었고, 닫히지 않은 버튼은 아래 표의 「잇지 못한 버튼」에 이유를 적었다. 기준: 흐름 지도 J1 · J2 · J10 · J14. 프로토타입이라 `done(true)` 후 다음 화면으로 간다. 코드: `Pum/Pum/Features/Onboarding/OnboardingRoute.swift` · `Pum/Pum/Features/Contract/ContractRoute.swift`.
+요약: 이은 화면 23 / 전체 23 (시작 15 · 계약서 8). 화면마다 이을 수 있는 버튼은 이었고, 닫히지 않은 버튼은 아래 표의 「잇지 못한 버튼」에 이유를 적었다. 기준: 흐름 지도 J1 · J2 · J10 · J14. 프로토타입이라 `done(true)` 후 다음 화면으로 간다. 코드: `Pum/Pum/Features/Auth/AuthRoute.swift · Features/Employee/EmployeeRoute.swift` · `Pum/Pum/Features/Employee/EmployeeRoute.swift`.
 
 공통: 뒤로 → 뒤로. 시작 흐름의 끝은 역할별 홈 탭(`backToRoot`)이다.
 

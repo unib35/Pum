@@ -11,7 +11,7 @@ struct DevLauncher: View {
         switch mode {
         case .employee: AppShell(role: .employee) { mode = nil }
         case .owner: AppShell(role: .owner) { mode = nil }
-        case .fromStart: AppShell(role: .owner, start: [.onboarding(.welcome)]) { mode = nil }
+        case .fromStart: AppShell(role: .owner, start: [.auth(.welcome)]) { mode = nil }
         case nil: menu
         }
     }

@@ -62,13 +62,13 @@ enum HomeRoute: String, CaseIterable, Hashable {
                 onClose: router.back,
                 onSelect: { _ in router.back() },
                 onShowAll: { router.navigate(.workplace(.ownerWorkplaces)) },
-                onAddByCode: { router.navigate(.onboarding(.inviteCode)) }
+                onAddByCode: { router.navigate(.employee(.inviteCode)) }
             )
         case .personalHome:
             PersonalHomeView(
                 state: .sample,
                 onSwitchWorkplace: { router.navigate(.home(.workplaceSwitcher)) },
-                onBell: { router.navigate(.comms(.newsFeed)) },
+                onBell: { router.navigate(.notice(.newsFeed)) },
                 onClockIn: { router.navigate(.attendance(.clockIn)) },
                 onOpenCalendar: { router.navigate(.attendance(.workCalendar)) },
                 onOpenPayBasis: { router.navigate(.payroll(.expectedPay)) }
@@ -77,7 +77,7 @@ enum HomeRoute: String, CaseIterable, Hashable {
             OwnerHomeUnverifiedView(
                 state: .sample,
                 onSwitchWorkplace: { router.navigate(.home(.workplaceSwitcher)) },
-                onBell: { router.navigate(.comms(.newsFeed)) },
+                onBell: { router.navigate(.notice(.newsFeed)) },
                 onOpenStep: { id in if id == "clockin" { router.navigate(.workplace(.checkInQR)) } },
                 onVerify: { router.navigate(.workplace(.verifyIntro)) }
             )

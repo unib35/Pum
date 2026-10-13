@@ -30,10 +30,10 @@ final class AppRouter {
         switch (role, tab) {
         case (.employee, .work): .attendance(.workCalendar)
         case (.employee, .pay): .payroll(.expectedPay)
-        case (.employee, .me): .account(.myInfo)
+        case (.employee, .me): .settings(.myInfo)
         case (.owner, .work): .attendance(.ownerReview)
         case (.owner, .pay): .payroll(.ownerPayroll)
-        case (.owner, .store): .staff(.staffList)
+        case (.owner, .store): .employee(.staffList)
         case (.employee, _): .home(.employeeHome)
         case (.owner, _): .home(.ownerHome)
         }

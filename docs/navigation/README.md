@@ -11,17 +11,16 @@
 
 ## 기능별
 
-| 기능 | 연결 / 전체 | 상세 |
+| 기능 | 연결 / 전체 | 상세(연결 작업 때 기능 이름으로 쓴 문서) |
 |---|---|---|
-| Account | 16 / 16 | [Account-Comms.md](Account-Comms.md) |
 | Attendance | 27 / 28 | [Attendance.md](Attendance.md) |
-| Comms | 5 / 5 | [Account-Comms.md](Account-Comms.md) |
-| Contract | 8 / 8 | [Onboarding-Contract.md](Onboarding-Contract.md) |
+| Auth | 8 / 8 | [Onboarding-Contract.md](Onboarding-Contract.md) · [Account-Comms.md](Account-Comms.md) |
+| Employee | 41 / 41 | [Staff.md](Staff.md) · [Onboarding-Contract.md](Onboarding-Contract.md) · [Account-Comms.md](Account-Comms.md) |
 | Home | 11 / 15 | [Home-Workplace.md](Home-Workplace.md) |
-| Onboarding | 15 / 15 | [Onboarding-Contract.md](Onboarding-Contract.md) |
+| Notice | 5 / 5 | [Account-Comms.md](Account-Comms.md) |
 | Payroll | 27 / 29 | [Payroll.md](Payroll.md) |
 | Schedule | 16 / 18 | [Schedule.md](Schedule.md) |
-| Staff | 20 / 20 | [Staff.md](Staff.md) |
+| Settings | 10 / 10 | [Account-Comms.md](Account-Comms.md) |
 | Workplace | 12 / 12 | [Home-Workplace.md](Home-Workplace.md) |
 | **합계** | **157 / 166** | |
 

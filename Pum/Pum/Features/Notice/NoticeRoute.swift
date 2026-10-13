@@ -1,6 +1,6 @@
 import SwiftUI
 
-enum CommsRoute: String, CaseIterable, Hashable {
+enum NoticeRoute: String, CaseIterable, Hashable {
     case noticeDetail = "3b"
     case newsFeed = "3a"
     case noticeReadStatus = "3d"
@@ -33,7 +33,7 @@ enum CommsRoute: String, CaseIterable, Hashable {
                 onClose: router.back,
                 onSend: { _, done in
                     done(true)
-                    router.replace(with: .comms(.newsFeed))
+                    router.replace(with: .notice(.newsFeed))
                 }
             )
         case .newsFeedInvite:
@@ -42,17 +42,19 @@ enum CommsRoute: String, CaseIterable, Hashable {
     }
 
     static let connected: Set<Self> = [
-        .noticeDetail, .newsFeed, .noticeReadStatus, .noticeCompose, .newsFeedInvite,
+        .noticeDetail, .newsFeed, .noticeReadStatus, .noticeCompose,
+        .newsFeedInvite,
     ]
+
 
     @MainActor
     private func newsFeed(_ state: NewsFeedState, _ router: AppRouter) -> some View {
         NewsFeedView(
             state: state,
-            onOpenContract: { _ in router.navigate(.contract(.contractReview)) },
-            onOpenNotice: { _ in router.navigate(.comms(.noticeDetail)) },
+            onOpenContract: { _ in router.navigate(.employee(.contractReview)) },
+            onOpenNotice: { _ in router.navigate(.notice(.noticeDetail)) },
             onOpenWorkplaceSwitcher: { router.navigate(.home(.workplaceSwitcher)) },
-            onOpenInvite: { _ in router.navigate(.onboarding(.inviteCodeRetry)) }
+            onOpenInvite: { _ in router.navigate(.employee(.inviteCodeRetry)) }
         )
     }
 }

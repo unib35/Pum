@@ -55,7 +55,7 @@ enum WorkplaceRoute: String, CaseIterable, Hashable {
                 onOpenCheckInMethod: { router.navigate(.workplace(.checkInMethod)) },
                 onOpenOvertimePolicy: { router.navigate(.workplace(.attendancePolicy)) },
                 onOpenStoreQR: { router.navigate(.workplace(.checkInQR)) },
-                onAddAdmin: { router.navigate(.staff(.managerInvite)) }
+                onAddAdmin: { router.navigate(.employee(.managerInvite)) }
             )
         case .verifyIntro:
             VerifyIntroView(
@@ -79,7 +79,7 @@ enum WorkplaceRoute: String, CaseIterable, Hashable {
                 onBack: router.back,
                 onComplete: { _, done in
                     done(true)
-                    router.navigate(.staff(.staffInvite))
+                    router.navigate(.employee(.staffInvite))
                 }
             )
         case .duplicateBusiness:
