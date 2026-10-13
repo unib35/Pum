@@ -5,10 +5,10 @@ import SwiftUI
 
 /// 이 화면 전용 크기 — 토큰에 없는 것만 이름을 붙인다(DEC-005). 사용처에서 @ScaledMetric으로 키운다.
 enum ScheduleDraftLayout {
-    /// 근무 줄 시간 열 폭(목업 약 56)
-    static let timeColumn: CGFloat = 56
-    /// 근무 줄 아바타(목업 약 44 → 가까운 값 40)
-    static let rowAvatar: CGFloat = 40
+    /// 근무 줄 시간 열 폭(원문 50)
+    static let timeColumn: CGFloat = 50
+    /// 근무 줄 아바타(원문 30)
+    static let rowAvatar: CGFloat = 30
     /// 주간 스트립 칸 최소 폭(접근성 글자 크기에서 가로 스크롤할 때)
     static let stripCellMin: CGFloat = 56
 }
@@ -81,14 +81,13 @@ struct ScheduleDraftView: View {
     private var content: some View {
         VStack(spacing: 0) {
             ScrollView {
-                VStack(spacing: PumTokens.Space.s12) {
+                VStack(spacing: PumTokens.Space.s14) { // 원문 블록 사이 14
                     header
                     weekCard
                     dayLine
                     shiftsCard
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.bottom, PumTokens.Space.s16)
             }
             if state.showsBottomBar { bottomBar }
         }
@@ -112,7 +111,6 @@ struct ScheduleDraftView: View {
                 chip
             }
         }
-        .padding(.top, PumTokens.Space.s8)
     }
 
     private var title: some View {
@@ -128,7 +126,7 @@ struct ScheduleDraftView: View {
 
     private var weekCard: some View {
         PumCard {
-            VStack(spacing: PumTokens.Space.s8) {
+            VStack(spacing: PumTokens.Space.s10) { // 원문 머리 아래 10
                 ViewThatFits(in: .horizontal) {
                     HStack(spacing: PumTokens.Space.s8) {
                         weekTitle
@@ -145,7 +143,9 @@ struct ScheduleDraftView: View {
                     onSelectDay(id)
                 }
             }
-            .padding(PumTokens.Space.s12)
+            .padding(.horizontal, PumTokens.Space.s10) // 원문 카드 12 10 10
+            .padding(.top, PumTokens.Space.s12)
+            .padding(.bottom, PumTokens.Space.s10)
         }
     }
 
@@ -170,6 +170,7 @@ struct ScheduleDraftView: View {
                     .foregroundStyle(PumColor.accent)
                     .frame(minHeight: PumTokens.Size.tapMin)
                     .contentShape(Rectangle())
+                    .padding(.vertical, -PumTokens.Space.s12) // 보이는 줄 높이는 원문대로, 누름 영역 44 유지
             }
             .buttonStyle(.plain)
         }
@@ -188,7 +189,7 @@ struct ScheduleDraftView: View {
     // MARK: 하단 — 지난주 복사 · 게시(받은 폭 2 : 3)
 
     private var bottomBar: some View {
-        VStack(spacing: PumTokens.Space.s8) {
+        VStack(spacing: PumTokens.Space.s10) { // 원문 버튼-안내 10
             if typeSize.isAccessibilitySize {
                 VStack(spacing: PumTokens.Space.s8) { publishButton; copyButton }
             } else {
@@ -199,8 +200,8 @@ struct ScheduleDraftView: View {
                 .frame(maxWidth: .infinity)
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
-        .padding(.top, PumTokens.Space.s8)
-        .padding(.bottom, PumTokens.Space.s12)
+        .padding(.top, PumTokens.Space.s12) // 원문 12 20 14
+        .padding(.bottom, PumTokens.Space.s14)
     }
 
     private var copyButton: some View {
@@ -243,7 +244,7 @@ private struct DraftWeekStrip: View {
     private func cell(_ day: DraftDay) -> some View {
         let selected = day.id == selectedID
         return Button { onSelect(day.id) } label: {
-            VStack(spacing: PumTokens.Space.s2) {
+            VStack(spacing: PumTokens.Space.s4) { // 원문 칸 안 간격 4
                 Text(day.weekday).pumText(.caption2, weight: .regular)
                     .foregroundStyle(selected ? PumColor.textOnInverseSecondary : (day.isRed ? PumColor.statusDanger : PumColor.textSecondary))
                 Text("\(day.id)").pumText(.headline, weight: selected ? .bold : .semibold) // 16px → headline(17), 1t와 같은 단계

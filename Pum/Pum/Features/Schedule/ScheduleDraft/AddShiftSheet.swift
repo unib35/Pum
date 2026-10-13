@@ -14,7 +14,7 @@ struct AddShiftSheet: View {
     @ScaledMetric(relativeTo: .callout) private var segmentHeight: CGFloat = 36
     /// 원문 세그먼트 폭 약 180(카드 안 오른쪽 절반)
     @ScaledMetric(relativeTo: .callout) private var segmentMaxWidth: CGFloat = 180
-    @ScaledMetric(relativeTo: .footnote) private var chipAvatar: CGFloat = 22
+    @ScaledMetric(relativeTo: .footnote) private var chipAvatar: CGFloat = 24
 
     init(state: AddShiftSheetState,
          onDraftChange: @escaping (AddShiftDraft) -> Void = { _ in },
@@ -27,7 +27,7 @@ struct AddShiftSheet: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s12) { // 원문 블록 사이 12
             header
             staffBlock
             timeBlock
@@ -36,8 +36,7 @@ struct AddShiftSheet: View {
             PumButton(title: AddShiftSheetState.addTitle) { onAddToDraft(draft) }
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
-        .padding(.bottom, PumTokens.Space.s16)
-        .onChange(of: state) { old, new in
+                .onChange(of: state) { old, new in
             // 손대지 않았거나 새 서버 값과 같아졌을 때만 다시 받는다 — 입력 중인 값을 말없이 지우지 않게
             if !old.hasChanges(draft) || !new.hasChanges(draft) { draft = new.initialDraft }
         }
@@ -58,6 +57,7 @@ struct AddShiftSheet: View {
                 PumBadge(text: state.badge, kind: .waiting)
             }
         }
+        .padding(.top, PumTokens.Space.s4) // 원문 손잡이 아래 여백 4
     }
 
     private var title: some View {
@@ -68,12 +68,12 @@ struct AddShiftSheet: View {
     // MARK: 직원
 
     private var staffBlock: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s6) { // 원문 라벨 아래 6
             label(AddShiftSheetState.staffLabel)
             ViewThatFits(in: .horizontal) {
-                HStack(spacing: PumTokens.Space.s8) { staffChips }
+                HStack(spacing: PumTokens.Space.s6) { staffChips } // 원문 칩 사이 6
                 ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: PumTokens.Space.s8) { staffChips }
+                    HStack(spacing: PumTokens.Space.s6) { staffChips }
                 }
             }
         }
@@ -96,6 +96,7 @@ struct AddShiftSheet: View {
                 .overlay { if !on { Capsule().stroke(PumColor.borderHairline, lineWidth: 1) } }
                 .frame(minHeight: PumTokens.Size.tapMin)
                 .contentShape(Rectangle())
+                .padding(.vertical, -PumTokens.Space.s6) // 보이는 칩 높이는 원문 34 근처, 누름 영역 44 유지
             }
             .buttonStyle(.plain)
             .accessibilityElement(children: .ignore)
@@ -109,7 +110,7 @@ struct AddShiftSheet: View {
     private var timeBlock: some View {
         VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
             ViewThatFits(in: .horizontal) {
-                HStack(alignment: .top, spacing: PumTokens.Space.s12) { startField; endField }
+                HStack(alignment: .top, spacing: PumTokens.Space.s8) { startField; endField } // 원문 칸 사이 8
                 VStack(alignment: .leading, spacing: PumTokens.Space.s12) { startField; endField }
             }
             if isWheelOpen {
@@ -136,8 +137,8 @@ struct AddShiftSheet: View {
             } label: {
                 Text(state.clock(minutes)).pumText(.headline, weight: .medium) // 16px 500 → headline(17)
                     .foregroundStyle(PumColor.textPrimary)
-                    .frame(maxWidth: .infinity, minHeight: PumTokens.Size.buttonH, alignment: .leading)
-                    .padding(.horizontal, PumTokens.Space.s16)
+                    .frame(maxWidth: .infinity, minHeight: PumTokens.Space.s24 * 2, alignment: .leading) // 원문 칸 높이 48
+                    .padding(.horizontal, PumTokens.Space.s14) // 원문 칸 안쪽 0 14
                     .background(PumColor.surfaceCard, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
                     .overlay {
                         RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous)
@@ -155,7 +156,7 @@ struct AddShiftSheet: View {
     }
 
     private func label(_ text: String) -> some View {
-        Text(text).pumText(.footnote, weight: .semibold).foregroundStyle(PumColor.textSecondary) // 13px 600
+        Text(text).pumText(.footnote, weight: .semibold).foregroundStyle(PumTokens.ColorToken.gray800) // 13px 600 #3A4150
     }
 
     // MARK: 휴게 · 반복
@@ -165,7 +166,7 @@ struct AddShiftSheet: View {
             VStack(spacing: 0) {
                 HStack(spacing: PumTokens.Space.s8) {
                     Text(AddShiftSheetState.breakLabel).pumText(.callout, weight: .regular) // 14px 400
-                        .foregroundStyle(PumColor.textSecondary)
+                        .foregroundStyle(PumTokens.ColorToken.gray800)
                     Spacer(minLength: PumTokens.Space.s8)
                     breakMenu
                 }
@@ -193,7 +194,7 @@ struct AddShiftSheet: View {
 
     private var repeatLabel: some View {
         Text(AddShiftSheetState.repeatLabel).pumText(.callout, weight: .regular)
-            .foregroundStyle(PumColor.textSecondary)
+            .foregroundStyle(PumTokens.ColorToken.gray800)
             .fixedSize()
     }
 
@@ -221,7 +222,7 @@ struct AddShiftSheet: View {
                 let selected = i == draft.repeatIndex
                 Button { draft.repeatIndex = i } label: {
                     Text(option)
-                        .pumText(.footnote, weight: selected ? .semibold : .medium)
+                        .pumText(.callout, weight: selected ? .semibold : .medium) // 원문 14
                         .foregroundStyle(selected ? PumColor.textPrimary : PumColor.textSecondary)
                         .frame(maxWidth: .infinity, minHeight: max(segmentHeight, PumTokens.Size.tapMin))
                         .background {
@@ -245,21 +246,25 @@ struct AddShiftSheet: View {
     private var estimateCard: some View {
         let e = state.estimate
         return PumCard {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+            VStack(spacing: 0) {
+                // 원문: 두 줄 모두 padding 11 16(→ 12 16), 줄 사이 구분선은 카드 끝까지
                 ViewThatFits(in: .horizontal) {
-                    HStack(spacing: PumTokens.Space.s8) {
-                        Text(e.title).pumText(.footnote, weight: .semibold).foregroundStyle(PumColor.textPrimary)
+                    HStack(spacing: PumTokens.Space.s12) {
+                        Text(e.title).pumText(.callout, weight: .regular).foregroundStyle(PumTokens.ColorToken.gray800)
                         Spacer(minLength: PumTokens.Space.s8)
-                        Text(e.hoursText).pumText(.footnote, weight: .bold).foregroundStyle(PumColor.textPrimary)
+                        Text(e.hoursText).pumText(.callout, weight: .bold).foregroundStyle(PumColor.textPrimary)
                     }
                     VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
-                        Text(e.title).pumText(.footnote, weight: .semibold).foregroundStyle(PumColor.textPrimary)
-                        Text(e.hoursText).pumText(.footnote, weight: .bold).foregroundStyle(PumColor.textPrimary)
+                        Text(e.title).pumText(.callout, weight: .regular).foregroundStyle(PumTokens.ColorToken.gray800)
+                        Text(e.hoursText).pumText(.callout, weight: .bold).foregroundStyle(PumColor.textPrimary)
                     }
                 }
+                .padding(.horizontal, PumTokens.Size.rowPadX)
+                .padding(.vertical, PumTokens.Size.rowPadY)
+                .frame(maxWidth: .infinity, alignment: .leading)
                 Rectangle().fill(PumColor.borderHairline).frame(height: 1)
                 ViewThatFits(in: .horizontal) {
-                    HStack(alignment: .top, spacing: PumTokens.Space.s12) {
+                    HStack(alignment: .center, spacing: PumTokens.Space.s12) {
                         costText(e)
                         Spacer(minLength: PumTokens.Space.s8)
                         totalText(e)
@@ -269,9 +274,10 @@ struct AddShiftSheet: View {
                         totalText(e)
                     }
                 }
+                .padding(.horizontal, PumTokens.Size.rowPadX)
+                .padding(.vertical, PumTokens.Size.rowPadY)
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .padding(PumTokens.Space.s16)
-            .frame(maxWidth: .infinity, alignment: .leading)
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(Text(e.accessibilityText))
         }
@@ -279,13 +285,13 @@ struct AddShiftSheet: View {
 
     private func costText(_ e: DraftEstimate) -> some View {
         VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
-            Text(e.costLabel).pumText(.footnote, weight: .semibold).foregroundStyle(PumColor.textSecondary)
+            Text(e.costLabel).pumText(.callout, weight: .regular).foregroundStyle(PumTokens.ColorToken.gray800)
             Text(e.basis).pumText(.caption).foregroundStyle(PumColor.textSecondary)
         }
     }
 
     private func totalText(_ e: DraftEstimate) -> some View {
-        Text(e.total).pumText(.headline, weight: .bold).foregroundStyle(PumColor.textPrimary)
+        Text(e.total).pumText(.body, weight: .bold).foregroundStyle(PumColor.textPrimary)
     }
 }
 

@@ -10,10 +10,10 @@ struct EmployeeHomeView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: PumTokens.Space.s12) {
+            VStack(spacing: PumTokens.Space.s14) { // 원문 1at: 블록 사이 14
                 header
                 PumLoadingContainer(isLoading: isLoading) {
-                    VStack(spacing: PumTokens.Space.s12) {
+                    VStack(spacing: PumTokens.Space.s14) {
                         WeekStripCard(title: state.weekTitle, summary: state.weekSummary, days: state.week)
                         TodayShiftCard(state: state)
                         MonthSummaryCard(state: state)
@@ -41,7 +41,8 @@ struct EmployeeHomeView: View {
                             .foregroundStyle(PumColor.textSecondary)
                     }
                     .padding(.horizontal, PumTokens.Size.screenPad)
-                    .padding(.vertical, PumTokens.Space.s12)
+                    .padding(.top, PumTokens.Space.s12) // 원문 1at: 아래 버튼 영역 padding 12 20 14
+                    .padding(.bottom, PumTokens.Space.s14)
                     .background(PumColor.bgApp)
                     PumTabBar(items: PumTabItem.employeeTabs, selection: $tab)
                 }
@@ -72,17 +73,21 @@ struct WeekStripCard: View {
 
     var body: some View {
         PumCard {
-            VStack(spacing: PumTokens.Space.s12) {
-                HStack(alignment: .firstTextBaseline) {
+            // 원문: 카드 padding 12 10 10 · 머리 줄 padding 0 8 8
+            VStack(spacing: PumTokens.Space.s8) {
+                HStack(alignment: .center) {
                     Text(title).pumText(.callout, weight: .bold).foregroundStyle(PumColor.textPrimary)
                     Spacer()
                     Text(summary).pumText(.caption).foregroundStyle(PumColor.textSecondary)
                 }
+                .padding(.horizontal, PumTokens.Space.s8)
                 HStack(spacing: PumTokens.Space.s4) {
                     ForEach(days) { DayCell(day: $0, dotStyle: dotStyle) }
                 }
             }
-            .padding(PumTokens.Space.s16)
+            .padding(.top, PumTokens.Space.s12)
+            .padding(.horizontal, PumTokens.Space.s10)
+            .padding(.bottom, PumTokens.Space.s10)
         }
     }
 }
@@ -100,7 +105,7 @@ private struct DayCell: View {
                 .frame(width: PumLayout.dayDot, height: PumLayout.dayDot)
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, PumTokens.Space.s8)
+        .padding(.vertical, PumTokens.Space.s6) // 원문 칸 padding 7 0 · 칸 안 간격 5
         .background(day.isToday ? PumColor.surfaceInverse : .clear,
                     in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
         .accessibilityElement(children: .ignore)
@@ -133,7 +138,8 @@ struct TodayShiftCard: View {
     var body: some View {
         let plan = state.today
         PumCard {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+            // 원문 1at: 카드 padding 16 18 · 헤더 아래 12 · 타임라인 위 18 · 마지막 줄 위 6
+            VStack(alignment: .leading, spacing: 0) {
                 HStack {
                     Text(state.todayTitle).pumText(.body, weight: .bold).foregroundStyle(PumColor.textPrimary)
                     Spacer()
@@ -151,18 +157,23 @@ struct TodayShiftCard: View {
                         startInfo(alignment: .leading)
                     }
                 }
+                .padding(.top, PumTokens.Space.s12)
                 ShiftTimeline(plan: plan)
+                    .padding(.top, PumTokens.Space.s18)
                 Text("인정 근무 \(HomeFormat.hours(plan.plannedPaidMinutes)) · \(PumFormat.amount(plan.plannedPay(hourlyWage: state.hourlyWage)))원 예정")
                     .pumText(.caption)
                     .foregroundStyle(PumColor.textSecondary)
+                    .padding(.top, PumTokens.Space.s6)
             }
-            .padding(PumTokens.Space.s20)
+            .padding(.vertical, PumTokens.Space.s16)
+            .padding(.horizontal, PumTokens.Space.s18)
         }
     }
 
     private var nowClock: some View {
         Text(HomeFormat.clock(state.nowMinute))
             .pumText(.display)
+            .pumBigNumberLineHeight()
             .foregroundStyle(PumColor.textPrimary)
             .accessibilityLabel(Text("지금 \(HomeFormat.clock(state.nowMinute))"))
     }
@@ -269,7 +280,8 @@ struct MonthSummaryCard: View {
             footer()
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(PumTokens.Space.s16)
+        .padding(.vertical, PumTokens.Space.s14) // 원문: 칸 padding 14 16
+        .padding(.horizontal, PumTokens.Space.s16)
     }
 }
 
@@ -290,17 +302,18 @@ struct UpcomingShiftsCard: View {
                 .contentShape(Rectangle().inset(by: -PumTokens.Space.s12)) // 터치 영역 44pt 이상
             }
             .padding(.horizontal, PumTokens.Space.s16)
-            .padding(.top, PumTokens.Space.s16)
+            .padding(.top, PumTokens.Space.s14) // 원문: 머리 줄 padding 14 16 4
             .padding(.bottom, PumTokens.Space.s4)
             ForEach(Array(shifts.enumerated()), id: \.element.id) { index, shift in
-                HStack(spacing: PumTokens.Space.s16) {
+                HStack(spacing: PumTokens.Space.s12) { // 원문: 줄 안 간격 12
                     Text(shift.id).pumText(.callout, weight: .bold).foregroundStyle(PumColor.textPrimary)
                     Text(PumFormat.timeRange(shift.start, shift.end)).pumText(.headline).foregroundStyle(PumColor.textPrimary)
                     Spacer()
                     Text(HomeFormat.hours(shift.paidMinutes)).pumText(.footnote).foregroundStyle(PumColor.textSecondary)
                 }
                 .padding(.horizontal, PumTokens.Space.s16)
-                .padding(.vertical, PumTokens.Space.s10)
+                .padding(.top, PumTokens.Space.s10)
+                .padding(.bottom, index == shifts.count - 1 ? PumTokens.Space.s12 : PumTokens.Space.s10) // 원문: 마지막 줄만 아래 12
                 .overlay(alignment: .top) { Rectangle().fill(PumColor.borderHairline).frame(height: index == 0 ? 0 : 1) }
                 .accessibilityElement(children: .combine)
             }
@@ -311,3 +324,19 @@ struct UpcomingShiftsCard: View {
 #Preview("1at") { EmployeeHomeView() }
 #Preview("1at · 큰 글자") { EmployeeHomeView().dynamicTypeSize(.xxxLarge) }
 #Preview("21k") { EmployeeHomeView(isLoading: true) }
+
+extension View {
+    /// 원문 큰 숫자(시계 · 지난 시간)는 line-height 1 → 글자 위아래 기본 여백만큼 배치 높이를 줄인다.
+    /// 글자는 자르지 않는다(음수 여백). 동적 글자 크기를 따라 같이 커진다.
+    func pumBigNumberLineHeight() -> some View {
+        modifier(BigNumberLineHeight())
+    }
+}
+
+private struct BigNumberLineHeight: ViewModifier {
+    @ScaledMetric(relativeTo: .largeTitle) private var trim = PumTokens.Space.s6
+
+    func body(content: Content) -> some View {
+        content.padding(.vertical, -trim)
+    }
+}
