@@ -37,7 +37,7 @@ struct LeaveRetirementView: View {
                 .padding(.top, PumTokens.Space.s8)
                 .padding(.horizontal, PumTokens.Size.screenPad)
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
                     headcountCard
                     section(state.leaveHeader) { leaveCard }
                     section(state.retirementHeader) { retirementCard }
@@ -53,7 +53,7 @@ struct LeaveRetirementView: View {
     }
 
     private var footer: some View {
-        VStack(spacing: PumTokens.Space.s8) {
+        VStack(spacing: PumTokens.Space.s10) {
             PumButton(title: LeaveRetirementState.saveTitle, kind: .dark, isLoading: isSaving, action: save)
             Text(LeaveRetirementState.notice).pumText(.caption).foregroundStyle(PumColor.textTertiary)
                 .multilineTextAlignment(.center)
@@ -65,7 +65,7 @@ struct LeaveRetirementView: View {
     }
 
     private func section<Content: View>(_ title: String, @ViewBuilder content: () -> Content) -> some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
             PumSectionHeader(title: title)
             content()
         }
@@ -73,14 +73,13 @@ struct LeaveRetirementView: View {
 
     private func divider(show: Bool) -> some View {
         Rectangle().fill(show ? PumColor.borderHairline : Color.clear).frame(height: 1)
-            .padding(.horizontal, PumTokens.Size.rowPadX)
     }
 
     // MARK: 상시 근로자
 
     private var headcountCard: some View {
         PumCard {
-            HStack(spacing: PumTokens.Space.s12) {
+            HStack(spacing: PumTokens.Space.s10) {
                 VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
                     Text(state.headcountText).pumText(.callout, weight: .semibold).foregroundStyle(PumColor.textPrimary)
                     Text(state.judgmentText).pumText(.caption).foregroundStyle(PumColor.textSecondary)
@@ -145,7 +144,7 @@ struct LeaveRetirementView: View {
     }
 
     private func keyText(_ s: String) -> some View {
-        Text(s).pumText(.callout).foregroundStyle(PumColor.textSecondary)
+        Text(s).pumText(.callout).foregroundStyle(PumTokens.ColorToken.gray800)
     }
 
     private func valueText(_ s: String) -> some View {

@@ -34,12 +34,12 @@ struct CheckInLowAccuracyView: View {
         static let horizontalRoadY: CGFloat = 0.46
         /// 오차 범위 큰 원 지름(원문 약 150) · 점선 두께 · 점선 간격
         static let errorSize: CGFloat = 150
-        static let errorStroke: CGFloat = 1
+        static let errorStroke: CGFloat = 1.5
         static let errorDash: [CGFloat] = [4, 3]
-        /// 반경 원 지름 · 테두리 · 안쪽 네모 — 원문 약 63 · 2 · 13
+        /// 반경 원 지름 · 테두리 · 안쪽 네모 — 원문 64 · 2 · 12
         static let pinSize: CGFloat = 64
         static let pinStroke: CGFloat = 2
-        static let pinInner: CGFloat = 14
+        static let pinInner: CGFloat = 12
         /// 사업장 표시 · 오차 원 · 내 위치 점 위치 비율(원문)
         static let pinX: CGFloat = 0.50 // 원문: 사업장은 지도 가운데
         static let pinY: CGFloat = 0.50
@@ -61,12 +61,16 @@ struct CheckInLowAccuracyView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
                     titleBlock
-                    PumSectionHeader(title: CheckInLowAccuracyState.sectionTitle)
-                    checkCard
+                    VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
+                        PumSectionHeader(title: CheckInLowAccuracyState.sectionTitle)
+                        checkCard
+                    }
                     mapCard
                     if !state.alternatives.isEmpty {
-                        PumSectionHeader(title: CheckInLowAccuracyState.alternativesTitle)
-                        alternativesCard
+                        VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
+                            PumSectionHeader(title: CheckInLowAccuracyState.alternativesTitle)
+                            alternativesCard
+                        }
                     }
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
@@ -111,7 +115,7 @@ struct CheckInLowAccuracyView: View {
                 .accessibilityFocused($titleFocused)
         }
         .padding(.horizontal, PumTokens.Space.s4)
-        .padding(.bottom, PumTokens.Space.s8)
+        .padding(.top, PumTokens.Space.s4)
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
@@ -150,9 +154,9 @@ struct CheckInLowAccuracyView: View {
                 mapPlaceholder
                     .accessibilityHidden(true) // 그림은 숨기고 아래 문장만 읽는다
                 Text(state.hint).pumText(.footnote)
-                    .foregroundStyle(PumTokens.ColorToken.gray700)
+                    .foregroundStyle(PumTokens.ColorToken.gray800)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.vertical, PumTokens.Space.s14)
+                    .padding(.vertical, PumTokens.Space.s12)
                     .padding(.horizontal, PumTokens.Size.rowPadX)
             }
         }
@@ -268,7 +272,7 @@ struct CheckInLowAccuracyView: View {
         PumButton(title: CheckInLowAccuracyState.retryTitle, kind: .outline, isLoading: lock.isChecking,
                   loadingTitle: CheckInLowAccuracyState.retryingTitle, action: retry)
             .padding(.horizontal, PumTokens.Size.screenPad)
-            .padding(.vertical, PumTokens.Space.s8)
+            .padding(.vertical, PumTokens.Space.s12)
             .background(PumColor.bgApp)
     }
 
