@@ -69,7 +69,6 @@ nonisolated struct AppLessStaffState: Equatable, Sendable {
 
     func day(_ id: String) -> AppLessWorkDay? { days.first { $0.id == id } }
 
-    var headerReadout: String { "\(name), \(Self.badgeText), \(summaryText)" }
     var sectionReadout: String { "\(sectionTitle), \(Self.ownerInputText)" }
     var fixOtherReadout: String { "\(Self.fixOtherTitle), \(Self.fixOtherDetail)" }
     var contractReadout: String { "\(Self.contractTitle), \(contractText)" }

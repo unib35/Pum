@@ -27,7 +27,6 @@ struct AppLessStaffTests {
         #expect(s.days[0].readout == "10월 2일 금, 17:00 \u{2013} 22:00, 4시간 30분, 예정대로")
         #expect(s.days[3].readout == "10월 9일 금, 17:00 \u{2013} 22:00, 한글날 · 예정")
         #expect(s.sectionReadout == "10월 근무, 사업주 입력")
-        #expect(s.headerReadout == "김민지, 앱 없음, 월 · 수 · 금 17–22 · 10,320원")
         let f = DayFixState.sample
         let p = f.preview!
         #expect(f.recognizedReadout(p) == "인정 근무, 5시간 30분")

@@ -15,7 +15,10 @@ struct AppLessStaffView: View {
     @State private var isSaving = false
     @State private var isSaved = false
     /// 시트 값이 오기 전에 눌렀다 — 값이 오면 연다
-    @State private var pendingOpen = false
+    /// 시트 값이 오기 전에 누른 날 — 같은 날 값이 오면 연다
+    @State private var pendingDayID: String?
+    /// 저장을 보낸 날 — 다른 날로 바뀐 뒤 늦게 온 응답은 무시
+    @State private var savingDayID: String?
     @State private var focusedField: DayFixField?
     /// 시간 고르기 시트가 열린 칸
     @State private var picking: DayFixField?
@@ -34,7 +37,6 @@ struct AppLessStaffView: View {
     /// 저장(입력, done) — 끝나면 done(성공 여부). 실패면 버튼이 풀리고, 성공이면 잠근 채 둔다
     var onSave: (DayFixInput, @escaping (Bool) -> Void) -> Void
 
-    @Environment(\.dynamicTypeSize) private var typeSize
     @ScaledMetric(relativeTo: .title2) private var avatarSize = PumTokens.Space.s24 * 2
 
     init(state: AppLessStaffState,
@@ -101,24 +103,32 @@ struct AppLessStaffView: View {
         )
         .onChange(of: pickerValue) { _, new in
             guard let field = picking else { return }
-            touched = true
-            if field == .start { draft.startMinutes = new.startMinutes } else { draft.endMinutes = new.endMinutes }
+            // 고르기를 연 것만으로는 손댄 것이 아님 — 값이 실제로 바뀔 때만
+            if field == .start {
+                guard new.startMinutes != draft.startMinutes else { return }
+                touched = true; draft.startMinutes = new.startMinutes
+            } else {
+                guard new.endMinutes != draft.endMinutes else { return }
+                touched = true; draft.endMinutes = new.endMinutes
+            }
         }
         .onChange(of: draft) { old, new in
             guard touched, let sheet, sheet.input(old).calcKey != sheet.input(new).calcKey else { return }
             onInputsChanged(sheet.input(new)) // 사유만 바뀐 것은 알리지 않는다
         }
         .onChange(of: sheet) { old, new in
-            if old?.dayID != new?.dayID { // 다른 날이면 새로 시작
+            if old?.dayID != new?.dayID { // 다른 날이면 새로 시작(보내던 응답은 버린다)
                 touched = false
                 isSaved = false
+                isSaving = false
+                savingDayID = nil
                 pickerReset()
             }
             if !touched && !isSaving && !isSaved { // 보내는 중 · 보낸 뒤에는 보낸 값 그대로
                 if let new { draft = new.initialDraft }
             }
             if new == nil { sheetOpen = false }
-            if new != nil && pendingOpen { pendingOpen = false; sheetOpen = true }
+            if let new, pendingDayID == new.dayID { pendingDayID = nil; sheetOpen = true }
         }
     }
 
@@ -151,7 +161,7 @@ struct AppLessStaffView: View {
 
     private func open(day id: String) {
         onEditDay(id)
-        if sheet != nil { sheetOpen = true } else { pendingOpen = true }
+        if let sheet, sheet.dayID == id { sheetOpen = true } else { pendingDayID = id }
     }
 
     private func cancel() {
@@ -161,14 +171,17 @@ struct AppLessStaffView: View {
     }
 
     private func dismissed() {
-        pendingOpen = false
+        pendingDayID = nil
         onCancel()
     }
 
     private func save() {
         guard let sheet, !isSaving, !isSaved else { return }
         isSaving = true
+        savingDayID = sheet.dayID
         onSave(sheet.input(draft)) { ok in
+            guard savingDayID == sheet.dayID else { return } // 그사이 다른 날로 바뀌었으면 무시
+            savingDayID = nil
             isSaving = false
             if ok { isSaved = true }
         }
