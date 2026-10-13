@@ -89,7 +89,7 @@ struct EmploymentCertIssuedView: View {
         PumCard {
             VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
                 Text(EmploymentCertIssuedState.documentTitle).tracking(PumTokens.Space.s4) // 원문 넓은 자간 — pumText보다 안쪽에
-                    .pumText(.headline, weight: .bold)
+                    .pumText(.title3, weight: .bold) // 원문 19px — 가장 가까운 단계 20
                     .foregroundStyle(PumColor.textPrimary)
                     .frame(maxWidth: .infinity)
                     .accessibilityAddTraits(.isHeader)
@@ -176,8 +176,8 @@ struct EmploymentCertIssuedView: View {
         .fixedSize(horizontal: false, vertical: true)
         .frame(maxWidth: .infinity, alignment: .leading)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(Text(state.codeCardSpoken))
-        .speechSpellsOutCharacters()
+        // 번호만 한 글자씩 — 안내 문구는 보통 읽기
+        .accessibilityLabel(Text("\(Text("\(EmploymentCertIssuedState.codeTitle), "))\(Text(state.verifyCode).speechSpellsOutCharacters())\(Text(", \(EmploymentCertIssuedState.verifyHint)"))"))
     }
 
     private var copyButton: some View {

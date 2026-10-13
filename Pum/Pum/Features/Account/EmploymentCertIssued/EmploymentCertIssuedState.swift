@@ -62,8 +62,6 @@ nonisolated struct EmploymentCertIssuedState: Equatable, Sendable {
     var codeText: String { "\(Self.codeTitle) \(verifyCode)" }
     /// 「확인 번호, 7K4X-92MD」
     var codeSpoken: String { "\(Self.codeTitle), \(verifyCode)" }
-    /// 「확인 번호, 7K4X-92MD, 받는 곳에서 …」 — 카드 한 덩어리 읽기
-    var codeCardSpoken: String { "\(codeSpoken), \(Self.verifyHint)" }
     /// 「2026년 10월 7일 · 대표 박민수」 — 뒤에 「사업주 서명」 칩
     var signLineText: String { "\(issueDateText) · 대표 \(ownerName)" }
     /// 「위와 같이 … 증명합니다. 2026년 10월 7일 · 대표 박민수 사업주 서명」
