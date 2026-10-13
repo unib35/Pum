@@ -326,17 +326,17 @@ struct UpcomingShiftsCard: View {
 #Preview("21k") { EmployeeHomeView(isLoading: true) }
 
 extension View {
-    /// 원문 큰 숫자(시계 · 지난 시간)는 line-height 1, font-size 48 → 글자 줄 높이를 48로 맞춘다(글자 크기 단계는 그대로).
-    /// 동적 글자 크기를 따라 같이 커진다.
+    /// 원문 큰 숫자(시계 · 지난 시간)는 line-height 1 → 글자 위아래 기본 여백만큼 배치 높이를 줄인다.
+    /// 글자는 자르지 않는다(음수 여백). 동적 글자 크기를 따라 같이 커진다.
     func pumBigNumberLineHeight() -> some View {
         modifier(BigNumberLineHeight())
     }
 }
 
 private struct BigNumberLineHeight: ViewModifier {
-    @ScaledMetric(relativeTo: .largeTitle) private var height: CGFloat = 48
+    @ScaledMetric(relativeTo: .largeTitle) private var trim = PumTokens.Space.s6
 
     func body(content: Content) -> some View {
-        content.lineHeight(.exact(points: height))
+        content.padding(.vertical, -trim)
     }
 }
