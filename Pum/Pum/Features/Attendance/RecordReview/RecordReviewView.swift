@@ -223,18 +223,10 @@ struct RecordReviewView: View {
         }
     }
 
-    // 6. 하단 고정 두 버튼 (원문 비율 1 : 1.4)
+    // 6. 하단 고정 두 버튼 (비율 1 : 1.5 ≈ 원문 1 : 1.4, 큰 글자 대응은 공통 부품)
     private var actions: some View {
-        // 공통 PumButtonPair는 간격 8 · 비율 1:1.5라, 원문(간격 10 · 1fr 1.4fr)대로 화면 안에서 짝을 만든다
-        GeometryReader { geo in
-            let gap = PumTokens.Space.s10
-            let unit = (geo.size.width - gap) / 2.4
-            HStack(spacing: gap) {
-                PumButton(title: "수정 요청", kind: .outline, action: onRequestEdit).frame(width: unit)
-                PumButton(title: "이상 없어요 \u{00B7} 확인 완료", kind: .primary, action: onConfirm).frame(width: unit * 1.4)
-            }
-        }
-        .frame(height: PumTokens.Size.buttonH)
+        PumButtonPair(negative: "수정 요청", positive: "이상 없어요 \u{00B7} 확인 완료", negativeKind: .outline,
+                      onNegative: onRequestEdit, onPositive: onConfirm)
             .padding(.horizontal, PumTokens.Size.screenPad)
             .padding(.top, PumTokens.Space.s12)
             .padding(.bottom, PumTokens.Space.s10) // 원문 아래 44 − 홈 막대 34
