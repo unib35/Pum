@@ -42,37 +42,116 @@ enum OnboardingRoute: String, CaseIterable, Hashable {
     func view(_ router: AppRouter) -> some View {
         switch self {
         case .inviteAccept:
-            InviteAcceptView()
+            InviteAcceptView(
+                onAccept: { router.navigate(.onboarding(.inviteOffer)) },
+                onLater: router.backToRoot
+            )
         case .phoneVerify:
-            PhoneVerifyView(state: .sample)
+            PhoneVerifyView(
+                state: .sample,
+                onBack: router.back,
+                onConfirm: { _ in router.navigate(.onboarding(.startChoice)) }
+            )
         case .welcome:
-            WelcomeView(state: .sample)
+            WelcomeView(
+                state: .sample,
+                onKakao: { router.navigate(.onboarding(.phoneVerify)) },
+                onApple: { router.navigate(.onboarding(.phoneVerify)) },
+                onPhone: { router.navigate(.onboarding(.phoneVerify)) }
+            )
         case .startChoice:
-            StartChoiceView(state: .sample)
+            StartChoiceView(
+                state: .sample,
+                onNext: { choice in
+                    switch choice {
+                    case .personal: router.navigate(.onboarding(.personalTerms))
+                    case .inviteCode: router.navigate(.onboarding(.inviteCode))
+                    case .owner: router.navigate(.workplace(.workplaceCreate))
+                    }
+                }
+            )
         case .inviteCode:
-            InviteCodeView(state: .sample)
+            InviteCodeView(
+                state: .sample,
+                onBack: router.back,
+                onConfirm: { _, done in
+                    done(true)
+                    router.navigate(.onboarding(.inviteAccept))
+                }
+            )
         case .personalTerms:
-            PersonalTermsView(state: .sample)
+            PersonalTermsView(
+                state: .sample,
+                onBack: router.back,
+                onStart: { _ in router.replace(with: .home(.personalHome)) },
+                onLater: { router.replace(with: .home(.personalHome)) }
+            )
         case .inviteCodeRetry:
-            InviteCodeRetryView(state: .sample)
+            InviteCodeRetryView(
+                state: .sample,
+                onBack: router.back,
+                onConfirm: { _, done in
+                    done(true)
+                    router.navigate(.onboarding(.inviteAccept))
+                }
+            )
         case .inviteExpired:
-            InviteExpiredView(state: .sample)
+            InviteExpiredView(
+                state: .sample,
+                onBack: router.back
+            )
         case .inviteSwitch:
-            InviteSwitchView(state: .sample)
+            InviteSwitchView(
+                state: .sample,
+                onAccept: { done in
+                    done(true)
+                    router.backToRoot()
+                },
+                onDecline: router.back
+            )
         case .inviteOffer:
-            InviteOfferView(state: .sample)
+            InviteOfferView(
+                state: .sample,
+                onJoin: { done in
+                    done(true)
+                    router.navigate(.contract(.contractReview))
+                }
+            )
         case .inviteOfferUnverified:
-            InviteOfferView(state: .unverifiedSample)
+            InviteOfferView(
+                state: .unverifiedSample,
+                onJoin: { done in
+                    done(true)
+                    router.navigate(.contract(.contractReview))
+                }
+            )
         case .inviteAfterSignup:
-            InviteAfterSignupView(state: .sample)
+            InviteAfterSignupView(
+                state: .sample,
+                onConfirm: { router.navigate(.onboarding(.inviteAccept)) },
+                onStartWithout: { router.navigate(.onboarding(.startChoice)) }
+            )
         case .invitePhoneMismatch:
-            InvitePhoneMismatchView(state: .sample)
+            InvitePhoneMismatchView(
+                state: .sample,
+                onBack: router.back
+            )
         case .onboardingChecklist:
-            OnboardingChecklistView(state: .sample)
+            OnboardingChecklistView(
+                state: .sample,
+                onBack: router.back
+            )
         case .accessEnded:
-            AccessEndedView(state: .inviteExpired)
+            AccessEndedView(
+                state: .inviteExpired,
+                onSecondary: { router.navigate(.onboarding(.inviteCode)) }
+            )
         }
     }
 
-    static let connected: Set<Self> = []
+    static let connected: Set<Self> = [
+        .inviteAccept, .phoneVerify, .welcome, .startChoice, .inviteCode, .personalTerms, .inviteCodeRetry,
+        .inviteExpired, .inviteSwitch, .inviteOffer, .inviteOfferUnverified, .inviteAfterSignup,
+        .invitePhoneMismatch, .onboardingChecklist, .accessEnded,
+    ]
 }

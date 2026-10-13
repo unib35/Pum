@@ -28,23 +28,73 @@ enum ContractRoute: String, CaseIterable, Hashable {
     func view(_ router: AppRouter) -> some View {
         switch self {
         case .contractReview:
-            ContractReviewView(startsAgreed: true)
+            ContractReviewView(
+                startsAgreed: true,
+                onBack: router.back,
+                onSign: { router.navigate(.contract(.signaturePad)) },
+                onViewFull: { router.navigate(.contract(.contractPDFViewer)) }
+            )
         case .signaturePad:
-            SignaturePadView(drawing: .sample)
+            SignaturePadView(
+                drawing: .sample,
+                onBack: router.back,
+                onComplete: { _ in
+                    if router.role == .owner {
+                        router.backToRoot()
+                    } else {
+                        router.replace(with: .onboarding(.onboardingChecklist))
+                    }
+                },
+                onDismissSheet: router.back
+            )
         case .contractList:
-            ContractListView()
+            ContractListView(
+                onBack: router.back,
+                onViewPDF: { _ in router.navigate(.contract(.contractPDFViewer)) },
+                onConfirmChange: { _ in router.navigate(.contract(.wageChangeContract)) }
+            )
         case .workTermsInput:
-            WorkTermsInputView(state: .sample)
+            WorkTermsInputView(
+                state: .sample,
+                onBack: router.back,
+                onPreview: { router.navigate(.contract(.contractPreview)) }
+            )
         case .contractChange:
-            ContractChangeView(state: .sample)
+            ContractChangeView(
+                state: .sample,
+                onBack: router.back,
+                onSend: { done in
+                    done(true)
+                    router.backToRoot()
+                }
+            )
         case .contractPreview:
-            ContractPreviewView(state: .sample)
+            ContractPreviewView(
+                state: .sample,
+                onBack: router.back,
+                onShowFull: { router.navigate(.contract(.contractPDFViewer)) },
+                onSignAndSend: { done in
+                    done(true)
+                    router.navigate(.contract(.signaturePad))
+                }
+            )
         case .wageChangeContract:
-            WageChangeContractView(state: .sample)
+            WageChangeContractView(
+                state: .sample,
+                onBack: router.back,
+                onOpenFull: { router.navigate(.contract(.contractPDFViewer)) },
+                onSign: { router.navigate(.contract(.signaturePad)) }
+            )
         case .contractPDFViewer:
-            ContractPDFViewerView(state: .sample)
+            ContractPDFViewerView(
+                state: .sample,
+                onBack: router.back
+            )
         }
     }
 
-    static let connected: Set<Self> = []
+    static let connected: Set<Self> = [
+        .contractReview, .signaturePad, .contractList, .workTermsInput, .contractChange, .contractPreview,
+        .wageChangeContract, .contractPDFViewer,
+    ]
 }
