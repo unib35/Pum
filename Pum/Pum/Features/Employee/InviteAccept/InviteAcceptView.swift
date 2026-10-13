@@ -16,7 +16,7 @@ struct InviteAcceptView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s20) {
+            VStack(alignment: .leading, spacing: PumTokens.Space.s18) {
                 brand
                 heading
                 card
@@ -25,7 +25,8 @@ struct InviteAcceptView: View {
                     .padding(.horizontal, noteInset)
             }
             .padding(.horizontal, PumTokens.Size.screenPad)
-            .padding(.vertical, PumTokens.Space.s16)
+            .padding(.top, PumTokens.Space.s8) // 원문 68 − 상태 막대 60
+            .padding(.bottom, PumTokens.Space.s16)
         }
         .background(PumColor.bgApp)
         .safeAreaInset(edge: .bottom, spacing: 0) { actions }
@@ -50,6 +51,7 @@ struct InviteAcceptView: View {
         var tail = AttributedString(record.titleTail); tail.foregroundColor = PumColor.textPrimary
         return Text(lead + name + tail)
             .pumText(.title1) // 목업 28px 700 = title1
+            .padding(.top, PumTokens.Space.s6) // 원문 margin-top 6
             .frame(maxWidth: .infinity, alignment: .leading)
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(Text(record.titleText))
@@ -60,10 +62,10 @@ struct InviteAcceptView: View {
     private var card: some View {
         PumCard {
             VStack(spacing: 0) {
-                HStack(spacing: PumTokens.Space.s12) {
+                HStack(spacing: PumTokens.Space.s14) {
                     Text(record.initial).pumText(.headline, weight: .bold).foregroundStyle(.white) // 17px 700
                         .frame(width: workplaceTile, height: workplaceTile)
-                        .background(record.tileColor, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
+                        .background(record.tileColor, in: RoundedRectangle(cornerRadius: PumTokens.Radius.lg, style: .continuous))
                         .accessibilityHidden(true)
                     VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
                         Text(record.workplaceName).pumText(.body, weight: .bold).foregroundStyle(PumColor.textPrimary) // 16px 700 → body(15)
@@ -71,19 +73,21 @@ struct InviteAcceptView: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .padding(PumTokens.Space.s16)
+                .padding(.vertical, PumTokens.Space.s16)
+                .padding(.horizontal, PumTokens.Space.s18)
                 .accessibilityElement(children: .combine)
                 Rectangle().fill(PumColor.borderHairline).frame(height: 1) // 전체 폭
                 Text("제안된 근로조건").pumText(.caption, weight: .bold).foregroundStyle(PumColor.textSecondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal, PumTokens.Size.rowPadX)
-                    .padding(.top, PumTokens.Space.s12)
+                    .padding(.horizontal, PumTokens.Space.s18)
+                    .padding(.top, PumTokens.Space.s16) // 원문 카드 6 + 제목 10
                     .padding(.bottom, PumTokens.Space.s4)
                     .accessibilityAddTraits(.isHeader)
                 let terms = record.visibleTerms
                 ForEach(Array(terms.enumerated()), id: \.element.id) { i, t in
                     termRow(t, isLast: i == terms.count - 1)
                 }
+                Color.clear.frame(height: PumTokens.Space.s8) // 원문 아래 8
             }
         }
     }
@@ -102,13 +106,12 @@ struct InviteAcceptView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding(.vertical, PumTokens.Size.rowPadY)
-        .padding(.horizontal, PumTokens.Size.rowPadX)
-        .frame(minHeight: PumTokens.Size.tapMin)
+        .padding(.vertical, PumTokens.Space.s10) // 원문 10
+        .padding(.horizontal, PumTokens.Space.s18)
         .overlay(alignment: .bottom) {
             if !isLast {
                 Rectangle().fill(PumColor.borderHairline).frame(height: 1)
-                    .padding(.horizontal, PumTokens.Size.rowPadX)
+                    .padding(.horizontal, PumTokens.Space.s18) // 원문: 안쪽 18에서 시작
             }
         }
         .accessibilityElement(children: .ignore)
@@ -125,7 +128,7 @@ struct InviteAcceptView: View {
 
     // 5. 하단 고정
     private var actions: some View {
-        VStack(spacing: PumTokens.Space.s4) {
+        VStack(spacing: PumTokens.Space.s10) {
             PumButton(title: "초대 수락하기", kind: .primary, action: onAccept)
             // 글자 버튼: 15px 500 보조색, 밑줄 없음, 터치 44
             Button(action: onLater) {
@@ -137,7 +140,7 @@ struct InviteAcceptView: View {
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
         .padding(.top, PumTokens.Space.s12)
-        .padding(.bottom, PumTokens.Space.s4)
+        .padding(.bottom, PumTokens.Space.s10) // 원문 아래 44 − 홈 막대 34
         .background(PumColor.bgApp)
     }
 }

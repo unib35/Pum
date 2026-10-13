@@ -26,14 +26,14 @@ struct RecordReviewView: View {
             PumNavHeader(title: "근무기록 확인", onBack: onBack)
                 .padding(.horizontal, PumTokens.Size.screenPad)
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s14) {
                     heading
                     messageCard
                     summaryCard
                     recordsCard
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s16)
+                .padding(.vertical, PumTokens.Space.s14)
             }
         }
         .background(PumColor.bgApp)
@@ -42,7 +42,7 @@ struct RecordReviewView: View {
 
     // 2. 제목 · 부제
     private var heading: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
             // 28px 700 → title1, 원문대로 두 줄로 끊는다(줄바꿈 문자)
             Text(state.titleLines.joined(separator: "\n")).pumText(.title1).foregroundStyle(PumColor.textPrimary)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -51,7 +51,6 @@ struct RecordReviewView: View {
                 .accessibilityAddTraits(.isHeader)
             subtitle
         }
-        .padding(.horizontal, PumTokens.Space.s4)
     }
 
     /// 14px: 앞뒤 보조색 400, 기한만 주황 700 → callout(14) 굵기 바꿈
@@ -73,16 +72,20 @@ struct RecordReviewView: View {
     // 3. 사장님 메시지 카드(인용)
     private var messageCard: some View {
         PumCard {
-            HStack(alignment: .top, spacing: PumTokens.Space.s12) {
-                Rectangle().fill(PumTokens.ColorToken.gray300) // 인용 막대: gray300 계열
-                    .frame(width: Local.quoteBarWidth)
-                    .accessibilityHidden(true)
-                Text(state.ownerMessage).pumText(.body, weight: .regular) // 15px → body
-                    .foregroundStyle(PumColor.textPrimary)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            }
-            .fixedSize(horizontal: false, vertical: true)
-            .padding(PumTokens.Space.s16)
+            // 원문: 안쪽 위아래 12 · 왼쪽 20 · 오른쪽 16, 인용 막대는 왼쪽 끝에서 위아래 12 띄움
+            Text(state.ownerMessage).pumText(.footnote, weight: .regular) // 13px
+                .foregroundStyle(PumTokens.ColorToken.gray800) // #3A4150
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.vertical, PumTokens.Space.s12)
+                .padding(.leading, PumTokens.Space.s20)
+                .padding(.trailing, PumTokens.Space.s16)
+                .overlay(alignment: .leading) {
+                    RoundedRectangle(cornerRadius: PumTokens.Space.s2, style: .continuous)
+                        .fill(PumTokens.ColorToken.gray300) // 인용 막대: gray300 계열
+                        .frame(width: Local.quoteBarWidth)
+                        .padding(.vertical, PumTokens.Space.s12)
+                        .accessibilityHidden(true)
+                }
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(Text(state.messageAccessibilityText))
         }
@@ -104,13 +107,13 @@ struct RecordReviewView: View {
                         stat(RecordReviewState.payLabel, state.payText, color: PumColor.statusDone, oneLine: false)
                     }
                 }
-                .padding(PumTokens.Space.s16)
-                Rectangle().fill(PumColor.borderHairline).frame(height: 1) // 원문: 양쪽 들여씀
-                    .padding(.horizontal, PumTokens.Size.rowPadX)
+                Rectangle().fill(PumColor.borderHairline).frame(height: 1) // 원문: 안쪽 18에서 시작
+                    .padding(.top, PumTokens.Space.s12)
                 countsLine
-                    .padding(.horizontal, PumTokens.Size.rowPadX)
-                    .padding(.vertical, PumTokens.Space.s12)
+                    .padding(.top, PumTokens.Space.s12)
             }
+            .padding(.vertical, PumTokens.Space.s16)
+            .padding(.horizontal, PumTokens.Space.s18)
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(Text(state.summaryAccessibilityText))
         }
@@ -220,13 +223,21 @@ struct RecordReviewView: View {
         }
     }
 
-    // 6. 하단 고정 두 버튼 (비율 1 : 1.5 ≈ 원문 4:6)
+    // 6. 하단 고정 두 버튼 (원문 비율 1 : 1.4)
     private var actions: some View {
-        PumButtonPair(negative: "수정 요청", positive: "이상 없어요 \u{00B7} 확인 완료", negativeKind: .outline,
-                      onNegative: onRequestEdit, onPositive: onConfirm)
+        // 공통 PumButtonPair는 간격 8 · 비율 1:1.5라, 원문(간격 10 · 1fr 1.4fr)대로 화면 안에서 짝을 만든다
+        GeometryReader { geo in
+            let gap = PumTokens.Space.s10
+            let unit = (geo.size.width - gap) / 2.4
+            HStack(spacing: gap) {
+                PumButton(title: "수정 요청", kind: .outline, action: onRequestEdit).frame(width: unit)
+                PumButton(title: "이상 없어요 \u{00B7} 확인 완료", kind: .primary, action: onConfirm).frame(width: unit * 1.4)
+            }
+        }
+        .frame(height: PumTokens.Size.buttonH)
             .padding(.horizontal, PumTokens.Size.screenPad)
             .padding(.top, PumTokens.Space.s12)
-            .padding(.bottom, PumTokens.Space.s4)
+            .padding(.bottom, PumTokens.Space.s10) // 원문 아래 44 − 홈 막대 34
             .background(PumColor.bgApp)
     }
 }

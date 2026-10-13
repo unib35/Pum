@@ -30,16 +30,21 @@ struct SignaturePadView: View {
     // MARK: 뒤 화면
 
     private var backScreen: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s14) {
             PumNavHeader(title: SignaturePadContent.backTitle, onBack: onBack)
             // 목업 24px 700 → title2 bold
             Text(SignaturePadContent.contractTitle).pumText(.title2, weight: .bold)
                 .foregroundStyle(PumColor.textPrimary)
                 .accessibilityAddTraits(.isHeader)
+            // 원문: 카드 안쪽 위 6 · 아래 4, 줄 위아래 11, 구분선은 안쪽 18에서 시작.
+            // 공통 PumRow는 안쪽 16 · 줄 12 · 최소 44라 화면 안에서 같은 모양으로 만든다
             PumCard {
-                // 원문 값 15px 600 — PumRow 기본 값 글자보다 굵다
-                PumRow(title: SignaturePadContent.periodLabel, isKey: true) { rowValue(SignaturePadContent.period) }
-                PumRow(title: SignaturePadContent.wageLabel, isKey: true, isLast: true) { rowValue(SignaturePadContent.wage) }
+                VStack(spacing: 0) {
+                    termRow(SignaturePadContent.periodLabel, SignaturePadContent.period, isLast: false)
+                    termRow(SignaturePadContent.wageLabel, SignaturePadContent.wage, isLast: true)
+                }
+                .padding(.top, PumTokens.Space.s6)
+                .padding(.bottom, PumTokens.Space.s4)
             }
             Spacer(minLength: 0)
         }
@@ -67,20 +72,45 @@ struct SignaturePadView: View {
                 .padding(.horizontal, PumTokens.Space.s4) // 시트 좌우보다 약 4 안쪽
             PumButton(title: SignaturePadContent.complete) { onComplete(drawing.validStrokes) }
                 .disabled(!drawing.hasSignature)
-                .padding(.top, PumTokens.Space.s4)
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
-        .padding(.bottom, PumTokens.Space.s16)
+        .padding(.top, PumTokens.Space.s6) // 원문 손잡이 아래 6(공통 시트가 12를 이미 둠)
+        .padding(.bottom, PumTokens.Space.s10) // 원문 아래 44 − 홈 막대 34
     }
 
-    private func rowValue(_ s: String) -> some View {
-        // 기간은 한 줄(원문), 큰 글자에서 넘치면 줄바꿈(잘리지 않게)
+    /// 키–값 줄: 기간은 한 줄(원문), 큰 글자에서 넘치면 값이 아래로
+    private func termRow(_ key: String, _ value: String, isLast: Bool) -> some View {
         ViewThatFits(in: .horizontal) {
-            Text(s).lineLimit(1).fixedSize()
-            Text(s)
+            HStack(spacing: PumTokens.Space.s12) {
+                keyText(key)
+                Spacer(minLength: 0)
+                valueText(value).lineLimit(1).fixedSize()
+            }
+            VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
+                keyText(key)
+                valueText(value)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .pumText(.body, weight: .semibold).foregroundStyle(PumColor.textPrimary)
-        .multilineTextAlignment(.trailing)
+        .padding(.vertical, PumTokens.Space.s10) // 원문 11 — 가까운 토큰
+        .padding(.horizontal, PumTokens.Space.s18)
+        .overlay(alignment: .bottom) {
+            if !isLast {
+                Rectangle().fill(PumColor.borderHairline).frame(height: 1)
+                    .padding(.horizontal, PumTokens.Space.s18)
+            }
+        }
+        .accessibilityElement(children: .combine)
+    }
+
+    private func keyText(_ s: String) -> some View {
+        Text(s).pumText(.body, weight: .regular).foregroundStyle(PumColor.textSecondary)
+    }
+
+    /// 원문 값 15px 600
+    private func valueText(_ s: String) -> some View {
+        Text(s).pumText(.body, weight: .semibold).foregroundStyle(PumColor.textPrimary)
+            .multilineTextAlignment(.trailing)
     }
 }
 
