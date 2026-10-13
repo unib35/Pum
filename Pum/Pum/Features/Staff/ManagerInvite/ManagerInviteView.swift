@@ -123,7 +123,7 @@ struct ManagerInviteView: View {
                 VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
                     Text(role.title).pumText(.callout, weight: .semibold).foregroundStyle(PumColor.textPrimary)
                     Text(state.description(of: role)).pumText(.caption, weight: .regular)
-                        .foregroundStyle(PumColor.textTertiary)
+                        .foregroundStyle(PumColor.textSecondary)
                         .multilineTextAlignment(.leading)
                         .fixedSize(horizontal: false, vertical: true)
                 }
@@ -168,7 +168,6 @@ struct ManagerInviteView: View {
             TextField("", text: text)
                 .focused($focus, equals: field)
                 .keyboardType(field == .phone ? .numberPad : .default)
-                .textContentType(field == .phone ? .telephoneNumber : .name)
                 .pumText(.headline, weight: .medium)
                 .foregroundStyle(PumColor.textPrimary)
                 .autocorrectionDisabled()
