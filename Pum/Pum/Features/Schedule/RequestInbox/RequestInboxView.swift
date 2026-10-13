@@ -31,10 +31,10 @@ struct RequestInboxView: View {
     private func card(_ item: RequestItem) -> some View {
         let locked = lock.isLocked(item.id)
         return PumCard {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+            VStack(alignment: .leading, spacing: PumTokens.Space.s10) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s10) {
                     head(item)
-                    VStack(alignment: .leading, spacing: PumTokens.Space.s4) {
+                    VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
                         Text(item.titleText).pumText(.headline, weight: .bold).foregroundStyle(PumColor.textPrimary)
                         Text(item.detailText).pumText(.caption).foregroundStyle(PumColor.textSecondary)
                     }
@@ -46,18 +46,19 @@ struct RequestInboxView: View {
                 .accessibilityValue(Text("\(item.titleText). \(item.detailText). \(item.accessibilityImpacts)"))
                 buttons(item, locked: locked)
             }
-            .padding(PumTokens.Space.s16)
+            .padding(.horizontal, PumTokens.Space.s16)
+            .padding(.vertical, PumTokens.Space.s14)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 
     private func head(_ item: RequestItem) -> some View {
-        HStack(alignment: .center, spacing: PumTokens.Space.s8) {
+        HStack(alignment: .center, spacing: PumTokens.Space.s10) {
             PumAvatar(name: item.name, colorIndex: item.colorIndex)
             ViewThatFits(in: .horizontal) {
-                HStack(spacing: PumTokens.Space.s8) { who(item); Spacer(minLength: PumTokens.Space.s8); time(item) }
+                HStack(spacing: PumTokens.Space.s10) { who(item); Spacer(minLength: PumTokens.Space.s8); time(item) }
                 VStack(alignment: .leading, spacing: PumTokens.Space.s4) {
-                    HStack(spacing: PumTokens.Space.s8) { who(item) }
+                    HStack(spacing: PumTokens.Space.s10) { who(item) }
                     time(item)
                 }
             }
@@ -86,6 +87,7 @@ struct RequestInboxView: View {
             }
         }
         .padding(.horizontal, PumTokens.Space.s12)
+        .padding(.vertical, PumTokens.Space.s4)
         .background(PumColor.bgApp, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
     }
 
@@ -101,8 +103,7 @@ struct RequestInboxView: View {
                 value(row)
             }
         }
-        .padding(.vertical, PumTokens.Space.s12)
-        .frame(minHeight: PumTokens.Size.tapMin)
+        .padding(.vertical, PumTokens.Space.s8) // 누르는 행이 아니라 최소 높이 44를 두지 않는다
     }
 
     private func label(_ row: RequestImpactRow) -> some View {
@@ -132,9 +133,9 @@ struct RequestInboxView: View {
             .accessibilityLabel(Text(item.approveAccessibility))
         return Group {
             if typeSize.isAccessibilitySize {
-                VStack(spacing: PumTokens.Space.s8) { reject; approve } // 넘치면 세로 — 순서는 가로와 같게(거절 → 승인)
+                VStack(spacing: PumTokens.Space.s10) { reject; approve } // 넘치면 세로 — 순서는 가로와 같게(거절 → 승인)
             } else {
-                RequestButtonSplit(spacing: PumTokens.Space.s8) { reject; approve } // 원문 거절 : 승인 = 1 : 1.5
+                RequestButtonSplit(spacing: PumTokens.Space.s10) { reject; approve } // 원문 거절 : 승인 = 1 : 1.5
             }
         }
     }

@@ -19,9 +19,9 @@ struct CorrectedPayslipView: View {
             PumNavHeader(title: CorrectedPayslipState.title, onBack: onBack)
                 .padding(.horizontal, PumTokens.Size.screenPad)
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
                     slip
-                    VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+                    VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
                         Text(CorrectedPayslipState.recordsSection).pumText(.caption, weight: .bold)
                             .foregroundStyle(PumColor.textSecondary)
                             .padding(.horizontal, PumTokens.Space.s4)
@@ -37,7 +37,8 @@ struct CorrectedPayslipView: View {
         .safeAreaInset(edge: .bottom, spacing: 0) {
             PumButton(title: CorrectedPayslipState.originalTitle, kind: .outline, action: onShowOriginal)
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s12)
+                .padding(.top, PumTokens.Space.s12)
+                .padding(.bottom, PumTokens.Space.s10) // 원문 아래 44 − 안전 영역 34
                 .background(PumColor.bgApp)
         }
     }
@@ -70,7 +71,8 @@ struct CorrectedPayslipView: View {
             }
             infoCells
         }
-        .padding(PumTokens.Space.s20)
+        .padding(.horizontal, PumTokens.Space.s18)
+        .padding(.vertical, PumTokens.Space.s16)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(PumColor.surfaceInverse)
     }
@@ -84,7 +86,7 @@ struct CorrectedPayslipView: View {
                     ForEach(cells, id: \.0) { infoCell($0.0, $0.1) }
                 }
             } else {
-                HStack(alignment: .top, spacing: PumTokens.Space.s12) {
+                HStack(alignment: .top, spacing: PumTokens.Space.s8) {
                     ForEach(cells, id: \.0) { infoCell($0.0, $0.1) }
                 }
             }
@@ -119,13 +121,14 @@ struct CorrectedPayslipView: View {
             .accessibilityLabel(Text(state.deltaAccessibility))
             Text(state.payoutNote).pumText(.footnote, weight: .semibold)
                 .foregroundStyle(PumTokens.ColorToken.green700)
-                .padding(.horizontal, PumTokens.Space.s16)
-                .padding(.vertical, PumTokens.Space.s10)
+                .padding(.horizontal, PumTokens.Space.s14)
+                .padding(.vertical, PumTokens.Space.s12)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(PumColor.statusDoneSoft, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
         }
-        .padding(.horizontal, PumTokens.Space.s20)
-        .padding(.vertical, PumTokens.Space.s16)
+        .padding(.horizontal, PumTokens.Space.s18)
+        .padding(.top, PumTokens.Space.s4)
+        .padding(.bottom, PumTokens.Space.s16)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(PumColor.surfaceCard)
     }

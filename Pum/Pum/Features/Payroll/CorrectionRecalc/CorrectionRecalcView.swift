@@ -25,7 +25,7 @@ struct CorrectionRecalcView: View {
                 .padding(.horizontal, PumTokens.Size.screenPad)
                 .disabled(state.isSending)
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
                     summaryCard
                     section(CorrectionRecalcState.changesSection) { changesCard }
                     section(CorrectionRecalcState.payoutSection) { payoutCard }
@@ -36,14 +36,15 @@ struct CorrectionRecalcView: View {
         }
         .background(PumColor.bgApp)
         .safeAreaInset(edge: .bottom, spacing: 0) {
-            VStack(spacing: PumTokens.Space.s8) {
+            VStack(spacing: PumTokens.Space.s10) {
                 PumButton(title: CorrectionRecalcState.confirmTitle, kind: .primary, isLoading: state.isSending, action: confirm)
                     .disabled(!state.canConfirm && !state.isSending)
                 Text(state.footnote).pumText(.caption).foregroundStyle(PumColor.textTertiary)
                     .multilineTextAlignment(.center)
             }
             .padding(.horizontal, PumTokens.Size.screenPad)
-            .padding(.vertical, PumTokens.Space.s12)
+            .padding(.top, PumTokens.Space.s12)
+            .padding(.bottom, PumTokens.Space.s10) // 원문 아래 44 − 안전 영역 34
             .background(PumColor.bgApp)
         }
     }
@@ -62,7 +63,7 @@ struct CorrectionRecalcView: View {
     }
 
     private func section<C: View>(_ title: String, @ViewBuilder content: () -> C) -> some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
             Text(title).pumText(.caption, weight: .bold).foregroundStyle(PumColor.textSecondary)
                 .padding(.horizontal, PumTokens.Space.s4)
                 .accessibilityAddTraits(.isHeader)
@@ -78,16 +79,19 @@ struct CorrectionRecalcView: View {
 
     private var summaryCard: some View {
         PumCard {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s4) {
+            VStack(alignment: .leading, spacing: 0) {
                 Text(state.summaryTitle).pumText(.caption, weight: .regular).foregroundStyle(PumColor.textSecondary)
                 ViewThatFits(in: .horizontal) {
-                    HStack(alignment: .firstTextBaseline, spacing: PumTokens.Space.s8) { oldAmount; newAmount }
+                    HStack(alignment: .firstTextBaseline, spacing: PumTokens.Space.s10) { oldAmount; newAmount }
                     VStack(alignment: .leading, spacing: PumTokens.Space.s2) { oldAmount; newAmount } // 넘치면 아래로
                 }
+                .padding(.top, PumTokens.Space.s4)
                 Text(state.deltaText).pumText(.footnote, weight: .bold)
                     .foregroundStyle(state.deltaWon < 0 ? PumColor.textSecondary : PumColor.statusDone)
+                    .padding(.top, PumTokens.Space.s2)
             }
-            .padding(PumTokens.Space.s16)
+            .padding(.horizontal, PumTokens.Space.s16)
+            .padding(.vertical, PumTokens.Space.s14)
             .frame(maxWidth: .infinity, alignment: .leading)
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(Text(state.summaryAccessibility))

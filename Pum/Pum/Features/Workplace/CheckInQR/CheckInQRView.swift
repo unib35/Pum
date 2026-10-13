@@ -40,7 +40,7 @@ struct CheckInQRView: View {
             PumNavHeader(title: CheckInQRState.screenTitle, onBack: onBack)
                 .padding(.horizontal, PumTokens.Size.screenPad)
             ScrollView {
-                VStack(spacing: PumTokens.Space.s10) {
+                VStack(spacing: PumTokens.Space.s12) {
                     qrCard
                     actionCard
                     Text(CheckInQRState.guide)
@@ -48,11 +48,10 @@ struct CheckInQRView: View {
                         .foregroundStyle(PumColor.textSecondary)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.horizontal, PumTokens.Space.s4)
-                        .padding(.top, PumTokens.Space.s4)
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.top, PumTokens.Space.s8)
-                .padding(.bottom, PumTokens.Space.s16)
+                .padding(.top, PumTokens.Space.s12)
+                .padding(.bottom, PumTokens.Space.s12)
             }
         }
         .background(PumColor.bgApp)
@@ -67,21 +66,24 @@ struct CheckInQRView: View {
 
     private var qrCard: some View {
         PumCard {
-            VStack(spacing: PumTokens.Space.s4) {
+            VStack(spacing: 0) {
                 qrBoxView
-                    .padding(.bottom, PumTokens.Space.s10)
+                    .padding(.bottom, PumTokens.Space.s12)
                 Text(state.workplaceName)
                     .pumText(.headline, weight: .bold) // 원문 17px 700
                     .foregroundStyle(PumColor.textPrimary)
                     .multilineTextAlignment(.center)
                 Text(state.subtitle)
+                    .padding(.top, PumTokens.Space.s2)
                     .pumText(.caption)
                     .foregroundStyle(PumColor.textSecondary)
                     .multilineTextAlignment(.center)
             }
             .frame(maxWidth: .infinity)
-            .padding(.horizontal, PumTokens.Space.s16)
-            .padding(.vertical, PumTokens.Space.s20)
+            // 원문 padding 22 20 18 — 위 22는 가까운 토큰 20
+            .padding(.horizontal, PumTokens.Space.s20)
+            .padding(.top, PumTokens.Space.s20)
+            .padding(.bottom, PumTokens.Space.s18)
         }
     }
 
@@ -183,8 +185,8 @@ struct CheckInQRView: View {
                 .multilineTextAlignment(.center)
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
-        .padding(.top, PumTokens.Space.s8)
-        .padding(.bottom, PumTokens.Space.s8)
+        .padding(.top, PumTokens.Space.s12)
+        .padding(.bottom, PumTokens.Space.s10) // 원문 아래 44 − 안전 영역 34
         .background(PumColor.bgApp)
     }
 
