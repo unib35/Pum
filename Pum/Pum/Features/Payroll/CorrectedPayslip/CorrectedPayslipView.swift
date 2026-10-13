@@ -81,23 +81,29 @@ struct CorrectedPayslipView: View {
     private var infoCells: some View {
         let cells: [(String, String)] = [("직원", state.employeeName), ("정정일", state.correctedDateText), ("정정", state.correctionCountText)]
         return Group {
+            let column = VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+                ForEach(cells, id: \.0) { infoCell($0.0, $0.1) }
+            }
             if typeSize.isAccessibilitySize {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
-                    ForEach(cells, id: \.0) { infoCell($0.0, $0.1) }
-                }
+                column
             } else {
-                HStack(alignment: .top, spacing: PumTokens.Space.s8) {
-                    ForEach(cells, id: \.0) { infoCell($0.0, $0.1) }
+                // 값이 칸 안에서 꺾이면(예: 정정일 숫자) 세로로
+                ViewThatFits(in: .horizontal) {
+                    HStack(alignment: .top, spacing: PumTokens.Space.s8) {
+                        ForEach(cells, id: \.0) { infoCell($0.0, $0.1, oneLine: true) }
+                    }
+                    column
                 }
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
-    private func infoCell(_ label: String, _ value: String) -> some View {
+    private func infoCell(_ label: String, _ value: String, oneLine: Bool = false) -> some View {
         VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
             Text(label).pumText(.caption, weight: .regular).foregroundStyle(PumColor.textOnInverseSecondary)
             Text(value).pumText(.callout).foregroundStyle(.white)
+                .fixedSize(horizontal: oneLine, vertical: false)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .accessibilityElement(children: .combine)
