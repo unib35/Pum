@@ -55,13 +55,11 @@ struct PersonalTermsView: View {
                     PumIconButton(systemImage: "chevron.left", label: "뒤로", action: onBack)
                     Spacer()
                 }
-                .padding(.bottom, PumTokens.Space.s4)
                 heading
                 card
                 if let text = state.estimateText { estimateBox(text) }
             }
             .padding(.horizontal, PumTokens.Size.screenPad)
-            .padding(.top, PumTokens.Space.s8)
             .padding(.bottom, PumTokens.Space.s16)
         }
         .scrollDismissesKeyboard(.interactively)
@@ -102,7 +100,7 @@ struct PersonalTermsView: View {
                 .foregroundStyle(PumColor.textPrimary)
                 .accessibilityAddTraits(.isHeader)
             Text("이 조건으로 예상 월급을 계산해요. 나중에 수정 가능")
-                .pumText(.body, weight: .regular) // 목업 14px → 가까운 단계 body 15 (DEC-005)
+                .pumText(.callout, weight: .regular) // 14px 400
                 .foregroundStyle(PumColor.textSecondary)
         }
     }
@@ -129,7 +127,7 @@ struct PersonalTermsView: View {
     private func row<C: View>(@ViewBuilder _ content: () -> C) -> some View {
         content()
             .padding(.horizontal, cardPadX)
-            .padding(.vertical, PumTokens.Space.s10)
+            .padding(.vertical, PumTokens.Space.s14) // 원문 padding 14 0
             .frame(minHeight: PumTokens.Size.tapMin)
     }
 
@@ -201,11 +199,12 @@ struct PersonalTermsView: View {
             }
             .pumText(.title3) // 20px 700
             .foregroundStyle(PumColor.accent)
-            .padding(.horizontal, PumTokens.Space.s14)
+            .padding(.horizontal, PumTokens.Space.s12) // 원문 padding 6 12
             .padding(.vertical, PumTokens.Space.s6)
             .background(PumColor.accentSoftStrong, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous)) // 원문 #D6DFFB = blue-100
+            .padding(.vertical, PumTokens.Space.s4) // 누름 영역만 44로 넓히고 배치 높이는 원문(약 36)대로
             .contentShape(Rectangle())
-            .frame(minHeight: PumTokens.Size.tapMin)
+            .padding(.vertical, -PumTokens.Space.s4)
             .onTapGesture { amountFocused = true }
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(Text(state.payType.title))
@@ -274,21 +273,22 @@ struct PersonalTermsView: View {
                 .monospacedDigit()
         }
         .padding(.horizontal, PumTokens.Space.s16)
-        .padding(.vertical, PumTokens.Space.s14)
+        .padding(.vertical, PumTokens.Space.s12) // 원문 padding 12 16
         .background(PumColor.surfaceFill, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
         .accessibilityElement(children: .combine)
     }
 
     // 4. 하단 버튼
     private var actions: some View {
-        VStack(spacing: 0) {
+        VStack(spacing: PumTokens.Space.s10) { // 원문 gap 10
             PumButton(title: "시작하기", kind: .primary) { onStart(state) }
                 .disabled(!state.canStart)
             Button(action: onLater) {
-                Text("나중에 설정").pumText(.body, weight: .regular).foregroundStyle(PumColor.textSecondary) // 목업 14px → body 15
+                Text("나중에 설정").pumText(.callout, weight: .regular).foregroundStyle(PumColor.textSecondary) // 14px 400
                     .frame(maxWidth: .infinity)
-                    .frame(minHeight: PumTokens.Size.tapMin)
+                    .frame(minHeight: PumTokens.Size.tapMin) // 원문 높이 40, 누름 영역만 44
                     .contentShape(Rectangle())
+                    .padding(.vertical, -2)
             }
             .buttonStyle(.plain)
         }

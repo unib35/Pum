@@ -8,13 +8,17 @@ struct PoliciesView: View {
     var onOpen: (String) -> Void = { _ in }
     var onOpenConsents: () -> Void = {}
 
+    /// 안내 글자 한 줄 높이(원문 12px × 1.5) — 큰 글자에서 함께 커진다
+    @ScaledMetric(relativeTo: .caption) private var footerLineHeight: CGFloat = 18
+    /// 행 위아래 안쪽 — 원문 13
+    private let rowPadY: CGFloat = 13
+
     var body: some View {
         VStack(spacing: 0) {
             PumNavHeader(title: PoliciesState.headerTitle, onBack: onBack)
-                .padding(.top, PumTokens.Space.s8)
                 .padding(.horizontal, PumTokens.Size.screenPad)
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s14) {
                     if let notice = state.notice { noticeBand(notice) }
                     PumCard {
                         ForEach(state.rows) { row in
@@ -24,7 +28,7 @@ struct PoliciesView: View {
                     footer
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s12)
+                .padding(.vertical, PumTokens.Space.s14)
             }
         }
         .background(PumColor.bgApp)
@@ -35,9 +39,9 @@ struct PoliciesView: View {
     private func noticeBand(_ n: PolicyChangeNotice) -> some View {
         Button(action: onOpenChange) {
             ViewThatFits(in: .horizontal) {
-                HStack(spacing: PumTokens.Space.s8) {
+                HStack(spacing: PumTokens.Space.s10) {
                     noticeText(n)
-                    Spacer(minLength: PumTokens.Space.s8)
+                    Spacer(minLength: PumTokens.Space.s10)
                     noticeAction
                 }
                 VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
@@ -93,7 +97,7 @@ struct PoliciesView: View {
                     chevron
                 }
             }
-            .padding(.horizontal, PumTokens.Size.rowPadX).padding(.vertical, PumTokens.Size.rowPadY)
+            .padding(.horizontal, PumTokens.Size.rowPadX).padding(.vertical, rowPadY)
             .frame(minHeight: PumTokens.Size.tapMin)
             .contentShape(Rectangle())
             .overlay(alignment: .bottom) { if !isLast { hairline } }
@@ -146,6 +150,8 @@ struct PoliciesView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .frame(minHeight: PumTokens.Size.tapMin)
                 .contentShape(Rectangle())
+                // 누름 영역 44 유지, 배치 높이는 글자 한 줄(원문)
+                .padding(.vertical, -max(0, PumTokens.Size.tapMin - footerLineHeight) / 2)
         }
         .buttonStyle(.plain)
         .padding(.horizontal, PumTokens.Space.s4)

@@ -28,19 +28,17 @@ struct PhoneVerifyView: View {
 
     var body: some View {
         ScrollView {
-            // 원문 간격: 뒤로 → 제목 약 20, 안내 → 6칸 · 6칸 → 남은 시간 약 16
-            VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+            // 원문 간격: 세로 gap 18 (뒤로 · 제목 · 6칸 · 남은 시간)
+            VStack(alignment: .leading, spacing: PumTokens.Space.s18) {
                 HStack {
                     PumIconButton(systemImage: "chevron.left", label: "뒤로", action: onBack)
                     Spacer()
                 }
-                .padding(.bottom, PumTokens.Space.s4)
                 heading
                 codeField
                 timerRow
             }
             .padding(.horizontal, PumTokens.Size.screenPad)
-            .padding(.top, PumTokens.Space.s8)
             .padding(.bottom, PumTokens.Space.s16)
         }
         .scrollDismissesKeyboard(.never)
@@ -92,13 +90,13 @@ struct PhoneVerifyView: View {
         HStack(alignment: .center) {
             Text(state.remainingText).pumText(.footnote) // 13px 400
                 .foregroundStyle(PumColor.textSecondary)
-                .padding(.leading, PumTokens.Space.s8) // 목업: 칸 왼쪽보다 약 4 안쪽 → 가까운 단계
+                .padding(.leading, PumTokens.Space.s4) // 원문 padding 0 4
                 .monospacedDigit()
             Spacer(minLength: PumTokens.Space.s8)
             Button(action: resend) {
                 Text("다시 보내기").pumText(.footnote, weight: .semibold) // 13px 600
                     .foregroundStyle(PumColor.accent)
-                    .padding(.horizontal, PumTokens.Space.s8)
+                    .padding(.horizontal, PumTokens.Space.s4) // 원문 padding 0 4
                     .padding(.vertical, PumTokens.Space.s14) // 누름 영역만 44로 넓힌다(줄 높이 약 17 + 28)
                     .contentShape(Rectangle())
                     .padding(.vertical, -PumTokens.Space.s14)
