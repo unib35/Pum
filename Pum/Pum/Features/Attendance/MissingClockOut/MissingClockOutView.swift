@@ -65,7 +65,6 @@ struct MissingClockOutView: View {
                 PumWorkplaceChip(name: state.workplaceName, initial: state.workplaceInitial) {}
                 Spacer()
             }
-            .padding(.top, PumTokens.Space.s8)
             Button { sheetOpen = true } label: { card }
                 .buttonStyle(.plain)
                 .accessibilityHint(Text(sheetOpen ? "" : "실제 퇴근시간 입력창을 엽니다"))

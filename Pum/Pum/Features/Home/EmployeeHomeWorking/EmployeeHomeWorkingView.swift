@@ -79,7 +79,6 @@ struct EmployeeHomeWorkingView: View {
             Spacer()
             PumIconButton(systemImage: "bell", label: "알림", showsDot: b.hasUnreadNotification) {}
         }
-        .padding(.top, PumTokens.Space.s8)
     }
 }
 

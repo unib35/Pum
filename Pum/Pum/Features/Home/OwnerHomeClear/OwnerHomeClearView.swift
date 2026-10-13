@@ -45,7 +45,6 @@ struct OwnerHomeClearView: View {
             Spacer(minLength: PumTokens.Space.s8)
             PumIconButton(systemImage: "bell", label: "알림", showsDot: false) {}
         }
-        .padding(.top, PumTokens.Space.s8)
     }
 
     private var titleBlock: some View {

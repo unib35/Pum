@@ -27,7 +27,7 @@ struct EmployeeHomeOvertimeView: View {
 
     private func scroll(_ s: EmployeeHomeOvertimeState) -> some View {
         ScrollView {
-            VStack(spacing: PumTokens.Space.s12) {
+            VStack(spacing: PumTokens.Space.s16) {
                 header(s)
                 OvertimeCard(state: s, onClockOut: onClockOut)
                 OvertimeSoFarCard(state: s)
@@ -43,7 +43,6 @@ struct EmployeeHomeOvertimeView: View {
             Spacer()
             PumIconButton(systemImage: "bell", label: "알림", showsDot: s.hasUnreadNotification) {}
         }
-        .padding(.top, PumTokens.Space.s8)
     }
 }
 
@@ -58,12 +57,13 @@ struct OvertimeCard: View {
     private let dotSize = PumTokens.Space.s8
 
     var body: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+        // 원문 간격: 위 줄–경과 14, 경과–막대 18, 막대–아래 줄 10, 아래 줄–버튼 18
+        VStack(alignment: .leading, spacing: PumTokens.Space.s18) {
+            VStack(alignment: .leading, spacing: 0) {
                 top
-                elapsed
-                OvertimeProgressBar(state: state)
-                bottomLine
+                elapsed.padding(.top, PumTokens.Space.s14)
+                OvertimeProgressBar(state: state).padding(.top, PumTokens.Space.s18)
+                bottomLine.padding(.top, PumTokens.Space.s10)
             }
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(Text(OvertimeFormat.cardLabel(
@@ -174,7 +174,7 @@ struct OvertimeSoFarCard: View {
 
     var body: some View {
         PumCard {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+            VStack(alignment: .leading, spacing: PumTokens.Space.s10) {
                 Text("오늘 지금까지").pumText(.footnote, weight: .medium).foregroundStyle(PumColor.textSecondary)
                     .accessibilityAddTraits(.isHeader)
                 // 좁거나 큰 글자면 세로로
@@ -183,7 +183,8 @@ struct OvertimeSoFarCard: View {
                     VStack(alignment: .leading, spacing: PumTokens.Space.s12) { cells }
                 }
             }
-            .padding(PumTokens.Space.s20)
+            .padding(.vertical, PumTokens.Space.s16)
+            .padding(.horizontal, PumTokens.Space.s18)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
@@ -199,7 +200,7 @@ struct OvertimeSoFarCard: View {
     }
 
     private func cell(_ title: String, _ value: String, _ color: Color, spoken: String? = nil) -> some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s4) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
             Text(title).pumText(.caption2, weight: .regular).foregroundStyle(PumColor.textSecondary)
             Text(value).pumText(.body, weight: .bold).foregroundStyle(color)
         }

@@ -114,7 +114,6 @@ struct WorkCalendarView: View {
             Spacer(minLength: PumTokens.Space.s8)
             PumWorkplaceChip(name: state.workplaceName, initial: state.workplaceInitial, action: onWorkplace)
         }
-        .padding(.top, PumTokens.Space.s8)
     }
 
     // MARK: 달력

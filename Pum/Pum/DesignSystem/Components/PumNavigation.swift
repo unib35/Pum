@@ -73,9 +73,13 @@ struct PumWorkplaceChip: View {
             }
             .padding(.leading, PumTokens.Space.s8)
             .padding(.trailing, PumTokens.Space.s12)
-            .frame(minHeight: PumTokens.Size.tapMin)
+            // DEC-010: 보이는 높이는 머리 줄 40(원문 38에 가장 가까운 값), 누름 영역은 44
+            .frame(minHeight: PumLayout.navRow)
             .background(PumColor.surfaceCard, in: Capsule())
-            .pumRing(.hairline, cornerRadius: PumTokens.Size.tapMin / 2)
+            .pumRing(.hairline, cornerRadius: PumLayout.navRow / 2)
+            .padding(.vertical, PumTokens.Space.s2)
+            .contentShape(Capsule())
+            .padding(.vertical, -PumTokens.Space.s2)
         }
         .buttonStyle(.plain)
         .accessibilityLabel(Text("사업장: \(name)\(role.map { ", \($0)" } ?? "")"))

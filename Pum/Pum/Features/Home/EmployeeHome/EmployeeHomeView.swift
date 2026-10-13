@@ -56,7 +56,6 @@ struct EmployeeHomeView: View {
             Spacer()
             PumIconButton(systemImage: "bell", label: "알림", showsDot: !isLoading && state.hasUnreadNotification) {} // 로딩 중엔 안 읽음 여부를 아직 모름(21j · 21k 원문 점 없음)
         }
-        .padding(.top, PumTokens.Space.s8)
     }
 }
 
