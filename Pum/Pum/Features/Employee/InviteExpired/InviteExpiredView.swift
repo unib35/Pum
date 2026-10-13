@@ -18,18 +18,19 @@ struct InviteExpiredView: View {
             PumNavHeader(title: "초대", onBack: onBack)
                 .padding(.horizontal, PumTokens.Size.screenPad)
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s20) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s14) {
                     VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
                         Text("초대 기간이 지났어요").pumText(.title2).foregroundStyle(PumColor.textPrimary)
                             .accessibilityAddTraits(.isHeader)
                         Text(state.expiredLine).pumText(.callout, weight: .regular).foregroundStyle(PumTokens.ColorToken.gray700) // 14px 400 #5B6170
+                            .padding(.horizontal, PumTokens.Space.s2)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     card
                     contactRow
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s16)
+                .padding(.top, PumTokens.Space.s18) // 블록 gap 14 + 제목 margin-top 4
             }
         }
         .background(PumColor.bgApp)
@@ -40,7 +41,7 @@ struct InviteExpiredView: View {
     private var card: some View {
         PumCard {
             VStack(spacing: 0) {
-                HStack(spacing: PumTokens.Space.s12) {
+                HStack(spacing: PumTokens.Space.s14) {
                     Text(state.initial).pumText(.headline, weight: .bold).foregroundStyle(.white) // 17px 700
                         .frame(width: workplaceTile, height: workplaceTile)
                         .background(state.tileColor, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
@@ -54,7 +55,8 @@ struct InviteExpiredView: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .padding(PumTokens.Space.s16)
+                .padding(.vertical, PumTokens.Space.s16)
+                .padding(.horizontal, PumTokens.Space.s18)
                 .accessibilityElement(children: .combine)
                 Rectangle().fill(PumColor.borderHairline).frame(height: 1)
                 termRow("대표", state.ownerName, valueColor: PumColor.textPrimary, isLast: false, spoken: nil)
@@ -133,7 +135,7 @@ struct InviteExpiredView: View {
 
     // 5. 하단 주 버튼
     private var actions: some View {
-        VStack(spacing: PumTokens.Space.s8) {
+        VStack(spacing: PumTokens.Space.s10) {
             PumButton(title: state.requestTitle, kind: .primary, isLoading: lock.isSending, loadingTitle: "요청을 보내는 중", action: request)
             Text(state.requestNote).pumText(.caption).foregroundStyle(PumColor.textTertiary)
                 .multilineTextAlignment(.center)
@@ -141,7 +143,7 @@ struct InviteExpiredView: View {
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
         .padding(.top, PumTokens.Space.s12)
-        .padding(.bottom, PumTokens.Space.s4)
+        .padding(.bottom, PumTokens.Space.s10)
         .background(PumColor.bgApp)
     }
 
