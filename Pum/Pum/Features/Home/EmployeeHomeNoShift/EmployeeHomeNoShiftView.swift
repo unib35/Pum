@@ -31,7 +31,7 @@ struct EmployeeHomeNoShiftView: View {
 
     private var screen: some View {
         ScrollView {
-            VStack(spacing: PumTokens.Space.s12) {
+            VStack(spacing: PumTokens.Space.s14) { // 원문 1au · 6u · 6v: 블록 사이 14
                 header
                 if let notice = state.maintenanceNotice, !maintenanceHidden {
                     MaintenanceNoticeRow(notice: notice) {
@@ -68,7 +68,8 @@ struct NoShiftTodayCard: View {
 
     var body: some View {
         PumCard {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+            // 원문: 카드 padding 16 18 · 제목 줄 아래 14 · 시각 위 2 · 요약 위 4
+            VStack(alignment: .leading, spacing: PumTokens.Space.s14) {
                 // 큰 글자에서 제목과 배지가 한 줄에 안 들어가면 위아래로
                 ViewThatFits(in: .horizontal) {
                     HStack {
@@ -81,15 +82,17 @@ struct NoShiftTodayCard: View {
                         PumBadge(text: "근무 없음", kind: .waiting)
                     }
                 }
-                VStack(alignment: .leading, spacing: PumTokens.Space.s4) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
                     Text(state.nextShiftCaption).pumText(.footnote).foregroundStyle(PumColor.textSecondary)
                     // 목업 26px → 토큰 title2(24)·title1(28)이 같은 거리. 좁은 폭에서 안 잘리도록 title2 (DEC-005)
                     Text(state.nextShiftRange).pumText(.title2).foregroundStyle(PumColor.textPrimary)
                 }
                 .accessibilityElement(children: .combine)
                 Text(state.plannedSummary).pumText(.caption).foregroundStyle(PumColor.textSecondary)
+                    .padding(.top, -PumTokens.Space.s10) // 14 + 4 → 요약 위 4 (바깥 간격 14에서 10 당김)
             }
-            .padding(PumTokens.Space.s20)
+            .padding(.vertical, PumTokens.Space.s16)
+            .padding(.horizontal, PumTokens.Space.s18)
             .frame(maxWidth: .infinity, alignment: .leading)
             // 디자인 1au: 구분선은 카드 끝에서 끝까지, 이동 행은 카드 바닥(C5 이동 행)
             Rectangle().fill(PumColor.borderHairline).frame(height: 1)
@@ -104,9 +107,11 @@ struct NoShiftTodayCard: View {
                         .foregroundStyle(PumColor.textDisabled)
                         .accessibilityHidden(true)
                 }
-                .padding(.horizontal, PumTokens.Space.s20)
-                .frame(minHeight: PumTokens.Size.tapMin + PumTokens.Space.s8)
+                .padding(.horizontal, PumTokens.Space.s18)
+                // 원문: 줄 padding 12 18 — 누름 44는 지키고 배치 높이만 원문(글자 줄 + 위아래 12)에 맞춘다
+                .frame(minHeight: PumTokens.Size.tapMin)
                 .contentShape(Rectangle())
+                .padding(.vertical, -(PumTokens.Size.tapMin - (PumTokens.Space.s12 * 2 + PumTokens.Space.s16)) / 2)
             }
             .buttonStyle(.plain)
             .accessibilityLabel(Text("예정에 없는 출근"))
@@ -123,7 +128,7 @@ struct NoShiftTodayCard: View {
 struct MaintenanceNoticeRow: View {
     let notice: MaintenanceNotice
     let onDismiss: () -> Void
-    @ScaledMetric private var iconSize = PumTokens.Size.tapMin - PumTokens.Space.s8 // 원문 회색 원 약 36
+    @ScaledMetric private var iconSize = PumTokens.Space.s24 + PumTokens.Space.s2 // 원문 회색 원 26
 
     var body: some View {
         PumCard {
@@ -149,11 +154,13 @@ struct MaintenanceNoticeRow: View {
                         .foregroundStyle(PumColor.textSecondary)
                         .frame(minWidth: PumTokens.Size.tapMin, minHeight: PumTokens.Size.tapMin)
                         .contentShape(Rectangle())
+                        // 원문: 닫기는 글자 폭 그대로 · 줄 padding 12 16. 누름 44는 지키고 배치만 줄인다
+                        .padding(.vertical, -PumTokens.Space.s4)
+                        .padding(.horizontal, -PumTokens.Space.s8)
                 }
                 .buttonStyle(.plain)
             }
-            .padding(.leading, PumTokens.Space.s16)
-            .padding(.trailing, PumTokens.Space.s8)
+            .padding(.horizontal, PumTokens.Space.s16)
             .padding(.vertical, PumTokens.Space.s12)
         }
     }
@@ -168,7 +175,7 @@ private struct UpdateNoticeSheetContent: View {
     @Environment(\.dynamicTypeSize) private var typeSize
 
     var body: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s12) { // 원문: 시트 안 간격 12
             ViewThatFits(in: .horizontal) {
                 HStack(alignment: .firstTextBaseline) {
                     title
@@ -191,7 +198,7 @@ private struct UpdateNoticeSheetContent: View {
                             .pumText(.body, weight: .semibold)
                             .foregroundStyle(PumColor.textPrimary)
                             .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.vertical, PumTokens.Space.s16)
+                            .padding(.vertical, PumTokens.Size.rowPadY) // 원문 13 → 12
                             .padding(.horizontal, PumTokens.Space.s16) // 구분선은 카드 끝까지(원문)
                     }
                 }
