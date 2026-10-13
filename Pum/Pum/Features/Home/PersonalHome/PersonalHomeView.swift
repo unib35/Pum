@@ -17,7 +17,7 @@ struct PersonalHomeView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: PumTokens.Space.s12) {
+            VStack(spacing: PumTokens.Space.s14) { // 원문 카드 사이 14
                 header
                 WeekStripCard(title: state.weekTitle, summary: state.weekSummary, days: state.week, dotStyle: .muted) // 원문: 개인 기록 점은 회색
                 PersonalTodayCard(state: state)
@@ -33,7 +33,7 @@ struct PersonalHomeView: View {
         .background(PumColor.bgApp)
         .safeAreaInset(edge: .bottom, spacing: 0) {
             VStack(spacing: 0) {
-                VStack(spacing: PumTokens.Space.s4) {
+                VStack(spacing: PumTokens.Space.s10) { // 원문 버튼과 링크 사이 10
                     PumButton(title: "출근 기록", action: onClockIn)
                     Button(action: onManualEntry) {
                         Text("시간 직접 입력")
@@ -41,11 +41,13 @@ struct PersonalHomeView: View {
                             .foregroundStyle(PumColor.accent)
                             .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin)
                             .contentShape(Rectangle())
+                            .padding(.vertical, -PumTokens.Space.s14) // 보이는 줄 16 · 누름 영역은 44 유지
                     }
                     .buttonStyle(.plain)
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
                 .padding(.top, PumTokens.Space.s12)
+                .padding(.bottom, PumTokens.Space.s14) // 원문 하단 14
                 .background(PumColor.bgApp)
                 PumTabBar(items: PumTabItem.employeeTabs, selection: Binding(
                     get: { tab },
@@ -61,7 +63,6 @@ struct PersonalHomeView: View {
             Spacer()
             PumIconButton(systemImage: "bell", label: "알림", showsDot: state.hasUnreadNotification, action: onBell)
         }
-        .padding(.top, PumTokens.Space.s8)
     }
 }
 
@@ -90,9 +91,11 @@ private struct PersonalModeChip: View {
             }
             .padding(.leading, PumTokens.Space.s8)
             .padding(.trailing, PumTokens.Space.s12)
-            .frame(minHeight: PumTokens.Size.tapMin)
+            .padding(.vertical, PumTokens.Space.s8) // 원문 위아래 7 + 칸 24 = 38 → 가까운 토큰 8
             .background(PumColor.surfaceCard, in: Capsule())
             .pumRing(.hairline, cornerRadius: PumTokens.Size.tapMin / 2)
+            .frame(minHeight: PumTokens.Size.tapMin) // 누름 영역 44는 유지
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .accessibilityLabel(Text("개인 모드, \(name)"))
@@ -109,7 +112,7 @@ private struct PersonalTodayCard: View {
 
     var body: some View {
         PumCard {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+            VStack(alignment: .leading, spacing: 0) {
                 // 큰 글자에서 제목과 배지가 한 줄에 안 들어가면 위아래로
                 ViewThatFits(in: .horizontal) {
                     HStack {
@@ -133,12 +136,16 @@ private struct PersonalTodayCard: View {
                         startInfo(alignment: .leading)
                     }
                 }
+                .padding(.top, PumTokens.Space.s12) // 원문 제목 줄 → 큰 시계 12
                 ShiftTimeline(plan: state.today)
+                    .padding(.top, PumTokens.Space.s18) // 원문 시계 → 막대 18
                 Text("내 시급 \(PumFormat.amount(state.hourlyWage))원 기준 · \(PumFormat.amount(state.plannedPay))원 예정")
                     .pumText(.caption)
                     .foregroundStyle(PumColor.textSecondary)
+                    .padding(.top, PumTokens.Space.s6) // 원문 시간 글자 → 시급 줄 6
             }
-            .padding(PumTokens.Space.s20)
+            .padding(.horizontal, PumTokens.Space.s18) // 원문 16 18
+            .padding(.vertical, PumTokens.Space.s16)
         }
     }
 
@@ -147,7 +154,7 @@ private struct PersonalTodayCard: View {
     }
 
     private var badges: some View {
-        HStack(spacing: PumTokens.Space.s8) {
+        HStack(spacing: PumTokens.Space.s6) {
             PumMyRecordTag()
             PumBadge(text: "출근 전", kind: .waiting)
         }
@@ -209,7 +216,8 @@ private struct PersonalMonthCard: View {
             footer()
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(PumTokens.Space.s16)
+        .padding(.horizontal, PumTokens.Space.s16) // 원문 14 16
+        .padding(.vertical, PumTokens.Space.s14)
     }
 }
 
@@ -219,6 +227,8 @@ private struct PersonalMonthCard: View {
 private struct PersonalRecentCard: View {
     let records: [PersonalRecord]
     let onOpenCalendar: () -> Void
+    /// 원문 날짜 칸 너비 48 — 큰 글자에서 함께 커진다
+    @ScaledMetric private var dayWidth: CGFloat = 48
 
     var body: some View {
         PumCard {
@@ -234,17 +244,19 @@ private struct PersonalRecentCard: View {
                 .buttonStyle(.plain)
             }
             .padding(.horizontal, PumTokens.Space.s16)
-            .padding(.top, PumTokens.Space.s16)
+            .padding(.top, PumTokens.Space.s14) // 원문 14 16 4
             .padding(.bottom, PumTokens.Space.s4)
             ForEach(Array(records.enumerated()), id: \.element.id) { index, record in
-                HStack(spacing: PumTokens.Space.s16) {
+                HStack(spacing: PumTokens.Space.s12) { // 원문 칸 사이 12
                     Text(record.id).pumText(.callout, weight: .bold).foregroundStyle(PumColor.textPrimary)
+                        .frame(minWidth: dayWidth, alignment: .leading) // 원문 날짜 칸 48
                     Text(PumFormat.timeRange(record.start, record.end)).pumText(.headline).foregroundStyle(PumColor.textPrimary)
                     Spacer()
                     Text(HomeFormat.hours(record.paidMinutes)).pumText(.footnote).foregroundStyle(PumColor.textSecondary)
                 }
                 .padding(.horizontal, PumTokens.Space.s16)
-                .padding(.vertical, PumTokens.Space.s10)
+                .padding(.top, PumTokens.Space.s10)
+                .padding(.bottom, index == records.count - 1 ? PumTokens.Space.s12 : PumTokens.Space.s10) // 마지막 줄만 아래 12
                 .overlay(alignment: .top) { Rectangle().fill(PumColor.borderHairline).frame(height: index == 0 ? 0 : 1) }
                 .accessibilityElement(children: .combine)
             }
@@ -272,7 +284,8 @@ private struct PersonalInviteCard: View {
                         .foregroundStyle(PumColor.textTertiary)
                         .accessibilityHidden(true)
                 }
-                .padding(PumTokens.Space.s16)
+                .padding(.horizontal, PumTokens.Space.s16) // 원문 12 16
+                .padding(.vertical, PumTokens.Space.s12)
                 .frame(minHeight: PumTokens.Size.tapMin)
             }
         }

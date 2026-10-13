@@ -63,7 +63,7 @@ struct WelcomeView: View {
                     }
                     VStack(spacing: PumTokens.Space.s16) { buttons; terms }
                         .padding(.top, PumTokens.Space.s12)
-                        .padding(.bottom, PumTokens.Space.s16)
+                        .padding(.bottom, PumTokens.Space.s10) // 원문 하단 44 − 홈 막대 안전 영역 34
                 }
             }
         }

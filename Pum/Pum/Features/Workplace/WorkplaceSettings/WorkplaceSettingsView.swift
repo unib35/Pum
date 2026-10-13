@@ -78,7 +78,7 @@ struct WorkplaceSettingsView: View {
                     if state.isMeRepresentative { closeButton } // 대표만(REQ-093)
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.top, PumTokens.Space.s8)
+                .padding(.top, PumTokens.Space.s4) // 원문 머리 줄(40) 아래 10 — 공통 머리 줄이 44라 4만
                 .padding(.bottom, PumTokens.Space.s24)
             }
         }
@@ -100,7 +100,7 @@ struct WorkplaceSettingsView: View {
     private var infoCard: some View {
         Button(action: onOpenInfo) {
             PumCard {
-                HStack(spacing: PumTokens.Space.s16) {
+                HStack(spacing: PumTokens.Space.s14) { // 원문 14
                     StoreTile(initial: state.workplaceInitial, colorIndex: state.workplaceColorIndex)
                     VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
                         Text(state.workplaceName).pumText(.headline, weight: .bold).foregroundStyle(PumColor.textPrimary) // 원문 18px 700 → 17
@@ -112,7 +112,8 @@ struct WorkplaceSettingsView: View {
                         .foregroundStyle(PumColor.textDisabled)
                         .accessibilityHidden(true)
                 }
-                .padding(PumTokens.Space.s16)
+                .padding(.horizontal, PumTokens.Space.s18) // 원문 16 18
+                .padding(.vertical, PumTokens.Space.s16)
                 .frame(minHeight: PumTokens.Size.tapMin)
             }
         }
@@ -135,7 +136,7 @@ struct WorkplaceSettingsView: View {
         }
         .tint(PumColor.accent)
         .padding(.horizontal, PumTokens.Size.rowPadX)
-        .padding(.vertical, PumTokens.Space.s10)
+        .padding(.vertical, PumTokens.Size.rowPadY) // 원문 11 → 12
         .frame(minHeight: PumTokens.Size.tapMin)
         .accessibilityLabel(Text("급여 확정 전 확인 요청, \(state.reviewRequestSubtitle)"))
         .overlay(alignment: .bottom) { Rectangle().fill(PumColor.borderHairline).frame(height: 1) }
@@ -151,9 +152,9 @@ struct WorkplaceSettingsView: View {
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin)
                 .contentShape(Rectangle())
+                .padding(.vertical, -PumTokens.Space.s4) // 원문 높이 36 — 누름 영역은 44 유지
         }
         .buttonStyle(.plain)
-        .padding(.top, PumTokens.Space.s8)
     }
 }
 

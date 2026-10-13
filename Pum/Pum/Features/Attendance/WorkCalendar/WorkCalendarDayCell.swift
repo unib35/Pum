@@ -13,6 +13,8 @@ enum WorkCalendarMetrics {
     /// 날짜 글자 줄 높이(원문 18) · 오늘 원 위로 당김(원문 5 → 토큰 4)
     static let numberLine = PumTokens.Space.s18
     static let todayPull = PumTokens.Space.s4
+    /// 6p 빈 상태 날짜 칸 높이(원문 38 · 위 padding 4). 누름 영역 44는 위아래 3씩 겹쳐 지킨다.
+    static let quietCellHeight = PumTokens.Space.s24 + PumTokens.Space.s14
     /// 선택한 날 카드의 날짜 상자 폭(원문 44)
     static let dateBox: CGFloat = 44
     /// 빈 원 테두리
@@ -50,12 +52,11 @@ struct WorkCalendarDayCell: View {
     var isQuiet = false
     var showsPlannedDot = false
     @ScaledMetric private var disc = WorkCalendarMetrics.todayDisc
-    @ScaledMetric private var quietDisc = PumTokens.Space.s24 + PumTokens.Space.s4
     @ScaledMetric private var line = WorkCalendarMetrics.numberLine
 
     var body: some View {
         Button(action: action) {
-            VStack(spacing: isQuiet ? PumTokens.Space.s2 : PumTokens.Space.s4) {
+            VStack(spacing: PumTokens.Space.s4) {
                 numberView
                 // 점 자리 높이는 고정 — 「휴무」 글자가 숫자 줄을 밀어 올리지 않게(디자인 1g)
                 Color.clear
@@ -63,14 +64,18 @@ struct WorkCalendarDayCell: View {
                     .overlay(alignment: .top) { markView.fixedSize() }
             }
             // 원문 1g: 칸 위 padding 6 · 칸 높이 52 · 위쪽 정렬
-            .padding(.top, isQuiet ? 0 : PumTokens.Space.s6)
+            // 6p 원문: 칸 높이 38 · 위 padding 4 (누름 44 − 38 = 6 → 위아래 3씩 음수 padding)
+            .padding(.top, isQuiet ? PumTokens.Space.s4 + quietPull : PumTokens.Space.s6)
             .frame(maxWidth: .infinity, minHeight: isQuiet ? PumTokens.Size.tapMin : WorkCalendarMetrics.cellHeight,
-                   alignment: isQuiet ? .center : .top)
+                   alignment: .top)
             .contentShape(Rectangle())
+            .padding(.vertical, isQuiet ? -quietPull : 0)
         }
         .buttonStyle(.plain)
         .accessibilityLabel(Text(label))
     }
+
+    private var quietPull: CGFloat { (PumTokens.Size.tapMin - WorkCalendarMetrics.quietCellHeight) / 2 }
 
     private var dotSize: CGFloat { isQuiet ? WorkCalendarMetrics.quietDot : WorkCalendarMetrics.dot }
 
@@ -79,7 +84,7 @@ struct WorkCalendarDayCell: View {
             .pumText(.body, weight: isToday ? .bold : (isQuiet ? .regular : .medium)) // 빈 상태(6p) 원문은 400
             .foregroundStyle(numberColor)
         if isQuiet {
-            text.frame(minWidth: quietDisc, minHeight: quietDisc)
+            text.frame(height: line)
         } else if isToday {
             // 원문: 원 30 · 위 여백 -5
             text.frame(minWidth: disc, minHeight: disc)

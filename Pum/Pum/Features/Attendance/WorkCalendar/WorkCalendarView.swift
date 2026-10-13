@@ -41,24 +41,26 @@ struct WorkCalendarView: View {
 
     private func emptyBody(_ empty: WorkCalendarEmpty) -> some View {
         ScrollView {
-            VStack(spacing: PumTokens.Space.s12) {
+            VStack(spacing: PumTokens.Space.s14) {
                 header
                 emptyCalendarCard(empty)
-                VStack(alignment: .leading, spacing: PumTokens.Space.s4) {
+                // 원문: 글 묶음 padding 8 4 0 · 제목과 본문 사이 6
+                VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
                     // 목업 20px 700 → title3(20)
                     Text(WorkCalendarEmpty.title).pumText(.title3).foregroundStyle(PumColor.textPrimary)
-                    Text(WorkCalendarEmpty.hint).pumText(.callout, weight: .regular)
-                        .foregroundStyle(PumColor.textSecondary)
-                    Text("다음 근무는 \(Text(empty.nextWorkText).bold().foregroundStyle(PumColor.textPrimary))이에요.")
-                        .pumText(.callout, weight: .regular).foregroundStyle(PumColor.textSecondary)
+                    VStack(alignment: .leading, spacing: 0) {
+                        Text(WorkCalendarEmpty.hint).pumText(.callout, weight: .regular)
+                            .foregroundStyle(PumColor.textSecondary)
+                        Text("다음 근무는 \(Text(empty.nextWorkText).bold().foregroundStyle(PumColor.textPrimary))이에요.")
+                            .pumText(.callout, weight: .regular).foregroundStyle(PumColor.textSecondary)
+                    }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, PumTokens.Space.s8)
-                .padding(.top, PumTokens.Space.s16)
+                .padding(.horizontal, PumTokens.Space.s4)
+                .padding(.top, PumTokens.Space.s8)
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel(Text(empty.accessibilityText))
                 PumButton(title: WorkCalendarEmpty.scheduleButton, kind: .outline, action: onOpenSchedule)
-                    .padding(.top, PumTokens.Space.s8)
             }
             .padding(.horizontal, PumTokens.Size.screenPad)
             .padding(.bottom, PumTokens.Space.s24)
@@ -73,11 +75,13 @@ struct WorkCalendarView: View {
     private func emptyCalendarCard(_ empty: WorkCalendarEmpty) -> some View {
         let layout = state.layout
         return PumCard {
-            VStack(spacing: PumTokens.Space.s8) {
+            // 원문: 카드 padding 14 12 8 · 달 제목 아래 10 · 요일 줄 아래 4 · 날짜 칸 높이 38
+            VStack(spacing: 0) {
                 Text(state.monthTitle).pumText(.headline, weight: .bold).foregroundStyle(PumColor.textPrimary)
                     .accessibilityAddTraits(.isHeader)
-                    .frame(minHeight: PumTokens.Size.tapMin)
+                    .padding(.bottom, PumTokens.Space.s10)
                 quietWeekdayHeader
+                    .padding(.bottom, PumTokens.Space.s4)
                 VStack(spacing: 0) {
                     ForEach(0..<layout.weekCount, id: \.self) { week in
                         HStack(alignment: .top, spacing: 0) {
@@ -88,7 +92,9 @@ struct WorkCalendarView: View {
                     }
                 }
             }
-            .padding(PumTokens.Space.s16)
+            .padding(.top, PumTokens.Space.s14)
+            .padding(.bottom, PumTokens.Space.s8)
+            .padding(.horizontal, PumTokens.Space.s12)
         }
     }
 
@@ -99,7 +105,7 @@ struct WorkCalendarView: View {
                 label: empty.dayLabel(d), action: { onSelectDay(d) },
                 isQuiet: true, showsPlannedDot: empty.plannedDays.contains(d))
         } else {
-            Color.clear.frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin)
+            Color.clear.frame(maxWidth: .infinity, minHeight: WorkCalendarMetrics.quietCellHeight)
                 .accessibilityHidden(true)
         }
     }
