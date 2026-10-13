@@ -160,6 +160,7 @@ struct ContentView: View {
             case "17g": CoverRequestReceivedView(state: .sample)
             case "17i": RoleOfferReceivedView(state: .managerInvite)
             case "17k": RoleOfferReceivedView(state: .ownerTransfer)
+            case "17j": OwnerTransferView(state: .sample)
             case "gallery": ComponentGalleryView()
             default: DevMenu()
             }
@@ -317,6 +318,7 @@ private struct DevMenu: View {
                     NavigationLink("17g 대타 요청 받음") { CoverRequestReceivedView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("17i 관리자 초대 받음") { RoleOfferReceivedView(state: .managerInvite).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("17k 대표 권한 이전 요청 받음") { RoleOfferReceivedView(state: .ownerTransfer).toolbar(.hidden, for: .navigationBar) }
+                    NavigationLink("17j 대표 변경") { OwnerTransferView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                 }
                 Section("디자인 시스템") {
                     NavigationLink("컴포넌트 갤러리") { ComponentGalleryView() }
