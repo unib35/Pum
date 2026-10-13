@@ -161,9 +161,9 @@ struct DayFixSheet: View {
     private func fieldBox<Content: View>(ring: PumTokens.Shadow, @ViewBuilder content: () -> Content) -> some View {
         content()
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, PumTokens.Space.s16)
+            .padding(.horizontal, PumTokens.Space.s14) // 원문 padding 0 14
             .frame(minHeight: PumTokens.Size.tapMin)
-            .padding(.vertical, PumTokens.Space.s6)
+            .padding(.vertical, PumTokens.Space.s4) // 원문 상자 높이 50(44 + 4 + 4 ≈ 52)
             .background(PumColor.surfaceCard, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
             .pumRing(ring, cornerRadius: PumTokens.Radius.md)
             .contentShape(Rectangle())
@@ -215,9 +215,9 @@ struct DayFixSheet: View {
             .focused($reasonFocused)
             .disabled(locked)
             .onChange(of: draft.reason) { if reasonFocused { onEdit() } } // 서버 값으로 바뀐 것은 손댄 것이 아님
-            .padding(.horizontal, PumTokens.Space.s16)
+            .padding(.horizontal, PumTokens.Space.s14) // 원문 padding 0 14
             .frame(minHeight: PumTokens.Size.tapMin)
-            .padding(.vertical, PumTokens.Space.s6)
+            .padding(.vertical, PumTokens.Space.s4) // 원문 상자 높이 50
             .background(PumColor.surfaceCard, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
             .pumRing(reasonFocused ? Self.focusRing : .hairline, cornerRadius: PumTokens.Radius.md)
             .accessibilityLabel(Text(DayFixState.reasonTitle))

@@ -235,8 +235,9 @@ struct AppLessStaffView: View {
     private var workCard: some View {
         PumCard {
             sectionRow
-            ForEach(state.days) { day in
-                Divider().overlay(PumColor.borderHairline)
+            // 원문: 제목 줄 밑에는 구분선이 없고, 행 사이에만 있다
+            ForEach(Array(state.days.enumerated()), id: \.element.id) { i, day in
+                if i > 0 { Divider().overlay(PumColor.borderHairline) }
                 dayRow(day)
             }
         }
@@ -248,8 +249,8 @@ struct AppLessStaffView: View {
             VStack(alignment: .leading, spacing: PumTokens.Space.s2) { sectionTitle; ownerInput }
         }
         .padding(.horizontal, PumTokens.Size.rowPadX)
-        .padding(.top, PumTokens.Size.rowPadY)
-        .padding(.bottom, PumTokens.Space.s8)
+        .padding(.top, PumTokens.Space.s14) // 원문 padding 14 16 4
+        .padding(.bottom, PumTokens.Space.s4)
         .frame(maxWidth: .infinity, alignment: .leading)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(state.sectionReadout))
