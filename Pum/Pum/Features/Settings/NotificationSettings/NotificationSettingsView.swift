@@ -24,7 +24,7 @@ struct NotificationSettingsView: View {
             PumNavHeader(title: NotificationSettingsState.screenTitle, onBack: onBack)
                 .padding(.horizontal, PumTokens.Size.screenPad)
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s20) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s14) { // 원문 블록 사이 14
                     section {
                         PumSectionHeader(title: NotificationSettingsState.workSection)
                     } card: {
@@ -57,7 +57,7 @@ struct NotificationSettingsView: View {
                     }
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.top, PumTokens.Space.s12)
+                .padding(.top, PumTokens.Space.s14) // 머리 줄과 첫 블록 사이 14
                 .padding(.bottom, PumTokens.Space.s24)
             }
         }
@@ -72,6 +72,7 @@ struct NotificationSettingsView: View {
             header()
             PumCard { card() }
         }
+        .padding(.top, PumTokens.Space.s4) // 원문 섹션 제목 위 4
     }
 
     private var divider: some View {
@@ -105,7 +106,7 @@ struct NotificationSettingsView: View {
     private var leadRow: some View {
         let sub = Text(NotificationSettingsState.leadSubtitle).foregroundStyle(PumColor.textSecondary)
         return ViewThatFits(in: .horizontal) {
-            HStack(spacing: PumTokens.Space.s8) {
+            HStack(spacing: PumTokens.Space.s12) { // 원문 gap 12
                 titleBlock(NotificationSettingsState.leadTitle, sub)
                 Spacer(minLength: PumTokens.Space.s8)
                 pills
@@ -123,7 +124,7 @@ struct NotificationSettingsView: View {
     /// 알약 3개 — 한 줄에 안 들어가면 세로로(가장 큰 글자)
     private var pills: some View {
         ViewThatFits(in: .horizontal) {
-            HStack(spacing: PumTokens.Space.s8) { pillItems }
+            HStack(spacing: PumTokens.Space.s6) { pillItems } // 원문 알약 사이 6
             VStack(alignment: .leading, spacing: PumTokens.Space.s4) { pillItems }
         }
         .animation(PumMotion.respecting(reduceMotion, PumMotion.fast), value: state.leadTime) // M2 · M22
@@ -147,7 +148,7 @@ struct NotificationSettingsView: View {
         }
         .tint(PumColor.accent)
         .padding(.horizontal, PumTokens.Size.rowPadX)
-        .padding(.vertical, PumTokens.Space.s10)
+        .padding(.vertical, PumTokens.Size.rowPadY) // 원문 13 → 12
         .frame(minHeight: PumTokens.Size.tapMin)
         .accessibilityLabel(Text(subtitle.map { "\(title), \($0)" } ?? title))
     }
@@ -168,7 +169,7 @@ struct NotificationSettingsView: View {
         .tint(PumColor.textDisabled) // 원문: 회색 트랙 — 비활성이라 켜진 채 고정
         .disabled(true)
         .padding(.horizontal, PumTokens.Size.rowPadX)
-        .padding(.vertical, PumTokens.Space.s10)
+        .padding(.vertical, PumTokens.Size.rowPadY) // 원문 13 → 12
         .frame(minHeight: PumTokens.Size.tapMin)
         .accessibilityLabel(Text("\(title), \(label)"))
     }
@@ -177,17 +178,19 @@ struct NotificationSettingsView: View {
 
     private var quietRow: some View {
         Button(action: onOpenQuietHours) {
-            HStack(spacing: PumTokens.Space.s8) {
+            HStack(spacing: PumTokens.Space.s12) { // 원문 gap 12
                 titleBlock(NotificationSettingsState.quietTitle, Text(state.quietHoursText).foregroundStyle(PumColor.textSecondary))
                     .frame(maxWidth: .infinity, alignment: .leading)
-                Text(state.quietStatusText).pumText(.callout, weight: .regular).foregroundStyle(PumColor.textSecondary)
-                Image(systemName: "chevron.right")
-                    .font(.footnote.weight(.semibold))
-                    .foregroundStyle(PumColor.textDisabled)
-                    .accessibilityHidden(true)
+                HStack(spacing: PumTokens.Space.s6) { // 원문 「켜짐」–› 6
+                    Text(state.quietStatusText).pumText(.callout, weight: .regular).foregroundStyle(PumColor.textSecondary)
+                    Image(systemName: "chevron.right")
+                        .font(.footnote.weight(.semibold))
+                        .foregroundStyle(PumColor.textDisabled)
+                        .accessibilityHidden(true)
+                }
             }
             .padding(.horizontal, PumTokens.Size.rowPadX)
-            .padding(.vertical, PumTokens.Space.s10)
+            .padding(.vertical, PumTokens.Size.rowPadY) // 원문 13 → 12
             .frame(minHeight: PumTokens.Size.tapMin)
             .contentShape(Rectangle())
         }

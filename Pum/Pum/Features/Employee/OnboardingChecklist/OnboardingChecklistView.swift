@@ -11,7 +11,7 @@ struct OnboardingChecklistView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.dynamicTypeSize) private var typeSize
     @ScaledMetric(relativeTo: .body) private var circleSize = Local.stepCircle
-    @ScaledMetric(relativeTo: .body) private var barHeight = PumTokens.Space.s8
+    @ScaledMetric(relativeTo: .body) private var barHeight = PumTokens.Space.s6 // 원문 6
 
     init(state: OnboardingChecklistState = .sample,
          onBack: @escaping () -> Void = {},
@@ -34,7 +34,7 @@ struct OnboardingChecklistView: View {
         VStack(spacing: 0) {
             backRow
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s14) {
                     titleBlock
                     PumCard {
                         ForEach(Array(state.steps.enumerated()), id: \.element.id) { index, step in
@@ -44,7 +44,7 @@ struct OnboardingChecklistView: View {
                     if let upload = state.upload { uploadBox(upload) }
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.top, PumTokens.Space.s8)
+                .padding(.top, PumTokens.Space.s14) // 머리–제목 14
                 .padding(.bottom, PumTokens.Space.s16)
             }
             .scrollBounceBehavior(.basedOnSize)
@@ -67,7 +67,7 @@ struct OnboardingChecklistView: View {
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel(Text(state.accessibilityTitle))
                 .accessibilityAddTraits(.isHeader)
-            bar.padding(.top, PumTokens.Space.s8)
+            bar.padding(.top, PumTokens.Space.s12)
                 .accessibilityHidden(true) // 제목이 같은 내용을 읽음
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -103,7 +103,7 @@ struct OnboardingChecklistView: View {
             statusMark(done: step.isDone)
             VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
                 if step.isDone {
-                    Text(step.title).pumText(.body, weight: .medium).foregroundStyle(PumColor.textSecondary)
+                    Text(step.title).pumText(.body, weight: .medium).foregroundStyle(PumTokens.ColorToken.gray700)
                     Text(step.detail).pumText(.caption).foregroundStyle(PumColor.textTertiary)
                 } else {
                     Text(step.title).pumText(.body, weight: .bold).foregroundStyle(PumColor.textPrimary)
@@ -150,7 +150,7 @@ struct OnboardingChecklistView: View {
             if typeSize.isAccessibilitySize {
                 VStack(spacing: PumTokens.Space.s8) { photoButton; fileButton }
             } else {
-                HStack(spacing: PumTokens.Space.s12) { photoButton; fileButton } // 받은 폭 1 : 1
+                HStack(spacing: PumTokens.Space.s8) { photoButton; fileButton } // 받은 폭 1 : 1, 간격 8
             }
             Text(upload.note).pumText(.caption).foregroundStyle(PumColor.textSecondary)
         }

@@ -13,8 +13,8 @@ struct EmploymentStatusView: View {
     /// 확인 창 원문 없음 — 클로저만
     var onConfirmLeave: (LeaveReason) -> Void
 
-    /// 세그먼트 칸 높이 — 원문 약 36(누름 영역 44)
-    @ScaledMetric(relativeTo: .callout) private var segmentHeight: CGFloat = 36
+    /// 세그먼트 칸 높이 — 원문 전체 36 = 칸 30 + 안쪽 3×2, 안쪽 2(가까운 토큰)라 칸 32(누름 영역 44)
+    @ScaledMetric(relativeTo: .callout) private var segmentHeight: CGFloat = 32
     /// 아바타 — 원문 약 44
     @ScaledMetric(relativeTo: .body) private var avatarSize = PumLayout.avatar + PumTokens.Space.s8
 
@@ -40,7 +40,7 @@ struct EmploymentStatusView: View {
             PumNavHeader(title: EmploymentStatusState.headerTitle, onBack: onBack)
                 .padding(.horizontal, PumTokens.Size.screenPad)
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s14) {
                     targetBlock
                     segments
                     if draft.status == .left {
@@ -50,7 +50,8 @@ struct EmploymentStatusView: View {
                     }
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s8)
+                .padding(.top, PumTokens.Space.s14) // 머리–대상 14
+                .padding(.bottom, PumTokens.Space.s8)
                 .allowsHitTesting(!locked) // 처리 중 · 성공 뒤엔 입력만 막고, 처리 중 모양은 버튼에만
             }
             .scrollBounceBehavior(.basedOnSize)
@@ -92,13 +93,16 @@ struct EmploymentStatusView: View {
                     Text(status.title)
                         .pumText(.footnote, weight: selected ? .semibold : .medium)
                         .foregroundStyle(selected ? PumColor.textPrimary : PumColor.textSecondary)
-                        .frame(maxWidth: .infinity, minHeight: max(segmentHeight, PumTokens.Size.tapMin))
+                        .frame(maxWidth: .infinity, minHeight: segmentHeight)
                         .background {
                             if selected {
-                                RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous).fill(PumColor.surfaceCard)
+                                RoundedRectangle(cornerRadius: PumTokens.Radius.pill, style: .continuous).fill(PumColor.surfaceCard)
                             }
                         }
+                        // 보이는 칸 32, 누름 영역은 44 유지(배치 높이만 원문에 맞춤)
+                        .padding(.vertical, max(0, PumTokens.Size.tapMin - segmentHeight) / 2)
                         .contentShape(Rectangle())
+                        .padding(.vertical, -max(0, PumTokens.Size.tapMin - segmentHeight) / 2)
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel(Text(status.title))
@@ -106,7 +110,7 @@ struct EmploymentStatusView: View {
             }
         }
         .padding(PumTokens.Space.s2)
-        .background(PumColor.surfaceFill, in: RoundedRectangle(cornerRadius: PumTokens.Radius.lg, style: .continuous))
+        .background(PumColor.surfaceFill, in: Capsule()) // 원문 모서리 999
     }
 
     // MARK: 퇴사 정보
@@ -116,7 +120,7 @@ struct EmploymentStatusView: View {
             ForEach(Array(serverState.rows.enumerated()), id: \.element.id) { i, row in
                 if i > 0 {
                     Rectangle().fill(PumColor.borderHairline).frame(height: 1)
-                        .padding(.horizontal, PumTokens.Size.rowPadX)
+                        .padding(.horizontal, PumTokens.Space.s18)
                 }
                 infoRow(row)
             }
@@ -124,8 +128,8 @@ struct EmploymentStatusView: View {
     }
 
     @ViewBuilder private func infoRow(_ row: EmploymentInfoRow) -> some View {
-        let label = Text(row.label).pumText(.callout, weight: .regular).foregroundStyle(PumColor.textSecondary)
-        let value = Text(row.value).pumText(.callout, weight: .semibold).foregroundStyle(PumColor.textPrimary)
+        let label = Text(row.label).pumText(.body, weight: .regular).foregroundStyle(PumColor.textSecondary)
+        let value = Text(row.value).pumText(.body, weight: .semibold).foregroundStyle(PumColor.textPrimary)
         let content = ViewThatFits(in: .horizontal) {
             HStack(spacing: PumTokens.Space.s12) {
                 label
@@ -137,8 +141,8 @@ struct EmploymentStatusView: View {
                 value.multilineTextAlignment(.leading)
             }
         }
-        .padding(.vertical, PumTokens.Size.rowPadY)
-        .padding(.horizontal, PumTokens.Size.rowPadX)
+        .padding(.vertical, PumTokens.Space.s14)
+        .padding(.horizontal, PumTokens.Space.s18)
         .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin, alignment: .leading)
 
         if row.id == EmploymentStatusState.leaveDateRowID {
@@ -157,11 +161,11 @@ struct EmploymentStatusView: View {
     // MARK: 사유
 
     private var reasonSection: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s8) { // 제목–칩 14-6
             Text(EmploymentStatusState.reasonHeader).pumText(.caption, weight: .bold).foregroundStyle(PumColor.textSecondary)
                 .padding(.horizontal, PumTokens.Space.s4)
                 .accessibilityAddTraits(.isHeader)
-            ReasonFlowLayout(spacing: PumTokens.Space.s8) {
+            ReasonFlowLayout(spacing: PumTokens.Space.s6) {
                 ForEach(Array(LeaveReason.allCases.enumerated()), id: \.element.id) { i, reason in
                     PumChoicePill(title: reason.title, isOn: draft.reason == reason, offStyle: .outlined,
                                   position: (i, LeaveReason.allCases.count)) {
@@ -170,18 +174,20 @@ struct EmploymentStatusView: View {
                 }
             }
         }
+        .padding(.top, PumTokens.Space.s2)
     }
 
     // MARK: 안내
 
     private var notice: some View {
         Text("\(serverState.noticeBefore)\(Text(EmploymentStatusState.noticeEmphasis).bold())\(serverState.noticeAfter)")
-            .pumText(.footnote, weight: .regular)
-            .foregroundStyle(PumColor.textSecondary)
+            .pumText(.caption, weight: .regular)
+            .foregroundStyle(PumTokens.ColorToken.gray700)
             .fixedSize(horizontal: false, vertical: true)
-            .padding(PumTokens.Space.s16)
+            .padding(.vertical, PumTokens.Space.s12)
+            .padding(.horizontal, PumTokens.Space.s16)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(PumColor.surfaceFill, in: RoundedRectangle(cornerRadius: PumTokens.Radius.lg, style: .continuous))
+            .background(PumColor.surfaceFill, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(Text(serverState.noticeSpoken))
     }
@@ -195,7 +201,8 @@ struct EmploymentStatusView: View {
         }
         .disabled(isDone)
         .padding(.horizontal, PumTokens.Size.screenPad)
-        .padding(.vertical, PumTokens.Space.s12)
+        .padding(.top, PumTokens.Space.s12)
+        .padding(.bottom, PumTokens.Space.s10)
         .background(PumColor.bgApp)
     }
 }

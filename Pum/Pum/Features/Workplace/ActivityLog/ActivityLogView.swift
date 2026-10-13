@@ -13,8 +13,8 @@ struct ActivityLogView: View {
 
     @State private var query = ""
     @Environment(\.dynamicTypeSize) private var typeSize
-    /// 시각 열 폭(목업 약 40) — 글자 크기를 따라 커짐
-    @ScaledMetric(relativeTo: .caption) private var timeWidth: CGFloat = 40
+    /// 시각 열 폭(원문 42) — 글자 크기를 따라 커짐
+    @ScaledMetric(relativeTo: .caption) private var timeWidth: CGFloat = 42
 
     var body: some View {
         VStack(spacing: 0) {
@@ -24,16 +24,16 @@ struct ActivityLogView: View {
             .padding(.horizontal, PumTokens.Size.screenPad)
 
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
                     searchField
-                    ActivityLogFlow(hSpacing: PumTokens.Space.s8, vSpacing: PumTokens.Space.s8) {
+                    ActivityLogFlow(hSpacing: PumTokens.Space.s6, vSpacing: PumTokens.Space.s6) {
                         ForEach(state.dropdowns) { dropdownChip($0) }
                     }
-                    ActivityLogFlow(hSpacing: PumTokens.Space.s8, vSpacing: PumTokens.Space.s8) {
+                    ActivityLogFlow(hSpacing: PumTokens.Space.s6, vSpacing: PumTokens.Space.s6) {
                         ForEach(state.quickFilters) { quickChip($0) }
                     }
                     ForEach(state.days) { day in
-                        VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+                        VStack(alignment: .leading, spacing: PumTokens.Space.s6) { // 제목–카드 12-6
                             PumSectionHeader(title: day.title)
                             PumCard {
                                 ForEach(Array(day.entries.enumerated()), id: \.element.id) { i, e in
@@ -41,6 +41,7 @@ struct ActivityLogView: View {
                                 }
                             }
                         }
+                        .padding(.top, PumTokens.Space.s2)
                     }
                     Text(state.footerNote)
                         .pumText(.caption, weight: .regular)
@@ -49,7 +50,7 @@ struct ActivityLogView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s12)
+                .padding(.vertical, PumTokens.Space.s12) // 머리–검색 12
             }
         }
         .background(PumColor.bgApp)
@@ -58,7 +59,7 @@ struct ActivityLogView: View {
     // MARK: 검색
 
     private var searchField: some View {
-        HStack(spacing: PumTokens.Space.s10) {
+        HStack(spacing: PumTokens.Space.s8) {
             Image(systemName: "magnifyingglass")
                 .font(.system(size: PumLayout.navIcon, weight: .regular))
                 .foregroundStyle(PumColor.textSecondary)
@@ -70,7 +71,7 @@ struct ActivityLogView: View {
                 .onSubmit { onSearch(query) } // 한글 조합 중 글자마다 서버로 보내지 않게 「검색」을 누를 때만
                 .accessibilityLabel(Text(state.searchPlaceholder))
         }
-        .padding(.horizontal, PumTokens.Space.s16)
+        .padding(.horizontal, PumTokens.Space.s14)
         .padding(.vertical, PumTokens.Space.s12)
         .frame(minHeight: PumTokens.Size.tapMin)
         .background(PumColor.surfaceCard, in: RoundedRectangle(cornerRadius: PumTokens.Radius.lg, style: .continuous))
@@ -82,10 +83,10 @@ struct ActivityLogView: View {
     private func dropdownChip(_ d: ActivityDropdown) -> some View {
         Button { onPickDropdown(d.id) } label: {
             HStack(spacing: PumTokens.Space.s6) {
-                Text(d.title).pumText(.callout, weight: .semibold).foregroundStyle(PumColor.textPrimary)
+                Text(d.title).pumText(.footnote, weight: .semibold).foregroundStyle(PumColor.textPrimary)
                 Image(systemName: "chevron.down").font(.caption.weight(.semibold)).foregroundStyle(PumColor.textSecondary)
             }
-            .padding(.horizontal, PumTokens.Space.s14)
+            .padding(.horizontal, PumTokens.Space.s12)
             .padding(.vertical, PumTokens.Space.s6)
             .background(PumColor.surfaceCard, in: Capsule())
             .pumRing(.hairline, cornerRadius: PumTokens.Radius.pill)
@@ -100,7 +101,7 @@ struct ActivityLogView: View {
         Button { onToggleQuickFilter(f.id) } label: {
             Text(f.title)
                 .pumText(.caption, weight: .semibold)
-                .foregroundStyle(f.isOn ? PumColor.accent : PumColor.textSecondary)
+                .foregroundStyle(f.isOn ? PumColor.accent : PumTokens.ColorToken.gray700)
                 .padding(.horizontal, PumTokens.Space.s10)
                 .padding(.vertical, PumTokens.Space.s6)
                 .background(f.isOn ? PumColor.accentSoft : PumColor.surfaceFill,
@@ -119,11 +120,12 @@ struct ActivityLogView: View {
         // 큰 글자: 시각 열이 넘치지 않게 시각을 내용 위로 올린다
         let outer = big
             ? AnyLayout(VStackLayout(alignment: .leading, spacing: PumTokens.Space.s4))
-            : AnyLayout(HStackLayout(alignment: .top, spacing: PumTokens.Space.s12))
+            : AnyLayout(HStackLayout(alignment: .top, spacing: PumTokens.Space.s10))
         return outer {
             Text(e.timeText).pumText(.caption, weight: .regular).foregroundStyle(PumColor.textTertiary)
                 .frame(width: big ? nil : timeWidth, alignment: .leading)
-            HStack(alignment: .top, spacing: PumTokens.Space.s8) {
+                .padding(.top, big ? 0 : PumTokens.Space.s2)
+            HStack(alignment: .top, spacing: PumTokens.Space.s10) {
                 VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
                     Text(e.title).pumText(.callout, weight: .semibold).foregroundStyle(PumColor.textPrimary)
                         .fixedSize(horizontal: false, vertical: true)

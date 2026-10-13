@@ -20,7 +20,7 @@ struct NoticeReadStatusView: View {
             }
             .padding(.horizontal, PumTokens.Size.screenPad)
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s14) { // 원문 블록 사이 14
                     header
                     progressCard
                     if !state.unread.isEmpty { unreadSection }
@@ -28,13 +28,14 @@ struct NoticeReadStatusView: View {
                     if let rec = state.recruitment { recruitmentCard(rec) }
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s16)
+                .padding(.top, PumTokens.Space.s14) // 머리 줄과 첫 블록 사이 14
+                .padding(.bottom, PumTokens.Space.s16)
             }
             if let title = state.remindTitle {
                 PumButton(title: title, kind: .dark, action: onRemind)
                     .padding(.horizontal, PumTokens.Size.screenPad)
-                    .padding(.top, PumTokens.Space.s8)
-                    .padding(.bottom, PumTokens.Space.s12)
+                    .padding(.top, PumTokens.Space.s12) // 원문 버튼 위 12 · 아래 44(안전 영역 포함 → 10)
+                    .padding(.bottom, PumTokens.Space.s10)
             }
         }
         .background(PumColor.bgApp)
@@ -42,7 +43,7 @@ struct NoticeReadStatusView: View {
 
     // 2. 배지 · 시각 · 제목
     private var header: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s10) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s8) { // 원문 배지–제목 8
             HStack(spacing: PumTokens.Space.s8) {
                 // 공통 후보: 11px 700 알약 배지(PumBadge는 12px 600) — 3b와 같은 값
                 Text("공지")
@@ -61,13 +62,12 @@ struct NoticeReadStatusView: View {
                 .accessibilityAddTraits(.isHeader)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.horizontal, PumTokens.Space.s4)
     }
 
     // 3. 확인 현황 카드
     private var progressCard: some View {
         PumCard {
-            VStack(spacing: PumTokens.Space.s12) {
+            VStack(spacing: PumTokens.Space.s10) { // 원문 막대 위 10
                 HStack(alignment: .firstTextBaseline) {
                     Text("확인 현황").pumText(.callout, weight: .bold).foregroundStyle(PumColor.textPrimary)
                     Spacer(minLength: PumTokens.Space.s8)
@@ -78,7 +78,8 @@ struct NoticeReadStatusView: View {
                 }
                 bar
             }
-            .padding(PumTokens.Space.s16) // 원문 카드 안쪽 약 18 → 카드 높이가 원문에 가까운 s16
+            .padding(.vertical, PumTokens.Space.s16) // 원문 padding 16 18
+            .padding(.horizontal, PumTokens.Space.s18)
         }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text("확인 현황, \(state.progressAccessibilityText)"))
@@ -107,6 +108,7 @@ struct NoticeReadStatusView: View {
                 }
             }
         }
+        .padding(.top, PumTokens.Space.s2) // 원문 섹션 제목 위 2
     }
 
     private func unreadRow(_ p: NoticeUnreadPerson) -> some View {
@@ -126,7 +128,7 @@ struct NoticeReadStatusView: View {
                     Image(systemName: "phone")
                         .font(.system(size: PumLayout.navIcon - PumTokens.Space.s2, weight: .medium))
                         .foregroundStyle(PumColor.textPrimary)
-                        .frame(width: PumLayout.avatar, height: PumLayout.avatar)
+                        .frame(width: PumLayout.avatar - PumTokens.Space.s2, height: PumLayout.avatar - PumTokens.Space.s2) // 원문 34
                         .background(PumColor.surfaceFill, in: Circle())
                         // 누름 영역만 44로 넓히고 행 높이는 보이는 36 기준(원문 행 높이 유지)
                         .padding(PumTokens.Space.s4)
@@ -152,11 +154,12 @@ struct NoticeReadStatusView: View {
                 }
             }
         }
+        .padding(.top, PumTokens.Space.s2)
     }
 
     private func readRow(_ p: NoticeReadPerson) -> some View {
         HStack(spacing: PumTokens.Space.s12) {
-            PumAvatar(name: p.name, colorIndex: p.colorIndex, size: PumLayout.avatar - PumTokens.Space.s2) // 원문 약 32pt → 34 근사
+            PumAvatar(name: p.name, colorIndex: p.colorIndex, size: PumLayout.avatar - PumTokens.Space.s4) // 원문 32pt
             Text(p.name).pumText(.callout, weight: .medium).foregroundStyle(PumColor.textPrimary)
                 .fixedSize(horizontal: false, vertical: true)
             Spacer(minLength: PumTokens.Space.s8)
@@ -172,8 +175,8 @@ struct NoticeReadStatusView: View {
     private func recruitmentCard(_ r: NoticeLinkedRecruitment) -> some View {
         Button(action: onOpenRecruitment) {
             PumCard {
-                HStack(spacing: PumTokens.Space.s8) {
-                    VStack(alignment: .leading, spacing: PumTokens.Space.s4) {
+                HStack(spacing: PumTokens.Space.s12) { // 원문 gap 12
+                    VStack(alignment: .leading, spacing: PumTokens.Space.s2) { // 원문 제목–내용 2
                         Text("연결된 근무 모집").pumText(.footnote, weight: .bold).foregroundStyle(PumColor.textSecondary)
                         Text("\(Text(r.prefixText).foregroundStyle(PumColor.textPrimary))\(Text(r.confirmedText).foregroundStyle(PumColor.statusDone))\(Text(r.suffixText).foregroundStyle(PumColor.textPrimary))")
                             .pumText(.callout)
@@ -183,7 +186,8 @@ struct NoticeReadStatusView: View {
                     Image(systemName: "chevron.right").font(.callout.weight(.semibold)).foregroundStyle(PumColor.textTertiary)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(PumTokens.Space.s16)
+                .padding(.vertical, PumTokens.Space.s12) // 원문 padding 12 16
+                .padding(.horizontal, PumTokens.Space.s16)
                 .frame(minHeight: PumTokens.Size.tapMin)
             }
         }
