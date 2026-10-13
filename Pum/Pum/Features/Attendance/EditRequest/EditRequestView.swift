@@ -160,6 +160,7 @@ struct EditRequestView: View {
             Button(action: openPicker) {
                 // 목업 20px 700 → title3
                 Text(draft.requestedEndText).pumText(.title3).foregroundStyle(PumColor.accent)
+                    .fixedSize() // 시각은 한 줄 — 큰 글자에서 「22:3 / 0」으로 꺾이지 않게
                     .padding(.horizontal, PumTokens.Space.s12)
                     .padding(.vertical, PumTokens.Space.s6) // 원문 칸 padding 6 12
                     .background(PumColor.accentSoft, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))

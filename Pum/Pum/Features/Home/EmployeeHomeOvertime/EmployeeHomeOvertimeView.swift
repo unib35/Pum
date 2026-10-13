@@ -181,7 +181,7 @@ struct OvertimeSoFarCard: View {
                     .accessibilityAddTraits(.isHeader)
                 // 좁거나 큰 글자면 세로로
                 ViewThatFits(in: .horizontal) {
-                    HStack(alignment: .top, spacing: 0) { cells } // 원문 3칸 균등, 틈 없음
+                    HStack(alignment: .top, spacing: PumTokens.Space.s8) { cells } // 원문은 3칸 균등 · 틈 없음 — 큰 글자에서 값이 붙지 않게 8
                     VStack(alignment: .leading, spacing: PumTokens.Space.s12) { cells }
                 }
             }
