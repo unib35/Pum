@@ -45,7 +45,6 @@ struct WorkplaceCreateView: View {
                     Text("1 / 3").pumText(.footnote).foregroundStyle(PumColor.textSecondary) // 13px 400
                         .accessibilityLabel(Text("3단계 중 1단계"))
                 }
-                .padding(.bottom, PumTokens.Space.s4)
                 heading
                 markRow
                 infoCard
@@ -55,7 +54,6 @@ struct WorkplaceCreateView: View {
                     .padding(.horizontal, PumTokens.Space.s4)
             }
             .padding(.horizontal, PumTokens.Size.screenPad)
-            .padding(.top, PumTokens.Space.s8)
             .padding(.bottom, PumTokens.Space.s16)
         }
         .scrollDismissesKeyboard(.interactively)
@@ -78,7 +76,7 @@ struct WorkplaceCreateView: View {
     // 대표 글자 · 색
     private var markRow: some View {
         Button(action: onPickMark) {
-            HStack(spacing: PumTokens.Space.s16) {
+            HStack(spacing: PumTokens.Space.s14) { // 원문 gap 14
                 Text(state.markText).pumText(.title2).foregroundStyle(.white) // 24px 700
                     .frame(width: markSize, height: markSize)
                     .background(PumAvatarPalette.stores[state.markColorIndex % PumAvatarPalette.stores.count],
@@ -124,7 +122,7 @@ struct WorkplaceCreateView: View {
     private func row<C: View>(@ViewBuilder _ content: () -> C) -> some View {
         content()
             .padding(.horizontal, cardPadX)
-            .padding(.vertical, PumTokens.Space.s10)
+            .padding(.vertical, PumTokens.Space.s14) // 원문 padding 14 0
             .frame(minHeight: PumTokens.Size.tapMin)
     }
 

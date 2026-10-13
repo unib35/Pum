@@ -15,18 +15,17 @@ struct StartChoiceView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+            VStack(alignment: .leading, spacing: PumTokens.Space.s18) { // 원문 gap 18
                 header
                 ForEach(StartChoice.allCases, id: \.self) { choice in
                     StartChoiceCard(choice: choice, state: state) { select(choice) }
                 }
                 Text("사업장은 검색해서 들어갈 수 없어요. 사장님의 초대를 받아야 소속돼요.")
                     .pumText(.caption).foregroundStyle(PumColor.textTertiary)
-                    .padding(.horizontal, PumTokens.Space.s8) // 원문: 카드보다 약 8 안쪽
+                    .padding(.horizontal, PumTokens.Space.s4) // 원문 padding 0 4
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
             .padding(.horizontal, PumTokens.Size.screenPad)
-            .padding(.top, PumTokens.Space.s24)
             .padding(.bottom, PumTokens.Space.s16)
         }
         .scrollBounceBehavior(.basedOnSize)
@@ -43,7 +42,6 @@ struct StartChoiceView: View {
                 .pumText(.callout, weight: .regular).foregroundStyle(PumColor.textSecondary) // 14px 400
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.bottom, PumTokens.Space.s8)
     }
 
     private var nextButton: some View {
@@ -75,7 +73,7 @@ private struct StartChoiceCard: View {
                       accessibilityLabel: state.accessibilityLabel(for: choice),
                       accessibilityValue: state.accessibilityValue(for: choice),
                       action: action) {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
+            VStack(alignment: .leading, spacing: PumTokens.Space.s4) { // 원문 제목–설명 4
                 // 16px 700 → headline(17) 근사
                 Text(choice.title).pumText(.headline, weight: .bold).foregroundStyle(PumColor.textPrimary)
                 Text(choice.detail).pumText(.footnote).foregroundStyle(PumColor.textSecondary) // 13px 400
@@ -84,7 +82,7 @@ private struct StartChoiceCard: View {
                     StartChoiceFlow(spacing: PumTokens.Space.s6) {
                         ForEach(choice.tags, id: \.self) { StartChoiceTag(title: $0) }
                     }
-                    .padding(.top, PumTokens.Space.s6)
+                    .padding(.top, PumTokens.Space.s8) // 설명–태그 12 = 4 + 8
                 }
             }
         }
@@ -98,8 +96,8 @@ private struct StartChoiceTag: View {
     var body: some View {
         Text(title).pumText(.caption2) // 11px 600
             .foregroundStyle(PumColor.textSecondary)
-            .padding(.horizontal, PumTokens.Space.s10)
-            .padding(.vertical, PumTokens.Space.s6)
+            .padding(.horizontal, PumTokens.Space.s8) // 원문 padding 4 8
+            .padding(.vertical, PumTokens.Space.s4)
             .background(PumColor.surfaceFill, in: RoundedRectangle(cornerRadius: PumTokens.Radius.sm, style: .continuous))
     }
 }
