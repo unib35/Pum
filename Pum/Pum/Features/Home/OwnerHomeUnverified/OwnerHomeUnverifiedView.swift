@@ -5,8 +5,8 @@ import SwiftUI
 
 /// 이 화면 전용 크기 — 토큰에 없는 것만
 private enum OwnerHomeUnverifiedLayout {
-    /// 단계 원(원문 36)
-    static let stepCircle: CGFloat = PumLayout.avatar
+    /// 단계 원(원문 30)
+    static let stepCircle: CGFloat = 30
 }
 
 struct OwnerHomeUnverifiedView: View {
@@ -22,7 +22,7 @@ struct OwnerHomeUnverifiedView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: PumTokens.Space.s12) {
+            VStack(spacing: PumTokens.Space.s14) {
                 header
                 titleBlock
                 stepsCard
@@ -51,7 +51,6 @@ struct OwnerHomeUnverifiedView: View {
             Spacer(minLength: PumTokens.Space.s8)
             PumIconButton(systemImage: "bell", label: "알림", showsDot: state.hasUnreadNotification, action: onBell)
         }
-        .padding(.top, PumTokens.Space.s8)
     }
 
     private var chip: some View {
@@ -71,7 +70,7 @@ struct OwnerHomeUnverifiedView: View {
     }
 
     private var titleBlock: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s4) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
             Text(state.dateText).pumText(.footnote, weight: .medium).foregroundStyle(PumColor.textSecondary)
             // 1aq와 같이 목업 26px → title1
             Text("시작 준비").pumText(.title1).foregroundStyle(PumColor.textPrimary)
@@ -79,7 +78,7 @@ struct OwnerHomeUnverifiedView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, PumTokens.Space.s4)
-        .padding(.top, PumTokens.Space.s8)
+        .padding(.top, PumTokens.Space.s4)
     }
 
     // MARK: 시작 준비
@@ -109,13 +108,15 @@ struct OwnerHomeUnverifiedView: View {
 
     private var todayCard: some View {
         PumCard {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+            VStack(alignment: .leading, spacing: 0) {
                 HStack {
                     Text(state.todayTitle).pumText(.body, weight: .bold).foregroundStyle(PumColor.textPrimary)
                         .accessibilityAddTraits(.isHeader)
                     Spacer(minLength: PumTokens.Space.s8)
                     Text(state.todayStaffCountText).pumText(.caption, weight: .medium).foregroundStyle(PumColor.textSecondary)
                 }
+                .padding(.top, PumTokens.Space.s14)
+                .padding(.bottom, PumTokens.Space.s6)
                 ViewThatFits(in: .horizontal) {
                     HStack(spacing: PumTokens.Space.s12) {
                         emptyText.frame(maxWidth: .infinity, alignment: .leading)
@@ -127,8 +128,10 @@ struct OwnerHomeUnverifiedView: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
+                .padding(.top, PumTokens.Space.s8)
+                .padding(.bottom, PumTokens.Space.s14)
             }
-            .padding(PumTokens.Space.s16)
+            .padding(.horizontal, PumTokens.Space.s16)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
@@ -149,7 +152,7 @@ struct OwnerHomeUnverifiedView: View {
 
     private var payrollCard: some View {
         PumCard {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s10) {
+            VStack(alignment: .leading, spacing: 0) {
                 HStack {
                     Text(state.payrollTitle).pumText(.footnote, weight: .medium).foregroundStyle(PumColor.textSecondary)
                     Spacer(minLength: PumTokens.Space.s8)
@@ -158,9 +161,12 @@ struct OwnerHomeUnverifiedView: View {
                 // 값이 없다 — 계산하지 않고 「—」 (원문 22px 700 연회색 → title2)
                 Text("—").pumText(.title2).foregroundStyle(PumColor.textTertiary)
                     .accessibilityLabel(Text("아직 계산 전"))
+                    .padding(.top, PumTokens.Space.s4)
                 Text("직원과 근로조건이 등록되면 계산돼요").pumText(.caption).foregroundStyle(PumColor.textSecondary)
+                    .padding(.top, PumTokens.Space.s6)
             }
-            .padding(PumTokens.Space.s16)
+            .padding(.vertical, PumTokens.Space.s14)
+            .padding(.horizontal, PumTokens.Space.s16)
             .frame(maxWidth: .infinity, alignment: .leading)
             .accessibilityElement(children: .combine)
         }

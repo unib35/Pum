@@ -8,7 +8,7 @@ private enum OwnerHomeLayout {
     static let miniBarWidth: CGFloat = 64
     static let miniBarHeight: CGFloat = PumTokens.Space.s6
     /// 인건비 막대 높이
-    static let payBarHeight: CGFloat = PumTokens.Space.s8
+    static let payBarHeight: CGFloat = PumTokens.Space.s6
 }
 
 struct OwnerHomeView: View {
@@ -26,7 +26,7 @@ struct OwnerHomeView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: PumTokens.Space.s12) {
+            VStack(spacing: PumTokens.Space.s14) {
                 header
                 if isLoading {
                     // M32 — 0.5초 안에 오면 스켈레톤 없이 본문. 본문은 컨테이너에 넣지 않는다(넣으면 1aq 행 높이가 달라짐)
@@ -74,7 +74,7 @@ struct OwnerHomeView: View {
     }
 
     private var titleBlock: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s4) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
             Text(staleSince.map(OwnerHomeLoadFailed.sinceLine) ?? state.dateText).pumText(.footnote, weight: .medium).foregroundStyle(PumColor.textSecondary)
             // 목업 26px → title1(28): 24와 28이 같은 거리, 화면 제목이라 큰 쪽
             Text("\(Text("처리할 일 ").foregroundStyle(PumColor.textPrimary))\(Text("\(state.attentionCount)").foregroundStyle(PumColor.statusAttention))")
@@ -84,7 +84,7 @@ struct OwnerHomeView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, PumTokens.Space.s4)
-        .padding(.top, PumTokens.Space.s8)
+        .padding(.top, PumTokens.Space.s4)
     }
 
     // MARK: 결정
@@ -134,14 +134,15 @@ struct OwnerHomeView: View {
             .accessibilityElement(children: .combine)
             .accessibilityAddTraits(.isHeader)
             .padding(.top, PumTokens.Space.s14)
-            .padding(.bottom, PumTokens.Space.s4)
+            .padding(.bottom, PumTokens.Space.s6)
             .padding(.horizontal, PumTokens.Size.rowPadX)
 
             ForEach(state.working) { p in
                 let overdue = p.isOverdue(now: state.nowMinute)
                 OwnerPersonRow(name: p.name, colorIndex: p.colorIndex, title: p.name,
                                detail: p.detail(now: state.nowMinute),
-                               overdueText: overdue ? OwnerHomeFormat.overdue(minutes: p.overdueMinutes(now: state.nowMinute)) : nil) {
+                               overdueText: overdue ? OwnerHomeFormat.overdue(minutes: p.overdueMinutes(now: state.nowMinute)) : nil,
+                               rowPadY: PumTokens.Space.s10) {
                     if overdue {
                         PumChipButton(title: "퇴근 확인", kind: .attention) { onClockOutCheck(p) }
                             .accessibilityLabel(Text("\(p.name) 퇴근 확인"))
@@ -179,7 +180,7 @@ struct OwnerHomeView: View {
 
     private var payrollCard: some View {
         PumCard {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s10) {
+            VStack(alignment: .leading, spacing: 0) {
                 HStack {
                     Text(state.payrollTitle).pumText(.footnote, weight: .medium).foregroundStyle(PumColor.textSecondary)
                     Spacer(minLength: PumTokens.Space.s8)
@@ -187,7 +188,9 @@ struct OwnerHomeView: View {
                 }
                 // 목업 22px 700 → title2(24): title3(20)보다 가깝고, 금액이 이 카드의 주인공
                 Text(OwnerHomeFormat.won(state.expectedPay)).pumText(.title2).foregroundStyle(PumColor.textPrimary)
+                    .padding(.top, PumTokens.Space.s4)
                 PayrollBar(ratio: state.confirmedRatio)
+                    .padding(.top, PumTokens.Space.s10)
                 ViewThatFits(in: .horizontal) {
                     HStack {
                         confirmedText
@@ -199,8 +202,10 @@ struct OwnerHomeView: View {
                         remainingText
                     }
                 }
+                .padding(.top, PumTokens.Space.s8)
             }
-            .padding(PumTokens.Space.s16)
+            .padding(.vertical, PumTokens.Space.s14)
+            .padding(.horizontal, PumTokens.Space.s16)
             .frame(maxWidth: .infinity, alignment: .leading)
             .accessibilityElement(children: .combine)
         }
@@ -224,6 +229,8 @@ private struct OwnerPersonRow<Trailing: View>: View {
     let title: String
     let detail: String
     var overdueText: String?
+    /// 원문 결정 행 11 → rowPadY(12), 근무 중 행 10
+    var rowPadY: CGFloat = PumTokens.Size.rowPadY
     @ViewBuilder var trailing: Trailing
 
     var body: some View {
@@ -238,7 +245,7 @@ private struct OwnerPersonRow<Trailing: View>: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding(.vertical, PumTokens.Size.rowPadY)
+        .padding(.vertical, rowPadY)
         .padding(.horizontal, PumTokens.Size.rowPadX)
         .frame(minHeight: PumTokens.Size.tapMin)
         .overlay(alignment: .bottom) {

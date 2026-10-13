@@ -20,7 +20,7 @@ struct OwnerHomeClearView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: PumTokens.Space.s12) {
+            VStack(spacing: PumTokens.Space.s14) {
                 header
                 titleBlock
                 foldedTaskRow
@@ -48,7 +48,7 @@ struct OwnerHomeClearView: View {
     }
 
     private var titleBlock: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s4) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
             Text(state.dateText).pumText(.footnote, weight: .medium).foregroundStyle(PumColor.textSecondary)
             // 목업 26px → title1(28): 24와 28이 같은 거리, 화면 제목이라 큰 쪽
             Text("오늘 근무").pumText(.title1).foregroundStyle(PumColor.textPrimary)
@@ -56,7 +56,7 @@ struct OwnerHomeClearView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, PumTokens.Space.s4)
-        .padding(.top, PumTokens.Space.s8)
+        .padding(.top, PumTokens.Space.s4)
     }
 
     // MARK: 접힌 할 일
@@ -85,7 +85,7 @@ struct OwnerHomeClearView: View {
                         .foregroundStyle(PumColor.textDisabled)
                         .accessibilityHidden(true)
                 }
-                .padding(.vertical, PumTokens.Size.rowPadY)
+                .padding(.vertical, PumTokens.Space.s14) // 원문 14 16
                 .padding(.horizontal, PumTokens.Size.rowPadX)
                 .frame(minHeight: PumTokens.Size.tapMin)
                 .contentShape(Rectangle())
@@ -109,7 +109,7 @@ struct OwnerHomeClearView: View {
             .accessibilityElement(children: .combine)
             .accessibilityAddTraits(.isHeader)
             .padding(.top, PumTokens.Space.s14)
-            .padding(.bottom, PumTokens.Space.s4)
+            .padding(.bottom, PumTokens.Space.s6)
             .padding(.horizontal, PumTokens.Size.rowPadX)
 
             ForEach(state.working) { p in
@@ -121,7 +121,8 @@ struct OwnerHomeClearView: View {
             ForEach(state.scheduled) { p in
                 ClearPersonRow(name: p.name, colorIndex: p.colorIndex, detail: p.detail,
                                isDimmed: true, accessibilityPrefix: "출근 전",
-                               showsDivider: p.id != state.scheduled.last?.id) { EmptyView() }
+                               showsDivider: p.id != state.scheduled.last?.id,
+                               bottomPad: p.id == state.scheduled.last?.id ? PumTokens.Space.s14 : PumTokens.Space.s10) { EmptyView() }
             }
         }
     }
@@ -130,7 +131,7 @@ struct OwnerHomeClearView: View {
 
     private var payrollCard: some View {
         PumCard {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s10) {
+            VStack(alignment: .leading, spacing: 0) {
                 HStack {
                     Text(state.payrollTitle).pumText(.footnote, weight: .medium).foregroundStyle(PumColor.textSecondary)
                     Spacer(minLength: PumTokens.Space.s8)
@@ -138,7 +139,9 @@ struct OwnerHomeClearView: View {
                 }
                 // 목업 28px 700 → title1(28)
                 Text(OwnerHomeFormat.won(state.expectedPay)).pumText(.title1).foregroundStyle(PumColor.textPrimary)
+                    .padding(.top, PumTokens.Space.s4)
                 PayrollBar(ratio: state.confirmedRatio)
+                    .padding(.top, PumTokens.Space.s12)
                 ViewThatFits(in: .horizontal) {
                     HStack {
                         confirmedText
@@ -150,8 +153,10 @@ struct OwnerHomeClearView: View {
                         remainingText
                     }
                 }
+                .padding(.top, PumTokens.Space.s8)
             }
-            .padding(PumTokens.Space.s16)
+            .padding(.vertical, PumTokens.Space.s16)
+            .padding(.horizontal, PumTokens.Space.s18)
             .frame(maxWidth: .infinity, alignment: .leading)
             .accessibilityElement(children: .combine)
         }
@@ -177,6 +182,8 @@ private struct ClearPersonRow<Trailing: View>: View {
     /// VoiceOver에서 근무 중 / 출근 전을 구분하는 말
     let accessibilityPrefix: String
     var showsDivider: Bool = true
+    /// 원문 마지막 행만 아래 14
+    var bottomPad: CGFloat = PumTokens.Space.s10
     @ViewBuilder var trailing: Trailing
 
     var body: some View {
@@ -191,7 +198,8 @@ private struct ClearPersonRow<Trailing: View>: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding(.vertical, PumTokens.Size.rowPadY)
+        .padding(.top, PumTokens.Space.s10)
+        .padding(.bottom, bottomPad)
         .padding(.horizontal, PumTokens.Size.rowPadX)
         .frame(minHeight: PumTokens.Size.tapMin)
         .overlay(alignment: .bottom) {

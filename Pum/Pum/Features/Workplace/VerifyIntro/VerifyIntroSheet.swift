@@ -32,11 +32,10 @@ struct VerifyIntroSheet: View {
                     }
                 }
             }
-            VStack(spacing: PumTokens.Space.s4) {
+            VStack(spacing: PumTokens.Space.s12) {
                 PumButton(title: VerifyIntroState.startTitle, kind: .primary, action: onStart)
                 PumButton(title: VerifyIntroState.laterTitle, kind: .text, size: .small, action: onLater)
             }
-            .padding(.top, PumTokens.Space.s4)
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
         .padding(.bottom, PumTokens.Space.s8)
@@ -57,7 +56,7 @@ struct VerifyIntroStepRow: View {
     @ScaledMetric(relativeTo: .body) private var circle = VerifyIntroLocal.stepCircle
 
     var body: some View {
-        HStack(alignment: .top, spacing: PumTokens.Space.s12) {
+        HStack(alignment: .top, spacing: PumTokens.Space.s14) {
             marker
             VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
                 Text(step.title).pumText(.body, weight: .semibold) // 15px 600
@@ -68,7 +67,7 @@ struct VerifyIntroStepRow: View {
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding(.horizontal, PumTokens.Size.rowPadX)
-        .padding(.vertical, PumTokens.Space.s16) // 원문 행 높이 약 62
+        .padding(.vertical, PumTokens.Space.s14) // 원문 14 16
         .frame(minHeight: PumTokens.Size.tapMin)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(step.accessibilityLabel(number: number)))
