@@ -243,8 +243,9 @@ private struct DirectChip: View {
         }
         .pumText(.caption, weight: style == .fill ? .bold : .semibold)
         .foregroundStyle(style == .fill ? PumColor.textPrimary : PumTokens.ColorToken.gray700) // 원문 rgb(91,97,112)
-        .padding(.horizontal, PumTokens.Space.s8)
-        .padding(.vertical, PumTokens.Space.s4) // 원문 칩 약 38 × 22
+        // 원문 코드: 「확인」 padding 7 11 · 모서리 9 / 「고침」 padding 4 9 · 모서리 8
+        .padding(.horizontal, style == .fill ? PumTokens.Space.s10 : PumTokens.Space.s8)
+        .padding(.vertical, style == .fill ? PumTokens.Space.s6 : PumTokens.Space.s4)
         .background(style == .fill ? PumColor.surfaceFill : PumColor.surfaceCard,
                     in: RoundedRectangle(cornerRadius: PumTokens.Radius.sm, style: .continuous)) // 원문 작은 칩 모서리
         .modifier(OutlineRing(enabled: style == .outline, radius: PumTokens.Radius.sm))
