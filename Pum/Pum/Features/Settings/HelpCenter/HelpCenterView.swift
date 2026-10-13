@@ -20,10 +20,10 @@ struct HelpCenterView: View {
             PumNavHeader(title: HelpCenterState.headerTitle, onBack: onBack)
                 .padding(.horizontal, PumTokens.Size.screenPad)
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
                     searchField
                     topicGrid
-                    VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+                    VStack(alignment: .leading, spacing: PumTokens.Space.s6) { // 제목–카드 12-6
                         PumSectionHeader(title: HelpCenterState.faqHeader)
                         PumCard {
                             ForEach(Array(state.faqs.enumerated()), id: \.element.id) { i, f in
@@ -31,6 +31,7 @@ struct HelpCenterView: View {
                             }
                         }
                     }
+                    .padding(.top, PumTokens.Space.s2)
                     PumCard {
                         linkRow(state.contact, action: onContact, isLast: false)
                         linkRow(state.bugReport, action: onReportBug, isLast: false)
@@ -47,7 +48,7 @@ struct HelpCenterView: View {
     // MARK: 검색
 
     private var searchField: some View {
-        HStack(spacing: PumTokens.Space.s10) {
+        HStack(spacing: PumTokens.Space.s8) {
             Image(systemName: "magnifyingglass")
                 .font(.system(size: PumLayout.navIcon, weight: .regular))
                 .foregroundStyle(PumColor.textSecondary)
@@ -59,7 +60,7 @@ struct HelpCenterView: View {
                 .onSubmit { let q = query.trimmingCharacters(in: .whitespaces); if !q.isEmpty { onSearch(q) } } // 한글 조합 중 글자마다 보내지 않게 「검색」을 누를 때만
                 .accessibilityLabel(Text(HelpCenterState.searchPlaceholder))
         }
-        .padding(.horizontal, PumTokens.Space.s16)
+        .padding(.horizontal, PumTokens.Space.s14)
         .padding(.vertical, PumTokens.Space.s12)
         .frame(minHeight: PumTokens.Size.tapMin)
         .background(PumColor.surfaceCard, in: RoundedRectangle(cornerRadius: PumTokens.Radius.lg, style: .continuous))
@@ -87,17 +88,17 @@ struct HelpCenterView: View {
 
     private func topicCard(_ t: HelpTopic) -> some View {
         Button { onOpenTopic(t.id) } label: {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
+            VStack(alignment: .leading, spacing: PumTokens.Space.s4) {
                 Text(t.title).pumText(.body, weight: .bold).foregroundStyle(PumColor.textPrimary)
                 Text(t.detail).pumText(.caption, weight: .regular).foregroundStyle(PumColor.textSecondary)
             }
             .multilineTextAlignment(.leading)
-            .padding(.horizontal, PumTokens.Space.s14)
-            .padding(.vertical, PumTokens.Space.s12)
+            .padding(.horizontal, PumTokens.Space.s16)
+            .padding(.vertical, PumTokens.Space.s14)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
             .frame(minHeight: PumTokens.Size.tapMin)
-            .background(PumColor.surfaceCard, in: RoundedRectangle(cornerRadius: PumTokens.Radius.lg, style: .continuous))
-            .pumRing(.hairline, cornerRadius: PumTokens.Radius.lg)
+            .background(PumColor.surfaceCard, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
+            .pumRing(.hairline, cornerRadius: PumTokens.Radius.md)
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
