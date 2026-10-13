@@ -33,14 +33,14 @@ struct PayrollInquiryView: View {
                         .pumText(.title1).foregroundStyle(PumColor.textPrimary)
                         .fixedSize(horizontal: false, vertical: true)
                         .accessibilityAddTraits(.isHeader)
-                        .padding(.bottom, PumTokens.Space.s4)
                     summaryCard
                     itemSection
                     inputBox
                     optionsCard
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s8)
+                .padding(.top, PumTokens.Space.s12) // 머리 줄 아래 원문 gap 12
+                .padding(.bottom, PumTokens.Space.s8)
                 .allowsHitTesting(!isProcessing)
             }
             .scrollBounceBehavior(.basedOnSize)
@@ -67,7 +67,6 @@ struct PayrollInquiryView: View {
                 Spacer()
             }
         }
-        .padding(.top, PumTokens.Space.s8)
     }
 
     // MARK: 요약 카드
@@ -77,7 +76,7 @@ struct PayrollInquiryView: View {
             ForEach(Array(serverState.rows.enumerated()), id: \.element.id) { i, row in
                 if i > 0 {
                     Rectangle().fill(PumColor.borderHairline).frame(height: 1)
-                        .padding(.horizontal, PumTokens.Size.rowPadX)
+                        .padding(.horizontal, PumTokens.Space.s18) // 원문: 카드 안쪽 18에서 시작
                 }
                 summaryRow(row)
             }
@@ -85,14 +84,14 @@ struct PayrollInquiryView: View {
     }
 
     private func summaryRow(_ row: InquirySummaryRow) -> some View {
-        let l = Text(row.label).pumText(.callout, weight: .regular).foregroundStyle(PumColor.textSecondary)
-        let v = Text(row.value).pumText(.callout, weight: .semibold).foregroundStyle(PumColor.textPrimary)
+        let l = Text(row.label).pumText(.body, weight: .regular).foregroundStyle(PumColor.textSecondary) // 15px
+        let v = Text(row.value).pumText(.body, weight: .semibold).foregroundStyle(PumColor.textPrimary)
         return ViewThatFits(in: .horizontal) {
             HStack(spacing: PumTokens.Space.s12) { l; Spacer(minLength: 0); v.fixedSize() }
             VStack(alignment: .leading, spacing: PumTokens.Space.s4) { l; v.multilineTextAlignment(.leading) }
         }
-        .padding(.vertical, PumTokens.Size.rowPadY)
-        .padding(.horizontal, PumTokens.Size.rowPadX)
+        .padding(.vertical, PumTokens.Space.s14) // 원문 padding 14 0, 카드 좌우 18
+        .padding(.horizontal, PumTokens.Space.s18)
         .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin, alignment: .leading)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text("\(row.label), \(row.value)"))
@@ -103,7 +102,8 @@ struct PayrollInquiryView: View {
     private var itemSection: some View {
         VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
             PumSectionHeader(title: PayrollInquiryState.itemHeader)
-            InquiryFlowLayout(spacing: PumTokens.Space.s8) {
+                .padding(.top, PumTokens.Space.s2) // 원문 padding 2 4 0
+            InquiryFlowLayout(spacing: PumTokens.Space.s6) {
                 ForEach(Array(InquiryItem.allCases.enumerated()), id: \.element.id) { i, item in
                     PumChoicePill(title: item.title, isOn: draft.item == item, offStyle: .outlined,
                                   position: (i, InquiryItem.allCases.count)) {
@@ -120,10 +120,11 @@ struct PayrollInquiryView: View {
         let r = PumTokens.Radius.lg
         return TextField(PayrollInquiryState.placeholder, text: $draft.body, axis: .vertical)
             .pumText(.callout, weight: .regular)
-            .foregroundStyle(PumTokens.ColorToken.gray700)
+            .foregroundStyle(PumTokens.ColorToken.gray800)
             .focused($bodyFocused)
             .lineLimit(3...)
-            .padding(PumTokens.Space.s16)
+            .padding(.vertical, PumTokens.Space.s14) // 원문 padding 14 16
+            .padding(.horizontal, PumTokens.Space.s16)
             .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin, alignment: .topLeading)
             .background(PumColor.surfaceCard, in: RoundedRectangle(cornerRadius: r, style: .continuous))
             .overlay {
@@ -188,7 +189,8 @@ struct PayrollInquiryView: View {
         }
         .disabled(!serverState.canSend(draft))
         .padding(.horizontal, PumTokens.Size.screenPad)
-        .padding(.vertical, PumTokens.Space.s12)
+        .padding(.top, PumTokens.Space.s12)
+        .padding(.bottom, PumTokens.Space.s10) // 원문 아래 44 − 홈 막대
         .background(PumColor.bgApp)
     }
 }

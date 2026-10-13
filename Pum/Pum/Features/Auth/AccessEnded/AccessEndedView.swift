@@ -6,12 +6,13 @@ struct AccessEndedView: View {
     var onPrimary: () -> Void = {}
     var onSecondary: () -> Void = {}
 
-    /// 사업장 색 네모 약 48 — 15f와 같은 값, 큰 글자에서 글자와 함께 커진다
-    @ScaledMetric(relativeTo: .headline) private var tile: CGFloat = 48
+    /// 사업장 색 네모 44(원문), 큰 글자에서 글자와 함께 커진다
+    @ScaledMetric(relativeTo: .headline) private var tile: CGFloat = 44
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s24) {
+            VStack(alignment: .leading, spacing: PumTokens.Space.s16) { // 원문 gap 16
+                Color.clear.frame(height: PumTokens.Space.s20) // 원문 높이 20 빈 칸
                 VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
                     Text(state.title).pumText(.title2).foregroundStyle(PumColor.textPrimary) // 26px 700 → title2(24)
                         .accessibilityAddTraits(.isHeader)
@@ -21,7 +22,6 @@ struct AccessEndedView: View {
                 if let card = state.card { cardView(card) }
             }
             .padding(.horizontal, PumTokens.Size.screenPad)
-            .padding(.top, PumTokens.Space.s24)
             .padding(.bottom, PumTokens.Space.s16)
         }
         .background(PumColor.bgApp)
@@ -36,16 +36,17 @@ struct AccessEndedView: View {
                         .frame(width: tile, height: tile)
                         .background(PumColor.accent, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
                     ViewThatFits(in: .horizontal) {
-                        HStack(spacing: PumTokens.Space.s8) { names(card); badge(card) }
+                        HStack(spacing: PumTokens.Space.s12) { names(card); badge(card) }
                         VStack(alignment: .leading, spacing: PumTokens.Space.s8) { names(card); badge(card) }
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .padding(PumTokens.Space.s16)
+                .padding(.vertical, PumTokens.Space.s14)
+                .padding(.horizontal, PumTokens.Space.s18) // 원문 padding 14 0, 카드 좌우 18
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel(Text(card.spokenText))
                 ForEach(Array(card.rows.enumerated()), id: \.offset) { _, row in
-                    Rectangle().fill(PumColor.borderHairline).frame(height: 1).padding(.horizontal, PumTokens.Space.s16) // 원문: 안쪽에서 시작
+                    Rectangle().fill(PumColor.borderHairline).frame(height: 1).padding(.horizontal, PumTokens.Space.s18) // 원문: 안쪽(18)에서 시작
                     rowView(row)
                 }
             }
@@ -58,7 +59,7 @@ struct AccessEndedView: View {
                 Text(card.name).pumText(.body, weight: .bold).foregroundStyle(PumColor.textPrimary) // 16px 700 → body
                 Text(card.subtitle).pumText(.caption).foregroundStyle(PumColor.textSecondary)
             }
-            Spacer(minLength: PumTokens.Space.s8)
+            Spacer(minLength: 0)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
@@ -80,8 +81,8 @@ struct AccessEndedView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding(.vertical, PumTokens.Size.rowPadY)
-        .padding(.horizontal, PumTokens.Size.rowPadX)
+        .padding(.vertical, PumTokens.Space.s14) // 원문 padding 14 0
+        .padding(.horizontal, PumTokens.Space.s18)
         .frame(minHeight: PumTokens.Size.tapMin)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(row.spokenText))
@@ -96,13 +97,14 @@ struct AccessEndedView: View {
     }
 
     private var actions: some View {
-        VStack(spacing: PumTokens.Space.s4) {
+        VStack(spacing: PumTokens.Space.s10) { // 원문 gap 10
             PumButton(title: state.primaryTitle, kind: .primary, action: onPrimary)
             PumButton(title: state.secondaryTitle, kind: .text, size: .small, action: onSecondary)
+                .padding(.vertical, -PumTokens.Space.s2) // 원문 높이 40, 누름은 44 유지
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
         .padding(.top, PumTokens.Space.s12)
-        .padding(.bottom, PumTokens.Space.s4)
+        .padding(.bottom, PumTokens.Space.s10) // 원문 아래 44 − 홈 막대
         .background(PumColor.bgApp)
     }
 }
