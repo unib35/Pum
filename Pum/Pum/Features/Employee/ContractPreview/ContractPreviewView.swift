@@ -99,7 +99,7 @@ struct ContractPreviewView: View {
                 .frame(minWidth: PumTokens.Size.tapMin, minHeight: PumTokens.Size.tapMin, alignment: .trailing)
                 .contentShape(Rectangle())
                 // 누름 영역 44는 유지, 배치 높이만 원문(글자 줄 약 18)에 맞춘다
-                .padding(.vertical, -(PumTokens.Size.tapMin - 18) / 2)
+                .padding(.vertical, -(PumTokens.Size.tapMin - PumTokens.Space.s18) / 2)
         }
         .buttonStyle(.plain)
         return ViewThatFits(in: .horizontal) {

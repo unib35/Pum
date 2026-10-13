@@ -92,7 +92,7 @@ struct AdminConfirmCheckInView: View {
         // 보이는 높이 36(원문), 누름 영역 44는 유지하고 배치 높이만 36
         .frame(minHeight: PumTokens.Size.tapMin)
         .contentShape(Rectangle())
-        .padding(.vertical, -(PumTokens.Size.tapMin - 36) / 2)
+        .padding(.vertical, -(PumTokens.Size.tapMin - PumTokens.Space.s24 - PumTokens.Space.s12) / 2)
         .accessibilityElement(children: .combine)
     }
 
