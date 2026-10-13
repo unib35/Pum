@@ -22,8 +22,8 @@ struct WorkTermsInputView: View {
     // 화면 전용 상수 (DEC-005)
     /// 요일 칩 한 변 — 원문 30(2e · 8d와 같은 값)
     @ScaledMetric(relativeTo: .caption) private var chipSize = PumTimePickerStyle.weekdayChip
-    /// 필수 항목 줄 체크 원 지름 — 원문 약 24
-    @ScaledMetric(relativeTo: .footnote) private var checkSize: CGFloat = 24
+    /// 필수 항목 줄 체크 원 지름 — 원문 20
+    @ScaledMetric(relativeTo: .footnote) private var checkSize: CGFloat = 20
 
     init(state: WorkTermsInputState = .sample,
          onBack: @escaping () -> Void = {},
@@ -61,10 +61,8 @@ struct WorkTermsInputView: View {
             ScrollView {
                 VStack(spacing: PumTokens.Space.s12) {
                     employeeCard
-                    PumSectionHeader(title: WorkTermsInputState.wageHeading)
-                    wageCard
-                    PumSectionHeader(title: WorkTermsInputState.workHeading)
-                    workCard
+                    section(WorkTermsInputState.wageHeading) { wageCard }
+                    section(WorkTermsInputState.workHeading) { workCard }
                     weeklyCard
                     requiredLine
                 }
@@ -119,7 +117,7 @@ struct WorkTermsInputView: View {
                     badge
                 }
             }
-            .padding(.vertical, PumTokens.Space.s14)
+            .padding(.vertical, PumTokens.Space.s12)
             .padding(.horizontal, PumTokens.Space.s16)
             .frame(maxWidth: .infinity, alignment: .leading)
             .accessibilityElement(children: .combine)
@@ -205,14 +203,14 @@ struct WorkTermsInputView: View {
 
     @ViewBuilder private var requiredLine: some View {
         if let text = state.requiredText {
-            let label = HStack(spacing: PumTokens.Space.s12) {
+            let label = HStack(spacing: PumTokens.Space.s10) {
                 Image(systemName: "checkmark")
-                    .font(.system(size: checkSize * 0.5, weight: .bold))
+                    .font(.system(size: checkSize * 0.6, weight: .bold))
                     .foregroundStyle(PumColor.textPrimary)
                     .frame(width: checkSize, height: checkSize)
                     .background(PumColor.surfaceFill, in: Circle())
                     .accessibilityHidden(true)
-                Text(text).pumText(.footnote).foregroundStyle(PumColor.textSecondary)
+                Text(text).pumText(.footnote).foregroundStyle(PumTokens.ColorToken.gray800)
             }
             let link = Button(action: onShowItems) {
                 Text(WorkTermsInputState.showItemsTitle).pumText(.footnote, weight: .semibold)
@@ -231,9 +229,16 @@ struct WorkTermsInputView: View {
 
     // MARK: 행 조각
 
+    /// 구역 제목과 카드 사이 6(원문)
+    private func section<C: View>(_ title: String, @ViewBuilder content: () -> C) -> some View {
+        VStack(spacing: PumTokens.Space.s6) {
+            PumSectionHeader(title: title)
+            content()
+        }
+    }
+
     private var divider: some View {
         Rectangle().fill(PumColor.borderHairline).frame(height: 1)
-            .padding(.horizontal, PumTokens.Size.rowPadX)
     }
 
     private func valueText(_ text: String) -> some View {
@@ -243,7 +248,7 @@ struct WorkTermsInputView: View {
 
     private func keyText(_ text: String, subtitle: String? = nil) -> some View {
         VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
-            Text(text).pumText(.body, weight: .regular).foregroundStyle(PumColor.textSecondary)
+            Text(text).pumText(.body, weight: .regular).foregroundStyle(PumTokens.ColorToken.gray800)
             if let subtitle { Text(subtitle).pumText(.caption).foregroundStyle(PumColor.textSecondary) }
         }
     }
@@ -309,9 +314,10 @@ struct WorkTermsInputView: View {
                         .frame(width: chipSize, height: chipSize)
                         .background(on ? PumColor.surfaceInverse : PumColor.surfaceFill,
                                     in: RoundedRectangle(cornerRadius: PumTokens.Radius.sm, style: .continuous))
-                        // 누름 영역: 세로 44pt, 가로는 칩 + 간격(이웃과 겹치지 않게)
+                        // 누름 영역: 세로 44pt, 가로는 칩 + 간격(이웃과 겹치지 않게). 줄 높이에는 칩 크기만 쓴다
                         .frame(minWidth: chipSize + PumTokens.Space.s4, minHeight: PumTokens.Size.tapMin)
                         .contentShape(Rectangle())
+                        .padding(.vertical, -max(0, PumTokens.Size.tapMin - chipSize) / 2)
                 }
                 .buttonStyle(.plain)
                 .padding(.horizontal, -PumTokens.Space.s2)
