@@ -42,6 +42,9 @@ nonisolated struct MyLeaveState: Equatable, Sendable {
     let earnedText: String
     /// 막대에서 쓴 몫(0–1000, 서버 값). 화면은 나누지 않는다.
     let usedPermille: Int
+    /// 막대에 쓰는 몫 — 서버 값이 0–1000 밖이면 끝에 붙인다
+    var barUsedPermille: Int { Self.clampedPermille(usedPermille) }
+    static func clampedPermille(_ value: Int) -> Int { min(max(value, 0), 1000) }
     let accrualRows: [MyLeaveRow]
     let usedRows: [MyLeaveRow]
 

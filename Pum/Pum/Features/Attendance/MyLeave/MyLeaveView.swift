@@ -106,7 +106,7 @@ struct MyLeaveView: View {
     /// 쓴 몫(회색) + 남은 몫(파랑) — 몫은 서버 값
     private var bar: some View {
         GeometryReader { geo in
-            let used = geo.size.width * CGFloat(state.usedPermille) / 1000
+            let used = geo.size.width * CGFloat(state.barUsedPermille) / 1000
             HStack(spacing: 0) {
                 Rectangle().fill(PumTokens.ColorToken.gray500).frame(width: used)
                 Rectangle().fill(PumColor.accent)

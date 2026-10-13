@@ -25,4 +25,10 @@ struct MyLeaveTests {
         #expect(s.accrualRows[0].spoken == "다음에 생기는 날, 10월 9일 · 3.6시간")
         #expect(s.accrualRows[2].spoken == "1년이 되는 날, 15일 × 3.6시간, 2027.3.9 · 54시간")
     }
+
+    @Test func 막대_몫은_0에서_1000() {
+        #expect(MyLeaveState.sample.barUsedPermille == 333)
+        #expect(MyLeaveState.clampedPermille(-5) == 0)
+        #expect(MyLeaveState.clampedPermille(1_200) == 1_000)
+    }
 }
