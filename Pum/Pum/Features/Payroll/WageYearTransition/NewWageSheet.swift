@@ -16,6 +16,8 @@ struct NewWageSheet: View {
     @ScaledMetric(relativeTo: .callout) private var avatarSize: CGFloat = 30
     /// 입력칸 폭 — 원문 약 112
     @ScaledMetric(relativeTo: .body) private var fieldWidth: CGFloat = 112
+    /// 입력칸 높이 — 원문 40
+    private let fieldHeight: CGFloat = PumLayout.navRow
     /// 입력 자릿수 상한 — 9자리(억 단위)
     private let maxDigits = 9
 
@@ -35,7 +37,7 @@ struct NewWageSheet: View {
                 .frame(maxWidth: .infinity)
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
-        .padding(.bottom, PumTokens.Space.s16)
+        // 원문 아래 34는 홈 막대 안전 영역(시트 판이 따로 더함)
     }
 
     // MARK: 머리
@@ -85,8 +87,7 @@ struct NewWageSheet: View {
             }
         }
         .padding(.horizontal, PumTokens.Size.rowPadX)
-        .padding(.vertical, PumTokens.Space.s10)
-        .frame(minHeight: PumTokens.Size.tapMin)
+        .padding(.vertical, PumTokens.Size.rowPadY) // 원문 11 → 가까운 12
     }
 
     private func identity(_ e: WageEmployee) -> some View {
@@ -120,6 +121,8 @@ struct NewWageSheet: View {
         }
         .padding(.horizontal, PumTokens.Space.s12)
         .frame(minHeight: PumTokens.Size.tapMin)
+        .contentShape(Rectangle())
+        .padding(.vertical, -(PumTokens.Size.tapMin - fieldHeight) / 2) // 원문 칸 높이 40(누름 영역 44 유지)
         .frame(width: stacked ? nil : fieldWidth)
         .frame(maxWidth: stacked ? .infinity : nil)
         .background(PumColor.surfaceCard, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
@@ -163,7 +166,6 @@ struct NewWageSheet: View {
         }
         .padding(.horizontal, PumTokens.Size.rowPadX)
         .padding(.vertical, PumTokens.Size.rowPadY)
-        .frame(minHeight: PumTokens.Size.tapMin)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text("\(title), \(detail)"))
         .accessibilityValue(Text(value))
@@ -184,7 +186,6 @@ struct NewWageSheet: View {
                 WageRatioLayout(ratio: 1.5, gap: PumTokens.Space.s8) { cancel; send } // C1 PAIR — 취소 : 보내기 = 1 : 1.5
             }
         }
-        .padding(.top, PumTokens.Space.s4)
     }
 }
 

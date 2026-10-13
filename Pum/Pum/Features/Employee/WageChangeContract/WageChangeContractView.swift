@@ -12,8 +12,8 @@ struct WageChangeContractView: View {
 
     @Environment(\.dynamicTypeSize) private var typeSize
 
-    /// 회색 원 아바타 지름(원문 약 26)
-    @ScaledMetric(relativeTo: .body) private var avatarSize: CGFloat = 26
+    /// 회색 원 아바타 지름(원문 28)
+    @ScaledMetric(relativeTo: .body) private var avatarSize: CGFloat = 28
 
     init(state: WageChangeContractState,
          onBack: @escaping () -> Void = {},
@@ -31,14 +31,16 @@ struct WageChangeContractView: View {
         VStack(spacing: 0) {
             backRow
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s14) { // 원문 블록 사이 14
                     header
+                    sender
+                        .padding(.horizontal, PumTokens.Space.s4)
                     wageSection
                     restCard
                     impactCard
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s12)
+                .padding(.top, PumTokens.Space.s14) // 원문 머리 줄 아래 14
             }
         }
         .background(PumColor.bgApp)
@@ -67,7 +69,7 @@ struct WageChangeContractView: View {
     }
 
     private var header: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s6) { // 원문 배지 줄~제목 6
             ViewThatFits(in: .horizontal) {
                 HStack(spacing: PumTokens.Space.s8) { needsDecision; sent }
                 VStack(alignment: .leading, spacing: PumTokens.Space.s6) { needsDecision; sent }
@@ -77,9 +79,9 @@ struct WageChangeContractView: View {
             Text(WageChangeContractState.headerTitle).pumText(.title2).foregroundStyle(PumColor.textPrimary)
                 .fixedSize(horizontal: false, vertical: true)
                 .accessibilityAddTraits(.isHeader)
-            sender
         }
         .padding(.horizontal, PumTokens.Space.s4)
+        .padding(.top, PumTokens.Space.s2) // 원문 padding 2 4 0
     }
 
     private var needsDecision: some View { PumBadge(text: WageChangeContractState.needsDecisionTitle, kind: .attention) }
@@ -90,7 +92,7 @@ struct WageChangeContractView: View {
     }
 
     private var sender: some View {
-        HStack(spacing: PumTokens.Space.s12) {
+        HStack(spacing: PumTokens.Space.s10) { // 원문 원~이름 10
             if !state.senderInitial.isEmpty {
             Text(state.senderInitial)
                 .font(PumFont.font(size: avatarSize * 0.42, weight: .bold, relativeTo: .caption))
@@ -111,10 +113,11 @@ struct WageChangeContractView: View {
     // MARK: 시급
 
     private var wageSection: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s14) {
             Text(state.wageHeading).pumText(.body, weight: .bold).foregroundStyle(PumColor.textPrimary)
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.horizontal, PumTokens.Space.s4)
+                .padding(.top, PumTokens.Space.s4) // 원문 padding 4 4 0
                 .accessibilityAddTraits(.isHeader)
             ViewThatFits(in: .horizontal) {
                 HStack(spacing: PumTokens.Space.s8) { currentTile; newTile }
@@ -134,7 +137,7 @@ struct WageChangeContractView: View {
     }
 
     @ViewBuilder private func tile(label: String, value: String, isNew: Bool) -> some View {
-        let r = PumTokens.Radius.lg
+        let r = PumTokens.Radius.md // 원문 12
         let content = VStack(alignment: .leading, spacing: PumTokens.Space.s4) {
             Text(label).pumText(.caption)
                 .foregroundStyle(isNew ? PumColor.accent : PumColor.textSecondary)
@@ -144,7 +147,7 @@ struct WageChangeContractView: View {
                 .fixedSize(horizontal: false, vertical: true)
         }
         .padding(.vertical, PumTokens.Size.rowPadY)
-        .padding(.horizontal, PumTokens.Size.rowPadX)
+        .padding(.horizontal, PumTokens.Space.s14) // 원문 padding 12 14
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(isNew ? PumColor.accentSoft : PumColor.surfaceCard,
                     in: RoundedRectangle(cornerRadius: r, style: .continuous))
@@ -179,7 +182,7 @@ struct WageChangeContractView: View {
             }
             .padding(.vertical, PumTokens.Size.rowPadY)
             .padding(.horizontal, PumTokens.Size.rowPadX)
-            .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin, alignment: .leading)
+            .frame(maxWidth: .infinity, alignment: .leading)
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(Text(state.impactSpoken))
         }
@@ -202,8 +205,8 @@ struct WageChangeContractView: View {
         Text(text).pumText(.body, weight: .bold).foregroundStyle(PumColor.textPrimary)
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, PumTokens.Size.rowPadX)
-            .padding(.top, PumTokens.Size.rowPadY + PumTokens.Space.s2)
-            .padding(.bottom, PumTokens.Space.s2)
+            .padding(.top, PumTokens.Space.s14) // 원문 머리 padding 14 16 4
+            .padding(.bottom, PumTokens.Space.s4)
             .accessibilityAddTraits(.isHeader)
     }
 
@@ -215,22 +218,23 @@ struct WageChangeContractView: View {
             HStack(alignment: .firstTextBaseline, spacing: PumTokens.Space.s12) { l.fixedSize(); Spacer(minLength: 0); v }
             VStack(alignment: .leading, spacing: PumTokens.Space.s4) { l; v }
         }
-        .padding(.vertical, PumTokens.Size.rowPadY + PumTokens.Space.s2)
+        .padding(.vertical, PumTokens.Size.rowPadY) // 원문 11 → 가까운 12
         .padding(.horizontal, PumTokens.Size.rowPadX)
-        .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin, alignment: .leading)
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     // MARK: 하단
 
     private var footer: some View {
-        VStack(spacing: PumTokens.Space.s12) {
+        VStack(spacing: PumTokens.Space.s10) { // 원문 버튼~안내 10
             buttons
             Text(state.footerNotice).pumText(.caption).foregroundStyle(PumColor.textSecondary)
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
-        .padding(.vertical, PumTokens.Space.s12)
+        .padding(.top, PumTokens.Space.s12)
+        .padding(.bottom, PumTokens.Space.s10) // 원문 하단 44 − 홈 막대 안전 영역 34
         .background(PumColor.bgApp)
     }
 

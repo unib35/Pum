@@ -12,7 +12,7 @@ struct BreakReviewView: View {
     @State private var isApproving = false
     @State private var isApproved = false
     @Environment(\.dynamicTypeSize) private var typeSize
-    @ScaledMetric(relativeTo: .body) private var statusCircle = PumLayout.avatar - PumTokens.Space.s12
+    @ScaledMetric(relativeTo: .body) private var statusCircle = PumLayout.avatar - PumTokens.Space.s10
 
     init(state: BreakReviewState,
          onBack: @escaping () -> Void = {},
@@ -28,8 +28,9 @@ struct BreakReviewView: View {
         VStack(spacing: 0) {
             backRow
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s14) { // 원문 블록 사이 14
                     header
+                    shift
                     breakTiles
                     reasonCard
                     ifApprovedCard
@@ -38,7 +39,7 @@ struct BreakReviewView: View {
                     }
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s12)
+                .padding(.top, PumTokens.Space.s14) // 원문 머리 줄 아래 14
             }
         }
         .background(PumColor.bgApp)
@@ -67,7 +68,7 @@ struct BreakReviewView: View {
     }
 
     private var header: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s6) { // 원문 배지 줄~제목 6
             ViewThatFits(in: .horizontal) {
                 HStack(spacing: PumTokens.Space.s8) { badge; sender }
                 VStack(alignment: .leading, spacing: PumTokens.Space.s6) { badge; sender }
@@ -77,11 +78,17 @@ struct BreakReviewView: View {
             Text(BreakReviewState.headerTitle).pumText(.title2).foregroundStyle(PumColor.textPrimary)
                 .fixedSize(horizontal: false, vertical: true)
                 .accessibilityAddTraits(.isHeader)
-            Text(state.shiftText).pumText(.body, weight: .bold).foregroundStyle(PumColor.textPrimary)
-                .fixedSize(horizontal: false, vertical: true)
-                .padding(.top, PumTokens.Space.s4)
         }
         .padding(.horizontal, PumTokens.Space.s4)
+        .padding(.top, PumTokens.Space.s2) // 원문 padding 2 4 0
+    }
+
+    private var shift: some View {
+        Text(state.shiftText).pumText(.body, weight: .bold).foregroundStyle(PumColor.textPrimary)
+            .fixedSize(horizontal: false, vertical: true)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, PumTokens.Space.s4)
+            .padding(.top, PumTokens.Space.s4) // 원문 padding 4 4 0
     }
 
     private var badge: some View { PumBadge(text: BreakReviewState.needsCheckTitle, kind: .attention) }
@@ -111,7 +118,7 @@ struct BreakReviewView: View {
     }
 
     @ViewBuilder private func tile(label: String, value: String, isActual: Bool) -> some View {
-        let r = PumTokens.Radius.lg
+        let r = PumTokens.Radius.md // 원문 12
         let content = VStack(alignment: .leading, spacing: PumTokens.Space.s4) {
             Text(label).pumText(.caption)
                 .foregroundStyle(isActual ? PumColor.accent : PumColor.textSecondary)
@@ -121,7 +128,7 @@ struct BreakReviewView: View {
                 .fixedSize(horizontal: false, vertical: true)
         }
         .padding(.vertical, PumTokens.Size.rowPadY)
-        .padding(.horizontal, PumTokens.Size.rowPadX)
+        .padding(.horizontal, PumTokens.Space.s14) // 원문 padding 12 14
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(isActual ? PumColor.accentSoft : PumColor.surfaceCard,
                     in: RoundedRectangle(cornerRadius: r, style: .continuous))
@@ -147,8 +154,8 @@ struct BreakReviewView: View {
             Text(BreakReviewState.ifApprovedTitle).pumText(.body, weight: .bold).foregroundStyle(PumColor.textPrimary)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, PumTokens.Size.rowPadX)
-                .padding(.top, PumTokens.Size.rowPadY + PumTokens.Space.s2)
-                .padding(.bottom, PumTokens.Space.s2)
+                .padding(.top, PumTokens.Space.s14) // 원문 머리 padding 14 16 4
+                .padding(.bottom, PumTokens.Space.s4)
                 .accessibilityAddTraits(.isHeader)
             pairRow(label: BreakReviewState.workedLabel, value: state.workedChangeText)
                 .accessibilityElement(children: .ignore)
@@ -160,7 +167,7 @@ struct BreakReviewView: View {
             }
             .padding(.vertical, PumTokens.Size.rowPadY)
             .padding(.horizontal, PumTokens.Size.rowPadX)
-            .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin, alignment: .leading)
+            .frame(maxWidth: .infinity, alignment: .leading)
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(Text(state.costSpoken))
         }
@@ -187,9 +194,9 @@ struct BreakReviewView: View {
             HStack(alignment: .firstTextBaseline, spacing: PumTokens.Space.s12) { l.fixedSize(); Spacer(minLength: 0); v }
             VStack(alignment: .leading, spacing: PumTokens.Space.s4) { l; v }
         }
-        .padding(.vertical, PumTokens.Size.rowPadY + PumTokens.Space.s2)
+        .padding(.vertical, PumTokens.Size.rowPadY) // 원문 11 → 가까운 12
         .padding(.horizontal, PumTokens.Size.rowPadX)
-        .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin, alignment: .leading)
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     private func repeatCard(title: String, law: String) -> some View {
@@ -217,14 +224,15 @@ struct BreakReviewView: View {
     // MARK: 하단
 
     private var footer: some View {
-        VStack(spacing: PumTokens.Space.s12) {
+        VStack(spacing: PumTokens.Space.s10) { // 원문 버튼~안내 10
             buttons
             Text(state.footerNotice).pumText(.caption).foregroundStyle(PumColor.textSecondary)
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
-        .padding(.vertical, PumTokens.Space.s12)
+        .padding(.top, PumTokens.Space.s12)
+        .padding(.bottom, PumTokens.Space.s10) // 원문 하단 44 − 홈 막대 안전 영역 34
         .background(PumColor.bgApp)
     }
 

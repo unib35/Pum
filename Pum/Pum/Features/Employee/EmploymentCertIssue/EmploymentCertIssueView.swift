@@ -38,13 +38,13 @@ struct EmploymentCertIssueView: View {
         VStack(spacing: 0) {
             backRow
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s14) { // 원문 블록 사이 14
                     header
                     documentCard
                     choiceCard
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s12)
+                .padding(.top, PumTokens.Space.s14) // 원문 머리 줄 아래 14
             }
         }
         .background(PumColor.bgApp)
@@ -75,7 +75,7 @@ struct EmploymentCertIssueView: View {
     }
 
     private var header: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s6) { // 원문 배지 줄~제목 6
             ViewThatFits(in: .horizontal) {
                 HStack(spacing: PumTokens.Space.s8) { needsDecision; sender }
                 VStack(alignment: .leading, spacing: PumTokens.Space.s6) { needsDecision; sender }
@@ -87,6 +87,7 @@ struct EmploymentCertIssueView: View {
                 .accessibilityAddTraits(.isHeader)
         }
         .padding(.horizontal, PumTokens.Space.s4)
+        .padding(.top, PumTokens.Space.s2) // 원문 padding 2 4 0
     }
 
     private var needsDecision: some View {
@@ -102,13 +103,14 @@ struct EmploymentCertIssueView: View {
 
     private var documentCard: some View {
         PumCard {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+            VStack(alignment: .leading, spacing: PumTokens.Space.s10) { // 원문 gap 9 → 가까운 10
                 Text(EmploymentCertIssueState.documentTitle).tracking(PumTokens.Space.s4) // 원문 넓은 자간 — pumText보다 안쪽에
                     .pumText(.headline, weight: .bold)
                     .foregroundStyle(PumColor.textPrimary)
                     .frame(maxWidth: .infinity)
+                    .padding(.bottom, PumTokens.Space.s4) // 원문 제목 아래 4
                     .accessibilityAddTraits(.isHeader)
-                VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s10) {
                     ForEach(Array(state.rows.enumerated()), id: \.offset) { _, row in
                         docRow(label: row.label, value: row.value)
                             .accessibilityElement(children: .ignore)
@@ -116,11 +118,13 @@ struct EmploymentCertIssueView: View {
                     }
                 }
                 Rectangle().fill(PumColor.borderHairline).frame(height: 1)
+                    .padding(.top, PumTokens.Space.s2) // 원문 구분선 위 2
                 closing
                     .accessibilityElement(children: .ignore)
                     .accessibilityLabel(Text(state.closingSpoken))
             }
-            .padding(PumTokens.Size.rowPadX + PumTokens.Space.s4)
+            .padding(.vertical, PumTokens.Space.s18) // 원문 padding 18 20
+            .padding(.horizontal, PumTokens.Space.s20)
         }
     }
 
@@ -158,9 +162,9 @@ struct EmploymentCertIssueView: View {
     private var signChip: some View {
         Text(EmploymentCertIssueState.signatureChip).pumText(.caption, weight: .semibold)
             .foregroundStyle(PumTokens.ColorToken.gray700)
-            .padding(.horizontal, PumTokens.Space.s10)
-            .padding(.vertical, PumTokens.Space.s6)
-            .background(PumColor.surfaceFill, in: Capsule())
+            .padding(.horizontal, PumTokens.Space.s10) // 원문 padding 4 9 → 가까운 10
+            .padding(.vertical, PumTokens.Space.s4)
+            .background(PumColor.surfaceFill, in: RoundedRectangle(cornerRadius: PumTokens.Radius.sm, style: .continuous))
     }
 
     // MARK: 선택
@@ -195,7 +199,6 @@ struct EmploymentCertIssueView: View {
             }
             .padding(.horizontal, PumTokens.Size.rowPadX)
             .padding(.vertical, PumTokens.Size.rowPadY)
-            .frame(minHeight: PumTokens.Size.tapMin)
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
@@ -208,14 +211,15 @@ struct EmploymentCertIssueView: View {
     // MARK: 하단
 
     private var footer: some View {
-        VStack(spacing: PumTokens.Space.s12) {
+        VStack(spacing: PumTokens.Space.s10) { // 원문 버튼~안내 10
             buttons
             Text(state.footerNotice).pumText(.caption).foregroundStyle(PumColor.textSecondary)
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
-        .padding(.vertical, PumTokens.Space.s12)
+        .padding(.top, PumTokens.Space.s12)
+        .padding(.bottom, PumTokens.Space.s10) // 원문 하단 44 − 홈 막대 안전 영역 34
         .background(PumColor.bgApp)
     }
 
@@ -245,7 +249,8 @@ struct EmploymentCertIssueView: View {
 /// 체크 표시 — 원문: 켜짐은 회색 원 + 체크, 꺼짐은 둥근 네모 테두리(두 행이 서로 다른 모양으로 그려져 있어 켜짐 · 꺼짐으로 나눴다)
 private struct CertCheckMark: View {
     let isOn: Bool
-    @ScaledMetric(relativeTo: .footnote) private var size = PumSelectionStyle.markSize + PumTokens.Space.s4
+    @ScaledMetric(relativeTo: .footnote) private var onSize = PumSelectionStyle.markSize + PumTokens.Space.s4 // 원문 켜짐 원 26
+    @ScaledMetric(relativeTo: .footnote) private var offSize = PumSelectionStyle.markSize // 원문 꺼짐 네모 22
 
     var body: some View {
         ZStack {
@@ -253,11 +258,11 @@ private struct CertCheckMark: View {
                 Circle().fill(PumColor.surfaceFill)
                 Image(systemName: "checkmark").pumText(.caption, weight: .bold).foregroundStyle(PumColor.textPrimary)
             } else {
-                RoundedRectangle(cornerRadius: PumTokens.Radius.sm, style: .continuous)
+                RoundedRectangle(cornerRadius: PumTokens.Radius.xs, style: .continuous) // 원문 모서리 6
                     .strokeBorder(PumTokens.ColorToken.gray300, lineWidth: PumSelectionStyle.ringWidth)
             }
         }
-        .frame(width: size, height: size)
+        .frame(width: isOn ? onSize : offSize, height: isOn ? onSize : offSize)
         .accessibilityHidden(true)
     }
 }
