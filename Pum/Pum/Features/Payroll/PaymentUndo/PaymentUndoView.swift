@@ -42,7 +42,8 @@ struct PaymentUndoView: View {
                     if !state.activities.isEmpty { activityCard }
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s12)
+                .padding(.top, PumTokens.Space.s16) // 원문 gap 14 + 제목 위 2
+                .padding(.bottom, PumTokens.Space.s12)
             }
             .scrollBounceBehavior(.basedOnSize)
         }

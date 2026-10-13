@@ -61,7 +61,7 @@ struct OwnerRecordActionsView: View {
             }
             .padding(.horizontal, PumTokens.Size.screenPad)
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s14) { // 원문 블록 사이 14
                     personRow
                     PumCard {
                         // 원문 값 15px 600 — PumRow 기본 값 글자보다 굵다
@@ -76,7 +76,8 @@ struct OwnerRecordActionsView: View {
                     }
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s12)
+                .padding(.top, PumTokens.Space.s14) // 머리 줄 아래 14
+                .padding(.bottom, PumTokens.Space.s12)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -88,8 +89,7 @@ struct OwnerRecordActionsView: View {
             HStack(spacing: PumTokens.Space.s12) { personInfo; badge }
             VStack(alignment: .leading, spacing: PumTokens.Space.s8) { personInfo; badge }
         }
-        .padding(.horizontal, PumTokens.Space.s4)
-        .accessibilityElement(children: .ignore)
+        .accessibilityElement(children: .ignore) // 원문 좌우 padding 없음
         .accessibilityLabel(Text(state.personAccessibilityText))
     }
 

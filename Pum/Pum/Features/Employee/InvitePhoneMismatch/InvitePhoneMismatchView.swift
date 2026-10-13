@@ -15,7 +15,7 @@ struct InvitePhoneMismatchView: View {
             PumNavHeader(title: InvitePhoneMismatchState.title, onBack: onBack)
                 .padding(.horizontal, PumTokens.Size.screenPad)
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s20) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s14) {
                     Text(InvitePhoneMismatchState.headline).pumText(.title1).foregroundStyle(PumColor.textPrimary)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .accessibilityAddTraits(.isHeader)
@@ -23,10 +23,10 @@ struct InvitePhoneMismatchView: View {
                     workplaceCard
                     Text(InvitePhoneMismatchState.notice).pumText(.caption).foregroundStyle(PumColor.textSecondary)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.horizontal, PumTokens.Space.s8)
+                        .padding(.horizontal, PumTokens.Space.s4)
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s16)
+                .padding(.top, PumTokens.Space.s18) // 블록 gap 14 + 제목 margin-top 4
             }
         }
         .background(PumColor.bgApp)
@@ -47,7 +47,7 @@ struct InvitePhoneMismatchView: View {
     private var workplaceCard: some View {
         PumCard {
             VStack(spacing: 0) {
-                HStack(spacing: PumTokens.Space.s12) {
+                HStack(spacing: PumTokens.Space.s14) {
                     Text(state.initial).pumText(.headline, weight: .bold).foregroundStyle(.white)
                         .frame(width: workplaceTile, height: workplaceTile)
                         .background(state.tileColor, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
@@ -60,7 +60,8 @@ struct InvitePhoneMismatchView: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .padding(PumTokens.Space.s16)
+                .padding(.vertical, PumTokens.Space.s16)
+                .padding(.horizontal, PumTokens.Space.s18)
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel(Text(state.cardAccessibilityText))
                 Rectangle().fill(PumColor.borderHairline).frame(height: 1)
@@ -112,7 +113,7 @@ struct InvitePhoneMismatchView: View {
     }
 
     private var actions: some View {
-        VStack(spacing: PumTokens.Space.s4) {
+        VStack(spacing: PumTokens.Space.s10) {
             PumButton(title: InvitePhoneMismatchState.requestTitle, kind: .primary,
                       isLoading: state.isRequesting, action: onRequestConfirm)
             PumButton(title: InvitePhoneMismatchState.loginWithInvitedTitle, kind: .text,
@@ -121,7 +122,7 @@ struct InvitePhoneMismatchView: View {
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
         .padding(.top, PumTokens.Space.s12)
-        .padding(.bottom, PumTokens.Space.s4)
+        .padding(.bottom, PumTokens.Space.s10)
         .background(PumColor.bgApp)
     }
 }

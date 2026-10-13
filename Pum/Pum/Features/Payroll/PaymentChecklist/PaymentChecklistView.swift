@@ -17,7 +17,7 @@ struct PaymentChecklistView: View {
             PumNavHeader(title: state.title, onBack: onBack)
                 .padding(.horizontal, PumTokens.Size.screenPad)
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s14) { // 원문 블록 사이 14
                     summaryCard
                     if !state.pending.isEmpty { pendingSection }
                     if !state.paid.isEmpty { paidSection }
@@ -27,7 +27,8 @@ struct PaymentChecklistView: View {
                         .padding(.horizontal, PumTokens.Space.s4)
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s16)
+                .padding(.top, PumTokens.Space.s14) // 원문 머리 줄 아래 14
+                .padding(.bottom, PumTokens.Space.s16)
             }
         }
         .background(PumColor.bgApp)
@@ -36,7 +37,7 @@ struct PaymentChecklistView: View {
     // 2. 요약 카드
     private var summaryCard: some View {
         PumCard {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+            VStack(alignment: .leading, spacing: 0) {
                 ViewThatFits(in: .horizontal) {
                     HStack(alignment: .center, spacing: PumTokens.Space.s8) {
                         Text(state.payDateText).pumText(.footnote, weight: .medium).foregroundStyle(PumColor.textSecondary)
@@ -60,7 +61,8 @@ struct PaymentChecklistView: View {
                         count
                     }
                 }
-                bar
+                .padding(.top, PumTokens.Space.s8) // 원문 금액 줄 위 8
+                bar.padding(.top, PumTokens.Space.s14) // 원문 막대 위 14
                 ViewThatFits(in: .horizontal) {
                     HStack {
                         paidSummary
@@ -72,8 +74,10 @@ struct PaymentChecklistView: View {
                         remainingSummary
                     }
                 }
+                .padding(.top, PumTokens.Space.s8) // 원문 요약 줄 위 8
             }
-            .padding(PumTokens.Space.s16)
+            .padding(.vertical, PumTokens.Space.s16)
+            .padding(.horizontal, PumTokens.Space.s18) // 원문 padding 16 18
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         .accessibilityElement(children: .ignore)
@@ -112,7 +116,7 @@ struct PaymentChecklistView: View {
     // 3. 지급 대기
     private var pendingSection: some View {
         VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
-            PumSectionHeader(title: state.pendingHeaderText)
+            PumSectionHeader(title: state.pendingHeaderText).padding(.top, PumTokens.Space.s2) // 원문 padding 2 4 0
             PumCard {
                 ForEach(Array(state.pending.enumerated()), id: \.element.id) { i, p in
                     if i > 0 { divider }
@@ -125,7 +129,7 @@ struct PaymentChecklistView: View {
     // 4. 지급 완료
     private var paidSection: some View {
         VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
-            PumSectionHeader(title: state.paidHeaderText)
+            PumSectionHeader(title: state.paidHeaderText).padding(.top, PumTokens.Space.s2)
             PumCard {
                 ForEach(Array(state.paid.enumerated()), id: \.element.id) { i, p in
                     if i > 0 { divider }
@@ -169,7 +173,7 @@ struct PaymentChecklistView: View {
             }
             .padding(.horizontal, PumTokens.Size.rowPadX)
             .padding(.vertical, PumTokens.Space.s12)
-            .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin, alignment: .leading)
+            .frame(maxWidth: .infinity, alignment: .leading)
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)

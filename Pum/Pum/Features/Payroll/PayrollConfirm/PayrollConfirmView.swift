@@ -5,6 +5,7 @@ import SwiftUI
 struct PayrollConfirmView: View {
     @State private var state: PayrollConfirmState
     @State private var sheetOpen: Bool
+    @ScaledMetric(relativeTo: .callout) private var checkCircle: CGFloat = 34 // 원문 확인 원 지름 34
     /// 확정 — 두 토글 값을 담은 상태를 넘긴다
     var onConfirm: (PayrollConfirmState) -> Void
     var onCancel: () -> Void
@@ -41,40 +42,41 @@ struct PayrollConfirmView: View {
 
     /// 뒤 화면(시트에 덮여 어둡게): 머리 + 확인 완료 상자 + 총액 카드
     private var background: some View {
-        VStack(spacing: PumTokens.Space.s16) {
+        VStack(spacing: PumTokens.Space.s14) { // 원문 블록 사이 14
             HStack {
                 Text("급여").pumText(.title1).foregroundStyle(PumColor.textPrimary) // 28px 700
                     .accessibilityAddTraits(.isHeader)
                 Spacer(minLength: PumTokens.Space.s8)
                 Text(state.yearMonthTitle).pumText(.callout, weight: .semibold) // 14px 600, 꺾쇠 없음
                     .foregroundStyle(PumColor.textPrimary)
-                    .padding(.horizontal, PumTokens.Space.s14)
-                    .frame(minHeight: PumTokens.Size.tapMin)
+                    .padding(.horizontal, PumTokens.Space.s14) // 원문 padding 8 14
+                    .padding(.vertical, PumTokens.Space.s8)
                     .background(PumColor.surfaceCard, in: Capsule())
                     .pumRing(.hairline, cornerRadius: PumTokens.Radius.pill)
             }
             checkedBox
             PumCard {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s4) { // 원문 금액 위 4
                     Text(state.expectedTitle).pumText(.footnote, weight: .medium).foregroundStyle(PumColor.textSecondary) // 13px 500
                     Text(state.amountText).pumText(.hero).foregroundStyle(PumColor.textPrimary) // 32px 700
                         .lineLimit(1).minimumScaleFactor(0.5)
                 }
-                .padding(PumTokens.Space.s16)
+                .padding(.vertical, PumTokens.Space.s16) // 원문 카드 padding 16 18
+                .padding(.horizontal, PumTokens.Space.s18)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .accessibilityElement(children: .combine)
             }
             Spacer(minLength: 0)
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
-        .padding(.vertical, PumTokens.Space.s12)
+        .padding(.bottom, PumTokens.Space.s12) // 원문 제목 줄 위 여백 없음
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
     }
 
     private var checkedBox: some View {
         HStack(spacing: PumTokens.Space.s12) {
             Image(systemName: "checkmark").pumText(.caption, weight: .bold).foregroundStyle(.white)
-                .frame(width: PumTokens.Space.s24, height: PumTokens.Space.s24) // 목업 원 약 26 → space-24
+                .frame(width: checkCircle, height: checkCircle) // 원문 원 34
                 .background(PumColor.statusDone, in: Circle())
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
@@ -83,8 +85,8 @@ struct PayrollConfirmView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding(.horizontal, PumTokens.Space.s14)
-        .padding(.vertical, PumTokens.Space.s10)
+        .padding(.horizontal, PumTokens.Space.s16) // 원문 padding 14 16
+        .padding(.vertical, PumTokens.Space.s14)
         .background(PumColor.statusDoneSoft, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
         .accessibilityElement(children: .combine)
     }

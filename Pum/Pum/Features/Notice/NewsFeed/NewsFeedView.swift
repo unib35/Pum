@@ -274,8 +274,8 @@ private struct InviteCard: View {
 
     var body: some View {
         PumCard(attention: true) {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
-              VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+            VStack(alignment: .leading, spacing: PumTokens.Space.s10) {
+              VStack(alignment: .leading, spacing: PumTokens.Space.s10) {
                 HStack {
                     PumBadge(text: "직원 초대", kind: .attention)
                     Spacer(minLength: PumTokens.Space.s8)
@@ -297,9 +297,10 @@ private struct InviteCard: View {
               }
               .accessibilityElement(children: .ignore)
               .accessibilityLabel(Text("직원 초대, \(invite.ago), \(invite.title), \(invite.detail)"))
-                buttons.padding(.top, PumTokens.Space.s4)
+                buttons
             }
-            .padding(PumTokens.Space.s16)
+            .padding(.vertical, PumTokens.Space.s14)
+            .padding(.horizontal, PumTokens.Space.s16)
         }
         .accessibilityElement(children: .contain)
     }

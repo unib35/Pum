@@ -13,18 +13,19 @@ struct PaymentNotReceivedSheet: View {
     @Environment(\.dynamicTypeSize) private var typeSize
 
     var body: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s14) {
             VStack(alignment: .leading, spacing: PumTokens.Space.s4) {
                 Text(state.sheetTitle).pumText(.title3).foregroundStyle(PumColor.textPrimary)
                     .accessibilityAddTraits(.isHeader)
                 Text(state.sheetSubtitle).pumText(.footnote, weight: .regular).foregroundStyle(PumColor.textSecondary)
             }
+            .padding(.horizontal, PumTokens.Space.s2)
             reasonCard
             memoField
-            buttons.padding(.top, PumTokens.Space.s4)
+            buttons
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
-        .padding(.bottom, PumTokens.Space.s8)
+        .padding(.bottom, PumTokens.Space.s10)
     }
 
     private var reasonCard: some View {
@@ -46,8 +47,9 @@ struct PaymentNotReceivedSheet: View {
     }
 
     private var memoField: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
             Text(state.memoLabel).pumText(.footnote, weight: .semibold).foregroundStyle(PumTokens.ColorToken.gray800)
+                .padding(.horizontal, PumTokens.Space.s2)
                 .accessibilityHidden(true)
             TextField("", text: Binding(get: { draft.memo }, set: { draft.setMemo($0) }))
                 .pumText(.body, weight: .regular)
@@ -56,7 +58,7 @@ struct PaymentNotReceivedSheet: View {
                 .submitLabel(.done)
                 .onSubmit { memoFocused = false }
                 .disabled(isSending)
-                .padding(.horizontal, PumTokens.Size.rowPadX)
+                .padding(.horizontal, PumTokens.Space.s14)
                 .frame(minHeight: PumTokens.Size.buttonH)
                 .background(PumColor.surfaceCard, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
                 .pumRing(.hairline, cornerRadius: PumTokens.Radius.md)

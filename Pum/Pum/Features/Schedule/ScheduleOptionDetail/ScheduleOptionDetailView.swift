@@ -19,43 +19,54 @@ struct ScheduleOptionDetailView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
                     summaryCard
-                    PumSectionHeader(title: state.reasonsTitle)
-                    reasonsCard
-                    PumSectionHeader(title: state.changesTitle)
-                    changesCard
+                    section(state.reasonsTitle) { reasonsCard }
+                    section(state.changesTitle) { changesCard }
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
                 .padding(.vertical, PumTokens.Space.s12)
             }
             PumButton(title: state.sendTitle, kind: .primary, isLoading: isSending, loadingTitle: "요청을 보내는 중", action: send)
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.top, PumTokens.Space.s8)
-                .padding(.bottom, PumTokens.Space.s12)
+                .padding(.top, PumTokens.Space.s12) // 원문 위 12 · 아래 44 − 안전 영역 34 = 10
+                .padding(.bottom, PumTokens.Space.s10)
         }
         .background(PumColor.bgApp)
+    }
+
+    /// 구역 제목 + 카드 — 원문: 제목 위 2 · 제목~카드 6(블록 12 − 6)
+    private func section<C: View>(_ title: String, @ViewBuilder content: () -> C) -> some View {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
+            PumSectionHeader(title: title).padding(.top, PumTokens.Space.s2)
+            content()
+        }
     }
 
     // MARK: 요약
 
     private var summaryCard: some View {
         PumCard {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s4) {
+            VStack(alignment: .leading, spacing: 0) {
+                VStack(alignment: .leading, spacing: 0) {
                     Text(state.summaryTitle).pumText(.caption, weight: .regular).foregroundStyle(PumColor.textSecondary)
                     ViewThatFits(in: .horizontal) {
-                        HStack(alignment: .firstTextBaseline, spacing: PumTokens.Space.s8) { oldAmount; newAmount }
+                        HStack(alignment: .firstTextBaseline, spacing: PumTokens.Space.s10) { oldAmount; newAmount } // 원문 칸 사이 10
                         VStack(alignment: .leading, spacing: PumTokens.Space.s2) { oldAmount; newAmount } // 넘치면 아래로
                     }
+                    .padding(.top, PumTokens.Space.s4) // 원문 금액 위 4
                     Text(state.deltaText).pumText(.footnote, weight: .bold)
                         .foregroundStyle(state.direction == .decrease ? PumColor.statusDone : PumColor.textSecondary)
+                        .padding(.top, PumTokens.Space.s2) // 원문 증감 위 2
                 }
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel(Text(state.summaryAccessibilityText))
                 Rectangle().fill(PumColor.borderHairline).frame(height: 1)
+                    .padding(.top, PumTokens.Space.s10) // 원문 선 위 10 · 선 아래 10
                 checkFlow
+                    .padding(.top, PumTokens.Space.s10)
                     .accessibilityHidden(true) // 요약 라벨이 같은 내용을 읽는다
             }
-            .padding(PumTokens.Space.s16)
+            .padding(.horizontal, PumTokens.Space.s16) // 원문 padding 14 16
+            .padding(.vertical, PumTokens.Space.s14)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
@@ -72,7 +83,7 @@ struct ScheduleOptionDetailView: View {
 
     /// 한 줄에 안 들어가면 줄바꿈 흐름. 9b 체크 표시와 같은 값(공통 후보: 초록 체크 항목)
     private var checkFlow: some View {
-        PumCheckFlowLayout(spacing: PumTokens.Space.s12, lineSpacing: PumTokens.Space.s8) {
+        PumCheckFlowLayout(spacing: PumTokens.Space.s10, lineSpacing: PumTokens.Space.s10) { // 원문 gap 10
             ForEach(state.checks, id: \.title) { item in
                 HStack(spacing: PumTokens.Space.s4) {
                     if item.met {
@@ -140,12 +151,12 @@ struct ScheduleOptionDetailView: View {
 
     private func changeRow(_ c: ScheduleStaffChange) -> some View {
         ViewThatFits(in: .horizontal) {
-            HStack(alignment: .center, spacing: PumTokens.Space.s12) {
+            HStack(alignment: .center, spacing: PumTokens.Space.s10) { // 원문 칸 사이 10
                 PumAvatar(name: c.name, colorIndex: c.colorIndex)
                 changeText(c).frame(maxWidth: .infinity, alignment: .leading)
                 changeTag(c)
             }
-            HStack(alignment: .top, spacing: PumTokens.Space.s12) { // 넘치면 증감은 이름 아래로
+            HStack(alignment: .top, spacing: PumTokens.Space.s10) { // 넘치면 증감은 이름 아래로
                 PumAvatar(name: c.name, colorIndex: c.colorIndex)
                 VStack(alignment: .leading, spacing: PumTokens.Space.s4) {
                     changeText(c)
@@ -175,7 +186,7 @@ struct ScheduleOptionDetailView: View {
     }
 
     private func changeTag(_ c: ScheduleStaffChange) -> some View {
-        Text(c.changeText).pumText(.caption, weight: .semibold).foregroundStyle(PumColor.textSecondary)
+        Text(c.changeText).pumText(.caption, weight: .semibold).foregroundStyle(PumTokens.ColorToken.gray700) // 원문 #5B6170
     }
 
     private var divider: some View {

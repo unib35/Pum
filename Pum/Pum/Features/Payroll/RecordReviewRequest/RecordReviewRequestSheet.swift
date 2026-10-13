@@ -17,22 +17,20 @@ struct RecordReviewRequestSheet: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
+            VStack(alignment: .leading, spacing: PumTokens.Space.s8) { // 원문 12 − 4
                 Text(RecordReviewRequestState.sheetTitle).pumText(.title3) // 22px 700 → title3(1ao · 1al과 같은 결정)
                     .foregroundStyle(PumColor.textPrimary)
                     .accessibilityAddTraits(.isHeader)
                 Text(RecordReviewRequestState.sheetSubtitle).pumText(.footnote, weight: .regular) // 13px
                     .foregroundStyle(PumColor.textSecondary)
             }
-            .padding(.horizontal, PumTokens.Space.s4) // 원문: 카드보다 약 4 안쪽
             settings
             messageField
             PumButton(title: state.sendTitle, kind: .primary, isLoading: state.isSending, action: onSend)
                 .disabled(!state.canSend && !state.isSending)
-                .padding(.top, PumTokens.Space.s4)
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
-        .padding(.bottom, PumTokens.Space.s16)
+        .padding(.bottom, PumTokens.Space.s10) // 원문 아래 44 − 안전 영역 34
     }
 
     // MARK: 설정 카드
@@ -60,7 +58,7 @@ struct RecordReviewRequestSheet: View {
     private func kvRow(_ key: String, _ value: String) -> some View {
         keyValue(key, value)
             .padding(.horizontal, PumTokens.Size.rowPadX)
-            .padding(.vertical, PumTokens.Size.rowPadY)
+            .padding(.vertical, PumTokens.Space.s14) // 원문 padding 14 0
             .frame(minHeight: PumTokens.Size.tapMin)
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(Text("\(key), \(value)"))
@@ -106,7 +104,7 @@ struct RecordReviewRequestSheet: View {
             }
         }
         .padding(.horizontal, PumTokens.Size.rowPadX)
-        .padding(.vertical, PumTokens.Size.rowPadY)
+        .padding(.vertical, PumTokens.Space.s14)
     }
 
     // MARK: 자동 보내기
@@ -123,7 +121,7 @@ struct RecordReviewRequestSheet: View {
         .tint(PumColor.accent)
         .disabled(state.isSending) // 처리 중에는 보낸 값과 화면 값이 어긋나지 않게
         .padding(.horizontal, PumTokens.Size.rowPadX)
-        .padding(.vertical, PumTokens.Space.s10)
+        .padding(.vertical, PumTokens.Space.s14)
         .frame(minHeight: PumTokens.Size.tapMin)
         .accessibilityLabel(Text("\(RecordReviewRequestState.autoSendTitle), \(state.autoSendSubtitle)"))
     }
@@ -138,8 +136,8 @@ struct RecordReviewRequestSheet: View {
             .disabled(state.isSending)
             .padding(PumTokens.Space.s12)
             .frame(height: messageMinHeight) // TextEditor는 세로로 늘어나려 해서 시트를 화면 끝까지 키운다 — 높이를 정해 둔다
-            .background(PumColor.surfaceCard, in: RoundedRectangle(cornerRadius: PumTokens.Radius.lg, style: .continuous))
-            .pumRing(.hairline, cornerRadius: PumTokens.Radius.lg)
+            .background(PumColor.surfaceCard, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
+            .pumRing(.hairline, cornerRadius: PumTokens.Radius.md) // 원문 모서리 12
             .accessibilityLabel(Text("직원에게 보낼 메시지"))
     }
 }

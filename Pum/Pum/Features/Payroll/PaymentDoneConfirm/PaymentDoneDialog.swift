@@ -55,16 +55,17 @@ struct PaymentDoneDialog: View {
 
     private var panel: some View {
         VStack(spacing: 0) {
-            VStack(spacing: PumTokens.Space.s12) {
+            VStack(spacing: 0) {
                 Text(state.title).pumText(.headline, weight: .bold).foregroundStyle(PumColor.textPrimary)
                     .multilineTextAlignment(.center)
                     .accessibilityAddTraits(.isHeader)
                     .accessibilityFocused($titleFocused)
-                infoBox
+                infoBox.padding(.top, PumTokens.Space.s14) // 원문 제목~상자 14
                 Text(state.noticeLine1 + "\n" + state.noticeLine2)
                     .pumText(.footnote, weight: .regular).foregroundStyle(PumColor.textSecondary)
                     .multilineTextAlignment(.center)
                     .accessibilityLabel(Text(state.noticeSpoken))
+                    .padding(.top, PumTokens.Space.s12) // 원문 상자~안내 12
             }
             .padding(.horizontal, PumTokens.Space.s18)
             .padding(.top, PumTokens.Space.s20)
@@ -126,6 +127,7 @@ struct PaymentDoneDialog: View {
             Text(title).pumText(.body, weight: weight).foregroundStyle(color)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, PumTokens.Space.s8)
+                .padding(.vertical, PumTokens.Space.s14) // 원문 버튼 padding 14 0
                 .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin, maxHeight: .infinity)
                 .contentShape(Rectangle())
         }

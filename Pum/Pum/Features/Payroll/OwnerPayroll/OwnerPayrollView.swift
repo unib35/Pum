@@ -4,14 +4,14 @@ import SwiftUI
 
 /// 이 화면 전용 크기 — 토큰에 없는 것만(DEC-005)
 private enum OwnerPayrollLayout {
-    /// 진행 단계 원 지름(목업 약 26)
-    static let stepCircle: CGFloat = 26
+    /// 진행 단계 원 지름(목업 22)
+    static let stepCircle: CGFloat = 22
     /// 단계 사이 선 굵기(목업 약 2) — space-2
     static let stepLine: CGFloat = PumTokens.Space.s2
-    /// 경고 숫자 원 지름(목업 약 32)
-    static let warnCircle: CGFloat = 32
-    /// 직원 아바타(목업 약 44)
-    static let avatar: CGFloat = PumTokens.Size.tapMin
+    /// 경고 숫자 원 지름(목업 34)
+    static let warnCircle: CGFloat = 34
+    /// 직원 아바타(목업 36)
+    static let avatar: CGFloat = PumLayout.avatar
 }
 
 struct OwnerPayrollView: View {
@@ -26,7 +26,7 @@ struct OwnerPayrollView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: PumTokens.Space.s16) {
+            VStack(spacing: PumTokens.Space.s14) { // 원문 블록 사이 14
                 header
                 stepper
                 if record.showsWarning { warning }
@@ -34,7 +34,7 @@ struct OwnerPayrollView: View {
                 employeeCard
             }
             .padding(.horizontal, PumTokens.Size.screenPad)
-            .padding(.vertical, PumTokens.Space.s12)
+            .padding(.bottom, PumTokens.Space.s12) // 원문 제목 줄 위 여백 없음
         }
         .background(PumColor.bgApp)
         .safeAreaInset(edge: .bottom, spacing: 0) {
@@ -45,7 +45,8 @@ struct OwnerPayrollView: View {
                         .accessibilityLabel(Text(record.confirmAccessibilityLabel))
                         .accessibilityHint(Text(record.confirmAccessibilityHint))
                         .padding(.horizontal, PumTokens.Size.screenPad)
-                        .padding(.vertical, PumTokens.Space.s8)
+                        .padding(.top, PumTokens.Space.s12) // 원문 아래 44 − 안전 영역 34
+                        .padding(.bottom, PumTokens.Space.s10)
                 }
                 // 원문 1u는 탭 바 없이 확정 버튼만 하단 고정
             }
@@ -65,16 +66,19 @@ struct OwnerPayrollView: View {
                 .accessibilityAddTraits(.isHeader)
             if !typeSize.isAccessibilitySize { Spacer(minLength: PumTokens.Space.s8) }
             Button(action: onPickMonth) {
-                HStack(spacing: PumTokens.Space.s4) {
+                HStack(spacing: PumTokens.Space.s6) { // 원문 gap 6
                     Text(record.monthTitle).pumText(.body, weight: .semibold).lineLimit(1) // 15px 600
                     Image(systemName: "chevron.down").font(.caption.weight(.semibold)).accessibilityHidden(true)
                 }
                 .foregroundStyle(PumColor.textPrimary)
-                .padding(.horizontal, PumTokens.Space.s14)
-                .frame(minHeight: PumTokens.Size.tapMin)
+                .padding(.horizontal, PumTokens.Space.s14) // 원문 padding 8 14
+                .padding(.vertical, PumTokens.Space.s8)
                 .background(PumColor.surfaceCard, in: Capsule())
                 .pumRing(.hairline, cornerRadius: PumTokens.Radius.pill)
+                // 누름 44 유지, 배치는 원문 칩 높이만
+                .frame(minHeight: PumTokens.Size.tapMin)
                 .contentShape(Capsule())
+                .padding(.vertical, -(PumTokens.Size.tapMin - (PumTokens.Space.s8 * 2 + PumTokens.Space.s16)) / 2)
             }
             .buttonStyle(.plain)
             .accessibilityLabel(Text(record.monthTitle))
@@ -104,6 +108,7 @@ struct OwnerPayrollView: View {
                 .frame(maxWidth: .infinity)
             }
         }
+        .padding(.horizontal, PumTokens.Space.s2) // 원문 padding 0 2
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(record.stageAccessibilityText))
     }
@@ -151,13 +156,13 @@ struct OwnerPayrollView: View {
                 .foregroundStyle(PumColor.statusAttention)
                 .frame(minWidth: PumTokens.Size.tapMin, minHeight: PumTokens.Size.tapMin)
                 .contentShape(Rectangle())
+                .padding(.vertical, -(PumTokens.Size.tapMin - PumTokens.Space.s16) / 2) // 누름 44 유지 · 배치는 글줄 높이만
             }
             .buttonStyle(.plain)
             .accessibilityHidden(true) // 경고 한 문장의 끝(「처리」)으로 읽는다
         }
-        .padding(.leading, PumTokens.Space.s14)
-        .padding(.trailing, PumTokens.Space.s8)
-        .padding(.vertical, PumTokens.Space.s10)
+        .padding(.vertical, PumTokens.Space.s14) // 원문 padding 14 16
+        .padding(.horizontal, PumTokens.Space.s16)
         .background(PumColor.statusAttentionSoft, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(record.warningAccessibilityText))
@@ -169,7 +174,7 @@ struct OwnerPayrollView: View {
 
     private var summaryCard: some View {
         PumCard {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+            VStack(alignment: .leading, spacing: 0) {
                 ViewThatFits(in: .horizontal) {
                     HStack(alignment: .firstTextBaseline) {
                         Text(record.summaryTitle).pumText(.footnote, weight: .medium)
@@ -185,9 +190,12 @@ struct OwnerPayrollView: View {
                 // 32px 700 → hero. 원문 1u는 「4,210,000원」 한 덩어리(「원」도 같은 크기)
                 Text(record.totalText + "원").pumText(.hero).foregroundStyle(PumColor.textPrimary)
                     .lineLimit(1).minimumScaleFactor(0.5)
+                    .padding(.top, PumTokens.Space.s4) // 원문 금액 위 4
                 footer
+                    .padding(.top, PumTokens.Space.s6) // 원문 한 줄 위 6
             }
-            .padding(PumTokens.Space.s16)
+            .padding(.vertical, PumTokens.Space.s16) // 원문 카드 padding 16 18
+            .padding(.horizontal, PumTokens.Space.s18)
             .frame(maxWidth: .infinity, alignment: .leading)
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(Text(record.summaryAccessibilityText))
@@ -197,7 +205,7 @@ struct OwnerPayrollView: View {
     /// 한 줄: 좁으면 줄바꿈
     private var footer: some View {
         ViewThatFits(in: .horizontal) {
-            HStack(alignment: .firstTextBaseline, spacing: PumTokens.Space.s8) { facts }
+            HStack(alignment: .firstTextBaseline, spacing: PumTokens.Space.s16) { facts } // 원문 gap 16
             VStack(alignment: .leading, spacing: PumTokens.Space.s2) { facts }
         }
     }

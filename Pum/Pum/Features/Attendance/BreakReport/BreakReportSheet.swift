@@ -22,16 +22,16 @@ struct BreakReportSheet: View {
     var body: some View {
         VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
             header
-            VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+            VStack(alignment: .leading, spacing: PumTokens.Space.s6) { // 원문 라벨~칸 6
                 label(BreakReportSheetState.choiceHeader)
                 segments.disabled(locked)
             }
-            VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+            VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
                 label(BreakReportSheetState.reasonHeader)
                 reasonField
             }
             if let p = state.preview(choiceID) { changeCard(p) }
-            VStack(spacing: PumTokens.Space.s12) {
+            VStack(spacing: PumTokens.Space.s12) { // 원문 보내기 버튼~안내는 시트 gap 12
                 PumButton(title: BreakReportSheetState.sendTitle, isLoading: isSending,
                           loadingTitle: BreakReportSheetState.sendingTitle, action: onSend)
                     .disabled(!canSend || isSent)
@@ -44,7 +44,7 @@ struct BreakReportSheet: View {
             }
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
-        .padding(.bottom, PumTokens.Space.s16)
+        // 원문 아래 34는 홈 막대 안전 영역(시트 판이 따로 더함)
         .onAppear { if startsFocused { reasonFocused = true } }
     }
 
@@ -88,14 +88,18 @@ struct BreakReportSheet: View {
                         .pumText(.callout, weight: selected ? .semibold : .medium)
                         .foregroundStyle(selected ? PumColor.textPrimary : PumColor.textSecondary)
                         .multilineTextAlignment(.center)
-                        .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin)
+                        .padding(.vertical, PumTokens.Space.s8) // 원문 칸 padding 8 0
+                        .frame(maxWidth: .infinity)
                         .background {
                             if selected {
-                                RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous)
+                                RoundedRectangle(cornerRadius: PumTokens.Radius.sm, style: .continuous)
                                     .fill(PumColor.surfaceCard)
                             }
                         }
+                        // 누름 영역만 44 이상으로 키우고 배치는 원문 칸 높이만 쓴다
+                        .padding(.vertical, PumTokens.Space.s6)
                         .contentShape(Rectangle())
+                        .padding(.vertical, -PumTokens.Space.s6)
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel(Text(c.title)) // 「선택됨」은 .isSelected가 읽는다
@@ -103,7 +107,7 @@ struct BreakReportSheet: View {
             }
         }
         .padding(PumTokens.Space.s2)
-        .background(PumColor.surfaceFill, in: RoundedRectangle(cornerRadius: PumTokens.Radius.lg, style: .continuous))
+        .background(PumColor.surfaceFill, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous)) // 원문 모서리 10 → 가까운 12
     }
 
     // MARK: 사유
@@ -116,9 +120,8 @@ struct BreakReportSheet: View {
             .focused($reasonFocused)
             .disabled(locked)
             .onChange(of: reason) { if reasonFocused { onEdit() } } // 서버 값으로 바뀐 것은 손댄 것이 아님
-            .padding(.horizontal, PumTokens.Space.s16)
-            .frame(minHeight: PumTokens.Size.tapMin)
-            .padding(.vertical, PumTokens.Space.s6)
+            .padding(.horizontal, PumTokens.Space.s14) // 원문 padding 0 14
+            .padding(.vertical, PumTokens.Space.s14) // 원문 상자 높이 48(글자 한 줄 + 14 × 2)
             .background(PumColor.surfaceCard, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
             .pumRing(reasonFocused ? Self.focusRing : .hairline, cornerRadius: PumTokens.Radius.md)
             .accessibilityLabel(Text(BreakReportSheetState.reasonHeader))
@@ -133,7 +136,7 @@ struct BreakReportSheet: View {
         PumCard {
             Text(BreakReportSheetState.changeHeader).pumText(.body, weight: .bold).foregroundStyle(PumColor.textPrimary)
                 .padding(.horizontal, PumTokens.Size.rowPadX)
-                .padding(.top, PumTokens.Size.rowPadY)
+                .padding(.top, PumTokens.Space.s14) // 원문 머리 padding 14 16 4
                 .padding(.bottom, PumTokens.Space.s4)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .accessibilityAddTraits(.isHeader)
@@ -161,7 +164,7 @@ struct BreakReportSheet: View {
         }
         .padding(.horizontal, PumTokens.Size.rowPadX)
         .padding(.vertical, PumTokens.Size.rowPadY)
-        .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin, alignment: .leading)
+        .frame(maxWidth: .infinity, alignment: .leading)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(readout))
     }

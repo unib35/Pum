@@ -26,10 +26,10 @@ struct PayslipIssueConfirmSheet: View {
                 termRow(PayslipIssueConfirmState.editLabel, PayslipIssueConfirmState.editValue, isLast: false)
                 termRow(PayslipIssueConfirmState.recordLabel, PayslipIssueConfirmState.recordValue, isLast: true)
             }
-            buttons.padding(.top, PumTokens.Space.s4)
+            buttons
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
-        .padding(.bottom, PumTokens.Space.s8)
+        .padding(.bottom, PumTokens.Space.s10) // 원문 아래 44 − 안전 영역 34
     }
 
     private func personRow(_ r: PayslipIssueConfirmRow, isLast: Bool) -> some View {
@@ -61,7 +61,7 @@ struct PayslipIssueConfirmSheet: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding(.vertical, PumTokens.Size.rowPadY)
+        .padding(.vertical, PumTokens.Size.rowPadY) // 원문 13 → 가까운 토큰 12
         .frame(minHeight: PumTokens.Size.tapMin)
         .padding(.horizontal, PumTokens.Size.rowPadX)
         .overlay(alignment: .bottom) { if !isLast { hairline } }
@@ -70,7 +70,7 @@ struct PayslipIssueConfirmSheet: View {
     }
 
     private func key(_ s: String) -> some View {
-        Text(s).pumText(.body, weight: .regular).foregroundStyle(PumColor.textSecondary)
+        Text(s).pumText(.body, weight: .regular).foregroundStyle(PumTokens.ColorToken.gray800)
     }
 
     private func val(_ s: String) -> some View {
@@ -84,8 +84,8 @@ struct PayslipIssueConfirmSheet: View {
     /// 두 버튼: 넓으면 1 : 1.5 가로(취소 → 발행), 넘치면 세로(같은 순서)
     private var buttons: some View {
         ViewThatFits(in: .horizontal) {
-            PayslipConfirmRatioRow(spacing: PumTokens.Space.s8) { cancelButton; issueButton }
-            VStack(spacing: PumTokens.Space.s8) { cancelButton; issueButton }
+            PayslipConfirmRatioRow(spacing: PumTokens.Space.s10) { cancelButton; issueButton }
+            VStack(spacing: PumTokens.Space.s10) { cancelButton; issueButton }
         }
     }
 

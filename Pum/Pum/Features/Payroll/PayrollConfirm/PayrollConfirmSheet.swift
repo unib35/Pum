@@ -22,27 +22,28 @@ struct PayrollConfirmSheet: View {
             summary
             notes
             toggles
-            VStack(spacing: PumTokens.Space.s4) {
-                PumButton(title: "급여 확정", kind: .primary, isLoading: state.isConfirming, action: onConfirm)
-                PumButton(title: "취소", kind: .text, action: onCancel)
-                    .disabled(state.isConfirming)
-            }
-            .padding(.top, PumTokens.Space.s4)
+            PumButton(title: "급여 확정", kind: .primary, isLoading: state.isConfirming, action: onConfirm)
+            // 원문 「취소」는 글줄만(15px) — 누름 영역은 버튼 높이 그대로, 배치만 글줄 높이
+            PumButton(title: "취소", kind: .text, action: onCancel)
+                .disabled(state.isConfirming)
+                .padding(.vertical, -(PumTokens.Size.buttonH - PumTokens.Space.s18) / 2)
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
-        .padding(.bottom, PumTokens.Space.s16)
+        .padding(.bottom, PumTokens.Space.s10) // 원문 아래 44 − 안전 영역 34
     }
 
     // MARK: 요약 카드
 
     private var summary: some View {
         PumCard {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+            VStack(alignment: .leading, spacing: 0) {
                 ViewThatFits(in: .horizontal) {
                     HStack(alignment: .firstTextBaseline) { total }
                     VStack(alignment: .leading, spacing: PumTokens.Space.s2) { total }
                 }
                 Rectangle().fill(PumTokens.ColorToken.borderHairline).frame(height: 1)
+                    .padding(.top, PumTokens.Space.s8) // 원문 합계 줄~구분선 8, 구분선~글 10
+                    .padding(.bottom, PumTokens.Space.s10)
                 ViewThatFits(in: .horizontal) {
                     HStack(alignment: .firstTextBaseline) {
                         Text(state.summaryLeft)
@@ -56,7 +57,8 @@ struct PayrollConfirmSheet: View {
                 }
                 .pumText(.footnote, weight: .regular).foregroundStyle(PumColor.textSecondary)
             }
-            .padding(PumTokens.Space.s16)
+            .padding(.vertical, PumTokens.Space.s16) // 원문 카드 padding 16 18
+            .padding(.horizontal, PumTokens.Space.s18)
             .frame(maxWidth: .infinity, alignment: .leading)
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(Text("총 지급액 \(state.amountText), \(state.summaryLeft), \(state.summaryRight)"))
@@ -73,14 +75,14 @@ struct PayrollConfirmSheet: View {
     // MARK: 점 목록
 
     private var notes: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s10) { // 원문 줄 간격 약 28pt
+        VStack(alignment: .leading, spacing: PumTokens.Space.s8) { // 원문 줄 사이 8
             ForEach(Array(state.notes.enumerated()), id: \.offset) { _, n in
-                HStack(alignment: .firstTextBaseline, spacing: PumTokens.Space.s8) {
+                HStack(alignment: .firstTextBaseline, spacing: PumTokens.Space.s10) { // 원문 점~글 10
                     Circle().fill(PumColor.textPrimary).frame(width: dot, height: dot)
                         .alignmentGuide(.firstTextBaseline) { $0[VerticalAlignment.center] + PumTokens.Space.s4 }
                         .accessibilityHidden(true)
                     Text("\(Text(n.head))\(Text(n.bold).fontWeight(.bold).foregroundColor(PumTokens.ColorToken.gray800))\(Text(n.tail))")
-                        .pumText(.footnote, weight: .regular).foregroundStyle(PumColor.textSecondary)
+                        .pumText(.footnote, weight: .regular).foregroundStyle(PumTokens.ColorToken.gray800) // 원문 #3A4150
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 .accessibilityElement(children: .ignore)
@@ -117,8 +119,7 @@ struct PayrollConfirmSheet: View {
         .tint(PumColor.accent)
         .disabled(state.isConfirming) // 처리 중에는 보낸 값과 화면 값이 어긋나지 않게
         .padding(.horizontal, PumTokens.Space.s16)
-        .padding(.vertical, PumTokens.Space.s10)
-        .frame(minHeight: PumTokens.Size.tapMin)
+        .padding(.vertical, PumTokens.Space.s12) // 원문 행 padding 13 0
         .accessibilityLabel(Text(label))
     }
 }

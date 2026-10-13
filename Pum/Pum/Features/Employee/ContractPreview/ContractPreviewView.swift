@@ -54,20 +54,27 @@ struct ContractPreviewView: View {
 
     private var contractCard: some View {
         PumCard {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+            VStack(alignment: .leading, spacing: 0) {
                 Text(state.docTitle).pumText(.headline, weight: .bold).foregroundStyle(PumColor.textPrimary)
                     .multilineTextAlignment(.center)
                     .frame(maxWidth: .infinity)
                     .accessibilityAddTraits(.isHeader)
                 // 원문 본문은 명조 계열 — 토큰에 없어 본문 글꼴(Pretendard)로 근사
+                    .padding(.bottom, PumTokens.Space.s14)
                 Text(state.intro).pumText(.caption).foregroundStyle(bodyColor)
+                    .padding(.bottom, PumTokens.Space.s8)
                 VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
                     ForEach(state.clauses) { clause in clauseRow(clause) }
                 }
+                .padding(.bottom, PumTokens.Space.s12)
                 Rectangle().fill(PumColor.borderHairline).frame(height: 1)
                 footerRow
+                    .padding(.top, PumTokens.Space.s10)
             }
-            .padding(PumTokens.Space.s16)
+            // 원문 padding 22 20 16 — 위 22는 가까운 토큰 20
+            .padding(.horizontal, PumTokens.Space.s20)
+            .padding(.top, PumTokens.Space.s20)
+            .padding(.bottom, PumTokens.Space.s16)
         }
     }
 
@@ -91,6 +98,8 @@ struct ContractPreviewView: View {
                 .foregroundStyle(PumColor.accent)
                 .frame(minWidth: PumTokens.Size.tapMin, minHeight: PumTokens.Size.tapMin, alignment: .trailing)
                 .contentShape(Rectangle())
+                // 누름 영역 44는 유지, 배치 높이만 원문(글자 줄 약 18)에 맞춘다
+                .padding(.vertical, -(PumTokens.Size.tapMin - PumTokens.Space.s18) / 2)
         }
         .buttonStyle(.plain)
         return ViewThatFits(in: .horizontal) {
@@ -121,7 +130,7 @@ struct ContractPreviewView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding(.vertical, PumTokens.Size.rowPadY)
+        .padding(.vertical, PumTokens.Space.s10)
         .padding(.horizontal, PumTokens.Space.s16)
         .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin, alignment: .leading)
         .accessibilityElement(children: .ignore)
@@ -145,15 +154,15 @@ struct ContractPreviewView: View {
     // MARK: 하단
 
     private var footer: some View {
-        VStack(spacing: PumTokens.Space.s8) {
+        VStack(spacing: PumTokens.Space.s10) {
             PumButton(title: ContractPreviewState.signTitle, kind: .primary, isLoading: lock.isSending,
                       loadingTitle: ContractPreviewState.sendingTitle, action: send)
             Text(ContractPreviewState.footnote).pumText(.caption).foregroundStyle(PumColor.textTertiary)
                 .multilineTextAlignment(.center)
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
-        .padding(.top, PumTokens.Space.s8)
-        .padding(.bottom, PumTokens.Space.s4)
+        .padding(.top, PumTokens.Space.s12)
+        .padding(.bottom, PumTokens.Space.s10)
         .background(PumColor.bgApp)
     }
 

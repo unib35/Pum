@@ -14,8 +14,8 @@ struct InviteAfterSignupView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s20) {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+            VStack(alignment: .leading, spacing: PumTokens.Space.s14) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s20) { // 블록 gap 14 + 제목 margin-top 6
                     brand
                     Text(state.titleText).pumText(.title1).foregroundStyle(PumColor.textPrimary) // 목업 26px 700 → title1(28)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -25,7 +25,7 @@ struct InviteAfterSignupView: View {
                 startWithoutRow
             }
             .padding(.horizontal, PumTokens.Size.screenPad)
-            .padding(.vertical, PumTokens.Space.s16)
+            .padding(.top, PumTokens.Space.s8) // 원문: 안전 영역 아래 8
         }
         .background(PumColor.bgApp)
         .safeAreaInset(edge: .bottom, spacing: 0) { actions }
@@ -45,7 +45,7 @@ struct InviteAfterSignupView: View {
     private var card: some View {
         PumCard {
             VStack(spacing: 0) {
-                HStack(spacing: PumTokens.Space.s12) {
+                HStack(spacing: PumTokens.Space.s14) {
                     Text(state.initial).pumText(.headline, weight: .bold).foregroundStyle(.white)
                         .frame(width: workplaceTile, height: workplaceTile)
                         .background(state.tileColor, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
@@ -58,7 +58,8 @@ struct InviteAfterSignupView: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .padding(PumTokens.Space.s16)
+                .padding(.vertical, PumTokens.Space.s16)
+                .padding(.horizontal, PumTokens.Space.s18)
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel(Text(state.cardAccessibilityText))
                 Rectangle().fill(PumColor.borderHairline).frame(height: 1)
@@ -132,7 +133,7 @@ struct InviteAfterSignupView: View {
     }
 
     private var actions: some View {
-        VStack(spacing: PumTokens.Space.s8) {
+        VStack(spacing: PumTokens.Space.s10) {
             PumButton(title: "초대 확인하기", kind: .primary, action: onConfirm)
             Text("확인하면 제안된 근로조건을 보여드려요").pumText(.caption).foregroundStyle(PumColor.textTertiary)
                 .multilineTextAlignment(.center)
@@ -140,7 +141,7 @@ struct InviteAfterSignupView: View {
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
         .padding(.top, PumTokens.Space.s12)
-        .padding(.bottom, PumTokens.Space.s4)
+        .padding(.bottom, PumTokens.Space.s10)
         .background(PumColor.bgApp)
     }
 }

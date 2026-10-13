@@ -11,7 +11,7 @@ struct LeaveBalanceView: View {
     var onOpenUsage: () -> Void
 
     @State private var selectedId: String?
-    @ScaledMetric(relativeTo: .body) private var avatarSize: CGFloat = 36
+    @ScaledMetric(relativeTo: .body) private var avatarSize: CGFloat = 32
 
     init(state: LeaveBalanceState = .sample,
          onBack: @escaping () -> Void = {},
@@ -29,7 +29,7 @@ struct LeaveBalanceView: View {
             PumNavHeader(title: LeaveBalanceState.screenTitle, onBack: onBack)
                 .padding(.horizontal, PumTokens.Size.screenPad)
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
                     heading
                     staffCard
                     historySection
@@ -119,7 +119,7 @@ struct LeaveBalanceView: View {
     @ViewBuilder private var historySection: some View {
         let entries = state.entries(for: selectedId)
         if let person = state.staffMember(id: selectedId), !entries.isEmpty {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+            VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
                 Text(state.sectionTitle(for: person.name))
                     .pumText(.caption, weight: .bold).foregroundStyle(PumColor.textSecondary)
                     .padding(.horizontal, PumTokens.Space.s4)

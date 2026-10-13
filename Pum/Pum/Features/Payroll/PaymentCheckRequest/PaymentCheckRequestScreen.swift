@@ -48,11 +48,12 @@ struct PaymentCheckRequestScreen: View {
     }
 
     private var background: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s14) {
             backLink
             Text("입금 확인 요청").pumText(.title2).foregroundStyle(PumColor.textPrimary) // 원문 26px 700 — title2(24)로 근사
                 .accessibilityAddTraits(.isHeader)
-                .padding(.top, PumTokens.Space.s8)
+                .padding(.top, PumTokens.Space.s6) // 원문 제목 위 2 + 4
+                .padding(.horizontal, PumTokens.Space.s4)
             Spacer(minLength: 0)
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
@@ -70,11 +71,11 @@ struct PaymentCheckRequestScreen: View {
             .foregroundStyle(PumColor.textPrimary)
             .frame(minWidth: PumTokens.Size.tapMin, minHeight: PumTokens.Size.tapMin, alignment: .leading)
             .contentShape(Rectangle())
+            .padding(.vertical, -PumTokens.Space.s2) // 원문 머리 줄 40(누름 영역은 44 유지)
         }
         .buttonStyle(.plain)
         .disabled(lock.isConfirming) // 알리는 동안 떠나지 않게
         .accessibilityLabel(Text("홈"))
-        .padding(.top, PumTokens.Space.s8)
     }
 }
 

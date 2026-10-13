@@ -4,8 +4,8 @@ import SwiftUI
 
 /// 이 화면 전용 크기 — 토큰에 없는 것만(DEC-005)
 private enum StaffListLayout {
-    /// 직원 아바타(목업 약 44)
-    static let avatar: CGFloat = PumTokens.Size.tapMin
+    /// 직원 아바타 — 원문 40
+    static let avatar: CGFloat = PumLayout.navRow
     /// 전화 버튼 원 지름(목업 약 36) — 터치 영역은 44
     static let callCircle: CGFloat = 36
 }
@@ -23,7 +23,7 @@ struct StaffListView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+            VStack(alignment: .leading, spacing: PumTokens.Space.s14) { // 원문 블록 사이 14
                 header
                 summary
                 listCard
@@ -61,7 +61,6 @@ struct StaffListView: View {
                 }
             }
         }
-        .padding(.top, PumTokens.Space.s8)
     }
 
     private var title: some View {
@@ -77,7 +76,7 @@ struct StaffListView: View {
 
     private var summary: some View {
         ViewThatFits(in: .horizontal) {
-            HStack(spacing: PumTokens.Space.s8) { summaryParts }
+            HStack(spacing: PumTokens.Space.s14) { summaryParts } // 원문 gap 14
             VStack(alignment: .leading, spacing: PumTokens.Space.s2) { summaryParts }
         }
         .accessibilityElement(children: .ignore)
@@ -125,7 +124,7 @@ struct StaffListView: View {
                 }
             }
         }
-        .padding(.vertical, PumTokens.Space.s12)
+        .padding(.vertical, PumTokens.Space.s14) // 원문 padding 14 16
         .padding(.horizontal, PumTokens.Space.s16)
         .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin, alignment: .leading)
         .background {
@@ -148,7 +147,7 @@ struct StaffListView: View {
                 }
             }
         }
-        .padding(.vertical, PumTokens.Space.s12)
+        .padding(.vertical, PumTokens.Space.s14) // 원문 padding 14 16
         .padding(.horizontal, PumTokens.Space.s16)
         .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin, alignment: .leading)
     }

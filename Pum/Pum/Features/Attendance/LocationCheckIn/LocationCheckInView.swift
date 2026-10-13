@@ -36,9 +36,11 @@ struct LocationCheckInView: View {
         /// 칩 안 네모 — 원문 24
         static let chipMark: CGFloat = 24
         static let glyph: CGFloat = 14
+        /// 현재 위치 행 체크 원 — 원문 22
+        static let checkCircle: CGFloat = 22
     }
 
-    @ScaledMetric(relativeTo: .body) private var checkCircle = PumLayout.avatar - PumTokens.Space.s12
+    @ScaledMetric(relativeTo: .body) private var checkCircle = Local.checkCircle
     @ScaledMetric(relativeTo: .caption) private var chipMarkSize = Local.chipMark
 
     var body: some View {
@@ -50,8 +52,7 @@ struct LocationCheckInView: View {
                 methodCard
             }
             .padding(.horizontal, PumTokens.Size.screenPad)
-            .padding(.top, PumTokens.Space.s8)
-            .padding(.bottom, PumTokens.Space.s16)
+            .padding(.bottom, PumTokens.Space.s12)
         }
         .scrollBounceBehavior(.basedOnSize)
         .background(PumColor.bgApp)
@@ -90,12 +91,15 @@ struct LocationCheckInView: View {
                 .foregroundStyle(PumColor.textPrimary)
                 .multilineTextAlignment(.leading)
         }
-        .padding(.vertical, PumTokens.Space.s4)
-        .padding(.leading, PumTokens.Space.s4)
+        .padding(.vertical, PumTokens.Space.s6)
+        .padding(.leading, PumTokens.Space.s6)
         .padding(.trailing, PumTokens.Space.s12)
-        .frame(minHeight: PumTokens.Size.tapMin)
         .background(PumColor.surfaceCard, in: Capsule())
         .overlay(Capsule().stroke(PumColor.borderHairline, lineWidth: 1))
+        // 보이는 높이 36(원문), 누름 영역 44는 유지하고 배치 높이만 36
+        .frame(minHeight: PumTokens.Size.tapMin)
+        .contentShape(Rectangle())
+        .padding(.vertical, -(PumTokens.Size.tapMin - PumTokens.Space.s24 - PumTokens.Space.s12) / 2)
         .accessibilityElement(children: .combine)
     }
 
@@ -113,7 +117,7 @@ struct LocationCheckInView: View {
                     PumBadge(text: state.statusText, kind: .waiting)
                 }
             }
-            .padding(.vertical, PumTokens.Size.rowPadY)
+            .padding(.vertical, PumTokens.Space.s14)
             .padding(.horizontal, PumTokens.Size.rowPadX)
             .frame(minHeight: PumTokens.Size.tapMin)
             .accessibilityElement(children: .combine)
@@ -271,7 +275,7 @@ struct LocationCheckInView: View {
     // MARK: 바닥
 
     private var footer: some View {
-        VStack(spacing: PumTokens.Space.s8) {
+        VStack(spacing: PumTokens.Space.s10) {
             // 위치 판정 값이 없어도 활성 — 출퇴근 기록은 막지 않는다(REQ-029)
             PumButton(title: LocationCheckInState.checkInTitle, kind: .primary, isLoading: lock.isChecking,
                       loadingTitle: LocationCheckInState.checkingTitle, action: checkIn)
@@ -280,8 +284,8 @@ struct LocationCheckInView: View {
                 .multilineTextAlignment(.center)
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
-        .padding(.top, PumTokens.Space.s8)
-        .padding(.bottom, PumTokens.Space.s8)
+        .padding(.top, PumTokens.Space.s12)
+        .padding(.bottom, PumTokens.Space.s10) // 원문 아래 44 − 안전 영역 34
         .background(PumColor.bgApp)
     }
 
