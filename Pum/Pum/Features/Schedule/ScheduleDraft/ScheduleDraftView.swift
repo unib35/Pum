@@ -25,6 +25,9 @@ struct ScheduleDraftView: View {
     private let onPublish: () -> Void
     private let onDraftChange: (AddShiftDraft) -> Void
     private let onAddToDraft: (AddShiftDraft) -> Void
+    private let onCancelPublish: () -> Void
+    private let onConfirmPublish: () -> Void
+    private let onSendChangeRequest: (String) -> Void
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.dynamicTypeSize) private var typeSize
 
@@ -35,10 +38,13 @@ struct ScheduleDraftView: View {
          onCopyLastWeek: @escaping () -> Void = {},
          onPublish: @escaping () -> Void = {},
          onDraftChange: @escaping (AddShiftDraft) -> Void = { _ in },
-         onAddToDraft: @escaping (AddShiftDraft) -> Void = { _ in }) {
+         onAddToDraft: @escaping (AddShiftDraft) -> Void = { _ in },
+         onCancelPublish: @escaping () -> Void = {},
+         onConfirmPublish: @escaping () -> Void = {},
+         onSendChangeRequest: @escaping (String) -> Void = { _ in }) {
         self.state = state
         _selectedID = State(initialValue: state.selectedID)
-        _isSheetOpen = State(initialValue: state.sheet != nil)
+        _isSheetOpen = State(initialValue: state.hasSheet)
         self.onChangeWorkplace = onChangeWorkplace
         self.onSelectDay = onSelectDay
         self.onAddShift = onAddShift
@@ -46,6 +52,9 @@ struct ScheduleDraftView: View {
         self.onPublish = onPublish
         self.onDraftChange = onDraftChange
         self.onAddToDraft = onAddToDraft
+        self.onCancelPublish = onCancelPublish
+        self.onConfirmPublish = onConfirmPublish
+        self.onSendChangeRequest = onSendChangeRequest
     }
 
     var body: some View {
@@ -56,10 +65,17 @@ struct ScheduleDraftView: View {
                         onAddToDraft(draft)
                         isSheetOpen = false
                     }
+                } else if let publish = state.publishSheet {
+                    PublishConfirmSheet(state: publish, onCancel: {
+                        onCancelPublish()
+                        isSheetOpen = false
+                    }, onConfirm: onConfirmPublish)
+                } else if let change = state.changeSheet {
+                    PublishedChangeSheet(state: change, onSend: onSendChangeRequest)
                 }
             }
             .onChange(of: state.selectedID) { _, new in selectedID = new }
-            .onChange(of: state.sheet != nil) { _, hasSheet in isSheetOpen = hasSheet }
+            .onChange(of: state.hasSheet) { _, hasSheet in isSheetOpen = hasSheet }
     }
 
     private var content: some View {
@@ -74,7 +90,7 @@ struct ScheduleDraftView: View {
                 .padding(.horizontal, PumTokens.Size.screenPad)
                 .padding(.bottom, PumTokens.Space.s16)
             }
-            bottomBar
+            if state.showsBottomBar { bottomBar }
         }
         .background(PumColor.bgApp)
         .safeAreaInset(edge: .bottom, spacing: 0) {
@@ -117,11 +133,11 @@ struct ScheduleDraftView: View {
                     HStack(spacing: PumTokens.Space.s8) {
                         weekTitle
                         Spacer(minLength: PumTokens.Space.s8)
-                        PumBadge(text: ScheduleDraftState.draftBadge, kind: .waiting)
+                        PumBadge(text: state.weekBadge.text, kind: state.weekBadge.kind)
                     }
                     VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
                         weekTitle
-                        PumBadge(text: ScheduleDraftState.draftBadge, kind: .waiting)
+                        PumBadge(text: state.weekBadge.text, kind: state.weekBadge.kind)
                     }
                 }
                 DraftWeekStrip(days: state.days, selectedID: selectedID) { id in
@@ -192,7 +208,11 @@ struct ScheduleDraftView: View {
     }
 
     private var publishButton: some View {
-        PumButton(title: ScheduleDraftState.publishTitle, action: onPublish)
+        PumButton(title: ScheduleDraftState.publishTitle) {
+            onPublish()
+            // 게시 확인 시트도 서버가 값을 줄 때만 연다
+            if state.publishSheet != nil { isSheetOpen = true }
+        }
     }
 }
 
@@ -297,7 +317,7 @@ private struct DraftShiftRow: View {
 // MARK: - 두 칸 비율 배치(6u와 같은 방식)
 
 /// 받은 폭을 두 칸으로 1 : ratio 로 나눈다(앞 칸 : 뒤 칸). 한쪽이 다른 쪽에 밀려 찌그러지지 않는다.
-private struct DraftRatioPairLayout: Layout {
+struct DraftRatioPairLayout: Layout {
     var ratio: CGFloat
     var spacing: CGFloat
 
@@ -330,4 +350,8 @@ private struct DraftRatioPairLayout: Layout {
 #Preview("17b") { ScheduleDraftView(state: .addingShift) }
 #Preview("17a · 큰 글자") { ScheduleDraftView().dynamicTypeSize(.xxxLarge) }
 #Preview("17b · 큰 글자") { ScheduleDraftView(state: .addingShift).dynamicTypeSize(.xxxLarge) }
+#Preview("17c") { ScheduleDraftView(state: .confirmingPublish) }
+#Preview("17d") { ScheduleDraftView(state: .changingPublished) }
+#Preview("17c · 큰 글자") { ScheduleDraftView(state: .confirmingPublish).dynamicTypeSize(.xxxLarge) }
+#Preview("17d · 큰 글자") { ScheduleDraftView(state: .changingPublished).dynamicTypeSize(.xxxLarge) }
 #Preview("17a · 접근성") { ScheduleDraftView().dynamicTypeSize(.accessibility2) }
