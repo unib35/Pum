@@ -43,7 +43,11 @@ struct EmployeeHomeOvertimeView: View {
             Spacer()
             PumIconButton(systemImage: "bell", label: "알림", showsDot: s.hasUnreadNotification) {}
         }
+        .padding(.vertical, -(PumTokens.Size.tapMin - Self.topRowHeight) / 2) // 원문 줄 높이 40(누름 44 유지)
     }
+
+    /// 원문 맨 위 줄(칩 · 알림) 높이 40
+    private static let topRowHeight: CGFloat = 40
 }
 
 /// 먹색 카드 — 연장 근무 중 · 경과 · 진행 막대 · 퇴근하기
@@ -55,6 +59,8 @@ struct OvertimeCard: View {
     static let overtimeTint = PumColor.statusAttentionLine
     /// 목업 점 지름 8 → space-8
     private let dotSize = PumTokens.Space.s8
+    /// 원문 퇴근하기 버튼 높이 50
+    private let clockOutHeight: CGFloat = 50
 
     var body: some View {
         // 원문 간격: 위 줄–경과 14, 경과–막대 18, 막대–아래 줄 10, 아래 줄–버튼 18
@@ -74,7 +80,7 @@ struct OvertimeCard: View {
         }
         .padding(PumTokens.Space.s20)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(PumColor.surfaceInverse, in: RoundedRectangle(cornerRadius: PumTokens.Radius.lg, style: .continuous))
+        .background(PumColor.surfaceInverse, in: RoundedRectangle(cornerRadius: PumTokens.Radius.xl, style: .continuous)) // 원문 모서리 16
     }
 
     private var top: some View {
@@ -89,8 +95,8 @@ struct OvertimeCard: View {
 
     /// 큰 경과 「4:15」(display) + 「근무」(title3 medium)
     private var elapsed: some View {
-        HStack(alignment: .lastTextBaseline, spacing: PumTokens.Space.s8) {
-            Text(OvertimeFormat.clockStyle(state.elapsedMinutes)).pumText(.display).foregroundStyle(.white)
+        HStack(alignment: .lastTextBaseline, spacing: PumTokens.Space.s6) { // 원문 「근무」 앞 6
+            Text(OvertimeFormat.clockStyle(state.elapsedMinutes)).pumText(.display).pumBigNumberLineHeight().foregroundStyle(.white)
             Text("근무").pumText(.title3, weight: .medium).foregroundStyle(PumColor.textOnInverseSecondary)
         }
         .lineLimit(1).minimumScaleFactor(0.6) // 접근성 큰 글자에서 잘리지 않게 한 줄 유지 · 축소
@@ -132,7 +138,7 @@ struct OvertimeCard: View {
                 .pumText(.body, weight: .bold)
                 .foregroundStyle(PumColor.textPrimary)
                 .frame(maxWidth: .infinity)
-                .frame(minHeight: PumTokens.Size.buttonH)
+                .frame(minHeight: clockOutHeight)
                 .background(.white, in: RoundedRectangle(cornerRadius: PumTokens.Radius.lg, style: .continuous))
                 .contentShape(Rectangle())
         }
@@ -144,7 +150,7 @@ struct OvertimeCard: View {
 struct OvertimeProgressBar: View {
     let state: EmployeeHomeOvertimeState
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    private let barHeight: CGFloat = PumTokens.Space.s8
+    private let barHeight: CGFloat = PumTokens.Space.s6 // 원문 막대 높이 6
 
     var body: some View {
         let shape = RoundedRectangle(cornerRadius: barHeight / 2, style: .continuous)
@@ -179,7 +185,7 @@ struct OvertimeSoFarCard: View {
                     .accessibilityAddTraits(.isHeader)
                 // 좁거나 큰 글자면 세로로
                 ViewThatFits(in: .horizontal) {
-                    HStack(alignment: .top, spacing: PumTokens.Space.s8) { cells }
+                    HStack(alignment: .top, spacing: 0) { cells } // 원문 3칸 균등, 틈 없음
                     VStack(alignment: .leading, spacing: PumTokens.Space.s12) { cells }
                 }
             }

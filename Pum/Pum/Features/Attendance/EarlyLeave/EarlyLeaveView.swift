@@ -33,7 +33,7 @@ struct EarlyLeaveView: View {
 
     /// 뒤 화면: 사업장 칩 + 근무 중 카드(1av를 단순하게)
     private var background: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s16) { // 원문 블록 사이 16
             HStack {
                 PumWorkplaceChip(name: state.workplaceName, initial: state.workplaceInitial) {}
                 Spacer()
@@ -46,13 +46,16 @@ struct EarlyLeaveView: View {
     }
 
     private var workingCard: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+        // 원문: 카드 padding 22 20 20(22는 가까운 20) · 큰 시간 위 14 · 아래 14
+        VStack(alignment: .leading, spacing: 0) {
             HStack(spacing: PumTokens.Space.s8) {
                 Circle().fill(PumColor.statusDone).frame(width: PumTokens.Space.s8, height: PumTokens.Space.s8) // 원문 점 약 8
                 Text("근무 중").pumText(.callout, weight: .semibold)
                     .foregroundStyle(.white.opacity(EarlyLeaveLocal.cardTextOpacity))
             }
             elapsed
+                .padding(.top, PumTokens.Space.s14)
+                .padding(.bottom, PumTokens.Space.s14)
             // 원문: 큰 시간 아래 한 줄 — 왼쪽 「출근」, 오른쪽 「퇴근 예정」(좁으면 세로)
             ViewThatFits(in: .horizontal) {
                 HStack { clockIn; Spacer(minLength: PumTokens.Space.s8); plannedEnd }
@@ -62,14 +65,14 @@ struct EarlyLeaveView: View {
         }
         .padding(PumTokens.Space.s20)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(PumColor.surfaceInverse, in: RoundedRectangle(cornerRadius: PumTokens.Radius.lg, style: .continuous))
+        .background(PumColor.surfaceInverse, in: RoundedRectangle(cornerRadius: PumTokens.Radius.xl, style: .continuous)) // 원문 모서리 16
         .accessibilityElement(children: .combine)
     }
 
     private var elapsed: some View {
         let p = WorkingFormat.parts(state.elapsedMinutes)
         return Text("\(p.hours):\(String(format: "%02d", p.minutes))")
-            .pumText(.display).foregroundStyle(.white)
+            .pumText(.display).pumBigNumberLineHeight().foregroundStyle(.white)
             .accessibilityLabel(Text(WorkingFormat.elapsedLabel(state.elapsedMinutes)))
     }
 
