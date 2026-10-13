@@ -251,7 +251,7 @@ private struct CertCheckMark: View {
         ZStack {
             if isOn {
                 Circle().fill(PumColor.surfaceFill)
-                Image(systemName: "checkmark").font(.caption.weight(.bold)).foregroundStyle(PumColor.textPrimary)
+                Image(systemName: "checkmark").pumText(.caption, weight: .bold).foregroundStyle(PumColor.textPrimary)
             } else {
                 RoundedRectangle(cornerRadius: PumTokens.Radius.sm, style: .continuous)
                     .strokeBorder(PumTokens.ColorToken.gray300, lineWidth: PumSelectionStyle.ringWidth)
