@@ -27,7 +27,7 @@ struct EmploymentCertRequestView: View {
         VStack(spacing: 0) {
             backRow
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s14) { // 원문 블록 사이 14
                     Text(EmploymentCertRequestState.title).pumText(.title2).foregroundStyle(PumColor.textPrimary)
                         .fixedSize(horizontal: false, vertical: true)
                         .padding(.horizontal, PumTokens.Space.s4)
@@ -37,7 +37,7 @@ struct EmploymentCertRequestView: View {
                     purposeSection
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s12)
+                .padding(.top, PumTokens.Space.s14) // 원문 머리 줄 아래 14
             }
             .scrollBounceBehavior(.basedOnSize)
         }
@@ -83,7 +83,8 @@ struct EmploymentCertRequestView: View {
     private func cardHeader(_ text: String) -> some View {
         Text(text).pumText(.body, weight: .bold).foregroundStyle(PumColor.textPrimary)
             .padding(.horizontal, PumTokens.Size.rowPadX)
-            .padding(.top, PumTokens.Size.rowPadY)
+            .padding(.top, PumTokens.Space.s14) // 원문 머리 padding 14 16 4
+            .padding(.bottom, PumTokens.Space.s4)
             .frame(maxWidth: .infinity, alignment: .leading)
             .accessibilityAddTraits(.isHeader)
     }
@@ -100,15 +101,14 @@ struct EmploymentCertRequestView: View {
             ForEach(Array(state.rows.enumerated()), id: \.element.id) { i, row in
                 if i > 0 { divider }
                 HStack(alignment: .firstTextBaseline, spacing: PumTokens.Space.s12) {
-                    Text(row.title).pumText(.footnote, weight: .regular).foregroundStyle(PumColor.textSecondary)
+                    Text(row.title).pumText(.callout, weight: .regular).foregroundStyle(PumTokens.ColorToken.gray800)
                     Spacer(minLength: PumTokens.Space.s8)
-                    Text(row.value).pumText(.footnote, weight: .bold).foregroundStyle(PumColor.textPrimary)
+                    Text(row.value).pumText(.callout, weight: .bold).foregroundStyle(PumColor.textPrimary)
                         .multilineTextAlignment(.trailing)
                 }
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.horizontal, PumTokens.Size.rowPadX)
                 .padding(.vertical, PumTokens.Size.rowPadY)
-                .frame(minHeight: PumTokens.Size.tapMin)
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel(Text(state.infoReadout(row)))
             }
@@ -130,12 +130,11 @@ struct EmploymentCertRequestView: View {
     private func toggleRow(_ title: String, _ isOn: Binding<Bool>) -> some View {
         let binding = Binding(get: { isOn.wrappedValue }, set: { touched = true; isOn.wrappedValue = $0 })
         return Toggle(isOn: binding) {
-            Text(title).pumText(.footnote, weight: .regular).foregroundStyle(PumColor.textSecondary)
+            Text(title).pumText(.callout, weight: .regular).foregroundStyle(PumTokens.ColorToken.gray800)
         }
         .tint(PumColor.accent)
         .padding(.horizontal, PumTokens.Size.rowPadX)
-        .padding(.vertical, PumTokens.Space.s10)
-        .frame(minHeight: PumTokens.Size.tapMin)
+        .padding(.vertical, PumTokens.Size.rowPadY) // 원문 11 → 가까운 12(스위치는 시스템 크기)
         .accessibilityLabel(Text(title))
         .accessibilityValue(Text(isOn.wrappedValue ? "켬" : "끔"))
     }
@@ -143,9 +142,9 @@ struct EmploymentCertRequestView: View {
     // MARK: 용도
 
     private var purposeSection: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s6) { // 원문 라벨~칸 6
             Text(EmploymentCertRequestState.purposeHeader).pumText(.footnote, weight: .semibold)
-                .foregroundStyle(PumColor.textSecondary)
+                .foregroundStyle(PumTokens.ColorToken.gray800)
                 .padding(.horizontal, PumTokens.Space.s4)
                 .accessibilityAddTraits(.isHeader)
             segments
@@ -162,17 +161,21 @@ struct EmploymentCertRequestView: View {
                     draft.purpose = p
                 } label: {
                     Text(p.title)
-                        .pumText(.footnote, weight: selected ? .semibold : .medium)
+                        .pumText(.callout, weight: selected ? .semibold : .medium)
                         .foregroundStyle(selected ? PumColor.textPrimary : PumColor.textSecondary)
                         .multilineTextAlignment(.center)
-                        .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin)
+                        .padding(.vertical, PumTokens.Space.s8) // 원문 칸 padding 8 0
+                        .frame(maxWidth: .infinity)
                         .background {
                             if selected {
-                                RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous)
+                                RoundedRectangle(cornerRadius: PumTokens.Radius.sm, style: .continuous)
                                     .fill(PumColor.surfaceCard)
                             }
                         }
+                        // 누름 영역만 44 이상으로 키우고 배치는 원문 칸 높이만 쓴다
+                        .padding(.vertical, PumTokens.Space.s6)
                         .contentShape(Rectangle())
+                        .padding(.vertical, -PumTokens.Space.s6)
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel(Text(p.title)) // 「선택됨」은 .isSelected가 읽는다
@@ -180,13 +183,13 @@ struct EmploymentCertRequestView: View {
             }
         }
         .padding(PumTokens.Space.s2)
-        .background(PumColor.surfaceFill, in: RoundedRectangle(cornerRadius: PumTokens.Radius.lg, style: .continuous))
+        .background(PumColor.surfaceFill, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous)) // 원문 모서리 10 → 가까운 12
     }
 
     // MARK: 하단
 
     private var footer: some View {
-        VStack(spacing: PumTokens.Space.s12) {
+        VStack(spacing: PumTokens.Space.s10) { // 원문 버튼~안내 10
             PumButton(title: EmploymentCertRequestState.sendTitle, isLoading: isSending,
                       loadingTitle: EmploymentCertRequestState.sendingTitle, action: send)
                 .disabled(isSent)
@@ -196,7 +199,8 @@ struct EmploymentCertRequestView: View {
                 .fixedSize(horizontal: false, vertical: true)
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
-        .padding(.vertical, PumTokens.Space.s12)
+        .padding(.top, PumTokens.Space.s12)
+        .padding(.bottom, PumTokens.Space.s10) // 원문 하단 44 − 홈 막대 안전 영역 34
         .background(PumColor.bgApp)
     }
 }

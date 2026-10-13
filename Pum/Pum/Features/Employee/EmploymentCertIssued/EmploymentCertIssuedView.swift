@@ -30,13 +30,13 @@ struct EmploymentCertIssuedView: View {
         VStack(spacing: 0) {
             backRow
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s14) { // 원문 블록 사이 14
                     header
                     documentCard
                     codeCard
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s12)
+                .padding(.top, PumTokens.Space.s14) // 원문 머리 줄 아래 14
             }
         }
         .background(PumColor.bgApp)
@@ -87,26 +87,31 @@ struct EmploymentCertIssuedView: View {
 
     private var documentCard: some View {
         PumCard {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+            VStack(alignment: .leading, spacing: PumTokens.Space.s10) { // 원문 gap 9 → 가까운 10
                 Text(EmploymentCertIssuedState.documentTitle).tracking(PumTokens.Space.s4) // 원문 넓은 자간 — pumText보다 안쪽에
                     .pumText(.title3, weight: .bold) // 원문 19px — 가장 가까운 단계 20
                     .foregroundStyle(PumColor.textPrimary)
                     .frame(maxWidth: .infinity)
+                    .padding(.bottom, PumTokens.Space.s8) // 원문 제목 아래 8
                     .accessibilityAddTraits(.isHeader)
                 table(state.personRows)
                 Rectangle().fill(PumColor.borderHairline).frame(height: 1)
+                    .padding(.vertical, PumTokens.Space.s4) // 원문 구분선 위아래 4
                 table(state.shopRows)
                 Rectangle().fill(PumColor.borderHairline).frame(height: 1)
+                    .padding(.top, PumTokens.Space.s2) // 원문 구분선 위 2
                 closing
                     .accessibilityElement(children: .ignore)
                     .accessibilityLabel(Text(state.closingSpoken))
             }
-            .padding(PumTokens.Size.rowPadX + PumTokens.Space.s4)
+            .padding(.top, PumTokens.Space.s24) // 원문 padding 22 22 18 → 가까운 24 24 18
+            .padding(.horizontal, PumTokens.Space.s24)
+            .padding(.bottom, PumTokens.Space.s18)
         }
     }
 
     private func table(_ rows: [EmploymentCertIssuedRow]) -> some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s10) {
             ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
                 docRow(label: row.label, value: row.value)
                     .accessibilityElement(children: .ignore)
@@ -150,8 +155,8 @@ struct EmploymentCertIssuedView: View {
         Text(EmploymentCertIssuedState.signatureChip).pumText(.caption, weight: .semibold)
             .foregroundStyle(PumTokens.ColorToken.gray700)
             .padding(.horizontal, PumTokens.Space.s10)
-            .padding(.vertical, PumTokens.Space.s6)
-            .background(PumColor.surfaceFill, in: Capsule())
+            .padding(.vertical, PumTokens.Space.s4) // 원문 padding 4 9
+            .background(PumColor.surfaceFill, in: RoundedRectangle(cornerRadius: PumTokens.Radius.sm, style: .continuous))
     }
 
     // MARK: 확인 번호
@@ -186,7 +191,7 @@ struct EmploymentCertIssuedView: View {
                 .foregroundStyle(PumColor.textPrimary)
                 .padding(.horizontal, PumTokens.Space.s12)
                 .padding(.vertical, PumTokens.Space.s6) // 원문 작은 칩(약 42 × 27)
-                .background(PumColor.surfaceFill, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
+                .background(PumColor.surfaceFill, in: RoundedRectangle(cornerRadius: PumTokens.Radius.sm, style: .continuous)) // 원문 모서리 9 → 가까운 8
                 // 누름 영역만 44 이상으로 키우고, 배치에는 원문 칩 크기만 쓴다(카드 높이가 늘지 않게)
                 .padding(.vertical, PumTokens.Space.s12)
                 .padding(.horizontal, PumTokens.Space.s4)
@@ -203,7 +208,8 @@ struct EmploymentCertIssuedView: View {
     private var footer: some View {
         buttons
             .padding(.horizontal, PumTokens.Size.screenPad)
-            .padding(.vertical, PumTokens.Space.s12)
+            .padding(.top, PumTokens.Space.s12)
+            .padding(.bottom, PumTokens.Space.s10) // 원문 하단 44 − 홈 막대 안전 영역 34
             .background(PumColor.bgApp)
     }
 

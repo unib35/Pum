@@ -48,7 +48,7 @@ struct WageYearTransitionView: View {
         VStack(spacing: 0) {
             backRow
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s14) { // 원문 블록 사이 14
                     titleBlock
                     if !state.below.isEmpty { belowCard }
                     if !state.thin.isEmpty { thinCard }
@@ -56,7 +56,7 @@ struct WageYearTransitionView: View {
                     holidayCard
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s12)
+                .padding(.top, PumTokens.Space.s14) // 원문 머리 줄 아래 14
             }
             .scrollBounceBehavior(.basedOnSize)
         }
@@ -123,10 +123,12 @@ struct WageYearTransitionView: View {
             Text(state.minimumTitle).pumText(.title2).foregroundStyle(PumColor.textPrimary)
                 .accessibilityAddTraits(.isHeader)
             Text(state.increaseLine).pumText(.footnote).foregroundStyle(PumColor.textSecondary)
+                .padding(.top, -PumTokens.Space.s2) // 원문 제목~증가 줄 2
         }
         .fixedSize(horizontal: false, vertical: true)
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, PumTokens.Space.s4)
+        .padding(.top, PumTokens.Space.s2) // 원문 padding 2 4 0
         .accessibilityElement(children: .combine)
     }
 
@@ -134,7 +136,8 @@ struct WageYearTransitionView: View {
         Text(text).pumText(.body, weight: .bold).foregroundStyle(PumColor.textPrimary)
             .fixedSize(horizontal: false, vertical: true)
             .padding(.horizontal, PumTokens.Size.rowPadX)
-            .padding(.top, PumTokens.Size.rowPadY)
+            .padding(.top, PumTokens.Space.s14) // 원문 머리 padding 14 16 4
+            .padding(.bottom, PumTokens.Space.s4)
             .frame(maxWidth: .infinity, alignment: .leading)
             .accessibilityAddTraits(.isHeader)
     }
@@ -241,7 +244,7 @@ struct WageYearTransitionView: View {
     // MARK: 하단
 
     private var footer: some View {
-        VStack(spacing: PumTokens.Space.s12) {
+        VStack(spacing: PumTokens.Space.s10) { // 원문 버튼~안내 10
             PumButton(title: WageYearTransitionState.setWagesTitle, action: openSheet)
             Text(state.footerNotice)
                 .pumText(.caption).foregroundStyle(PumColor.textSecondary)
@@ -249,7 +252,8 @@ struct WageYearTransitionView: View {
                 .fixedSize(horizontal: false, vertical: true)
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
-        .padding(.vertical, PumTokens.Space.s12)
+        .padding(.top, PumTokens.Space.s12)
+        .padding(.bottom, PumTokens.Space.s10) // 원문 하단 44 − 홈 막대 안전 영역 34
         .background(PumColor.bgApp)
     }
 }

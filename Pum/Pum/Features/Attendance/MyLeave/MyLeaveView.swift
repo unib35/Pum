@@ -19,14 +19,14 @@ struct MyLeaveView: View {
         VStack(spacing: 0) {
             backRow
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s14) { // 원문 블록 사이 14
                     heading
                     summaryCard
                     section(MyLeaveState.accrualHeader, rows: state.accrualRows)
                     section(MyLeaveState.usedHeader, rows: state.usedRows)
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s12)
+                .padding(.top, PumTokens.Space.s14) // 원문 머리 줄 아래 14
             }
             .scrollBounceBehavior(.basedOnSize)
         }
@@ -61,6 +61,7 @@ struct MyLeaveView: View {
         }
         .fixedSize(horizontal: false, vertical: true)
         .padding(.horizontal, PumTokens.Space.s4)
+        .padding(.top, PumTokens.Space.s2) // 원문 padding 2 4 0
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
@@ -76,15 +77,18 @@ struct MyLeaveView: View {
         let used = Text(state.usedText).pumText(.caption).foregroundStyle(PumColor.textSecondary)
         let earned = Text(state.earnedText).pumText(.caption).foregroundStyle(PumColor.textSecondary)
         return PumCard {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+            VStack(alignment: .leading, spacing: 0) {
                 twoColumns(title, perDay)
                 Text(state.remainingText).pumText(.hero).foregroundStyle(PumColor.textPrimary)
                     .fixedSize(horizontal: false, vertical: true)
+                    .padding(.top, PumTokens.Space.s4) // 원문 금액 위 4
                 bar
+                    .padding(.top, PumTokens.Space.s12) // 원문 막대 위 12
                 twoColumns(used, earned)
+                    .padding(.top, PumTokens.Space.s8) // 원문 글자 줄 위 8
             }
-            .padding(.horizontal, PumTokens.Size.rowPadX)
-            .padding(.vertical, PumTokens.Size.rowPadY)
+            .padding(.horizontal, PumTokens.Space.s18) // 원문 padding 16 18
+            .padding(.vertical, PumTokens.Space.s16)
             .frame(maxWidth: .infinity, alignment: .leading)
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(Text(state.summarySpoken))
@@ -123,7 +127,7 @@ struct MyLeaveView: View {
         PumCard {
             Text(header).pumText(.body, weight: .bold).foregroundStyle(PumColor.textPrimary)
                 .padding(.horizontal, PumTokens.Size.rowPadX)
-                .padding(.top, PumTokens.Size.rowPadY)
+                .padding(.top, PumTokens.Space.s14) // 원문 머리 padding 14 16 4
                 .padding(.bottom, PumTokens.Space.s4)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .accessibilityAddTraits(.isHeader)
@@ -152,7 +156,7 @@ struct MyLeaveView: View {
         }
         .padding(.vertical, PumTokens.Size.rowPadY)
         .padding(.horizontal, PumTokens.Size.rowPadX)
-        .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin, alignment: .leading)
+        .frame(maxWidth: .infinity, alignment: .leading)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(r.spoken))
     }
@@ -160,7 +164,7 @@ struct MyLeaveView: View {
     // MARK: 하단
 
     private var footer: some View {
-        VStack(spacing: PumTokens.Space.s12) {
+        VStack(spacing: PumTokens.Space.s10) { // 원문 버튼~안내 10
             PumButton(title: MyLeaveState.requestTitle, action: onRequestLeave)
             Text(MyLeaveState.footerNotice)
                 .pumText(.caption).foregroundStyle(PumColor.textSecondary)
@@ -168,7 +172,8 @@ struct MyLeaveView: View {
                 .fixedSize(horizontal: false, vertical: true)
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
-        .padding(.vertical, PumTokens.Space.s12)
+        .padding(.top, PumTokens.Space.s12)
+        .padding(.bottom, PumTokens.Space.s10) // 원문 하단 44 − 홈 막대 안전 영역 34
         .background(PumColor.bgApp)
     }
 }

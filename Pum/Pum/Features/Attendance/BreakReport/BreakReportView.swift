@@ -47,13 +47,13 @@ struct BreakReportView: View {
         VStack(spacing: 0) {
             backRow
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s14) { // 원문 블록 사이 14
                     titleBlock
                     recordCard
                     reportCard
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s12)
+                .padding(.top, PumTokens.Space.s14) // 원문 머리 줄 아래 14
             }
             .scrollBounceBehavior(.basedOnSize)
         }
@@ -118,7 +118,7 @@ struct BreakReportView: View {
     }
 
     private var titleBlock: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s6) { // 원문 배지 줄~제목 6
             ViewThatFits(in: .horizontal) {
                 HStack(spacing: PumTokens.Space.s8) { badge; subtitle }
                 VStack(alignment: .leading, spacing: PumTokens.Space.s4) { badge; subtitle }
@@ -129,6 +129,7 @@ struct BreakReportView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, PumTokens.Space.s4)
+        .padding(.top, PumTokens.Space.s2) // 원문 padding 2 4 0
     }
 
     private var badge: some View {
@@ -160,7 +161,7 @@ struct BreakReportView: View {
         .fixedSize(horizontal: false, vertical: true)
         .padding(.horizontal, PumTokens.Size.rowPadX)
         .padding(.vertical, PumTokens.Size.rowPadY)
-        .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin, alignment: .leading)
+        .frame(maxWidth: .infinity, alignment: .leading)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(row.readout))
     }
@@ -182,7 +183,6 @@ struct BreakReportView: View {
                 }
                 .padding(.horizontal, PumTokens.Size.rowPadX)
                 .padding(.vertical, PumTokens.Size.rowPadY)
-                .frame(minHeight: PumTokens.Size.tapMin)
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
