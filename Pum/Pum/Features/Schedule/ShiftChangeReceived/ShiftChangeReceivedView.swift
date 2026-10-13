@@ -85,7 +85,7 @@ struct ShiftChangeReceivedView: View {
                     .frame(width: senderSize, height: senderSize)
                     .background(PumColor.surfaceFill, in: Circle())
                     .accessibilityHidden(true)
-                Text(state.senderText).pumText(.callout, weight: .regular).foregroundStyle(PumColor.textSecondary)
+                Text(state.senderText).pumText(.callout, weight: .regular).foregroundStyle(PumTokens.ColorToken.gray800)
                     .fixedSize(horizontal: false, vertical: true)
             }
         }
@@ -161,7 +161,7 @@ struct ShiftChangeReceivedView: View {
 
     /// 좁거나 글자가 크면 라벨 아래로 값이 내려간다
     private func row(_ label: String, _ value: String) -> some View {
-        let l = Text(label).pumText(.callout, weight: .regular).foregroundStyle(PumColor.textSecondary)
+        let l = Text(label).pumText(.callout, weight: .regular).foregroundStyle(PumTokens.ColorToken.gray800)
         let v = Text(value).pumText(.callout, weight: .bold).foregroundStyle(PumColor.textPrimary)
         return ViewThatFits(in: .horizontal) {
             HStack(alignment: .firstTextBaseline, spacing: PumTokens.Space.s12) { l.fixedSize(); Spacer(minLength: 0); v }
