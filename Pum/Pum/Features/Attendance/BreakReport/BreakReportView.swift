@@ -73,7 +73,7 @@ struct BreakReportView: View {
             }
         }
         .onChange(of: sheet) { _, new in
-            if !touched {
+            if !touched && !isSending && !isSent { // 보내는 중 · 보낸 뒤에는 보낸 값 그대로
                 choiceID = new?.initialChoiceID ?? ""
                 reason = new?.initialReason ?? ""
             }

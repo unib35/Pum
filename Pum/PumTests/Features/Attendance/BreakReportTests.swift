@@ -63,4 +63,9 @@ struct BreakReportTests {
         #expect(s.payReadout(p) == "예상 급여, 기본 6,000 · 소정근로 초과 가산 3,000, +9,000원")
         #expect(s.choice("none")?.title == "못 쉼")
     }
+
+    @Test func 급여_차이_0과_음수_표기() {
+        #expect(BreakPreview(recognizedChange: "", recognizedReadout: "", payDetail: "", payDelta: 0).payText == "0원")
+        #expect(BreakPreview(recognizedChange: "", recognizedReadout: "", payDetail: "", payDelta: -1_500).payText == "-1,500원")
+    }
 }

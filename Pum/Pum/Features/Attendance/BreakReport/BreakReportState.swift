@@ -64,7 +64,7 @@ nonisolated struct BreakPreview: Equatable, Sendable {
     let payDelta: Int
 
     var payText: String {
-        let sign = payDelta < 0 ? "-" : "+"
+        let sign = payDelta < 0 ? "-" : (payDelta > 0 ? "+" : "")
         return "\(sign)\(PumFormat.amount(abs(payDelta)))원"
     }
 }

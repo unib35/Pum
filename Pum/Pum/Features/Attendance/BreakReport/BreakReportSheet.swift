@@ -80,6 +80,7 @@ struct BreakReportSheet: View {
             ForEach(state.choices) { c in
                 let selected = choiceID == c.id
                 Button {
+                    guard choiceID != c.id else { return } // 같은 칸 다시 누름은 손댄 것이 아님
                     onEdit()
                     choiceID = c.id
                 } label: {
@@ -114,7 +115,7 @@ struct BreakReportSheet: View {
             .tint(PumColor.accent)
             .focused($reasonFocused)
             .disabled(locked)
-            .onChange(of: reason) { onEdit() }
+            .onChange(of: reason) { if reasonFocused { onEdit() } } // 서버 값으로 바뀐 것은 손댄 것이 아님
             .padding(.horizontal, PumTokens.Space.s16)
             .frame(minHeight: PumTokens.Size.tapMin)
             .padding(.vertical, PumTokens.Space.s6)
