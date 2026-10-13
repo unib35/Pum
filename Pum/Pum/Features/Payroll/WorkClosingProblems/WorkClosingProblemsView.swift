@@ -144,7 +144,7 @@ struct WorkClosingProblemsView: View {
     }
 
     private func buttons(_ item: WorkClosingProblemItem, locked: Bool) -> some View {
-        HStack(spacing: PumTokens.Space.s8) {
+        HStack(spacing: PumTokens.Space.s6) { // 원문 버튼 사이 6
             ProblemPill(title: item.leadingTitle, style: .outline, locked: locked, context: item.buttonContext) {
                 if let action = item.leadingAction { run(item.id, action) } else { onEdit(item.id) }
             }
@@ -227,10 +227,11 @@ private struct ProblemPill: View {
             Text(title).pumText(.footnote, weight: style == .outline ? .semibold : .bold)
                 .foregroundStyle(style == .outline ? PumColor.textPrimary : .white)
                 .lineLimit(1)
-                .padding(.horizontal, PumTokens.Space.s14)
-                .padding(.vertical, PumTokens.Space.s8) // 원문 알약 높이 약 31
-                .background(fill, in: Capsule())
-                .overlay { if style == .outline { Capsule().strokeBorder(PumColor.textPrimary, lineWidth: PumTokens.Shadow.outline.spread) } }
+                .padding(.horizontal, PumTokens.Space.s12) // 원문 padding 7 12
+                .padding(.vertical, PumTokens.Space.s8) // 원문 높이 약 31
+                // 원문 모서리 10px 둥근 사각형(알약 아님) — 토큰에 10이 없어 md(12)
+                .background(fill, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
+                .overlay { if style == .outline { RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous).strokeBorder(PumColor.textPrimary, lineWidth: PumTokens.Shadow.outline.spread) } }
                 // 누름 영역: 키운 뒤 같은 만큼 음수 padding으로 되돌려 배치는 그대로
                 .padding(.vertical, PumTokens.Space.s8) // 알약 약 30 + 위아래 8 → 44 이상
                 .padding(.horizontal, PumTokens.Space.s4)
