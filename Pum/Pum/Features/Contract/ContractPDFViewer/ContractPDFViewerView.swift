@@ -30,6 +30,10 @@ struct ContractPDFViewerView: View {
             bottomBar
         }
         .background(PumTokens.ColorToken.gray200) // 원문 #E3E6EC
+        .onChange(of: state.pdfData) { _, new in // 서버가 다른 PDF를 주면 처음 쪽부터 다시
+            document = new.flatMap { PDFDocument(data: $0) }
+            pageIndex = 0
+        }
     }
 
     // MARK: 머리

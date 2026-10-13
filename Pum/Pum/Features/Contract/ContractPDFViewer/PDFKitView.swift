@@ -20,6 +20,10 @@ struct PDFKitView: UIViewRepresentable {
         return view
     }
 
+    static func dismantleUIView(_ view: PDFView, coordinator: Coordinator) {
+        NotificationCenter.default.removeObserver(coordinator, name: .PDFViewPageChanged, object: view)
+    }
+
     func updateUIView(_ view: PDFView, context: Context) {
         context.coordinator.onPageChange = onPageChange
         if view.document !== document { view.document = document }
@@ -34,7 +38,7 @@ struct PDFKitView: UIViewRepresentable {
                 self, selector: #selector(pageChanged(_:)), name: .PDFViewPageChanged, object: view)
         }
 
-        @objc private func pageChanged(_ note: Notification) {
+        @MainActor @objc private func pageChanged(_ note: Notification) {
             guard let view = note.object as? PDFView, let doc = view.document, let page = view.currentPage else { return }
             onPageChange(doc.index(for: page))
         }
