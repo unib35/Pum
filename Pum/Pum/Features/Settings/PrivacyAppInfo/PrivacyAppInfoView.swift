@@ -9,13 +9,12 @@ struct PrivacyAppInfoView: View {
     var body: some View {
         VStack(spacing: 0) {
             PumNavHeader(title: PrivacyAppInfoState.headerTitle, onBack: onBack)
-                .padding(.top, PumTokens.Space.s8)
                 .padding(.horizontal, PumTokens.Size.screenPad)
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
                     ForEach(state.sections) { section in
                         VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
-                            PumSectionHeader(title: section.title)
+                            PumSectionHeader(title: section.title).padding(.top, PumTokens.Space.s2)
                             PumCard {
                                 ForEach(section.rows) { row in
                                     rowView(row, isLast: row.id == section.rows.last?.id)

@@ -36,7 +36,7 @@ struct EmployeeHomeWorkingView: View {
 
     private func scroll(_ s: EmployeeHomeWorkingState) -> some View {
         ScrollView {
-            VStack(spacing: PumTokens.Space.s12) {
+            VStack(spacing: PumTokens.Space.s14) { // 원문 1av · 6q: 블록 사이 14
                 if let offline = s.offline {
                     OfflineBanner(offline: offline, onRetry: onRetryConnection)
                 }
@@ -67,7 +67,8 @@ struct EmployeeHomeWorkingView: View {
                 }
             }
             .padding(.horizontal, PumTokens.Size.screenPad)
-            .padding(.vertical, PumTokens.Space.s12)
+            .padding(.top, PumTokens.Space.s12) // 원문 1av · 6q: 아래 버튼 영역 padding 12 20 14
+            .padding(.bottom, PumTokens.Space.s14)
             .background(PumColor.bgApp)
             PumTabBar(items: PumTabItem.employeeTabs, selection: $tab)
         }
@@ -95,10 +96,11 @@ struct WorkingTodayCard: View {
 
     var body: some View {
         PumCard {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
-                HStack {
+            // 원문: 카드 padding 16 18 · 헤더 아래 12 · 진행 막대 위 18 · 마지막 줄 위 6
+            VStack(alignment: .leading, spacing: 0) {
+                HStack(spacing: PumTokens.Space.s6) {
                     Text(state.base.todayTitle).pumText(.body, weight: .bold).foregroundStyle(PumColor.textPrimary)
-                    Spacer()
+                    Spacer(minLength: PumTokens.Space.s8)
                     PumBadge(text: "근무 중", kind: .active)
                     if let offline = state.offline {
                         PumBadge(text: offline.badgeText, kind: .waiting)
@@ -116,16 +118,21 @@ struct WorkingTodayCard: View {
                         times(alignment: .leading)
                     }
                 }
+                .padding(.top, PumTokens.Space.s12)
                 WorkProgressBar(plan: state.plan, nowMinute: state.nowMinute)
+                    .padding(.top, PumTokens.Space.s18)
                 if let offline = state.offline {
                     Text(offline.savedNote).pumText(.caption).foregroundStyle(PumColor.textSecondary)
+                        .padding(.top, PumTokens.Space.s6)
                 } else {
                     Text("오늘 예정 \(HomeFormat.hours(state.plan.plannedPaidMinutes)) · \(PumFormat.amount(state.plannedPay))원")
                         .pumText(.caption)
                         .foregroundStyle(PumColor.textSecondary)
+                        .padding(.top, PumTokens.Space.s6)
                 }
             }
-            .padding(PumTokens.Space.s20)
+            .padding(.vertical, PumTokens.Space.s16)
+            .padding(.horizontal, PumTokens.Space.s18)
         }
     }
 
@@ -171,7 +178,7 @@ struct OfflineBanner: View {
     let onRetry: () -> Void
 
     var body: some View {
-        HStack(spacing: PumTokens.Space.s8) {
+        HStack(spacing: PumTokens.Space.s10) { // 원문: 띠 padding 11 14 · 글 사이 10
             Text(offline.bannerTitle)
                 .pumText(.callout, weight: .semibold) // 원문 600
                 .foregroundStyle(Color.white)
@@ -182,11 +189,13 @@ struct OfflineBanner: View {
                     .foregroundStyle(PumColor.accentOnInverse)
                     .frame(minHeight: PumTokens.Size.tapMin)
                     .contentShape(Rectangle())
+                    // 누름 44는 지키고 배치 높이만 원문(글자 줄 + 위아래 10)에 맞춘다
+                    .padding(.vertical, -(PumTokens.Size.tapMin - (PumTokens.Space.s10 * 2 + PumTokens.Space.s18)) / 2)
             }
             .buttonStyle(.plain)
             .accessibilityLabel(Text("연결 \(offline.retryTitle)")) // 무엇을 다시 하는지
         }
-        .padding(.horizontal, PumTokens.Space.s16)
+        .padding(.horizontal, PumTokens.Space.s14)
         .background(PumColor.surfaceInverse, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
         .accessibilityElement(children: .contain)
     }
@@ -199,8 +208,9 @@ struct OfflinePendingCard: View {
 
     var body: some View {
         PumCard {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
-                HStack(alignment: .top, spacing: PumTokens.Space.s14) {
+            // 원문: 카드 padding 14 16 · 원 30 옆 간격 12 · 안내 위 10
+            VStack(alignment: .leading, spacing: PumTokens.Space.s10) {
+                HStack(alignment: .center, spacing: PumTokens.Space.s12) {
                     Text("\(offline.pending.count)")
                         .pumText(.footnote, weight: .bold)
                         .foregroundStyle(PumColor.textSecondary)
@@ -216,7 +226,8 @@ struct OfflinePendingCard: View {
                 }
                 Text(offline.pendingNote).pumText(.caption).foregroundStyle(PumColor.textSecondary)
             }
-            .padding(PumTokens.Space.s16)
+            .padding(.vertical, PumTokens.Space.s14)
+            .padding(.horizontal, PumTokens.Space.s16)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         .accessibilityElement(children: .ignore)
