@@ -181,6 +181,7 @@ struct ContentView: View {
             case "20h": PayslipSendDirectView(state: .sample)
             case "21a": PaymentUndoView(state: .sample, startsWithSheetOpen: true)
             case "21b": PaymentUndoView(state: .reverted)
+            case "1ap": ContractPDFViewerView(state: .sample)
             case "gallery": ComponentGalleryView()
             default: DevMenu()
             }
@@ -359,6 +360,7 @@ private struct DevMenu: View {
                     NavigationLink("20h 명세서 보내기") { PayslipSendDirectView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("21a 지급 완료 취소") { PaymentUndoView(state: .sample, startsWithSheetOpen: true).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("21b 되돌린 뒤") { PaymentUndoView(state: .reverted).toolbar(.hidden, for: .navigationBar) }
+                    NavigationLink("1ap 계약서 전문 PDF") { ContractPDFViewerView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                 }
                 Section("디자인 시스템") {
                     NavigationLink("컴포넌트 갤러리") { ComponentGalleryView() }
