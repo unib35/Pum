@@ -174,6 +174,7 @@ struct ContentView: View {
             case "20b": DirectRegisterBasicView(state: .sample)
             case "20d": DirectRegisterContractView(state: .sample)
             case "20c": DirectRegisterTermsView(state: .sample)
+            case "20g": WorkClosingDirectView(state: .sample)
             case "gallery": ComponentGalleryView()
             default: DevMenu()
             }
@@ -345,6 +346,7 @@ private struct DevMenu: View {
                     NavigationLink("20b 직접 등록 · 기본 정보") { DirectRegisterBasicView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("20d 직접 등록 · 근로계약서") { DirectRegisterContractView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("20c 직접 등록 · 근로조건") { DirectRegisterTermsView(state: .sample).toolbar(.hidden, for: .navigationBar) }
+                    NavigationLink("20g 근무 마감 · 앱 없는 직원") { WorkClosingDirectView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                 }
                 Section("디자인 시스템") {
                     NavigationLink("컴포넌트 갤러리") { ComponentGalleryView() }

@@ -14,6 +14,7 @@ struct WorkClosingProblemsView: View {
     @State private var lock = WorkClosingRowLock()
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @ScaledMetric(relativeTo: .body) private var barHeight = PumTokens.Space.s8
+    @ScaledMetric(relativeTo: .body) private var rowAvatar = PumLayout.avatar - PumTokens.Space.s4 // 남은 행 아바타 원문 약 32pt
     @ScaledMetric(relativeTo: .body) private var smallAvatar = PumLayout.avatar - PumTokens.Space.s8 // 처리됨 행 아바타 약 28pt
 
     var body: some View {
@@ -80,7 +81,7 @@ struct WorkClosingProblemsView: View {
         // 원문: 위 줄은 아바타 옆 이름 · 배지, 아래 줄(설명 · 버튼)은 아바타 아래까지 카드 폭 전체
         return VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
             HStack(alignment: .center, spacing: PumTokens.Space.s12) {
-                PumAvatar(name: item.name, colorIndex: item.colorIndex)
+                PumAvatar(name: item.name, colorIndex: item.colorIndex, size: rowAvatar)
                 ViewThatFits(in: .horizontal) {
                     HStack(alignment: .firstTextBaseline, spacing: PumTokens.Space.s8) {
                         nameDate(item)
@@ -143,7 +144,7 @@ struct WorkClosingProblemsView: View {
     }
 
     private func buttons(_ item: WorkClosingProblemItem, locked: Bool) -> some View {
-        HStack(spacing: PumTokens.Space.s8) {
+        HStack(spacing: PumTokens.Space.s6) { // 원문 버튼 사이 6
             ProblemPill(title: item.leadingTitle, style: .outline, locked: locked, context: item.buttonContext) {
                 if let action = item.leadingAction { run(item.id, action) } else { onEdit(item.id) }
             }
@@ -226,10 +227,11 @@ private struct ProblemPill: View {
             Text(title).pumText(.footnote, weight: style == .outline ? .semibold : .bold)
                 .foregroundStyle(style == .outline ? PumColor.textPrimary : .white)
                 .lineLimit(1)
-                .padding(.horizontal, PumTokens.Space.s14)
-                .padding(.vertical, PumTokens.Space.s6)
-                .background(fill, in: Capsule())
-                .overlay { if style == .outline { Capsule().strokeBorder(PumColor.textPrimary, lineWidth: PumTokens.Shadow.outline.spread) } }
+                .padding(.horizontal, PumTokens.Space.s12) // 원문 padding 7 12
+                .padding(.vertical, PumTokens.Space.s8) // 원문 높이 약 31
+                // 원문 모서리 10px 둥근 사각형(알약 아님) — 토큰에 10이 없어 md(12)
+                .background(fill, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
+                .overlay { if style == .outline { RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous).strokeBorder(PumColor.textPrimary, lineWidth: PumTokens.Shadow.outline.spread) } }
                 // 누름 영역: 키운 뒤 같은 만큼 음수 padding으로 되돌려 배치는 그대로
                 .padding(.vertical, PumTokens.Space.s8) // 알약 약 30 + 위아래 8 → 44 이상
                 .padding(.horizontal, PumTokens.Space.s4)
