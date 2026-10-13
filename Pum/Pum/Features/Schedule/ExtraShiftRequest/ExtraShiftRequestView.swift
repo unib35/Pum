@@ -45,14 +45,14 @@ struct ExtraShiftRequestView: View {
         VStack(spacing: 0) {
             header
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s14) { // 원문 블록 사이 14
                     card
                     reasonSection
                     recipientsSection
                     notice
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s12)
+                .padding(.vertical, PumTokens.Space.s14)
             }
         }
         .background(PumColor.bgApp)
@@ -64,7 +64,8 @@ struct ExtraShiftRequestView: View {
             PumButton(title: state.sendTitle, kind: .primary, isLoading: state.isSending, action: send)
                 .disabled(!state.canSend)
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s12)
+                .padding(.top, PumTokens.Space.s12)
+                .padding(.bottom, PumTokens.Space.s10) // 원문 하단 44 − 홈 막대 안전 영역 34
                 .background(PumColor.bgApp)
         }
     }
@@ -103,7 +104,6 @@ struct ExtraShiftRequestView: View {
                 Spacer()
             }
         }
-        .padding(.top, PumTokens.Space.s8)
         .padding(.horizontal, PumTokens.Size.screenPad)
     }
 
@@ -123,7 +123,7 @@ struct ExtraShiftRequestView: View {
 
     private var divider: some View {
         Rectangle().fill(PumColor.borderHairline).frame(height: 1)
-            .padding(.horizontal, PumTokens.Size.rowPadX)
+            .padding(.horizontal, PumTokens.Space.s18) // 원문 카드 안쪽 18
     }
 
     /// 좁거나 글자가 크면 라벨 아래로 값이 내려간다
@@ -133,8 +133,8 @@ struct ExtraShiftRequestView: View {
             HStack(spacing: PumTokens.Space.s12) { l.fixedSize(); Spacer(minLength: 0); v }
             VStack(alignment: .leading, spacing: PumTokens.Space.s8) { l; v }
         }
-        .padding(.vertical, PumTokens.Size.rowPadY)
-        .padding(.horizontal, PumTokens.Size.rowPadX)
+        .padding(.vertical, PumTokens.Space.s14) // 원문 행 위아래 14
+        .padding(.horizontal, PumTokens.Space.s18)
         .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin, alignment: .leading)
     }
 
@@ -220,7 +220,7 @@ struct ExtraShiftRequestView: View {
         rowLayout {
             rowLabel("급여 가산")
         } value: {
-            ExtraShiftFlow(spacing: PumTokens.Space.s8) {
+            ExtraShiftFlow(spacing: PumTokens.Space.s6) { // 원문 알약 사이 6
                 PumChoicePill(title: "없음", isOn: state.premium == .none, offStyle: .filled, position: (0, 3)) {
                     state.setPremium(.none)
                 }
@@ -241,7 +241,7 @@ struct ExtraShiftRequestView: View {
             Text("사유").pumText(.footnote, weight: .bold).foregroundStyle(PumColor.textSecondary)
                 .accessibilityAddTraits(.isHeader)
                 .padding(.horizontal, PumTokens.Space.s4)
-            ExtraShiftFlow(spacing: PumTokens.Space.s8) {
+            ExtraShiftFlow(spacing: PumTokens.Space.s6) {
                 ForEach(Array(all.enumerated()), id: \.offset) { index, reason in
                     PumChoicePill(title: reason.title, isOn: state.reason == reason, offStyle: .outlined,
                                   position: (index, all.count)) {

@@ -45,7 +45,7 @@ struct StaffDetailView: View {
             }
             .padding(.horizontal, PumTokens.Size.screenPad)
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s14) { // 원문 블록 사이 14
                     profile
                     contactButtons
                     infoCard
@@ -71,7 +71,7 @@ struct StaffDetailView: View {
     // MARK: 아바타 · 이름
 
     private var profile: some View {
-        HStack(spacing: PumTokens.Space.s16) {
+        HStack(spacing: PumTokens.Space.s14) { // 원문 아바타 옆 14
             PumAvatar(name: state.name, colorIndex: state.colorIndex, size: avatar)
             VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
                 Text(state.name).pumText(.title3).foregroundStyle(PumColor.textPrimary) // 목업 22px 700 → 20 단계(근사)
@@ -93,7 +93,7 @@ struct StaffDetailView: View {
     }
 
     private func contactLabel<Icon: View>(_ title: String, @ViewBuilder icon: () -> Icon) -> some View {
-        VStack(spacing: PumTokens.Space.s8) {
+        VStack(spacing: PumTokens.Space.s4) { // 원문 아이콘 · 글자 사이 4
             icon().frame(height: contactIcon).accessibilityHidden(true)
             Text(title).pumText(.caption, weight: .semibold).lineLimit(1).minimumScaleFactor(0.8)
         }
@@ -178,12 +178,12 @@ struct StaffDetailView: View {
                 v.multilineTextAlignment(.leading)
             }
         }
-        .padding(.vertical, PumTokens.Size.rowPadY)
-        .padding(.horizontal, PumTokens.Size.rowPadX)
+        .padding(.vertical, PumTokens.Size.rowPadY) // 원문 13 → 12
+        .padding(.horizontal, PumTokens.Space.s18) // 원문 카드 안쪽 18
         .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin, alignment: .leading)
         .overlay(alignment: .bottom) {
             if !isLast {
-                Rectangle().fill(PumColor.borderHairline).frame(height: 1).padding(.horizontal, PumTokens.Size.rowPadX)
+                Rectangle().fill(PumColor.borderHairline).frame(height: 1).padding(.horizontal, PumTokens.Space.s18)
             }
         }
         if let action {

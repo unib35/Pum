@@ -55,7 +55,7 @@ struct PersonalRecordDetailView: View {
             PumNavHeader(title: PersonalRecordDetailState.title, onBack: onBack) { deleteButton }
                 .padding(.horizontal, PumTokens.Size.screenPad)
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s16) { // 원문 블록 사이 16
                     title
                     card
                     memoCard
@@ -72,7 +72,8 @@ struct PersonalRecordDetailView: View {
         .safeAreaInset(edge: .bottom, spacing: 0) {
             PumButton(title: "저장", kind: .dark, isLoading: state.isSaving, action: save)
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s12)
+                .padding(.top, PumTokens.Space.s12)
+                .padding(.bottom, PumTokens.Space.s10) // 원문 하단 44 − 홈 막대 안전 영역 34
                 .background(PumColor.bgApp)
         }
     }
@@ -162,7 +163,7 @@ struct PersonalRecordDetailView: View {
 
     private var divider: some View {
         Rectangle().fill(PumColor.borderHairline).frame(height: 1)
-            .padding(.horizontal, PumTokens.Size.rowPadX)
+            .padding(.horizontal, PumTokens.Space.s18) // 원문 카드 안쪽 18
     }
 
     /// 좁거나 글자가 크면 라벨 아래로 값이 내려간다
@@ -172,8 +173,8 @@ struct PersonalRecordDetailView: View {
             HStack(spacing: PumTokens.Space.s12) { l.fixedSize(); Spacer(minLength: 0); v }
             VStack(alignment: .leading, spacing: PumTokens.Space.s8) { l; v }
         }
-        .padding(.vertical, PumTokens.Size.rowPadY)
-        .padding(.horizontal, PumTokens.Size.rowPadX)
+        .padding(.vertical, PumTokens.Space.s14) // 원문 행 위아래 14
+        .padding(.horizontal, PumTokens.Space.s18)
         .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin, alignment: .leading)
     }
 
@@ -213,7 +214,7 @@ struct PersonalRecordDetailView: View {
         return rowLayout {
             rowLabel("휴게")
         } value: {
-            HStack(spacing: PumTokens.Space.s8) {
+            HStack(spacing: PumTokens.Space.s6) { // 원문 알약 사이 6
                 ForEach(Array(all.enumerated()), id: \.offset) { index, option in
                     PumChoicePill(title: option.title, isOn: state.breakOption == option, offStyle: .filled,
                                   position: (index, all.count)) {
@@ -260,7 +261,8 @@ struct PersonalRecordDetailView: View {
                     .padding(.horizontal, -PumTokens.Space.s4) // TextEditor 기본 안쪽 여백 상쇄
                     .accessibilityLabel(Text("메모"))
             }
-            .padding(PumTokens.Space.s16)
+            .padding(.horizontal, PumTokens.Space.s16) // 원문 14 16
+            .padding(.vertical, PumTokens.Space.s14)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
