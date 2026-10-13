@@ -20,7 +20,6 @@ struct DirectRegisterBasicView: View {
     var onNext: (DirectRegisterBasicValue, @escaping () -> Void) -> Void
 
     private enum Layout {
-        static let stepBarHeight: CGFloat = 3 // 원문 3 근사
         static let restLine: CGFloat = 1
         static let focusLine: CGFloat = 2
     }
@@ -102,17 +101,7 @@ struct DirectRegisterBasicView: View {
     }
 
     private var stepBar: some View {
-        HStack(spacing: PumTokens.Space.s4) {
-            ForEach(1...DirectRegisterBasicState.stepCount, id: \.self) { i in
-                Capsule()
-                    .fill(i <= DirectRegisterBasicState.currentStep ? PumColor.surfaceInverse : PumTokens.ColorToken.gray200)
-                    .frame(height: Layout.stepBarHeight)
-            }
-        }
-        .padding(.horizontal, PumTokens.Size.screenPad)
-        .padding(.vertical, PumTokens.Space.s8)
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(Text(DirectRegisterBasicState.stepReadout))
+        DirectRegisterStepBar(current: DirectRegisterBasicState.currentStep)
     }
 
     // MARK: 입력
