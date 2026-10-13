@@ -5,11 +5,13 @@ import SwiftUI
 enum WorkplaceSwitcherLocal {
     /// 사업장 색 네모 약 44(1n과 같은 모양). 큰 글자에서 함께 커진다
     static let tileSize: CGFloat = 44
-    /// 「전체 사업장」 겹친 네모 약 20×24(1n 칩과 같은 모양)
-    static let stackTileWidth: CGFloat = 20
-    static let stackTileHeight: CGFloat = 24
+    /// 「전체 사업장」 겹친 네모 26×26(흰 테두리 2)(1n 칩과 같은 모양)
+    static let stackTileWidth: CGFloat = 26
+    static let stackTileHeight: CGFloat = 26
     /// 열린 칩 파랑 테두리 약 2 — 토큰에 2는 없어 이름만 붙임
     static let openRingWidth: CGFloat = 2
+    /// 뒤 화면 맨 위 줄(칩 · 알림) 높이 40 — 누름 영역 44는 유지
+    static let topRowHeight: CGFloat = 40
     /// 체크 칸 최소 폭(정렬용)
     static let markMinWidth: CGFloat = 24
 }
@@ -36,12 +38,12 @@ struct WorkplaceSwitcherSheet: View {
             }
             PumCard { allRow }
             Button(action: onAddByCode) {
-                HStack(spacing: PumTokens.Space.s6) {
+                HStack(spacing: PumTokens.Space.s8) { // 원문 gap 8
                     Image(systemName: "plus").font(.callout.weight(.semibold)).accessibilityHidden(true)
                     Text("초대 코드로 사업장 추가").pumText(.body, weight: .semibold)
                 }
                 .foregroundStyle(PumColor.textSecondary)
-                .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin)
+                .frame(maxWidth: .infinity, minHeight: PumTokens.Space.s24 * 2) // 원문 높이 48
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
@@ -59,7 +61,6 @@ struct WorkplaceSwitcherSheet: View {
             HStack(alignment: .firstTextBaseline) { title; Spacer(minLength: PumTokens.Space.s8); count }
             VStack(alignment: .leading, spacing: PumTokens.Space.s4) { title; count }
         }
-        .padding(.horizontal, PumTokens.Space.s4)
     }
 
     private var title: some View {
@@ -75,7 +76,7 @@ struct WorkplaceSwitcherSheet: View {
 
     private func row(_ w: SwitcherWorkplace) -> some View {
         Button { onSelect(w.id) } label: {
-            HStack(spacing: PumTokens.Space.s12) {
+            HStack(spacing: PumTokens.Space.s14) {
                 // 15px 700 흰색 → callout(16)
                 Text(w.initial).pumText(.callout, weight: .bold).foregroundStyle(.white)
                     .frame(width: tile, height: tile)
@@ -87,7 +88,7 @@ struct WorkplaceSwitcherSheet: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 markView(state.mark(for: w))
             }
-            .padding(.vertical, PumTokens.Size.rowPadY)
+            .padding(.vertical, PumTokens.Space.s14) // 원문 행 padding 14 16
             .padding(.horizontal, PumTokens.Size.rowPadX)
             .frame(minHeight: PumTokens.Size.tapMin)
             .contentShape(Rectangle())
@@ -114,13 +115,13 @@ struct WorkplaceSwitcherSheet: View {
 
     private var allRow: some View {
         Button(action: onShowAll) {
-            HStack(spacing: PumTokens.Space.s12) {
-                HStack(spacing: -PumTokens.Space.s6) { // 겹침 space-6
+            HStack(spacing: PumTokens.Space.s14) {
+                HStack(spacing: -PumTokens.Space.s8) { // 겹침 8
                     ForEach(state.workplaces) { w in
                         RoundedRectangle(cornerRadius: PumTokens.Radius.sm, style: .continuous).fill(w.tileColor)
                             .frame(width: stackW, height: stackH)
                             .overlay(RoundedRectangle(cornerRadius: PumTokens.Radius.sm, style: .continuous)
-                                .strokeBorder(PumColor.surfaceCard, lineWidth: 1))
+                                .strokeBorder(PumColor.surfaceCard, lineWidth: 2))
                     }
                 }
                 VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
@@ -131,7 +132,7 @@ struct WorkplaceSwitcherSheet: View {
                 Image(systemName: "chevron.right").font(.footnote.weight(.semibold))
                     .foregroundStyle(PumColor.textDisabled).accessibilityHidden(true)
             }
-            .padding(.vertical, PumTokens.Size.rowPadY)
+            .padding(.vertical, PumTokens.Space.s14) // 원문 행 padding 14 16
             .padding(.horizontal, PumTokens.Size.rowPadX)
             .frame(minHeight: PumTokens.Size.tapMin)
             .contentShape(Rectangle())
