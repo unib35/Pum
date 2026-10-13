@@ -66,17 +66,24 @@ struct StaffAddSheet: View {
 /// 캡처용 — 기존 직원 목록(1ac) 위에 시트를 올린다. 시트는 값이 있을 때만 연다.
 struct StaffAddPreviewHost: View {
     var state: StaffAddState? = .sample
+    var onNext: (StaffAddMethod) -> Void = { _ in }
     @State private var open: Bool
 
-    init(state: StaffAddState? = .sample) {
+    init(state: StaffAddState? = .sample, onNext: @escaping (StaffAddMethod) -> Void = { _ in }) {
         self.state = state
+        self.onNext = onNext
         _open = State(initialValue: state != nil)
     }
 
     var body: some View {
         StaffListView()
             .pumBottomSheet(isPresented: $open) {
-                if let state { StaffAddSheet(state: state, onNext: { _ in open = false }) }
+                if let state {
+                    StaffAddSheet(state: state, onNext: { method in
+                        open = false
+                        onNext(method)
+                    })
+                }
             }
     }
 }
