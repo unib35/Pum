@@ -113,7 +113,7 @@ Claude Design에서 확정한 설계를 구현 기준으로 정리한 문서다.
 | 묶음 | 내용 |
 |---|---|
 | 색 | 회색 램프 `--gray-0`…`--gray-900`(쿨 그레이) · 강조 `--blue-50/100/300/500/700`(코발트 #2F5BEA) · 의미 `--green-*`(확정·금액) `--amber-*`(확인 필요) `--red-*`(결근·거절) · 별칭 `--bg-app` #F3F4F7, `--text-primary` #171B26, `--accent`, `--status-*` |
-| 간격 · 크기 | `--space-2`…`--space-24`, `--screen-pad` 20, `--tap-min` 44, `--button-h` 54 / `-sm` 44, 행 패딩 13×16 |
+| 간격 · 크기 | `--space-2`…`--space-24`, `--screen-pad` 20, `--tap-min` 44, `--button-h` 54 / `-sm` 44, 행 패딩 12×16(DEC-009 — 문서 원문 13) |
 | 모서리 | xs 6(태그) · sm 8(배지) · md 12(버튼·타일·입력) · lg 14(카드) · xl 16(시트) · pill 999 |
 | 그림자 | hairline · outline 1.5 · attention(주황 링) · float(알럿·토스트 전용) |
 | 글자 | Pretendard Variable 단일 패밀리, tabular-nums. display 52 · hero 32 · title-1 28 · title-2 24 · title-3 20 · headline 17 · body 15 · callout 14 · footnote 13 · caption 12 · caption-2 11 |

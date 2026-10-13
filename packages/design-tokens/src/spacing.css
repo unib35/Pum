@@ -15,7 +15,7 @@
   --tap-min: 44px;
   --button-h: 54px;
   --button-h-sm: 44px;
-  --row-pad-y: 13px;
+  --row-pad-y: 12px; /* DEC-009: 화면 원문 값(디자인 시스템 문서 13 → 12) */
   --row-pad-x: 16px;
 
   --radius-xs: 6px;   /* inline tag */
