@@ -52,15 +52,17 @@ nonisolated struct DirectRegisterTermsState: Equatable, Sendable {
 
     static func won(_ amount: Int) -> String { PumFormat.amount(amount) + "원" }
 
-    /// 숫자만 받는다. 비면 0
-    static func wage(fromInput s: String) -> Int {
-        Int(String(s.filter { $0.isASCII && $0.isNumber }.prefix(maxWageDigits))) ?? 0
+    /// 숫자만 받는다. 비면 0, 자릿수 한도를 넘으면 nil(이전 값 유지 — 조용히 잘라 다른 금액이 되지 않게)
+    static func wage(fromInput s: String) -> Int? {
+        let digits = s.filter { $0.isASCII && $0.isNumber }
+        guard digits.count <= maxWageDigits else { return nil }
+        return Int(digits) ?? 0
     }
 
     func isBelowMinimum(_ draft: DirectRegisterTermsDraft) -> Bool { draft.hourlyWage < minimumWage }
 
     func canProceed(_ draft: DirectRegisterTermsDraft) -> Bool {
-        !isBelowMinimum(draft) && !draft.weekdays.isEmpty
+        minimumWage > 0 && draft.hourlyWage > 0 && !isBelowMinimum(draft) && !draft.weekdays.isEmpty // 최저를 못 받았으면 넘기지 않음
     }
 
     func value(_ draft: DirectRegisterTermsDraft) -> DirectRegisterTermsValue {

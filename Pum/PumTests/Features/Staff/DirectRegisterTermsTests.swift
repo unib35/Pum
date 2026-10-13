@@ -31,13 +31,15 @@ struct DirectRegisterTermsTests {
     @Test func 요일_0개면_다음_잠금() {
         let s = DirectRegisterTermsState.sample
         #expect(!s.canProceed(.init(hourlyWage: 11_000, weekdays: [])))
+        #expect(!s.canProceed(.init(hourlyWage: 0, weekdays: [1]))) // 0원은 넘기지 않음
     }
 
     @Test func 숫자만_받는다() {
         #expect(DirectRegisterTermsState.wage(fromInput: "10,320원") == 10_320)
         #expect(DirectRegisterTermsState.wage(fromInput: "") == 0)
         #expect(DirectRegisterTermsState.wage(fromInput: "abc") == 0)
-        #expect(DirectRegisterTermsState.wage(fromInput: "12345678901") == 123_456_789)
+        #expect(DirectRegisterTermsState.wage(fromInput: "12345678901") == nil) // 한도 초과는 받지 않음
+        #expect(DirectRegisterTermsState.wage(fromInput: "１０３２０") == 0) // 전각 숫자는 무시
     }
 
     @Test func 넘기는_값() {

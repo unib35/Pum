@@ -131,7 +131,10 @@ struct DirectRegisterTermsView: View {
             HStack(spacing: 0) {
                 TextField("", text: Binding(
                     get: { draft.hourlyWage == 0 ? "" : PumFormat.amount(draft.hourlyWage) },
-                    set: { touchedWage = true; draft.hourlyWage = DirectRegisterTermsState.wage(fromInput: $0) }))
+                    set: {
+                        guard let w = DirectRegisterTermsState.wage(fromInput: $0) else { return }
+                        touchedWage = true; draft.hourlyWage = w
+                    }))
                     .keyboardType(.numberPad)
                     .fixedSize() // 원문 「10,320원」 — 「원」이 숫자 바로 뒤에
                     .focused($wageFocused)
@@ -174,6 +177,7 @@ struct DirectRegisterTermsView: View {
     private var minimumNote: some View {
         Text(state.minimumWageText).pumText(.caption, weight: .regular).foregroundStyle(PumColor.textSecondary)
             .fixedSize(horizontal: false, vertical: true)
+            .accessibilityHidden(true) // 시급 입력 라벨이 같이 읽는다
     }
 
     // MARK: 요일 · 시간
