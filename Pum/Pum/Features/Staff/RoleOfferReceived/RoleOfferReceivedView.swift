@@ -92,7 +92,9 @@ struct RoleOfferReceivedView: View {
     }
 
     private var needsDecision: some View { PumBadge(text: RoleOfferReceivedState.needsDecisionTitle, kind: .attention) }
-    private var verified: some View { PumBadge(text: RoleOfferReceivedState.verifiedBadge, kind: .done) }
+    @ViewBuilder private var verified: some View {
+        if state.isVerifiedBusiness { PumBadge(text: RoleOfferReceivedState.verifiedBadge, kind: .done) }
+    }
 
     private var sent: some View {
         Text(state.sentText).pumText(.footnote, weight: .medium).foregroundStyle(PumColor.textSecondary)

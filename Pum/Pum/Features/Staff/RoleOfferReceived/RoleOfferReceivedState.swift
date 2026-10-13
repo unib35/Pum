@@ -44,9 +44,13 @@ nonisolated struct RoleOfferReceivedState: Equatable, Sendable {
     let pairs: [RoleOfferPair]
     let footerNotice: String
     let responding: RoleOfferResponse?
+    /// 서버가 준 사업장 인증 여부 — 거짓이면 「인증된 사업장」 배지를 숨긴다(신뢰 표시라 상수로 두지 않음)
+    let isVerifiedBusiness: Bool
 
     init(sentText: String, title: String, businessText: String, sections: [RoleOfferSection],
-         pairs: [RoleOfferPair] = [], footerNotice: String, responding: RoleOfferResponse? = nil) {
+         pairs: [RoleOfferPair] = [], footerNotice: String, responding: RoleOfferResponse? = nil,
+         isVerifiedBusiness: Bool = true) {
+        self.isVerifiedBusiness = isVerifiedBusiness
         self.sentText = sentText
         self.title = title
         self.businessText = businessText
@@ -69,11 +73,12 @@ nonisolated struct RoleOfferReceivedState: Equatable, Sendable {
     func ended() -> RoleOfferReceivedState { with(responding: nil) }
 
     /// 「인증된 사업장, 종민김밥 본점 · 대표 박민수」
-    var verifiedReadout: String { "인증된 사업장, \(businessText)" }
+    var verifiedReadout: String { isVerifiedBusiness ? "인증된 사업장, \(businessText)" : businessText }
 
     private func with(responding: RoleOfferResponse?) -> RoleOfferReceivedState {
         RoleOfferReceivedState(sentText: sentText, title: title, businessText: businessText, sections: sections,
-                               pairs: pairs, footerNotice: footerNotice, responding: responding)
+                               pairs: pairs, footerNotice: footerNotice, responding: responding,
+                               isVerifiedBusiness: isVerifiedBusiness)
     }
 
     /// 17i 원문 캡처 값

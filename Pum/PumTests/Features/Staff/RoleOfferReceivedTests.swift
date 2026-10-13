@@ -46,4 +46,12 @@ struct RoleOfferReceivedTests {
         let declining = s.beginning(.decline)
         #expect(declining?.isLoading(.decline) == true && declining?.isLoading(.accept) == false)
     }
+
+    @Test func 인증되지_않은_사업장이면_인증_문구가_없다() {
+        let base = RoleOfferReceivedState.managerInvite
+        let unverified = RoleOfferReceivedState(sentText: base.sentText, title: base.title, businessText: base.businessText,
+                                                sections: base.sections, footerNotice: base.footerNotice, isVerifiedBusiness: false)
+        #expect(unverified.verifiedReadout == base.businessText)
+        #expect(base.verifiedReadout.hasPrefix("인증된 사업장"))
+    }
 }
