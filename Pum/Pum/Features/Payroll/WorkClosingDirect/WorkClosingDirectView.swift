@@ -8,7 +8,8 @@ struct WorkClosingDirectView: View {
     var onBack: () -> Void = {}
     /// 「확인」 — 결과를 done(성공 여부)로 알린다. 연결 전 기본값은 실패.
     var onConfirm: (_ id: String, _ done: @escaping (Bool) -> Void) -> Void = { _, done in done(false) }
-    var onOpenDay: (_ id: String) -> Void = { _ in }
+    /// 고친 날 열기(직원 id, 날짜 id) — 20f 하루 고치기
+    var onOpenDay: (_ personID: String, _ dayID: String) -> Void = { _, _ in }
     var onShowScheduled: (_ id: String) -> Void = { _ in }
     /// 마감 실행. 연결 전 기본값은 실패(done(false)).
     var onClose: (_ done: @escaping (Bool) -> Void) -> Void = { done in done(false) }
@@ -104,7 +105,8 @@ struct WorkClosingDirectView: View {
             rowTexts(title: title, subtitle: person.confirmSubtitle)
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel(Text("\(title), \(person.confirmSubtitle)"))
-            DirectChip(title: "확인", style: .fill, isLoading: lock.confirmingID == person.id) { confirm(person.id) }
+            DirectChip(title: "확인", style: .fill, isLoading: lock.confirmingID == person.id,
+                       spoken: "\(person.name) 기록 확인") { confirm(person.id) }
         }
         .padding(.horizontal, PumTokens.Size.rowPadX)
         .padding(.vertical, PumTokens.Space.s10)
@@ -139,7 +141,7 @@ struct WorkClosingDirectView: View {
     }
 
     private func editedRow(_ person: WorkClosingDirectState.Person, _ day: WorkClosingDirectState.EditedDay) -> some View {
-        Button { onOpenDay(person.id) } label: {
+        Button { onOpenDay(person.id, day.id) } label: {
             HStack(spacing: PumTokens.Space.s12) {
                 rowTexts(title: day.dateText, subtitle: day.detailText)
                 DirectChip(title: "고침", style: .outline, isLoading: false, action: nil) // 행 전체가 버튼
@@ -230,6 +232,8 @@ private struct DirectChip: View {
     let title: String
     let style: Style
     let isLoading: Bool
+    /// VoiceOver 이름 — 같은 칩이 여러 개일 때 구별(없으면 글자 그대로)
+    var spoken: String? = nil
     let action: (() -> Void)?
 
     private var shape: some View {
@@ -254,7 +258,7 @@ private struct DirectChip: View {
                     .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .accessibilityLabel(Text(title))
+            .accessibilityLabel(Text(spoken ?? title))
             .accessibilityValue(isLoading ? Text("처리 중") : Text(""))
         } else {
             shape
