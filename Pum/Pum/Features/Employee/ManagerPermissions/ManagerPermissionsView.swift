@@ -10,8 +10,12 @@ struct ManagerPermissionsView: View {
     var onSelectOwnerRole: () -> Void
     var onSave: (ManagerRole, [String]) -> Void
 
-    /// 세그먼트 칸 높이 — 원문 약 36(누름 영역 44)
-    @ScaledMetric(relativeTo: .callout) private var segmentHeight: CGFloat = 36
+    /// 세그먼트 칸 높이 — 원문 약 34(글자 13px 한 줄 + 위아래 7, 누름 영역은 44 유지)
+    @ScaledMetric(relativeTo: .callout) private var segmentHeight: CGFloat = 34
+    /// 행 위아래 안쪽 — 원문 11
+    private let rowPadY: CGFloat = 11
+    /// 세그먼트 바깥 안쪽 — 원문 3
+    private let segmentInset: CGFloat = 3
     /// 아바타 — 원문 약 44
     @ScaledMetric(relativeTo: .body) private var avatarSize = PumLayout.avatar + PumTokens.Space.s8
 
@@ -40,7 +44,7 @@ struct ManagerPermissionsView: View {
                     section(header: sensitiveHeader, group: .sensitive)
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s8)
+                .padding(.vertical, PumTokens.Space.s12)
                 .allowsHitTesting(!isSaving) // 저장 중엔 보낸 값과 화면이 어긋나지 않게 입력만 막음(처리 중 모양은 버튼에만)
             }
         }
@@ -80,21 +84,24 @@ struct ManagerPermissionsView: View {
                     Text(role.title)
                         .pumText(.footnote, weight: selected ? .semibold : .medium)
                         .foregroundStyle(selected ? PumColor.textPrimary : PumColor.textSecondary)
-                        .frame(maxWidth: .infinity, minHeight: max(segmentHeight, PumTokens.Size.tapMin))
+                        .frame(maxWidth: .infinity, minHeight: segmentHeight)
                         .background {
                             if selected {
-                                RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous).fill(PumColor.surfaceCard)
+                                Capsule().fill(PumColor.surfaceCard)
                             }
                         }
+                        // 누름 영역 44 유지, 배치 높이는 원문
+                        .frame(minHeight: PumTokens.Size.tapMin)
                         .contentShape(Rectangle())
+                        .padding(.vertical, -max(0, PumTokens.Size.tapMin - segmentHeight) / 2)
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel(Text(role.title))
                 .accessibilityAddTraits(selected ? [.isButton, .isSelected] : .isButton)
             }
         }
-        .padding(PumTokens.Space.s2)
-        .background(PumColor.surfaceFill, in: RoundedRectangle(cornerRadius: PumTokens.Radius.lg, style: .continuous))
+        .padding(segmentInset)
+        .background(PumColor.surfaceFill, in: Capsule())
     }
 
     // MARK: 섹션
@@ -107,6 +114,7 @@ struct ManagerPermissionsView: View {
         VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
             header.pumText(.caption, weight: .bold).foregroundStyle(PumColor.textSecondary)
                 .padding(.horizontal, PumTokens.Space.s4)
+                .padding(.top, PumTokens.Space.s2)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .accessibilityAddTraits(.isHeader)
             PumCard {
@@ -138,10 +146,10 @@ struct ManagerPermissionsView: View {
         }
         .tint(PumColor.accent)
         .disabled(locked)
-        .padding(.horizontal, PumTokens.Size.rowPadX).padding(.vertical, PumTokens.Size.rowPadY)
+        .padding(.horizontal, PumTokens.Size.rowPadX).padding(.vertical, rowPadY)
         .frame(minHeight: PumTokens.Size.tapMin)
         .overlay(alignment: .bottom) {
-            if !isLast { Rectangle().fill(PumColor.borderHairline).frame(height: 1) }
+            if !isLast { Rectangle().fill(PumColor.borderHairline).frame(height: 1).padding(.horizontal, PumTokens.Size.rowPadX) }
         }
         .accessibilityLabel(Text(serverState.spoken(item, in: draft)))
     }
@@ -154,7 +162,8 @@ struct ManagerPermissionsView: View {
         }
         // 원문은 저장 버튼이 늘 켜져 있다 — 바뀐 것이 없을 때 끄는 동작은 디자인에 없어 두지 않음(처리 중엔 PumButton이 잠금)
         .padding(.horizontal, PumTokens.Size.screenPad)
-        .padding(.vertical, PumTokens.Space.s12)
+        .padding(.top, PumTokens.Space.s12)
+        .padding(.bottom, PumTokens.Space.s10) // 원문 아래 44 − 홈 막대 34
         .background(PumColor.bgApp)
     }
 }

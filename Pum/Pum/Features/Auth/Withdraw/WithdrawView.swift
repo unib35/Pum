@@ -27,11 +27,10 @@ struct WithdrawView: View {
             PumNavHeader(title: "회원 탈퇴", onBack: onBack)
                 .padding(.horizontal, PumTokens.Size.screenPad)
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s14) {
                     Text("\(WithdrawState.headingFirstLine)\n\(WithdrawState.headingSecondLine)")
                         .pumText(.title2).foregroundStyle(PumColor.textPrimary)
                         .accessibilityAddTraits(.isHeader)
-                        .padding(.top, PumTokens.Space.s8)
                     ForEach(state.workplaces) { workplace in
                         WithdrawWorkplaceCard(workplace: workplace,
                                               onTransfer: { onTransferOwnership(workplace) },
@@ -42,7 +41,7 @@ struct WithdrawView: View {
                         .padding(.horizontal, PumTokens.Space.s4)
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s12)
+                .padding(.vertical, PumTokens.Space.s14) // 머리 줄–제목 14(원문 gap)
             }
             .scrollBounceBehavior(.basedOnSize)
         }
@@ -55,19 +54,19 @@ struct WithdrawView: View {
             VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
                 Text(state.consequencesTitle).pumText(.footnote, weight: .bold).foregroundStyle(PumColor.textSecondary)
                     .accessibilityAddTraits(.isHeader)
-                    .padding(.bottom, PumTokens.Space.s4)
+                    .padding(.bottom, PumTokens.Space.s2) // 제목 아래 10 = 간격 8 + 2
                 ForEach(state.consequences) { item in
-                    HStack(alignment: .firstTextBaseline, spacing: PumTokens.Space.s8) {
+                    HStack(alignment: .firstTextBaseline, spacing: PumTokens.Space.s10) {
                         Text("\u{2022}").accessibilityHidden(true)
                         Text(item.attributed).frame(maxWidth: .infinity, alignment: .leading)
                     }
                     .pumText(.footnote)
-                    .foregroundStyle(PumTokens.ColorToken.gray700)
+                    .foregroundStyle(PumTokens.ColorToken.gray800)
                     .accessibilityElement(children: .ignore)
                     .accessibilityLabel(Text(item.plainText))
                 }
             }
-            .padding(PumTokens.Space.s20)
+            .padding(.vertical, PumTokens.Space.s16).padding(.horizontal, PumTokens.Space.s18)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
@@ -79,8 +78,8 @@ struct WithdrawView: View {
                 .accessibilityHint(Text(state.blockedReason ?? ""))
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
-        .padding(.top, PumTokens.Space.s8)
-        .padding(.bottom, PumTokens.Space.s8)
+        .padding(.top, PumTokens.Space.s12)
+        .padding(.bottom, PumTokens.Space.s10) // 원문 아래 44 − 홈 막대 34
         .background(PumColor.bgApp)
     }
 }
@@ -96,7 +95,7 @@ private struct WithdrawWorkplaceCard: View {
 
     var body: some View {
         PumCard(attention: true) {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+            VStack(alignment: .leading, spacing: PumTokens.Space.s14) { // 메시지–버튼 14
                 VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
                     HStack(spacing: PumTokens.Space.s12) {
                         Text(workplace.initial)
@@ -111,14 +110,14 @@ private struct WithdrawWorkplaceCard: View {
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                     }
-                    Text(workplace.message).pumText(.footnote).foregroundStyle(PumTokens.ColorToken.gray700)
+                    Text(workplace.message).pumText(.footnote).foregroundStyle(PumTokens.ColorToken.gray800)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel(Text(workplace.spoken))
                 buttons
             }
-            .padding(PumTokens.Space.s20)
+            .padding(.vertical, PumTokens.Space.s16).padding(.horizontal, PumTokens.Space.s18)
         }
         .accessibilityElement(children: .contain)
     }
