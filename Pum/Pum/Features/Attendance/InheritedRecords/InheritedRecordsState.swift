@@ -36,7 +36,6 @@ nonisolated struct InheritedRecordsState: Equatable, Sendable {
 
     /// 「10월 12일 월 부터, 앱으로 출퇴근한 기록, 사업장 확인」
     var appRecordsReadout: String { "\(appRecordsTitle), \(Self.appRecordsDetail), 사업장 확인" }
-    var disputeReadout: String { "\(Self.disputeTitle), \(Self.disputeDetail), \(Self.disputeButton)" }
 
     static let sample = InheritedRecordsState(
         workplaceName: "종민김밥 본점",

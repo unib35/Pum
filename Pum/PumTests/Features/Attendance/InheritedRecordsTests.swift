@@ -32,6 +32,5 @@ struct InheritedRecordsTests {
         let s = InheritedRecordsState.sample
         #expect(s.months[0].readout == "9월, 12일 · 55시간 10분 · 명세서 받음, 사업주 입력")
         #expect(s.appRecordsReadout == "10월 12일 월 부터, 앱으로 출퇴근한 기록, 사업장 확인")
-        #expect(s.disputeReadout == "기록이 실제와 다르면, 날짜를 골라 실제 시간과 사유를 보내요 · 사장님이 확인해요, 이의 제기")
     }
 }

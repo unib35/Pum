@@ -80,15 +80,19 @@ struct InheritedRecordsView: View {
 
     private func monthRow(_ month: InheritedMonth) -> some View {
         Button { onOpenMonth(month.id) } label: {
-            ViewThatFits(in: .horizontal) {
-                HStack(spacing: PumTokens.Space.s12) {
-                    texts(title: month.title, detail: month.detail)
-                    ownerBadge
-                    chevron
-                }
-                VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
-                    texts(title: month.title, detail: month.detail)
-                    HStack(spacing: PumTokens.Space.s12) { ownerBadge; Spacer(minLength: 0); chevron }
+            // 행마다 따로 판정하면 큰 글자에서 행 모양이 섞인다 — 글자 크기 하나로 카드 전체를 같이 바꾼다
+            Group {
+                if typeSize >= .xxxLarge {
+                    VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
+                        texts(title: month.title, detail: month.detail)
+                        HStack(spacing: PumTokens.Space.s12) { ownerBadge; Spacer(minLength: 0); chevron }
+                    }
+                } else {
+                    HStack(spacing: PumTokens.Space.s12) {
+                        texts(title: month.title, detail: month.detail)
+                        ownerBadge.fixedSize()
+                        chevron
+                    }
                 }
             }
             .padding(.horizontal, PumTokens.Size.rowPadX)
@@ -116,7 +120,7 @@ struct InheritedRecordsView: View {
                     }
                 }
                 .padding(.horizontal, PumTokens.Size.rowPadX)
-                .padding(.vertical, PumTokens.Space.s14)
+                .padding(.vertical, PumTokens.Space.s12) // 원문 padding 12 16
                 .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin, alignment: .leading)
                 .contentShape(Rectangle())
             }
