@@ -7,7 +7,9 @@ struct DirectRegisterBasicView: View {
     let state: DirectRegisterBasicState
     @State private var draft: DirectRegisterBasicDraft
     /// 손대지 않았을 때만 호출자 새 값을 받는다
-    @State private var touched = false
+    /// 칸별 손댐 — 한 칸을 고쳐도 다른 칸은 호출자 새 값을 받는다
+    @State private var touchedName = false
+    @State private var touchedPhone = false
     @State private var isSending = false
     @FocusState private var focus: DirectRegisterBasicField?
 
@@ -63,7 +65,9 @@ struct DirectRegisterBasicView: View {
         .background(PumColor.bgApp)
         .safeAreaInset(edge: .bottom, spacing: 0) { footer }
         .onChange(of: state.initialDraft) { _, new in
-            if !touched && !isSending { draft = new }
+            guard !isSending else { return }
+            if !touchedName { draft.name = new.name }
+            if !touchedPhone { draft.phone = new.phone }
         }
     }
 
@@ -146,7 +150,9 @@ struct DirectRegisterBasicView: View {
         VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
             fieldLabel(DirectRegisterBasicState.nameTitle)
             box(.name) {
-                TextField("", text: Binding(get: { draft.name }, set: { touched = true; draft.name = $0 }))
+                TextField("", text: Binding(get: { draft.name }, set: { touchedName = true; draft.name = $0 }))
+                    .textContentType(.name)
+                    .autocorrectionDisabled()
                     .submitLabel(.next)
                     .onSubmit { focus = .phone }
                     .focused($focus, equals: .name)
@@ -162,10 +168,11 @@ struct DirectRegisterBasicView: View {
             fieldLabel(DirectRegisterBasicState.phoneTitle)
             box(.phone) {
                 TextField("", text: Binding(get: { draft.phone }, set: {
-                    touched = true
+                    touchedPhone = true
                     draft.phone = DirectRegisterBasicState.filterPhone($0)
                 }))
                 .keyboardType(.phonePad)
+                .textContentType(.telephoneNumber)
                 .toolbar { // 숫자 키패드에는 return 키가 없어 「완료」로 내린다
                     ToolbarItemGroup(placement: .keyboard) {
                         Spacer()
