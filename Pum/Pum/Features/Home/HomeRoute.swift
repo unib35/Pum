@@ -44,21 +44,43 @@ enum HomeRoute: String, CaseIterable, Hashable {
         case .employeeHome:
             EmployeeHomeView(onClockIn: { router.navigate(.attendance(.clockIn)) })
         case .employeeHomeNoShift:
-            EmployeeHomeNoShiftView()
+            EmployeeHomeNoShiftView(onUnplannedClockIn: { router.navigate(.attendance(.clockIn)) })
         case .employeeHomeWorking:
             EmployeeHomeWorkingView(onClockOut: { router.navigate(.attendance(.clockOutDone)) })
         case .ownerHome:
-            OwnerHomeView()
+            OwnerHomeView(
+                onDecide: { _ in router.navigate(.attendance(.ownerReview)) },
+                onClockOutCheck: { _ in router.navigate(.attendance(.ownerReview)) },
+                onOpenOthers: { router.navigate(.attendance(.ownerReview)) }
+            )
         case .ownerHomeClear:
             OwnerHomeClearView()
         case .employeeHomeOvertime:
             EmployeeHomeOvertimeView(onClockOut: { router.navigate(.attendance(.clockOutDone)) })
         case .workplaceSwitcher:
-            WorkplaceSwitcherView()
+            WorkplaceSwitcherView(
+                onClose: router.back,
+                onSelect: { _ in router.back() },
+                onShowAll: { router.navigate(.workplace(.ownerWorkplaces)) },
+                onAddByCode: { router.navigate(.onboarding(.inviteCode)) }
+            )
         case .personalHome:
-            PersonalHomeView(state: .sample)
+            PersonalHomeView(
+                state: .sample,
+                onSwitchWorkplace: { router.navigate(.home(.workplaceSwitcher)) },
+                onBell: { router.navigate(.comms(.newsFeed)) },
+                onClockIn: { router.navigate(.attendance(.clockIn)) },
+                onOpenCalendar: { router.navigate(.attendance(.workCalendar)) },
+                onOpenPayBasis: { router.navigate(.payroll(.expectedPay)) }
+            )
         case .ownerHomeUnverified:
-            OwnerHomeUnverifiedView(state: .sample)
+            OwnerHomeUnverifiedView(
+                state: .sample,
+                onSwitchWorkplace: { router.navigate(.home(.workplaceSwitcher)) },
+                onBell: { router.navigate(.comms(.newsFeed)) },
+                onOpenStep: { id in if id == "clockin" { router.navigate(.workplace(.checkInQR)) } },
+                onVerify: { router.navigate(.workplace(.verifyIntro)) }
+            )
         case .ownerHomeLoading:
             OwnerHomeView(isLoading: true)
         case .employeeHomeLoading:
@@ -66,13 +88,16 @@ enum HomeRoute: String, CaseIterable, Hashable {
         case .ownerHomeLoadFailed:
             OwnerHomeView(staleSince: OwnerHomeLoadFailed.sampleSince)
         case .offline:
-            EmployeeHomeWorkingView(state: .offline)
+            EmployeeHomeWorkingView(state: .offline, onClockOut: { router.navigate(.attendance(.clockOutDone)) })
         case .updateRecommended:
-            EmployeeHomeNoShiftView(state: .updateAvailable)
+            EmployeeHomeNoShiftView(state: .updateAvailable, onUnplannedClockIn: { router.navigate(.attendance(.clockIn)) })
         case .maintenanceNotice:
-            EmployeeHomeNoShiftView(state: .maintenanceNotice)
+            EmployeeHomeNoShiftView(state: .maintenanceNotice, onUnplannedClockIn: { router.navigate(.attendance(.clockIn)) })
         }
     }
 
-    static let connected: Set<Self> = [.employeeHome, .employeeHomeWorking, .employeeHomeOvertime]
+    static let connected: Set<Self> = [
+        .employeeHome, .employeeHomeNoShift, .employeeHomeWorking, .ownerHome, .employeeHomeOvertime,
+        .workplaceSwitcher, .personalHome, .ownerHomeUnverified, .offline, .updateRecommended, .maintenanceNotice,
+    ]
 }
