@@ -23,7 +23,6 @@ struct DuplicateBusinessView: View {
                 choices
             }
             .padding(.horizontal, PumTokens.Size.screenPad)
-            .padding(.top, PumTokens.Space.s8)
             .padding(.bottom, PumTokens.Space.s16)
         }
         .background(PumColor.bgApp)
@@ -36,7 +35,6 @@ struct DuplicateBusinessView: View {
             Text("사업장 인증 2 / 3").pumText(.footnote).foregroundStyle(PumColor.textSecondary)
                 .multilineTextAlignment(.trailing)
         }
-        .padding(.bottom, PumTokens.Space.s4)
     }
 
     private var heading: some View {
@@ -52,27 +50,33 @@ struct DuplicateBusinessView: View {
     private var card: some View {
         PumCard {
             VStack(alignment: .leading, spacing: 0) {
-                HStack(spacing: PumTokens.Space.s12) {
+                HStack(spacing: PumTokens.Space.s14) { // 원문 gap 14
                     Text(state.initial).pumText(.headline, weight: .bold).foregroundStyle(.white)
                         .frame(width: workplaceTile, height: workplaceTile)
                         .background(state.tileColor, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
                         .accessibilityHidden(true)
                     VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
                         ViewThatFits(in: .horizontal) {
-                            HStack(spacing: PumTokens.Space.s8) { name; badge }
+                            HStack(spacing: PumTokens.Space.s6) { name; badge } // 원문 gap 6
                             VStack(alignment: .leading, spacing: PumTokens.Space.s4) { name; badge }
                         }
                         Text(state.existingSubtitle).pumText(.caption).foregroundStyle(PumColor.textSecondary)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .padding(PumTokens.Space.s16)
+                .padding(.horizontal, PumTokens.Space.s18) // 원문 padding 16 18
+                .padding(.top, PumTokens.Space.s16)
+                .padding(.bottom, state.showsDeleteNote ? 0 : PumTokens.Space.s16)
                 .accessibilityElement(children: .combine)
                 if state.showsDeleteNote {
-                    Rectangle().fill(PumColor.borderHairline).frame(height: 1)
-                        .padding(.horizontal, PumTokens.Space.s16)
-                    deleteNote
-                        .padding(PumTokens.Space.s16)
+                    // 원문: 위 12 · 선 · 위 12 (선은 안쪽 폭)
+                    VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+                        Rectangle().fill(PumColor.borderHairline).frame(height: 1)
+                        deleteNote
+                    }
+                    .padding(.horizontal, PumTokens.Space.s18)
+                    .padding(.top, PumTokens.Space.s12)
+                    .padding(.bottom, PumTokens.Space.s16)
                 }
             }
         }
@@ -108,7 +112,7 @@ struct DuplicateBusinessView: View {
             guard lock.begin(c) else { return }
             action { ok in lock.finish(success: ok) }
         } label: {
-            HStack(spacing: PumTokens.Space.s12) {
+            HStack(spacing: PumTokens.Space.s14) { // 원문 gap 14
                 VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
                     Text(title).pumText(.body, weight: .semibold) // 15px 600
                         .foregroundStyle(danger ? PumColor.statusDanger : PumColor.textPrimary)
@@ -118,7 +122,7 @@ struct DuplicateBusinessView: View {
                 Image(systemName: "chevron.right").font(.footnote.weight(.semibold))
                     .foregroundStyle(PumColor.textDisabled).accessibilityHidden(true) // PumRow 화살표와 같은 색
             }
-            .padding(.vertical, PumTokens.Size.rowPadY)
+            .padding(.vertical, PumTokens.Space.s14) // 원문 padding 15 16 → 가장 가까운 토큰 14
             .padding(.horizontal, PumTokens.Size.rowPadX)
             .frame(minHeight: PumTokens.Size.tapMin)
             .contentShape(Rectangle())

@@ -22,7 +22,7 @@ struct AuthorityVerifyView: View {
             VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
                 topBar
                 heading
-                VStack(spacing: PumTokens.Space.s12) {
+                VStack(spacing: PumTokens.Space.s16) { // 원문 gap 16
                     representativeCard
                     delegateCard
                 }
@@ -30,7 +30,6 @@ struct AuthorityVerifyView: View {
                 previewBox
             }
             .padding(.horizontal, PumTokens.Size.screenPad)
-            .padding(.top, PumTokens.Space.s8)
             .padding(.bottom, PumTokens.Space.s16)
         }
         .background(PumColor.bgApp)
@@ -45,12 +44,11 @@ struct AuthorityVerifyView: View {
             Text("사업장 인증 3 / 3").pumText(.footnote).foregroundStyle(PumColor.textSecondary)
                 .multilineTextAlignment(.trailing)
         }
-        .padding(.bottom, PumTokens.Space.s4)
     }
 
     // 2. 제목
     private var heading: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s6) { // 원문 제목–설명 6
             Text("이 사업장을 관리할\n권한을 확인해요")
                 .pumText(.title2)
                 .foregroundStyle(PumColor.textPrimary)
@@ -67,7 +65,7 @@ struct AuthorityVerifyView: View {
             accessibilityValue: "2개 중 1번째",
             action: { state.choice = .representative }
         ) {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
+            VStack(alignment: .leading, spacing: PumTokens.Space.s4) { // 원문 제목–설명 4
                 cardTitle(AuthorityVerifyState.representativeTitle)
                 representativeDetail
             }
@@ -81,7 +79,7 @@ struct AuthorityVerifyView: View {
             accessibilityValue: "2개 중 2번째",
             action: { state.choice = .delegate }
         ) {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
+            VStack(alignment: .leading, spacing: PumTokens.Space.s4) {
                 cardTitle(AuthorityVerifyState.delegateTitle)
                 Text(AuthorityVerifyState.delegateDetail).pumText(.footnote).foregroundStyle(PumColor.textSecondary)
             }
@@ -116,7 +114,7 @@ struct AuthorityVerifyView: View {
     private var previewBox: some View {
         VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
             ViewThatFits(in: .horizontal) {
-                HStack(spacing: PumTokens.Space.s10) { badge; lead }
+                HStack(spacing: PumTokens.Space.s8) { badge; lead } // 원문 gap 8
                 VStack(alignment: .leading, spacing: PumTokens.Space.s6) { badge; lead }
             }
             ViewThatFits(in: .horizontal) {
@@ -133,7 +131,8 @@ struct AuthorityVerifyView: View {
             }
             note
         }
-        .padding(PumTokens.Space.s16)
+        .padding(.horizontal, PumTokens.Space.s18) // 원문 padding 16 18
+        .padding(.vertical, PumTokens.Space.s16)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(PumColor.statusDoneSoft, in: RoundedRectangle(cornerRadius: PumTokens.Radius.lg, style: .continuous))
         .accessibilityElement(children: .ignore)
@@ -158,7 +157,7 @@ struct AuthorityVerifyView: View {
             Text(label).pumText(.caption2, weight: .regular).foregroundStyle(PumColor.textSecondary) // 11px 400
             Text("✓ " + value).pumText(.footnote, weight: .bold).foregroundStyle(PumColor.statusDone) // 13px 700
         }
-        .padding(.horizontal, PumTokens.Space.s12).padding(.vertical, PumTokens.Space.s10)
+        .padding(PumTokens.Space.s10) // 원문 padding 10
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(PumColor.surfaceCard, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
     }
