@@ -14,6 +14,8 @@ struct PaymentUndoView: View {
     @State private var sheetOpen: Bool
     @State private var pendingID: String?
     @State private var lock = PaymentUndoLock()
+    /// 되돌리기에 성공한 직원 — 서버 새 값이 오기 전에 같은 행을 다시 눌러도 두 번 보내지 않는다
+    @State private var undoneID: String?
     @State private var toast: String?
     @ScaledMetric(relativeTo: .body) private var avatarSize = PumLayout.avatar - PumTokens.Space.s2 // 원문 34
 
@@ -46,16 +48,23 @@ struct PaymentUndoView: View {
         }
         .background(PumColor.bgApp)
         .pumToast($toast) // 서버가 준 문구가 있을 때만 · 3초 · 알림으로 읽음 · 동작 줄이기는 공통 규칙
-        .pumBottomSheet(isPresented: $sheetOpen, onDismiss: dismissed) {
+        // 처리 중에는 막 · 드래그로도 닫히지 않게
+        .pumBottomSheet(isPresented: Binding(get: { sheetOpen }, set: { if $0 || !lock.isSending { sheetOpen = $0 } }),
+                        onDismiss: dismissed) {
             if let target = state.undoTarget {
                 PaymentUndoSheet(target: target, lock: lock, onCancel: cancel, onUndo: { undo(target) })
             }
         }
         .onChange(of: state.undoTarget) { _, new in
+            if let new, new.id != undoneID, lock.isDone { lock.reset() } // 다른 직원이면 새로 시작
             if let new, pendingID == new.id { pendingID = nil; sheetOpen = true }
             if new == nil { sheetOpen = false }
         }
         .onChange(of: state.toastText) { _, new in toast = new }
+        .onChange(of: state.rows) { _, rows in
+            // 서버에서 「지급 대기」로 바뀌면 기억을 지운다 — 나중에 다시 지급 완료가 되면 또 되돌릴 수 있게
+            if let id = undoneID, rows.first(where: { $0.id == id })?.isPaid == false { undoneID = nil }
+        }
     }
 
     // MARK: 위
@@ -201,6 +210,7 @@ struct PaymentUndoView: View {
     // MARK: 동작
 
     private func request(_ id: String) {
+        guard id != undoneID else { return } // 이미 되돌림 — 서버 새 값을 기다린다
         if let target = state.undoTarget, target.id == id { sheetOpen = true } else { pendingID = id }
         onRequestUndo(id)
     }
@@ -208,18 +218,21 @@ struct PaymentUndoView: View {
     private func cancel() {
         guard !lock.isSending else { return }
         sheetOpen = false
-        lock.reset()
+        if !lock.isDone { lock.reset() } // 성공한 잠금은 풀지 않는다
     }
 
     private func dismissed() {
         guard !lock.isSending else { return }
-        lock.reset()
+        if !lock.isDone { lock.reset() }
     }
 
     /// 한 번만 — 누르는 즉시 잠그고, 성공이면 잠근 채 둔다
     private func undo(_ target: PaymentUndoState.UndoTarget) {
         guard lock.begin() else { return }
-        onUndo(target.id) { success in lock.finish(success: success) }
+        onUndo(target.id) { success in
+            lock.finish(success: success)
+            if success { undoneID = target.id }
+        }
     }
 }
 
