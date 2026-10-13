@@ -26,11 +26,12 @@ struct InviteCodeRetryView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+            VStack(alignment: .leading, spacing: PumTokens.Space.s14) {
                 PumNavHeader(title: "초대 코드", onBack: onBack)
                 Text("사장님께 받은 초대 코드를\n입력해주세요") // 원문 15e 줄바꿈(2d와 다름)
                     .pumText(.title1) // 2d 제목과 같은 단계
                     .foregroundStyle(PumColor.textPrimary)
+                    .padding(.top, PumTokens.Space.s4) // 제목 margin-top 4
                     .accessibilityAddTraits(.isHeader)
                 codeField
                 if let text = state.errorText {
@@ -48,7 +49,7 @@ struct InviteCodeRetryView: View {
                     .padding(.horizontal, PumTokens.Space.s4)
             }
             .padding(.horizontal, PumTokens.Size.screenPad)
-            .padding(.bottom, PumTokens.Space.s16)
+            .padding(.bottom, PumTokens.Space.s14)
         }
         .scrollDismissesKeyboard(.never)
         .background(PumColor.bgApp)
@@ -85,7 +86,8 @@ struct InviteCodeRetryView: View {
         PumButton(title: "초대 확인하기", kind: .primary, isLoading: state.isConfirming, action: confirm)
             .disabled(!state.canConfirm && !state.isConfirming)
             .padding(.horizontal, PumTokens.Size.screenPad)
-            .padding(.vertical, PumTokens.Space.s12)
+            .padding(.top, PumTokens.Space.s12)
+            .padding(.bottom, PumTokens.Space.s10)
             .background(PumColor.bgApp)
     }
 
