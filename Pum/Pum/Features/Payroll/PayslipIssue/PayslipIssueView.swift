@@ -15,6 +15,8 @@ struct PayslipIssueView: View {
     /// 세그먼트 칸 높이 — 원문 약 36(누름 영역은 44까지)
     @ScaledMetric(relativeTo: .callout) private var segmentHeight: CGFloat = 36
     /// 체크 원 지름 — 원문 약 20
+    /// 직원 줄 아바타 지름 — 원문 32
+    @ScaledMetric(relativeTo: .body) private var rowAvatar: CGFloat = 32
     @ScaledMetric(relativeTo: .caption) private var checkSize = PumLayout.avatar - PumTokens.Space.s16
 
     init(state: PayslipIssueState = .sample,
@@ -35,14 +37,14 @@ struct PayslipIssueView: View {
             PumNavHeader(title: state.title, onBack: onBack)
                 .padding(.horizontal, PumTokens.Size.screenPad)
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
                     summaryCard
                     timingSection
                     peopleSection
                     requiredSection
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s16)
+                .padding(.vertical, PumTokens.Space.s12)
             }
         }
         .background(PumColor.bgApp)
@@ -69,7 +71,8 @@ struct PayslipIssueView: View {
                     PumBadge(text: state.statusBadgeText, kind: .done)
                 }
             }
-            .padding(PumTokens.Space.s16)
+            .padding(.vertical, PumTokens.Space.s14)
+            .padding(.horizontal, PumTokens.Space.s16)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         .accessibilityElement(children: .ignore)
@@ -88,16 +91,16 @@ struct PayslipIssueView: View {
     // MARK: 보내는 때 — 세그먼트는 공통에 없어 화면 전용(공통 후보: 8d와 같은 값)
 
     private var timingSection: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
             PumSectionHeader(title: PayslipIssueState.timingHeader)
             PumCard {
                 VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
                     segments
                     Text(state.timingNote).pumText(.caption, weight: .regular).foregroundStyle(PumColor.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
-                        .padding(.horizontal, PumTokens.Space.s4)
                 }
-                .padding(PumTokens.Space.s12)
+                .padding(.vertical, PumTokens.Space.s12)
+                .padding(.horizontal, PumTokens.Space.s16)
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
@@ -136,7 +139,7 @@ struct PayslipIssueView: View {
     // MARK: 직원 목록
 
     private var peopleSection: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
             PumSectionHeader(title: state.peopleHeaderText)
             PumCard {
                 ForEach(Array(state.people.enumerated()), id: \.element.id) { i, p in
@@ -149,7 +152,7 @@ struct PayslipIssueView: View {
 
     private func row(_ p: PayslipIssuePerson) -> some View {
         HStack(alignment: .center, spacing: PumTokens.Space.s12) {
-            PumAvatar(name: p.name, colorIndex: p.colorIndex).accessibilityHidden(true)
+            PumAvatar(name: p.name, colorIndex: p.colorIndex, size: rowAvatar).accessibilityHidden(true)
             ViewThatFits(in: .horizontal) {
                 HStack(alignment: .center, spacing: PumTokens.Space.s8) {
                     nameBlock(p)
@@ -165,7 +168,7 @@ struct PayslipIssueView: View {
             }
         }
         .padding(.horizontal, PumTokens.Size.rowPadX)
-        .padding(.vertical, PumTokens.Space.s12)
+        .padding(.vertical, PumTokens.Size.rowPadY)
         .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin, alignment: .leading)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(p.accessibilityText))
@@ -203,25 +206,26 @@ struct PayslipIssueView: View {
     // MARK: 필수 기재 항목
 
     private var requiredSection: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
             PumSectionHeader(title: PayslipIssueState.requiredHeader)
             PumCard {
                 let columns = typeSize.isAccessibilitySize
                     ? [GridItem(.flexible(), alignment: .topLeading)]
                     : [GridItem(.flexible(), alignment: .topLeading), GridItem(.flexible(), alignment: .topLeading)]
-                LazyVGrid(columns: columns, alignment: .leading, spacing: PumTokens.Space.s12) {
+                LazyVGrid(columns: columns, alignment: .leading, spacing: PumTokens.Space.s10) {
                     ForEach(state.requiredItems) { item in
-                        HStack(alignment: .top, spacing: PumTokens.Space.s8) {
+                        HStack(alignment: .center, spacing: PumTokens.Space.s8) {
                             itemMark(ok: item.isOk)
                             Text(item.displayText).pumText(.footnote, weight: .regular)
-                                .foregroundStyle(PumColor.textPrimary)
+                                .foregroundStyle(PumTokens.ColorToken.gray800)
                                 .fixedSize(horizontal: false, vertical: true)
                         }
                         .accessibilityElement(children: .ignore)
                         .accessibilityLabel(Text(item.accessibilityText))
                     }
                 }
-                .padding(PumTokens.Space.s16)
+                .padding(.vertical, PumTokens.Space.s14)
+                .padding(.horizontal, PumTokens.Space.s16)
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
@@ -246,7 +250,7 @@ struct PayslipIssueView: View {
     // MARK: 하단
 
     private var bottomBar: some View {
-        VStack(spacing: PumTokens.Space.s8) {
+        VStack(spacing: PumTokens.Space.s10) {
             PumButton(title: state.issueButtonTitle, kind: .primary) {
                 if let t = state.selectedTiming { onIssue(t) }
             }
