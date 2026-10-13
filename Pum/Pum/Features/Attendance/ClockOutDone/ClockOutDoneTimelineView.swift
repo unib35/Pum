@@ -6,14 +6,14 @@ struct ClockOutDoneTimelineView: View {
     var axis = WorkTimelineAxis()
 
     // 목업 막대 높이 · 점선 패턴 · 기준선 두께 (DEC-005: 토큰 단계에 가장 가까운 값)
-    private let barHeight: CGFloat = PumTokens.Space.s16
-    private let plannedOutset: CGFloat = PumTokens.Space.s8
+    private let barHeight: CGFloat = PumTokens.Space.s10
+    private let plannedOutset: CGFloat = PumTokens.Space.s6
     private let dashPattern: [CGFloat] = [PumTokens.Space.s4, PumTokens.Space.s2]
     private let dashLine: CGFloat = 1.5
     private let baselineHeight: CGFloat = PumTokens.Space.s4
 
     var body: some View {
-        VStack(spacing: PumTokens.Space.s8) {
+        VStack(spacing: 0) {
             track
             ticks
         }
@@ -44,7 +44,7 @@ struct ClockOutDoneTimelineView: View {
             }
             .frame(height: geo.size.height, alignment: .leading)
         }
-        .frame(height: barHeight + plannedOutset)
+        .frame(height: PumTokens.Space.s24 + PumTokens.Space.s4) // 원문 트랙 높이 28
     }
 
     private var ticks: some View {

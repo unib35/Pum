@@ -20,12 +20,14 @@ struct PayslipView: View {
     private let dashPattern: [CGFloat] = [PumTokens.Space.s4, PumTokens.Space.s4]
     /// 라벨 색 #3A4150 = gray-800
     private let labelColor = PumTokens.ColorToken.gray800
+    /// 항목 행 위아래 여백 — 원문 9(토큰은 8 · 10 사이라 화면 전용 값)
+    private let lineVPad: CGFloat = 9
 
     var body: some View {
         VStack(spacing: 0) {
             navHeader.padding(.horizontal, PumTokens.Size.screenPad)
             ScrollView {
-                VStack(spacing: PumTokens.Space.s16) {
+                VStack(spacing: PumTokens.Space.s14) {
                     slip
                     PayslipActions(onSavePDF: onSavePDF, onKakao: onKakao, stacked: typeSize.isAccessibilitySize)
                     Text("명세서는 앱에서 계속 보관돼요 · 문의는 사장님께 직접 또는 앱 메시지로")
@@ -35,7 +37,7 @@ struct PayslipView: View {
                         .frame(maxWidth: .infinity)
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s12)
+                .padding(.bottom, PumTokens.Space.s12) // 위 여백 없음 — 머리 줄은 안전 영역 바로 아래(원문)
             }
         }
         .background(PumColor.bgApp)
@@ -65,7 +67,8 @@ struct PayslipView: View {
                 PumIconButton(systemImage: "square.and.arrow.up", label: "공유", action: onShare)
             }
         }
-        .padding(.top, PumTokens.Space.s8)
+        // 원문 머리 줄은 40 — 가운데 누름 영역 44는 넘쳐도 유지한다
+        .frame(height: PumLayout.navRow)
     }
 
     // MARK: 명세서 카드
@@ -81,7 +84,7 @@ struct PayslipView: View {
     }
 
     private var slipHead: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s14) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
             HStack(alignment: .top, spacing: PumTokens.Space.s8) {
                 VStack(alignment: .leading, spacing: PumTokens.Space.s4) {
                     Text(record.headerCaption).pumText(.caption, weight: .medium)
@@ -95,7 +98,8 @@ struct PayslipView: View {
             }
             infoCells
         }
-        .padding(PumTokens.Space.s20)
+        .padding(.vertical, PumTokens.Space.s18)
+        .padding(.horizontal, PumTokens.Space.s20)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(PumColor.surfaceInverse)
     }
@@ -117,7 +121,7 @@ struct PayslipView: View {
                     ForEach(cells, id: \.0) { infoCell($0.0, $0.1) }
                 }
             } else {
-                HStack(alignment: .top, spacing: PumTokens.Space.s12) {
+                HStack(alignment: .top, spacing: PumTokens.Space.s8) {
                     ForEach(cells, id: \.0) { infoCell($0.0, $0.1) }
                 }
             }
@@ -140,20 +144,24 @@ struct PayslipView: View {
             ForEach(record.earnings) { line($0, deduction: false) }
             dashedDivider
             total("지급 합계", text: record.grossText, color: PumColor.textPrimary, a11y: "지급 합계 \(record.grossText)원")
-            sectionTitle("공제 항목").padding(.top, PumTokens.Space.s18)
+            sectionTitle("공제 항목")
             ForEach(record.deductions) { line($0, deduction: true) }
             dashedDivider
             total("공제 합계", text: record.deductionTotalText, color: PumColor.statusDanger,
                   a11y: "공제 합계 \(PumFormat.amount(record.deductionTotal))원")
-            netBox.padding(.top, PumTokens.Space.s16)
+            netBox.padding(.top, PumTokens.Space.s10)
         }
-        .padding(PumTokens.Space.s20)
+        // 원문: 본문 padding 6 20 0 · 실지급액 상자 margin 10 20 18
+        .padding(.top, PumTokens.Space.s6)
+        .padding(.bottom, PumTokens.Space.s18)
+        .padding(.horizontal, PumTokens.Space.s20)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(PumColor.surfaceCard)
     }
 
     private func sectionTitle(_ s: String) -> some View {
         Text(s).pumText(.caption, weight: .bold).foregroundStyle(PumColor.textSecondary)
+            .padding(.top, PumTokens.Space.s12) // 원문: 구역 제목 padding 12 0 6
             .padding(.bottom, PumTokens.Space.s6)
             .accessibilityAddTraits(.isHeader)
     }
@@ -170,7 +178,7 @@ struct PayslipView: View {
                 .foregroundStyle(deduction ? PumColor.statusDanger : PumColor.textPrimary)
         }
         // 누를 수 없는 표시 행이라 44pt 최소 높이를 두지 않는다(디자인 1m 행 간격)
-        .padding(.vertical, PumTokens.Space.s6)
+        .padding(.vertical, lineVPad)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(record.accessibilityText(l, deduction: deduction)))
     }
@@ -187,7 +195,6 @@ struct PayslipView: View {
         PayslipDashLine()
             .stroke(PumColor.textDisabled, style: StrokeStyle(lineWidth: 1, dash: dashPattern))
             .frame(height: 1)
-            .padding(.vertical, PumTokens.Space.s8)
             .accessibilityHidden(true)
     }
 
@@ -197,7 +204,7 @@ struct PayslipView: View {
             Spacer(minLength: PumTokens.Space.s8)
             Text(text).pumText(.callout, weight: .bold).foregroundStyle(color)
         }
-        .padding(.vertical, PumTokens.Space.s4)
+        .padding(.vertical, PumTokens.Space.s10) // 원문: 합계 줄 padding 10 0 (위 점선은 줄의 위 테두리)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(a11y))
     }
@@ -207,7 +214,8 @@ struct PayslipView: View {
             HStack(alignment: .firstTextBaseline) { netLabel; Spacer(minLength: PumTokens.Space.s8); netValue }
             VStack(alignment: .leading, spacing: PumTokens.Space.s4) { netLabel; netValue }
         }
-        .padding(PumTokens.Space.s16)
+        .padding(.vertical, PumTokens.Space.s14)
+        .padding(.horizontal, PumTokens.Space.s16)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(PumColor.statusDoneSoft, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
         .accessibilityElement(children: .ignore)
@@ -247,9 +255,9 @@ private struct PayslipActions: View {
 
     var body: some View {
         if stacked {
-            VStack(spacing: PumTokens.Space.s8) { pdf; kakao }
+            VStack(spacing: PumTokens.Space.s12) { pdf; kakao }
         } else {
-            HStack(spacing: PumTokens.Space.s8) { pdf; kakao }
+            HStack(spacing: PumTokens.Space.s12) { pdf; kakao }
         }
     }
 

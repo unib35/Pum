@@ -6,20 +6,23 @@ struct WorkDetailView: View {
     var record: WorkDetailRecord = .sample
     var onBack: () -> Void = {}
     var onRequestEdit: () -> Void = {}
+    /// 변경 이력 시각 칸 폭 — 원문 92 (DEC-005 화면 전용)
+    @ScaledMetric(relativeTo: .footnote) private var stampWidth: CGFloat = 92
 
     var body: some View {
         VStack(spacing: 0) {
             PumNavHeader(title: "근무 상세", onBack: onBack)
                 .padding(.horizontal, PumTokens.Size.screenPad)
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
                     title
-                    PumCard { WorkTimelineView(record: record).padding(PumTokens.Space.s16) }
+                    PumCard { WorkTimelineView(record: record).padding(PumTokens.Space.s18) }
                     info
                     history
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s12)
+                .padding(.top, PumTokens.Space.s16) // 원문: 머리 줄 아래 16
+                .padding(.bottom, PumTokens.Space.s12)
             }
         }
         .background(PumColor.bgApp)
@@ -45,14 +48,31 @@ struct WorkDetailView: View {
         }
     }
 
+    /// 원문 행: 위아래 14 · 좌우 18(카드 안쪽) · 구분선은 그 폭 안. PumRow는 좌우 16 · 위아래 12 고정이라 화면 전용 행을 둔다
     private var info: some View {
         PumCard {
-            PumRow("예정 근무", value: record.plannedRange)
-            PumRow("실제 근무", value: record.actualRange)
-            PumRow("휴게시간", value: record.breakText)
-            PumRow(title: "인정 근무", isKey: true) { boldValue(record.recognizedText, PumColor.textPrimary) }
-            PumRow(title: "해당 근무 기본급", isKey: true, isLast: true) { boldValue(record.basePayText, PumColor.statusDone) } // 확정 금액 = 초록
+            VStack(spacing: 0) {
+                infoRow("예정 근무", isLast: false) { Text(record.plannedRange).pumText(.body, weight: .semibold) }
+                infoRow("실제 근무", isLast: false) { Text(record.actualRange).pumText(.body, weight: .semibold) }
+                infoRow("휴게시간", isLast: false) { Text(record.breakText).pumText(.body, weight: .semibold) }
+                infoRow("인정 근무", isLast: false) { boldValue(record.recognizedText, PumColor.textPrimary) }
+                infoRow("해당 근무 기본급", isLast: true) { boldValue(record.basePayText, PumColor.statusDone) } // 확정 금액 = 초록
+            }
+            .padding(.horizontal, PumTokens.Space.s18)
         }
+    }
+
+    private func infoRow<V: View>(_ key: String, isLast: Bool, @ViewBuilder value: () -> V) -> some View {
+        HStack(spacing: PumTokens.Space.s12) {
+            Text(key).pumText(.body, weight: .regular).foregroundStyle(PumColor.textSecondary)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            value().foregroundStyle(PumColor.textPrimary)
+        }
+        .padding(.vertical, PumTokens.Space.s14)
+        .overlay(alignment: .bottom) {
+            if !isLast { Rectangle().fill(PumColor.borderHairline).frame(height: 1) }
+        }
+        .accessibilityElement(children: .combine)
     }
 
     private func boldValue(_ s: String, _ color: Color) -> some View {
@@ -64,10 +84,11 @@ struct WorkDetailView: View {
         PumCard {
             VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
                 Text("변경 이력").pumText(.footnote, weight: .bold).foregroundStyle(PumColor.textSecondary)
+                    .padding(.bottom, PumTokens.Space.s2) // 제목 아래 10 = 8 + 2
                     .accessibilityAddTraits(.isHeader)
                 ForEach(record.history) { h in
                     ViewThatFits(in: .horizontal) {
-                        HStack(alignment: .firstTextBaseline, spacing: PumTokens.Space.s16) {
+                        HStack(alignment: .firstTextBaseline, spacing: PumTokens.Space.s12) {
                             stamp(h.stamp)
                             Text(h.text).pumText(.footnote).foregroundStyle(PumColor.textPrimary)
                             Spacer(minLength: 0)
@@ -81,12 +102,14 @@ struct WorkDetailView: View {
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(PumTokens.Space.s16)
+            .padding(.vertical, PumTokens.Space.s14)
+            .padding(.horizontal, PumTokens.Space.s18)
         }
     }
 
     private func stamp(_ s: String) -> some View {
         Text(s).pumText(.footnote).foregroundStyle(PumColor.textTertiary).fixedSize()
+            .frame(minWidth: stampWidth, alignment: .leading)
     }
 }
 

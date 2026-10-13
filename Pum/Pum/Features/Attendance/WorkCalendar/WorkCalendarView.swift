@@ -22,7 +22,7 @@ struct WorkCalendarView: View {
 
     private var recordsBody: some View {
         ScrollView {
-            VStack(spacing: PumTokens.Space.s12) {
+            VStack(spacing: PumTokens.Space.s14) {
                 header
                 calendarCard
                 selectedCard
@@ -120,14 +120,21 @@ struct WorkCalendarView: View {
 
     private var calendarCard: some View {
         PumCard {
-            VStack(spacing: PumTokens.Space.s8) {
+            // 원문: 카드 padding 14 12 10 · 달 줄 아래 10 · 요일 줄 아래 6 · 범례 위 10 아래 2
+            VStack(spacing: 0) {
                 monthBar
+                    .padding(.horizontal, PumTokens.Space.s6)
+                    .padding(.bottom, PumTokens.Space.s10)
                 weekdayHeader
+                    .padding(.bottom, PumTokens.Space.s6)
                 grid
                 legend
-                    .padding(.top, PumTokens.Space.s12) // 디자인 1g: 범례는 마지막 주와 떨어져 있다
+                    .padding(.top, PumTokens.Space.s10)
+                    .padding(.bottom, PumTokens.Space.s2)
             }
-            .padding(PumTokens.Space.s16)
+            .padding(.top, PumTokens.Space.s14)
+            .padding(.bottom, PumTokens.Space.s10)
+            .padding(.horizontal, PumTokens.Space.s12)
         }
     }
 
@@ -151,6 +158,9 @@ struct WorkCalendarView: View {
                 .foregroundStyle(PumColor.textSecondary)
                 .frame(width: PumTokens.Size.tapMin, height: PumTokens.Size.tapMin)
                 .contentShape(Rectangle())
+                // 원문 아이콘 8x14 — 누름 영역 44는 유지하고 배치만 줄인다
+                .padding(.vertical, -(PumTokens.Size.tapMin - PumTokens.Space.s14) / 2)
+                .padding(.horizontal, -(PumTokens.Size.tapMin - PumTokens.Space.s8) / 2)
         }
         .buttonStyle(.plain)
         .accessibilityLabel(Text(label))
@@ -182,7 +192,7 @@ struct WorkCalendarView: View {
 
     private var grid: some View {
         let layout = state.layout
-        return VStack(spacing: 0) {
+        return VStack(spacing: WorkCalendarMetrics.rowGap) {
             ForEach(0..<layout.weekCount, id: \.self) { week in
                 HStack(alignment: .top, spacing: 0) {
                     ForEach(0..<WorkCalendarLayout.columns, id: \.self) { col in
@@ -201,14 +211,14 @@ struct WorkCalendarView: View {
                 label: layout.accessibilityLabel(day: d, mark: state.marks[d], isToday: isToday),
                 action: { onSelectDay(d) })
         } else {
-            Color.clear.frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin)
+            Color.clear.frame(maxWidth: .infinity, minHeight: WorkCalendarMetrics.cellHeight)
                 .accessibilityHidden(true)
         }
     }
 
     private var legend: some View {
         ViewThatFits(in: .horizontal) {
-            HStack(spacing: PumTokens.Space.s12) {
+            HStack(spacing: PumTokens.Space.s14) {
                 ForEach(WorkCalendarDot.allCases, id: \.self) { legendItem($0) }
             }
             VStack(spacing: PumTokens.Space.s4) {
@@ -241,6 +251,7 @@ struct WorkCalendarView: View {
                         // 목업 19px 700 → title3(20)
                         Text("\(s.day)").pumText(.title3).foregroundStyle(PumColor.textPrimary)
                     }
+                    .frame(width: WorkCalendarMetrics.dateBox) // 원문 날짜 상자 44 · 가운데
                     VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
                         ViewThatFits(in: .horizontal) {
                             HStack(alignment: .firstTextBaseline, spacing: PumTokens.Space.s6) {
@@ -258,7 +269,8 @@ struct WorkCalendarView: View {
                         .font(.footnote.weight(.semibold))
                         .foregroundStyle(PumColor.textDisabled)
                 }
-                .padding(PumTokens.Space.s16)
+                .padding(.vertical, PumTokens.Space.s14)
+                .padding(.horizontal, PumTokens.Space.s16)
                 .frame(minHeight: PumTokens.Size.tapMin)
                 .contentShape(Rectangle())
             }
@@ -309,6 +321,7 @@ struct WorkCalendarView: View {
                         stat("연장", m.overtimeText)
                     }
                 }
+                VStack(spacing: 0) {
                 Rectangle().fill(PumColor.borderHairline).frame(height: 1)
                 HStack(alignment: .firstTextBaseline) {
                     Text("예상 급여").pumText(.footnote).foregroundStyle(PumColor.textSecondary)
@@ -316,9 +329,12 @@ struct WorkCalendarView: View {
                     // 목업 18px 700 → headline(17) bold: 20(title3)보다 1 차이로 가깝다
                     Text(m.payText).pumText(.headline, weight: .bold).foregroundStyle(PumColor.statusDone)
                 }
+                .padding(.top, PumTokens.Space.s12) // 원문: 구분선 아래 padding-top 12
                 .accessibilityElement(children: .combine)
+                }
             }
-            .padding(PumTokens.Space.s16)
+            .padding(.vertical, PumTokens.Space.s16)
+            .padding(.horizontal, PumTokens.Space.s18)
         }
     }
 
