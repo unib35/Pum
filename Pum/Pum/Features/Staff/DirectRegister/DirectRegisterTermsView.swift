@@ -133,6 +133,7 @@ struct DirectRegisterTermsView: View {
                     get: { draft.hourlyWage == 0 ? "" : PumFormat.amount(draft.hourlyWage) },
                     set: { touchedWage = true; draft.hourlyWage = DirectRegisterTermsState.wage(fromInput: $0) }))
                     .keyboardType(.numberPad)
+                    .fixedSize() // 원문 「10,320원」 — 「원」이 숫자 바로 뒤에
                     .focused($wageFocused)
                     .tint(PumColor.accent)
                     .accessibilityLabel(Text(state.wageReadout()))
@@ -145,6 +146,7 @@ struct DirectRegisterTermsView: View {
                         }
                     }
                 Text("원").accessibilityHidden(true)
+                Spacer(minLength: 0)
             }
             .pumText(.body, weight: .regular) // 원문 16px 400 → body(15) 근사
             .foregroundStyle(PumColor.textPrimary)
@@ -263,8 +265,7 @@ struct DirectRegisterTermsView: View {
     }
 
     private var divider: some View {
-        Rectangle().fill(PumColor.borderHairline).frame(height: Layout.restLine)
-            .padding(.horizontal, PumTokens.Size.rowPadX)
+        Rectangle().fill(PumColor.borderHairline).frame(height: Layout.restLine) // 원문 카드 끝까지
     }
 
     private var chevron: some View {
