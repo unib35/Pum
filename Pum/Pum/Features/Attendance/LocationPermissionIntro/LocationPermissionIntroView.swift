@@ -43,7 +43,7 @@ private struct LocationPermissionBackdrop: View {
     let state: LocationPermissionIntroState
 
     var body: some View {
-        VStack(spacing: PumTokens.Space.s12) {
+        VStack(spacing: PumTokens.Space.s16) {
             HStack {
                 PumWorkplaceChip(name: state.workplaceName, initial: state.workplaceInitial) {}
                 Spacer()
@@ -51,13 +51,13 @@ private struct LocationPermissionBackdrop: View {
             }
             PumCard {
                 VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
-                    VStack(alignment: .leading, spacing: PumTokens.Space.s4) {
+                    VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
                         Text(state.shiftDateText).pumText(.footnote, weight: .medium).foregroundStyle(PumColor.textSecondary)
                         Text(state.shiftTimeText).pumText(.hero).foregroundStyle(PumColor.textPrimary)
                     }
                     PumButton(title: state.clockInTitle) {}
                 }
-                .padding(PumTokens.Space.s16)
+                .padding(PumTokens.Space.s18)
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
             Spacer(minLength: 0)
@@ -76,7 +76,7 @@ private struct LocationPermissionSheetContent: View {
     let onUseQROnly: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
             Text("\(LocationPermissionIntroState.headingFirstLine)\n\(LocationPermissionIntroState.headingSecondLine)")
                 .pumText(.title2).foregroundStyle(PumColor.textPrimary)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -93,13 +93,14 @@ private struct LocationPermissionSheetContent: View {
             }
             Text("\(LocationPermissionIntroState.hintBefore)\(Text(LocationPermissionIntroState.hintStrong).bold())\(LocationPermissionIntroState.hintAfter)")
                 .pumText(.caption).foregroundStyle(PumColor.textSecondary)
-                .multilineTextAlignment(.center)
-                .frame(maxWidth: .infinity)
+                .multilineTextAlignment(.leading)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, PumTokens.Space.s4)
                 .accessibilityLabel(Text(state.hintPlain))
-            VStack(spacing: PumTokens.Space.s4) {
-                PumButton(title: LocationPermissionIntroState.continueTitle, action: onContinue)
-                PumButton(title: LocationPermissionIntroState.qrOnlyTitle, kind: .text, size: .small, action: onUseQROnly) // 원문 14px
-            }
+            PumButton(title: LocationPermissionIntroState.continueTitle, action: onContinue)
+            // 원문 링크 높이 약 20(14px 글자) — 누름 영역 44는 유지, 배치 높이만 20
+            PumButton(title: LocationPermissionIntroState.qrOnlyTitle, kind: .text, size: .small, action: onUseQROnly)
+                .padding(.vertical, -(PumTokens.Size.tapMin - PumTokens.Space.s20) / 2)
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
         .padding(.bottom, PumTokens.Space.s12)

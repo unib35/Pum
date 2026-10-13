@@ -14,9 +14,9 @@ struct AccountSecurityView: View {
     var onLogout: () -> Void = {}
     var onWithdraw: () -> Void = {}
 
-    /// 원문 큰 아바타 약 60 · 카메라 표시 약 23 (토큰에 없어 이 화면 상수)
+    /// 원문 큰 아바타 60 · 카메라 표시 22 (토큰에 없어 이 화면 상수)
     private let avatarSize: CGFloat = 60
-    private let cameraSize: CGFloat = 23
+    private let cameraSize: CGFloat = 22
 
     private var biometricBinding: Binding<Bool> {
         Binding(get: { state.biometricLockOn }, set: { onToggleBiometricLock($0) })
@@ -25,10 +25,9 @@ struct AccountSecurityView: View {
     var body: some View {
         VStack(spacing: 0) {
             PumNavHeader(title: AccountSecurityState.headerTitle, onBack: onBack)
-                .padding(.top, PumTokens.Space.s8)
                 .padding(.horizontal, PumTokens.Size.screenPad)
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s10) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s14) {
                     profileCard
                     PumCard {
                         ForEach([AccountField.name, .phone, .email], id: \.self) { field in
@@ -40,7 +39,8 @@ struct AccountSecurityView: View {
                     section(AccountSecurityState.manageHeader) { manageCard }
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s12)
+                .padding(.top, PumTokens.Space.s14) // 머리–첫 카드 14
+                .padding(.bottom, PumTokens.Space.s12)
             }
         }
         .background(PumColor.bgApp)
@@ -50,12 +50,12 @@ struct AccountSecurityView: View {
 
     private var profileCard: some View {
         PumCard {
-            HStack(spacing: PumTokens.Space.s16) {
+            HStack(spacing: PumTokens.Space.s14) {
                 avatar
                 VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
                     Text(state.name).pumText(.title3, weight: .bold).foregroundStyle(PumColor.textPrimary)
                     ViewThatFits(in: .horizontal) {
-                        HStack(spacing: PumTokens.Space.s8) { PumBadge(text: state.verifiedBadge, kind: .done); detail }
+                        HStack(spacing: PumTokens.Space.s6) { PumBadge(text: state.verifiedBadge, kind: .done); detail }
                         VStack(alignment: .leading, spacing: PumTokens.Space.s4) { PumBadge(text: state.verifiedBadge, kind: .done); detail }
                     }
                 }
@@ -63,7 +63,8 @@ struct AccountSecurityView: View {
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel(Text(state.profileAccessibility))
             }
-            .padding(PumTokens.Space.s16)
+            .padding(.vertical, PumTokens.Space.s16)
+            .padding(.horizontal, PumTokens.Space.s18)
         }
     }
 
@@ -216,11 +217,11 @@ struct AccountSecurityView: View {
     // MARK: 공통 조각
 
     private func section<Content: View>(_ title: String, @ViewBuilder content: () -> Content) -> some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s8) { // 제목–카드 14-6
             PumSectionHeader(title: title)
             content()
         }
-        .padding(.top, PumTokens.Space.s4)
+        .padding(.top, PumTokens.Space.s2)
     }
 
     private var hairline: some View { Rectangle().fill(PumColor.borderHairline).frame(height: 1) }
