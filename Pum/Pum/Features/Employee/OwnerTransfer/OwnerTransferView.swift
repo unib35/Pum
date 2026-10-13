@@ -18,7 +18,7 @@ struct OwnerTransferView: View {
     /// 아바타 지름 — 원문 약 30
     @ScaledMetric(relativeTo: .callout) private var avatarSize: CGFloat = 30
     /// 회색 체크 원 지름 — 6t와 같은 값
-    @ScaledMetric(relativeTo: .body) private var circleSize: CGFloat = 24
+    @ScaledMetric(relativeTo: .body) private var circleSize: CGFloat = 26
     private let checkRatio: CGFloat = 0.45
 
     init(state: OwnerTransferState,
@@ -34,7 +34,7 @@ struct OwnerTransferView: View {
         VStack(spacing: 0) {
             backRow
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s14) { // 원문 블록 사이 14
                     Text(OwnerTransferState.title).pumText(.title2).foregroundStyle(PumColor.textPrimary)
                         .fixedSize(horizontal: false, vertical: true)
                         .padding(.horizontal, PumTokens.Space.s4)
@@ -48,7 +48,7 @@ struct OwnerTransferView: View {
                     if state.recipient(draft) != nil { delegateCard } // 받을 사람이 없으면 빈 이름 안내를 보이지 않음
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s12)
+                .padding(.top, PumTokens.Space.s14) // 원문 머리 줄 아래 14 · 아래 여백 없음
             }
             .scrollBounceBehavior(.basedOnSize)
         }
@@ -92,7 +92,8 @@ struct OwnerTransferView: View {
     private func cardHeader(_ text: String) -> some View {
         Text(text).pumText(.body, weight: .bold).foregroundStyle(PumColor.textPrimary)
             .padding(.horizontal, PumTokens.Size.rowPadX)
-            .padding(.top, PumTokens.Size.rowPadY)
+            .padding(.top, PumTokens.Space.s14) // 원문 머리 14 16 4
+            .padding(.bottom, PumTokens.Space.s4)
             .frame(maxWidth: .infinity, alignment: .leading)
             .accessibilityAddTraits(.isHeader)
     }
@@ -187,7 +188,7 @@ struct OwnerTransferView: View {
 
     private var delegateCard: some View {
         PumCard {
-            HStack(alignment: .top, spacing: PumTokens.Space.s12) {
+            HStack(spacing: PumTokens.Space.s12) { // 원문 가운데 맞춤
                 Circle().fill(PumColor.surfaceFill)
                     .overlay {
                         Image(systemName: "checkmark")
@@ -197,7 +198,7 @@ struct OwnerTransferView: View {
                     .frame(width: circleSize, height: circleSize)
                     .accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
-                    Text(state.delegateTitle(draft)).pumText(.body, weight: .semibold).foregroundStyle(PumColor.textPrimary)
+                    Text(state.delegateTitle(draft)).pumText(.callout, weight: .semibold).foregroundStyle(PumColor.textPrimary) // 원문 14
                     Text(state.delegateDetail).pumText(.caption).foregroundStyle(PumColor.textSecondary)
                 }
                 .fixedSize(horizontal: false, vertical: true)
@@ -214,7 +215,7 @@ struct OwnerTransferView: View {
     // MARK: 하단
 
     private var footer: some View {
-        VStack(spacing: PumTokens.Space.s12) {
+        VStack(spacing: PumTokens.Space.s10) { // 원문 버튼-안내 10
             PumButton(title: OwnerTransferState.sendTitle, isLoading: isSending, loadingTitle: OwnerTransferState.sendingTitle, action: send)
                 .disabled(!state.canSend(draft) || isSent)
                 .accessibilityHint(Text(state.disabledReason(draft) ?? ""))
@@ -224,7 +225,7 @@ struct OwnerTransferView: View {
                 .fixedSize(horizontal: false, vertical: true)
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
-        .padding(.vertical, PumTokens.Space.s12)
+        .padding(.top, PumTokens.Space.s12) // 원문 12 20 34 — 아래 34는 홈 막대 안전 영역
         .background(PumColor.bgApp)
     }
 }

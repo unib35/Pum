@@ -30,13 +30,13 @@ struct ManagerInviteView: View {
         VStack(spacing: 0) {
             backRow
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s14) { // 원문 블록 사이 14
                     header
                     roleCard
                     inputCard
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s12)
+                .padding(.top, PumTokens.Space.s14) // 원문 머리 줄 아래 14 · 아래 여백 없음
             }
             .scrollDismissesKeyboard(.interactively)
         }
@@ -74,7 +74,7 @@ struct ManagerInviteView: View {
     }
 
     private var header: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s14) {
             Text(ManagerInviteState.title).pumText(.title2).foregroundStyle(PumColor.textPrimary)
                 .fixedSize(horizontal: false, vertical: true)
                 .accessibilityAddTraits(.isHeader)
@@ -105,7 +105,8 @@ struct ManagerInviteView: View {
         PumCard {
             Text(ManagerInviteState.roleHeader).pumText(.body, weight: .bold).foregroundStyle(PumColor.textPrimary)
                 .padding(.horizontal, PumTokens.Size.rowPadX)
-                .padding(.top, PumTokens.Size.rowPadY)
+                .padding(.top, PumTokens.Space.s14) // 원문 역할 머리 14 16 4
+                .padding(.bottom, PumTokens.Space.s4)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .accessibilityAddTraits(.isHeader)
             ForEach(ManagerInviteRole.allCases) { role in
@@ -144,7 +145,7 @@ struct ManagerInviteView: View {
 
     private var inputCard: some View {
         PumCard {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+            VStack(alignment: .leading, spacing: PumTokens.Space.s14) { // 원문 입력 카드 안 간격 14
                 field(ManagerInviteState.nameLabel, text: $draft.name, field: .name)
                 field(ManagerInviteState.phoneLabel, text: $draft.phone, field: .phone)
                 VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
@@ -157,8 +158,7 @@ struct ManagerInviteView: View {
     }
 
     private func label(_ text: String) -> some View {
-        Text(text).pumText(.footnote, weight: .semibold).foregroundStyle(PumTokens.ColorToken.gray700)
-            .padding(.horizontal, PumTokens.Space.s2)
+        Text(text).pumText(.footnote, weight: .semibold).foregroundStyle(PumTokens.ColorToken.gray800)
     }
 
     private func field(_ title: String, text: Binding<String>, field: Field) -> some View {
@@ -171,8 +171,8 @@ struct ManagerInviteView: View {
                 .pumText(.headline, weight: .medium)
                 .foregroundStyle(PumColor.textPrimary)
                 .autocorrectionDisabled()
-                .frame(minHeight: PumTokens.Size.buttonH)
-                .padding(.horizontal, PumTokens.Space.s16)
+                .frame(minHeight: PumTokens.Space.s24 * 2) // 원문 입력 칸 높이 48
+                .padding(.horizontal, PumTokens.Space.s14) // 원문 칸 안쪽 0 14
                 .background(PumColor.surfaceCard, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
                 .overlay {
                     RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous)
@@ -191,7 +191,7 @@ struct ManagerInviteView: View {
                 let selected = method == draft.method
                 Button { draft.method = method } label: {
                     Text(method.title)
-                        .pumText(.footnote, weight: selected ? .semibold : .medium)
+                        .pumText(.callout, weight: selected ? .semibold : .medium) // 원문 14
                         .foregroundStyle(selected ? PumColor.textPrimary : PumColor.textSecondary)
                         .frame(maxWidth: .infinity, minHeight: max(segmentHeight, PumTokens.Size.tapMin))
                         .background {
@@ -213,7 +213,7 @@ struct ManagerInviteView: View {
     // MARK: 하단
 
     private var footer: some View {
-        VStack(spacing: PumTokens.Space.s12) {
+        VStack(spacing: PumTokens.Space.s10) { // 원문 버튼-안내 10
             PumButton(title: ManagerInviteState.sendTitle, isLoading: isSending, loadingTitle: ManagerInviteState.sendingTitle, action: send)
                 .disabled(!state.canSend(draft))
                 .accessibilityHint(Text(state.disabledReason(draft) ?? ""))
@@ -222,7 +222,7 @@ struct ManagerInviteView: View {
                 .fixedSize(horizontal: false, vertical: true)
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
-        .padding(.vertical, PumTokens.Space.s12)
+        .padding(.top, PumTokens.Space.s12) // 원문 12 20 34 — 아래 34는 홈 막대 안전 영역
         .background(PumColor.bgApp)
     }
 }
