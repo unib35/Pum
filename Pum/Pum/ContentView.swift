@@ -178,6 +178,7 @@ struct ContentView: View {
             case "20e": AppLessStaffView(state: .sample, sheet: .sample)
             case "20f": AppLessStaffView(state: .sample, sheet: .sample, startsWithSheetOpen: true)
             case "20l": InheritedRecordsView(state: .sample)
+            case "20h": PayslipSendDirectView(state: .sample)
             case "gallery": ComponentGalleryView()
             default: DevMenu()
             }
@@ -353,6 +354,7 @@ private struct DevMenu: View {
                     NavigationLink("20e 앱 없는 직원") { AppLessStaffView(state: .sample, sheet: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("20f 하루 고치기") { AppLessStaffView(state: .sample, sheet: .sample, startsWithSheetOpen: true).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("20l 지난 근무기록") { InheritedRecordsView(state: .sample).toolbar(.hidden, for: .navigationBar) }
+                    NavigationLink("20h 명세서 보내기") { PayslipSendDirectView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                 }
                 Section("디자인 시스템") {
                     NavigationLink("컴포넌트 갤러리") { ComponentGalleryView() }
