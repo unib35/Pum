@@ -24,7 +24,6 @@ nonisolated struct DirectRegisterBasicValue: Equatable, Sendable {
 nonisolated struct DirectRegisterBasicState: Equatable, Sendable {
     static let backTitle = "직원 추가"
     static let title = "기본 정보"
-    static let stepCount = 3
     static let currentStep = 1
     static let nameTitle = "이름"
     static let phoneTitle = "휴대폰"
@@ -63,7 +62,7 @@ nonisolated struct DirectRegisterBasicState: Equatable, Sendable {
 
     // MARK: 읽기 문구
 
-    static var stepReadout: String { "\(stepCount)단계 중 \(currentStep)단계" }
+    static var stepReadout: String { DirectRegisterStepBar.readout(current: currentStep) }
     static var phoneLabel: String { "\(phoneTitle), \(phoneHint)" }
     static var birthDateLabel: String { "\(birthDateTitle), \(birthDateHint)" }
 
