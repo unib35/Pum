@@ -171,6 +171,7 @@ struct ContentView: View {
             case "19i": BreakReviewView(state: .sample)
             case "19h": BreakReportView(state: .sample, sheet: .sample, startsWithSheetOpen: true)
             case "20a": StaffAddPreviewHost(state: .sample)
+            case "20b": DirectRegisterBasicView(state: .sample)
             case "gallery": ComponentGalleryView()
             default: DevMenu()
             }
@@ -339,6 +340,7 @@ private struct DevMenu: View {
                     NavigationLink("19i 휴게 못 씀 확인") { BreakReviewView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("19h 휴게를 못 썼을 때") { BreakReportView(state: .sample, sheet: .sample, startsWithSheetOpen: true).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("20a 직원 추가") { StaffAddPreviewHost(state: .sample).toolbar(.hidden, for: .navigationBar) }
+                    NavigationLink("20b 직접 등록 · 기본 정보") { DirectRegisterBasicView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                 }
                 Section("디자인 시스템") {
                     NavigationLink("컴포넌트 갤러리") { ComponentGalleryView() }
