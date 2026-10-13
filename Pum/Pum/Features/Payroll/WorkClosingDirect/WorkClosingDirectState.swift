@@ -38,7 +38,7 @@ nonisolated struct WorkClosingDirectState: Equatable, Sendable {
     var title: String { "\(month)월 근무 마감" }
     var appRecordSubtitle: String { "직원 \(appStaffCount)명 \u{00B7} 확인할 것 \(appPendingCount)건" }
     /// 활성 문구는 원문에 없음 — 「9월 근무 마감」까지만(8a와 같은 방식)
-    var closeTitle: String { canClose ? title : "\(title) \u{00B7} \(remainingCount)건 남음" }
+    var closeTitle: String { canClose ? title : "근무 마감 \u{00B7} \(remainingCount)건 남음" } // 원문 비활성 문구엔 달이 없다
     var closeAccessibilityLabel: String { canClose ? title : "\(title), \(remainingCount)건 남아 마감할 수 없음" }
     /// 마감이 잠겨 있을 때 이유 — 화면에는 보이지 않는 읽기 문구
     var closeHint: String? { canClose ? nil : "확인할 것이 \(remainingCount)건 남았어요" }

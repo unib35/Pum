@@ -239,11 +239,11 @@ private struct DirectChip: View {
         }
         .pumText(.caption, weight: style == .fill ? .bold : .semibold)
         .foregroundStyle(style == .fill ? PumColor.textPrimary : PumTokens.ColorToken.gray700) // 원문 rgb(91,97,112)
-        .padding(.horizontal, PumTokens.Space.s14)
-        .padding(.vertical, PumTokens.Space.s8)
+        .padding(.horizontal, PumTokens.Space.s8)
+        .padding(.vertical, PumTokens.Space.s4) // 원문 칩 약 38 × 22
         .background(style == .fill ? PumColor.surfaceFill : PumColor.surfaceCard,
-                    in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
-        .modifier(OutlineRing(enabled: style == .outline, radius: PumTokens.Radius.md))
+                    in: RoundedRectangle(cornerRadius: PumTokens.Radius.sm, style: .continuous)) // 원문 작은 칩 모서리
+        .modifier(OutlineRing(enabled: style == .outline, radius: PumTokens.Radius.sm))
     }
 
     var body: some View {

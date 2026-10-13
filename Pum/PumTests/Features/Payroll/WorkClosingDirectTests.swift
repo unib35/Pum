@@ -21,7 +21,7 @@ struct WorkClosingDirectTests {
 
     @Test func 남은_건이_있으면_마감_못_함() {
         #expect(!s.canClose)
-        #expect(s.closeTitle == "9월 근무 마감 \u{00B7} 1건 남음")
+        #expect(s.closeTitle == "근무 마감 \u{00B7} 1건 남음")
     }
 
     @Test func 확인할_직원이_없으면_마감_가능() {
