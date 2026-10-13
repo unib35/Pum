@@ -52,47 +52,170 @@ enum StaffRoute: String, CaseIterable, Hashable {
     func view(_ router: AppRouter) -> some View {
         switch self {
         case .staffInvite:
-            StaffInviteView(draft: .sample, showsPhoneFocus: true)
+            StaffInviteView(
+                draft: .sample,
+                showsPhoneFocus: true,
+                onBack: router.back,
+                onSend: { _ in router.navigate(.contract(.workTermsInput)) }
+            )
         case .staffList:
-            StaffListView()
+            StaffListView(
+                onMember: { _ in router.navigate(.staff(.staffDetail)) },
+                onAdd: { router.navigate(.staff(.staffAddPreviewHost)) }
+            )
         case .staffDetail:
-            StaffDetailView(state: .sample)
+            StaffDetailView(
+                state: .sample,
+                onBack: router.back,
+                onEdit: { router.navigate(.staff(.employmentStatus)) }
+            )
         case .offboarding:
-            OffboardingView(state: .sample)
+            OffboardingView(
+                state: .sample,
+                onBack: router.back,
+                onNextStep: { router.navigate(.account(.afterLeaving)) }
+            )
         case .leaveBalance:
-            LeaveBalanceView(state: .sample)
+            LeaveBalanceView(state: .sample, onBack: router.back)
         case .offboardingNotEligible:
-            OffboardingView(state: .notEligible)
+            OffboardingView(
+                state: .notEligible,
+                onBack: router.back,
+                onNextStep: { router.navigate(.account(.afterLeaving)) }
+            )
         case .offboardingPension:
-            OffboardingView(state: .dcPension)
+            OffboardingView(
+                state: .dcPension,
+                onBack: router.back,
+                onNextStep: { router.navigate(.account(.afterLeaving)) }
+            )
         case .managerPermissions:
-            ManagerPermissionsView(state: .sample)
+            ManagerPermissionsView(
+                state: .sample,
+                onBack: router.back,
+                onSelectOwnerRole: { router.navigate(.staff(.ownerTransfer)) },
+                onSave: { _, _ in router.back() }
+            )
         case .employmentStatus:
-            EmploymentStatusView(state: .sample)
+            EmploymentStatusView(
+                state: .sample,
+                onBack: router.back,
+                onConfirmLeave: { _ in router.navigate(.staff(.offboarding)) }
+            )
         case .managerInvite:
-            ManagerInviteView(state: .sample)
+            ManagerInviteView(
+                state: .sample,
+                onBack: router.back,
+                onSend: { _, _, _, _, done in
+                    done(true)
+                    router.navigate(.staff(.managerInviteReceived))
+                }
+            )
         case .managerInviteReceived:
-            RoleOfferReceivedView(state: .managerInvite)
+            RoleOfferReceivedView(
+                state: .managerInvite,
+                onBack: router.back,
+                onDecline: { done in
+                    done(true)
+                    router.backToRoot()
+                },
+                onAcceptWithVerification: { done in
+                    done(true)
+                    router.navigate(.staff(.ownerTransfer))
+                }
+            )
         case .ownerTransferReceived:
-            RoleOfferReceivedView(state: .ownerTransfer)
+            RoleOfferReceivedView(
+                state: .ownerTransfer,
+                onBack: router.back,
+                onDecline: { done in
+                    done(true)
+                    router.backToRoot()
+                },
+                onAcceptWithVerification: { done in
+                    done(true)
+                    router.navigate(.staff(.managerPermissions))
+                }
+            )
         case .ownerTransfer:
-            OwnerTransferView(state: .sample)
+            OwnerTransferView(
+                state: .sample,
+                onBack: router.back,
+                onSendWithVerification: { _, _, done in
+                    done(true)
+                    router.navigate(.staff(.ownerTransferReceived))
+                }
+            )
         case .employmentCertIssue:
-            EmploymentCertIssueView(state: .sample)
+            EmploymentCertIssueView(
+                state: .sample,
+                onBack: router.back,
+                onDecline: router.back,
+                onIssue: { _, done in
+                    done(true)
+                    router.navigate(.account(.employmentCertIssued))
+                }
+            )
         case .staffAddPreviewHost:
             StaffAddPreviewHost(state: .sample)
         case .directRegisterBasic:
-            DirectRegisterBasicView(state: .sample)
+            DirectRegisterBasicView(
+                state: .sample,
+                onBack: router.back,
+                onNext: { _, done in
+                    done()
+                    router.navigate(.staff(.directRegisterTerms))
+                }
+            )
         case .directRegisterContract:
-            DirectRegisterContractView(state: .sample)
+            DirectRegisterContractView(
+                state: .sample,
+                onBack: router.back,
+                onRegister: { _, done in
+                    done()
+                    router.navigate(.staff(.appLessStaff))
+                }
+            )
         case .directRegisterTerms:
-            DirectRegisterTermsView(state: .sample)
+            DirectRegisterTermsView(
+                state: .sample,
+                onBack: router.back,
+                onNext: { _, done in
+                    done()
+                    router.navigate(.staff(.directRegisterContract))
+                }
+            )
         case .appLessStaff:
-            AppLessStaffView(state: .sample, sheet: .sample)
+            AppLessStaffView(
+                state: .sample,
+                sheet: .sample,
+                onBack: router.back,
+                onInvite: { router.navigate(.staff(.staffInvite)) },
+                onSave: { _, done in
+                    done(true)
+                    router.navigate(.payroll(.workClosingDirect))
+                }
+            )
         case .dayFix:
-            AppLessStaffView(state: .sample, sheet: .sample, startsWithSheetOpen: true)
+            AppLessStaffView(
+                state: .sample,
+                sheet: .sample,
+                startsWithSheetOpen: true,
+                onBack: router.back,
+                onInvite: { router.navigate(.staff(.staffInvite)) },
+                onSave: { _, done in
+                    done(true)
+                    router.navigate(.payroll(.workClosingDirect))
+                }
+            )
         }
     }
 
-    static let connected: Set<Self> = []
+    static let connected: Set<Self> = [
+        .staffInvite, .staffList, .staffDetail, .offboarding, .leaveBalance,
+        .offboardingNotEligible, .offboardingPension, .managerPermissions, .employmentStatus,
+        .managerInvite, .managerInviteReceived, .ownerTransferReceived, .ownerTransfer,
+        .employmentCertIssue, .directRegisterBasic, .directRegisterContract,
+        .directRegisterTerms, .appLessStaff, .dayFix,
+    ]
 }
