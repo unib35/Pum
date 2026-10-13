@@ -162,6 +162,8 @@ struct ContentView: View {
             case "17k": RoleOfferReceivedView(state: .ownerTransfer)
             case "17j": OwnerTransferView(state: .sample)
             case "19c": WageChangeContractView(state: .sample)
+            case "19a": WageYearTransitionView(state: .sample, sheet: .sample)
+            case "19b": WageYearTransitionView(state: .sample, sheet: .sample, startsWithSheetOpen: true)
             case "gallery": ComponentGalleryView()
             default: DevMenu()
             }
@@ -321,6 +323,8 @@ private struct DevMenu: View {
                     NavigationLink("17k 대표 권한 이전 요청 받음") { RoleOfferReceivedView(state: .ownerTransfer).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("17j 대표 변경") { OwnerTransferView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("19c 변경 계약서 받음") { WageChangeContractView(state: .sample).toolbar(.hidden, for: .navigationBar) }
+                    NavigationLink("19a 연도 전환") { WageYearTransitionView(state: .sample, sheet: .sample).toolbar(.hidden, for: .navigationBar) }
+                    NavigationLink("19b 새 시급 정하기") { WageYearTransitionView(state: .sample, sheet: .sample, startsWithSheetOpen: true).toolbar(.hidden, for: .navigationBar) }
                 }
                 Section("디자인 시스템") {
                     NavigationLink("컴포넌트 갤러리") { ComponentGalleryView() }
