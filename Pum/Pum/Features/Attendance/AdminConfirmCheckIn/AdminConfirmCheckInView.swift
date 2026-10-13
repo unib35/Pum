@@ -33,17 +33,17 @@ struct AdminConfirmCheckInView: View {
             VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
                 topRow
                 todayCard
-                Text(AdminConfirmCheckInState.sectionTitle).pumText(.caption, weight: .bold)
-                    .foregroundStyle(PumColor.textSecondary)
-                    .padding(.horizontal, PumTokens.Space.s8)
-                    .padding(.top, PumTokens.Space.s4)
-                    .accessibilityAddTraits(.isHeader)
-                stepsCard
+                VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
+                    Text(AdminConfirmCheckInState.sectionTitle).pumText(.caption, weight: .bold)
+                        .foregroundStyle(PumColor.textSecondary)
+                        .padding(.horizontal, PumTokens.Space.s4)
+                        .accessibilityAddTraits(.isHeader)
+                    stepsCard
+                }
                 noticeCard
             }
             .padding(.horizontal, PumTokens.Size.screenPad)
-            .padding(.top, PumTokens.Space.s8)
-            .padding(.bottom, PumTokens.Space.s16)
+            .padding(.bottom, PumTokens.Space.s12)
         }
         .scrollBounceBehavior(.basedOnSize)
         .background(PumColor.bgApp)
@@ -84,12 +84,15 @@ struct AdminConfirmCheckInView: View {
                 .foregroundStyle(PumColor.textPrimary)
                 .multilineTextAlignment(.leading)
         }
-        .padding(.vertical, PumTokens.Space.s4)
-        .padding(.leading, PumTokens.Space.s4)
+        .padding(.vertical, PumTokens.Space.s6)
+        .padding(.leading, PumTokens.Space.s6)
         .padding(.trailing, PumTokens.Space.s12)
-        .frame(minHeight: PumTokens.Size.tapMin)
         .background(PumColor.surfaceCard, in: Capsule())
         .overlay(Capsule().stroke(PumColor.borderHairline, lineWidth: 1))
+        // 보이는 높이 36(원문), 누름 영역 44는 유지하고 배치 높이만 36
+        .frame(minHeight: PumTokens.Size.tapMin)
+        .contentShape(Rectangle())
+        .padding(.vertical, -(PumTokens.Size.tapMin - 36) / 2)
         .accessibilityElement(children: .combine)
     }
 
@@ -107,7 +110,7 @@ struct AdminConfirmCheckInView: View {
                     PumBadge(text: state.statusText, kind: .waiting)
                 }
             }
-            .padding(.vertical, PumTokens.Size.rowPadY)
+            .padding(.vertical, PumTokens.Space.s14)
             .padding(.horizontal, PumTokens.Size.rowPadX)
             .frame(minHeight: PumTokens.Size.tapMin)
             .accessibilityElement(children: .combine)

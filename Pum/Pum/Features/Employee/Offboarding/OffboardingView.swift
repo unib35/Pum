@@ -29,7 +29,7 @@ struct OffboardingView: View {
             PumNavHeader(title: OffboardingState.screenTitle, onBack: onBack)
                 .padding(.horizontal, PumTokens.Size.screenPad)
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
                     staffCard
                     section(OffboardingState.payTitle) { payCard }
                     section(OffboardingState.stepsTitle) { stepsCard }
@@ -43,13 +43,14 @@ struct OffboardingView: View {
         .safeAreaInset(edge: .bottom, spacing: 0) {
             PumButton(title: state.nextStepTitle, kind: .primary, action: onNextStep)
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s12)
+                .padding(.top, PumTokens.Space.s12)
+                .padding(.bottom, PumTokens.Space.s10) // 원문 아래 44 − 안전 영역 34
                 .background(PumColor.bgApp)
         }
     }
 
     private func section<C: View>(_ title: String, @ViewBuilder content: () -> C) -> some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
             Text(title).pumText(.caption, weight: .bold).foregroundStyle(PumColor.textSecondary)
                 .padding(.horizontal, PumTokens.Space.s4)
                 .accessibilityAddTraits(.isHeader)
@@ -80,7 +81,8 @@ struct OffboardingView: View {
                     PumBadge(text: state.statusText, kind: .waiting)
                 }
             }
-            .padding(PumTokens.Space.s16)
+            .padding(.vertical, PumTokens.Space.s12)
+            .padding(.horizontal, PumTokens.Space.s16)
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(Text(state.headerSpoken))
             divider
@@ -96,9 +98,9 @@ struct OffboardingView: View {
             HStack(spacing: PumTokens.Space.s8) { main; Spacer(minLength: 0); note }
             VStack(alignment: .leading, spacing: PumTokens.Space.s2) { main; note }
         }
-        .padding(.vertical, PumTokens.Size.rowPadY)
+        .padding(.vertical, PumTokens.Space.s10)
         .padding(.horizontal, PumTokens.Space.s16)
-        .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin, alignment: .leading)
+        .frame(maxWidth: .infinity, alignment: .leading)
         .background(PumColor.statusAttentionSoft)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(state.deadlineSpoken))
@@ -195,9 +197,9 @@ struct OffboardingView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding(.vertical, PumTokens.Size.rowPadY)
+        .padding(.vertical, s.detail == nil ? PumTokens.Size.rowPadY : PumTokens.Space.s10) // 원문 13 · 10
         .padding(.horizontal, PumTokens.Space.s16)
-        .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin, alignment: .leading)
+        .frame(maxWidth: .infinity, alignment: .leading)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(state.stepSpoken(s)))
     }
