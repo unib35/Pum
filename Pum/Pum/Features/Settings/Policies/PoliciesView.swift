@@ -10,8 +10,8 @@ struct PoliciesView: View {
 
     /// 안내 글자 한 줄 높이(원문 12px × 1.5) — 큰 글자에서 함께 커진다
     @ScaledMetric(relativeTo: .caption) private var footerLineHeight: CGFloat = 18
-    /// 행 위아래 안쪽 — 원문 13
-    private let rowPadY: CGFloat = 13
+    /// 행 위아래 안쪽 — 원문 13 → 토큰 12(DEC-009)
+    private let rowPadY = PumTokens.Size.rowPadY
 
     var body: some View {
         VStack(spacing: 0) {

@@ -12,10 +12,10 @@ struct ManagerPermissionsView: View {
 
     /// 세그먼트 칸 높이 — 원문 약 34(글자 13px 한 줄 + 위아래 7, 누름 영역은 44 유지)
     @ScaledMetric(relativeTo: .callout) private var segmentHeight: CGFloat = 34
-    /// 행 위아래 안쪽 — 원문 11
-    private let rowPadY: CGFloat = 11
-    /// 세그먼트 바깥 안쪽 — 원문 3
-    private let segmentInset: CGFloat = 3
+    /// 행 위아래 안쪽 — 원문 11 → 토큰 12(DEC-009)
+    private let rowPadY = PumTokens.Size.rowPadY
+    /// 세그먼트 바깥 안쪽 — 원문 3 → 토큰 2
+    private let segmentInset = PumTokens.Space.s2
     /// 아바타 — 원문 약 44
     @ScaledMetric(relativeTo: .body) private var avatarSize = PumLayout.avatar + PumTokens.Space.s8
 

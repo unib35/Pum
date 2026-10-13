@@ -10,10 +10,10 @@ struct ConsentsView: View {
     var onOpen: (String) -> Void = { _ in }
     var onToggleOptional: (String, Bool) -> Void = { _, _ in }
 
-    /// 행 위아래 안쪽 — 원문 11
-    private let rowPadY: CGFloat = 11
-    /// 제목–안내 글자 — 원문 3
-    private let detailGap: CGFloat = 3
+    /// 행 위아래 안쪽 — 원문 11 → 토큰 12(DEC-009)
+    private let rowPadY = PumTokens.Size.rowPadY
+    /// 제목–안내 글자 — 원문 3 → 토큰 2
+    private let detailGap = PumTokens.Space.s2
 
     var body: some View {
         VStack(spacing: 0) {
