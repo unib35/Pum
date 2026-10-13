@@ -11,7 +11,7 @@ enum WorkplaceSwitcherLocal {
     /// 열린 칩 파랑 테두리 약 2 — 토큰에 2는 없어 이름만 붙임
     static let openRingWidth: CGFloat = 2
     /// 뒤 화면 맨 위 줄(칩 · 알림) 높이 40 — 누름 영역 44는 유지
-    static let topRowHeight: CGFloat = 40
+    static let topRowHeight = PumLayout.navRow
     /// 체크 칸 최소 폭(정렬용)
     static let markMinWidth: CGFloat = 24
 }

@@ -43,11 +43,7 @@ struct EmployeeHomeOvertimeView: View {
             Spacer()
             PumIconButton(systemImage: "bell", label: "알림", showsDot: s.hasUnreadNotification) {}
         }
-        .padding(.vertical, -(PumTokens.Size.tapMin - Self.topRowHeight) / 2) // 원문 줄 높이 40(누름 44 유지)
     }
-
-    /// 원문 맨 위 줄(칩 · 알림) 높이 40
-    private static let topRowHeight: CGFloat = 40
 }
 
 /// 먹색 카드 — 연장 근무 중 · 경과 · 진행 막대 · 퇴근하기
@@ -60,7 +56,7 @@ struct OvertimeCard: View {
     /// 목업 점 지름 8 → space-8
     private let dotSize = PumTokens.Space.s8
     /// 원문 퇴근하기 버튼 높이 50
-    private let clockOutHeight: CGFloat = 50
+    private let clockOutHeight = PumTokens.Size.buttonH // 원문 50 — 버튼 높이 토큰 54
 
     var body: some View {
         // 원문 간격: 위 줄–경과 14, 경과–막대 18, 막대–아래 줄 10, 아래 줄–버튼 18

@@ -238,5 +238,5 @@ struct EditRequestView: View {
 /// 화면 전용 상수 — 토큰에 없는 값(DEC-005)
 private enum EditRequestLocal {
     /// 머리 줄(닫기 · 제목) 높이 40 — 누름 영역 44는 유지
-    static let headerRowHeight: CGFloat = 40
+    static let headerRowHeight = PumLayout.navRow
 }
