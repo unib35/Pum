@@ -4,12 +4,12 @@ import SwiftUI
 
 /// 이 화면 전용 크기 — 토큰에 없는 것만 이름을 붙인다(DEC-005). 사용처에서 @ScaledMetric으로 키운다.
 private enum OwnerScheduleLayout {
-    /// 시간대 왼쪽 열 폭(목업 약 56 → 글자와 함께 커진다)
-    static let timeColumn: CGFloat = 64
+    /// 시간대 왼쪽 열 폭(목업 58 → 글자와 함께 커진다)
+    static let timeColumn: CGFloat = 58
     /// 사람 칸 아바타(목업 약 28)
     static let personAvatar: CGFloat = 28
-    /// 대타 줄 아바타(목업 약 24 → 가까운 storeTileSmall 24)
-    static let swapAvatar: CGFloat = PumLayout.storeTileSmall
+    /// 대타 줄 아바타(목업 30)
+    static let swapAvatar: CGFloat = 30
     /// 주간 스트립 칸 최소 폭(접근성 글자 크기에서 가로 스크롤할 때)
     static let stripCellMin: CGFloat = 56
 }
@@ -41,7 +41,7 @@ struct OwnerScheduleView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: PumTokens.Space.s12) {
+            VStack(spacing: PumTokens.Space.s14) { // 원문 블록 사이 14
                 header
                 weekCard
                 if let day = state.selectedDay {
@@ -73,7 +73,6 @@ struct OwnerScheduleView: View {
                 chip
             }
         }
-        .padding(.top, PumTokens.Space.s8)
     }
 
     private var title: some View {
@@ -90,7 +89,7 @@ struct OwnerScheduleView: View {
 
     private var weekCard: some View {
         PumCard {
-            VStack(spacing: PumTokens.Space.s4) {
+            VStack(spacing: 0) {
                 HStack(spacing: 0) {
                     chevronButton("chevron.left", label: "지난주", action: onPreviousWeek)
                     Spacer(minLength: PumTokens.Space.s8)
@@ -98,12 +97,15 @@ struct OwnerScheduleView: View {
                     Spacer(minLength: PumTokens.Space.s8)
                     chevronButton("chevron.right", label: "다음주", action: onNextWeek)
                 }
+                .padding(.horizontal, PumTokens.Space.s8) // 원문 머리 줄 padding 0 8 10
+                .padding(.bottom, PumTokens.Space.s10)
                 WeekStrip(days: state.days, selectedID: state.selectedID) { id in
                     withAnimation(PumMotion.respecting(reduceMotion, PumMotion.fast)) { state.select(id) } // M22
                 }
             }
-            .padding(.horizontal, PumTokens.Space.s8)
-            .padding(.vertical, PumTokens.Space.s8)
+            .padding(.top, PumTokens.Space.s14) // 원문 카드 padding 14 10 12
+            .padding(.horizontal, PumTokens.Space.s10)
+            .padding(.bottom, PumTokens.Space.s12)
         }
     }
 
@@ -114,6 +116,9 @@ struct OwnerScheduleView: View {
                 .foregroundStyle(PumColor.textSecondary)
                 .frame(width: PumTokens.Size.tapMin, height: PumTokens.Size.tapMin)
                 .contentShape(Rectangle())
+                // 누름 44 유지, 배치는 원문 화살표 8 × 줄 높이 18만
+                .padding(.vertical, -(PumTokens.Size.tapMin - PumTokens.Space.s18) / 2)
+                .padding(.horizontal, -(PumTokens.Size.tapMin - PumTokens.Space.s10) / 2)
         }
         .buttonStyle(.plain)
         .accessibilityLabel(Text(label))
@@ -130,6 +135,7 @@ struct OwnerScheduleView: View {
                 Text("+ 근무 추가").pumText(.footnote, weight: .semibold).foregroundStyle(PumColor.accent) // 목업 13px 600
                     .frame(minHeight: PumTokens.Size.tapMin)
                     .contentShape(Rectangle())
+                    .padding(.vertical, -(PumTokens.Size.tapMin - PumTokens.Space.s16) / 2) // 누름 44 유지 · 배치는 글줄 높이만
             }
             .buttonStyle(.plain)
             .accessibilityLabel(Text("\(day.spoken) 근무 추가"))
@@ -180,7 +186,7 @@ private struct WeekStrip: View {
     private func cell(_ day: ScheduleDay) -> some View {
         let selected = day.id == selectedID
         return Button { onSelect(day.id) } label: {
-            VStack(spacing: PumTokens.Space.s2) {
+            VStack(spacing: PumTokens.Space.s4) { // 원문 칸 안 gap 5 → 가장 가까운 4
                 Text(day.weekday).pumText(.caption2, weight: .regular)
                     .foregroundStyle(selected ? PumColor.textOnInverseSecondary : (day.isSunday ? PumColor.statusDanger : PumColor.textSecondary))
                 // 목업 16px → headline(17): 15·17 중 가까운 쪽이 같아 1at 주간 스트립과 같은 단계
@@ -195,7 +201,7 @@ private struct WeekStrip: View {
             .padding(.vertical, PumTokens.Space.s8)
             .frame(minHeight: PumTokens.Size.tapMin)
             .background(selected ? PumColor.surfaceInverse : .clear,
-                        in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
+                        in: RoundedRectangle(cornerRadius: PumTokens.Radius.lg, style: .continuous)) // 원문 모서리 14
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
@@ -219,7 +225,7 @@ private struct GroupRow: View {
 
     var body: some View {
         ViewThatFits(in: .horizontal) {
-            HStack(alignment: .top, spacing: PumTokens.Space.s12) {
+            HStack(alignment: .top, spacing: PumTokens.Space.s14) { // 원문 gap 14
                 times.frame(width: timeColumn, alignment: .leading)
                 people
             }
@@ -228,15 +234,17 @@ private struct GroupRow: View {
                 people
             }
         }
-        .padding(PumTokens.Space.s16)
+        .padding(.vertical, PumTokens.Space.s14) // 원문 padding 14 16
+        .padding(.horizontal, PumTokens.Space.s16)
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     private var times: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
+        VStack(alignment: .leading, spacing: 0) {
             Text(group.start).pumText(.callout, weight: .bold).foregroundStyle(PumColor.textPrimary) // 14px 700
             Text(group.end).pumText(.caption).foregroundStyle(PumColor.textTertiary)                  // 12px #8A919E
             Text(group.periodText).pumText(.caption2, weight: .regular).foregroundStyle(PumColor.textSecondary) // 11px
+                .padding(.top, PumTokens.Space.s4) // 원문 위 4
         }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text("\(group.start)부터 \(group.end), \(group.period) \(OwnerScheduleFormat.spokenDuration(group.hours))"))
@@ -255,14 +263,14 @@ private struct PersonCell: View {
     @ScaledMetric private var avatar = OwnerScheduleLayout.personAvatar
 
     var body: some View {
-        HStack(spacing: PumTokens.Space.s8) {
+        HStack(spacing: PumTokens.Space.s10) { // 원문 gap 10
             PumAvatar(name: person.name, colorIndex: person.colorIndex, size: avatar)
             Text(person.name).pumText(.callout).foregroundStyle(PumColor.textPrimary) // 14px 600
                 .frame(maxWidth: .infinity, alignment: .leading)
             Text(person.breakLabel).pumText(.caption).foregroundStyle(PumColor.textSecondary) // 12px
         }
-        .padding(.vertical, PumTokens.Space.s8)
-        .padding(.horizontal, PumTokens.Space.s10)
+        .padding(.vertical, PumTokens.Space.s8) // 원문 padding 9 12
+        .padding(.horizontal, PumTokens.Space.s12)
         .background(PumColor.surfaceFill, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text("\(person.name), \(person.breakSpoken)"))
@@ -279,21 +287,24 @@ private struct SwapRequestCard: View {
 
     var body: some View {
         PumCard(attention: true) {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s10) {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s10) {
-                    HStack(alignment: .firstTextBaseline) {
-                        Text(swap.title).pumText(.callout, weight: .bold).foregroundStyle(PumColor.statusAttention) // 주황 = 요청
-                        Spacer(minLength: PumTokens.Space.s8)
-                        Text(swap.requestedAgo).pumText(.caption).foregroundStyle(PumColor.textSecondary)
+            VStack(alignment: .leading, spacing: PumTokens.Space.s14) { // 원문 버튼 위 14
+                VStack(alignment: .leading, spacing: PumTokens.Space.s10) { // 원문 시간~사람 10
+                    VStack(alignment: .leading, spacing: PumTokens.Space.s12) { // 원문 제목 줄~날짜 12
+                        HStack(alignment: .firstTextBaseline) {
+                            Text(swap.title).pumText(.callout, weight: .bold).foregroundStyle(PumColor.statusAttention) // 주황 = 요청
+                            Spacer(minLength: PumTokens.Space.s8)
+                            Text(swap.requestedAgo).pumText(.caption).foregroundStyle(PumColor.textSecondary)
+                        }
+                        Text(swap.whenText).pumText(.body, weight: .semibold).foregroundStyle(PumColor.textPrimary) // 15px 600
                     }
-                    Text(swap.whenText).pumText(.body, weight: .semibold).foregroundStyle(PumColor.textPrimary) // 15px 600
                     people
                 }
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel(Text(swap.accessibilityText))
                 buttons
             }
-            .padding(PumTokens.Space.s16)
+            .padding(.vertical, PumTokens.Space.s16) // 원문 padding 16 18
+            .padding(.horizontal, PumTokens.Space.s18)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
@@ -314,12 +325,16 @@ private struct SwapRequestCard: View {
     }
 
     private var transfer: some View {
-        HStack(spacing: PumTokens.Space.s8) {
-            PumAvatar(name: swap.fromName, colorIndex: swap.fromColorIndex, size: avatar)
-            Text(swap.fromName).pumText(.callout, weight: .regular).foregroundStyle(PumColor.textTertiary).strikethrough() // 흐린 회색 + 취소선
+        HStack(spacing: PumTokens.Space.s10) { // 원문 사람 · 화살표 gap 10
+            HStack(spacing: PumTokens.Space.s8) {
+                PumAvatar(name: swap.fromName, colorIndex: swap.fromColorIndex, size: avatar)
+                Text(swap.fromName).pumText(.callout, weight: .regular).foregroundStyle(PumColor.textTertiary).strikethrough() // 흐린 회색 + 취소선
+            }
             Image(systemName: "arrow.right").font(.caption.weight(.semibold)).foregroundStyle(PumColor.textSecondary)
-            PumAvatar(name: swap.toName, colorIndex: swap.toColorIndex, size: avatar)
-            Text(swap.toName).pumText(.callout).foregroundStyle(PumColor.textPrimary)
+            HStack(spacing: PumTokens.Space.s8) {
+                PumAvatar(name: swap.toName, colorIndex: swap.toColorIndex, size: avatar)
+                Text(swap.toName).pumText(.callout).foregroundStyle(PumColor.textPrimary)
+            }
         }
     }
 
@@ -330,8 +345,8 @@ private struct SwapRequestCard: View {
     /// 같은 폭 2개. 「거절」은 원문에서 먹색 OUTLINE(1s의 빨강과 다름). 큰 글자에서는 세로
     private var buttons: some View {
         ViewThatFits(in: .horizontal) {
-            HStack(spacing: PumTokens.Space.s8) { rejectButton; approveButton }
-            VStack(spacing: PumTokens.Space.s8) { approveButton; rejectButton }
+            HStack(spacing: PumTokens.Space.s10) { rejectButton; approveButton } // 원문 gap 10
+            VStack(spacing: PumTokens.Space.s10) { approveButton; rejectButton }
         }
     }
 

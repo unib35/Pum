@@ -9,13 +9,13 @@ struct OwnerRecordActionsSheet: View {
 
     // 화면 전용 상수 — 토큰에 없는 값(DEC-005)
     private enum Local {
-        /// 행 높이 약 56 (터치 최소 44 이상)
-        static let rowMinHeight: CGFloat = 56
-        /// 카드 사이 간격 약 8, 화면 좌우 안쪽 약 10~12 → s12
+        /// 카드 사이 간격 8, 화면 좌우 · 아래 10(원문 padding 0 10 10)
         static let cardGap = PumTokens.Space.s8
-        static let sideInset = PumTokens.Space.s12
+        static let sideInset = PumTokens.Space.s10
+        /// 행 안쪽 — 원문 padding 14 18
+        static let rowPadY = PumTokens.Space.s14
+        static let rowPadX = PumTokens.Space.s18
     }
-    @ScaledMetric private var rowMinHeight = Local.rowMinHeight
 
     var body: some View {
         // 글자가 커져 화면을 넘으면 안에서 스크롤
@@ -24,7 +24,7 @@ struct OwnerRecordActionsSheet: View {
             ScrollView { cards }.scrollBounceBehavior(.basedOnSize)
         }
         .padding(.horizontal, Local.sideInset)
-        .padding(.bottom, Local.cardGap)
+        .padding(.bottom, Local.sideInset)
         .accessibilityElement(children: .contain)
         .accessibilityAddTraits(.isModal)
         // 모달이라 뒤의 막에 VoiceOver가 닿지 않는다 — 두 손가락 문지르기로 닫는다
@@ -40,7 +40,7 @@ struct OwnerRecordActionsSheet: View {
     }
 
     private func card<Content: View>(@ViewBuilder _ content: () -> Content) -> some View {
-        let r = PumTokens.Radius.xl
+        let r = PumTokens.Radius.lg // 원문 14
         return VStack(spacing: 0) { content() }
             .frame(maxWidth: .infinity)
             .background(PumColor.surfaceCard, in: RoundedRectangle(cornerRadius: r, style: .continuous))
@@ -54,8 +54,10 @@ struct OwnerRecordActionsSheet: View {
         card {
             Text(state.sheetTitle).pumText(.footnote).foregroundStyle(PumColor.textSecondary) // 13px
                 .multilineTextAlignment(.center)
-                .frame(maxWidth: .infinity, minHeight: rowMinHeight)
-                .padding(.horizontal, PumTokens.Size.rowPadX)
+                .frame(maxWidth: .infinity)
+                .padding(.top, Local.rowPadY) // 원문 padding 14 18 10
+                .padding(.bottom, PumTokens.Space.s10)
+                .padding(.horizontal, Local.rowPadX)
                 .accessibilityAddTraits(.isHeader)
             ForEach(state.menu, id: \.self) { item in
                 hairline
@@ -64,7 +66,10 @@ struct OwnerRecordActionsSheet: View {
                         // 17px: 일반 동작 500 파랑, 삭제 600 빨강
                         .pumText(.headline, weight: item.isDestructive ? .semibold : .medium)
                         .foregroundStyle(item.isDestructive ? PumColor.statusDanger : PumColor.accent)
-                        .frame(maxWidth: .infinity, minHeight: rowMinHeight)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, Local.rowPadY)
+                        .padding(.horizontal, Local.rowPadX)
+                        .frame(minHeight: PumTokens.Size.tapMin)
                         .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
@@ -79,7 +84,8 @@ struct OwnerRecordActionsSheet: View {
             Text("\(Text(OwnerRecordActionsState.guideRuleTitle).fontWeight(.bold).foregroundStyle(PumColor.textPrimary))\(Text(OwnerRecordActionsState.guideBefore).foregroundStyle(PumColor.textSecondary))\(Text(OwnerRecordActionsState.guideCorrection).fontWeight(.bold).foregroundStyle(PumColor.textSecondary))\(Text(OwnerRecordActionsState.guideAfter).foregroundStyle(PumColor.textSecondary))")
                 .pumText(.caption) // 12px
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(PumTokens.Space.s12)
+                .padding(.vertical, Local.rowPadY) // 원문 padding 14 18
+                .padding(.horizontal, Local.rowPadX)
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel(Text(state.guideText))
         }
@@ -91,7 +97,9 @@ struct OwnerRecordActionsSheet: View {
             Button(action: onCancel) {
                 Text(OwnerRecordActionsState.cancelText).pumText(.headline) // 17px 600
                     .foregroundStyle(PumColor.textPrimary)
-                    .frame(maxWidth: .infinity, minHeight: rowMinHeight)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, PumTokens.Space.s16) // 원문 padding 16 18
+                    .padding(.horizontal, Local.rowPadX)
                     .contentShape(Rectangle())
             }
             .buttonStyle(.plain)

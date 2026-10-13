@@ -17,8 +17,8 @@ struct EditApprovalView: View {
         static let quoteBarWidth: CGFloat = 3
         /// 변경 이력 점 지름 약 10, 점 칸 폭, 점 사이 선 폭
         static let dotSize: CGFloat = PumTokens.Space.s10
-        static let markerColumn: CGFloat = PumTokens.Space.s16
-        static let lineWidth: CGFloat = 1
+        static let markerColumn: CGFloat = PumTokens.Space.s14 // 원문 점 칸 14
+        static let lineWidth: CGFloat = PumTokens.Space.s2 // 원문 선 폭 2
     }
 
     var body: some View {
@@ -26,7 +26,7 @@ struct EditApprovalView: View {
             PumNavHeader(title: EditApprovalState.screenTitle, onBack: onBack)
                 .padding(.horizontal, PumTokens.Size.screenPad)
             ScrollView {
-                VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s14) { // 원문 블록 사이 14
                     personRow
                     changeCard
                     historyCard
@@ -35,11 +35,14 @@ struct EditApprovalView: View {
                             .underline().foregroundStyle(PumColor.textSecondary)
                             .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin)
                             .contentShape(Rectangle())
+                            // 누름 44 유지, 배치는 원문 글줄 높이만
+                            .padding(.vertical, -(PumTokens.Size.tapMin - PumTokens.Space.s16) / 2)
                     }
                     .buttonStyle(.plain)
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.vertical, PumTokens.Space.s12)
+                .padding(.top, PumTokens.Space.s14) // 원문 머리 줄 아래 14
+                .padding(.bottom, PumTokens.Space.s12)
             }
         }
         .background(PumColor.bgApp)
@@ -52,7 +55,6 @@ struct EditApprovalView: View {
             HStack(spacing: PumTokens.Space.s12) { personInfo; badge }
             VStack(alignment: .leading, spacing: PumTokens.Space.s8) { personInfo; badge }
         }
-        .padding(.horizontal, PumTokens.Space.s4)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(state.personAccessibilityText))
     }
@@ -74,19 +76,21 @@ struct EditApprovalView: View {
     // 3. 변경 카드
     private var changeCard: some View {
         PumCard {
-            VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
-                Text(EditApprovalState.fieldLabel).pumText(.caption, weight: .bold).foregroundStyle(PumColor.textSecondary) // 12px 700
-                timeChange
+            VStack(alignment: .leading, spacing: PumTokens.Space.s14) { // 원문 블록 사이 14
+                VStack(alignment: .leading, spacing: PumTokens.Space.s8) { // 원문 라벨~시간 8
+                    Text(EditApprovalState.fieldLabel).pumText(.caption, weight: .bold).foregroundStyle(PumColor.textSecondary) // 12px 700
+                    timeChange
+                }
                 messageBox
                 changeCells
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(PumTokens.Space.s16)
+            .padding(PumTokens.Space.s18) // 원문 카드 padding 18
         }
     }
 
     private var timeChange: some View {
-        HStack(alignment: .bottom, spacing: PumTokens.Space.s12) {
+        HStack(alignment: .bottom, spacing: PumTokens.Space.s14) { // 원문 gap 14
             VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
                 Text(EditApprovalState.recordedLabel).pumText(.caption2, weight: .regular).foregroundStyle(PumColor.textTertiary)
                 // 26px 600 → title2(24) 굵기 600. 기존 기록이라 흐림 + 취소선
@@ -107,28 +111,33 @@ struct EditApprovalView: View {
     }
 
     private var messageBox: some View {
-        HStack(alignment: .top, spacing: PumTokens.Space.s12) {
-            Rectangle().fill(PumTokens.ColorToken.gray300) // 인용 막대(1ae와 같음)
-                .frame(width: Local.quoteBarWidth)
-                .accessibilityHidden(true)
-            Text(state.message).pumText(.body, weight: .regular) // 15px → body
-                .foregroundStyle(PumColor.textPrimary)
-                .frame(maxWidth: .infinity, alignment: .leading)
-        }
-        .fixedSize(horizontal: false, vertical: true)
-        .padding(PumTokens.Space.s12)
-        .background(PumColor.surfaceFill, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
+        Text(state.message).pumText(.callout, weight: .regular) // 원문 14px · 글자색 #3A4150
+            .foregroundStyle(PumTokens.ColorToken.gray800)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .fixedSize(horizontal: false, vertical: true)
+            // 원문 padding 12 14 12 18, 막대는 왼쪽 0 · 위아래 12 · 폭 3
+            .padding(.top, PumTokens.Space.s12)
+            .padding(.bottom, PumTokens.Space.s12)
+            .padding(.leading, PumTokens.Space.s18)
+            .padding(.trailing, PumTokens.Space.s14)
+            .background(PumColor.surfaceFill, in: RoundedRectangle(cornerRadius: PumTokens.Radius.lg, style: .continuous))
+            .overlay(alignment: .leading) {
+                Rectangle().fill(PumTokens.ColorToken.gray300) // 인용 막대(1ae와 같음)
+                    .frame(width: Local.quoteBarWidth)
+                    .padding(.vertical, PumTokens.Space.s12)
+                    .accessibilityHidden(true)
+            }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(state.messageAccessibilityText))
     }
 
     private var changeCells: some View {
         ViewThatFits(in: .horizontal) {
-            HStack(alignment: .top, spacing: PumTokens.Space.s8) {
+            HStack(alignment: .top, spacing: PumTokens.Space.s10) { // 원문 gap 10
                 cell(state.recognizedChange)
                 cell(state.payChange)
             }
-            VStack(spacing: PumTokens.Space.s8) {
+            VStack(spacing: PumTokens.Space.s10) {
                 cell(state.recognizedChange)
                 cell(state.payChange)
             }
@@ -146,9 +155,10 @@ struct EditApprovalView: View {
             Text(from + to).pumText(.body, weight: .semibold).foregroundStyle(PumColor.textPrimary) // 15px
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(PumTokens.Space.s12)
-        .background(PumColor.surfaceCard, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
-        .pumRing(.hairline, cornerRadius: PumTokens.Radius.md)
+        .padding(.vertical, PumTokens.Space.s12) // 원문 칸 padding 12 14, 모서리 14
+        .padding(.horizontal, PumTokens.Space.s14)
+        .background(PumColor.surfaceCard, in: RoundedRectangle(cornerRadius: PumTokens.Radius.lg, style: .continuous))
+        .pumRing(.hairline, cornerRadius: PumTokens.Radius.lg)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(change.accessibilityText))
     }
@@ -166,17 +176,19 @@ struct EditApprovalView: View {
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(PumTokens.Space.s16)
+            .padding(.vertical, PumTokens.Space.s16) // 원문 카드 padding 16 18
+            .padding(.horizontal, PumTokens.Space.s18)
         }
     }
 
     private func stepRow(_ step: ApprovalHistoryStep, isLast: Bool) -> some View {
         let pending = step.status == .pending
         return HStack(alignment: .top, spacing: PumTokens.Space.s12) {
-            VStack(spacing: PumTokens.Space.s2) {
-                marker(step.status)
+            VStack(spacing: 0) {
+                marker(step.status).padding(.top, PumTokens.Space.s4) // 원문 점 위 4
                 if !isLast {
                     Rectangle().fill(PumColor.borderHairline).frame(width: Local.lineWidth).frame(maxHeight: .infinity)
+                        .padding(.vertical, PumTokens.Space.s4) // 원문 선 위아래 4
                 }
             }
             .frame(width: Local.markerColumn)
@@ -187,7 +199,7 @@ struct EditApprovalView: View {
                     .foregroundStyle(pending ? PumColor.textTertiary : PumColor.textSecondary)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.bottom, isLast ? 0 : PumTokens.Space.s12)
+            .padding(.bottom, isLast ? 0 : PumTokens.Space.s14) // 원문 행 아래 14
         }
         .fixedSize(horizontal: false, vertical: true)
         .accessibilityElement(children: .ignore)
@@ -210,7 +222,7 @@ struct EditApprovalView: View {
                       onNegative: onReject, onPositive: onApprove)
             .padding(.horizontal, PumTokens.Size.screenPad)
             .padding(.top, PumTokens.Space.s12)
-            .padding(.bottom, PumTokens.Space.s4)
+            .padding(.bottom, PumTokens.Space.s10) // 원문 아래 44 − 안전 영역 34
             .background(PumColor.bgApp)
     }
 }

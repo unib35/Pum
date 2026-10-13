@@ -6,8 +6,8 @@ import SwiftUI
 private enum OwnerWorkplacesLayout {
     /// 요약 막대 높이(목업 약 10) — 가장 가까운 간격 단계 s10
     static let summaryBarHeight: CGFloat = PumTokens.Space.s10
-    /// 카드 막대 높이(목업 약 8) — s8
-    static let cardBarHeight: CGFloat = PumTokens.Space.s8
+    /// 카드 막대 높이(목업 6) — s6
+    static let cardBarHeight: CGFloat = PumTokens.Space.s6
     /// 막대 두 구간 사이 틈(목업 약 2) — s2
     static let barGap: CGFloat = PumTokens.Space.s2
     /// 먹색 위 안쪽 구분선: 흰 10%(원문). 먹색 위 hairline 토큰이 없어 화면 안에서만 씀
@@ -16,8 +16,6 @@ private enum OwnerWorkplacesLayout {
     static let dash = StrokeStyle(lineWidth: 1, dash: [6, 4])
     /// 점선 색 — hairline(6%)은 점선으로는 안 보여 같은 회색 계열 gray-300(배지 종료 테두리와 같은 색)
     static let dashColor = PumTokens.ColorToken.gray300
-    /// 추가 버튼 높이(목업 약 50) — 버튼 높이 54에서 간격 단계 s4만큼 뺌
-    static let addButtonHeight: CGFloat = PumTokens.Size.buttonH - PumTokens.Space.s4
 }
 
 struct OwnerWorkplacesView: View {
@@ -32,16 +30,14 @@ struct OwnerWorkplacesView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: PumTokens.Space.s16) {
+            VStack(spacing: PumTokens.Space.s14) { // 원문 블록 사이 14
                 header
                 summaryCard
-                VStack(spacing: PumTokens.Space.s12) {
-                    ForEach(record.entries) { entryCard($0) }
-                }
+                ForEach(record.entries) { entryCard($0) }
                 addButton
             }
             .padding(.horizontal, PumTokens.Size.screenPad)
-            .padding(.vertical, PumTokens.Space.s12)
+            .padding(.bottom, PumTokens.Space.s12) // 원문 제목 줄 위 여백 없음
         }
         .background(PumColor.bgApp)
         .safeAreaInset(edge: .bottom, spacing: 0) {
@@ -63,7 +59,7 @@ struct OwnerWorkplacesView: View {
     // MARK: 먹색 요약 카드
 
     private var summaryCard: some View {
-        VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+        VStack(alignment: .leading, spacing: 0) {
             titleRow
             // 목업 34px 700 → hero 32(가장 가까운 단계), 「원」도 같은 크기
             HStack(alignment: .firstTextBaseline, spacing: PumTokens.Space.s2) {
@@ -71,13 +67,18 @@ struct OwnerWorkplacesView: View {
                 Text("원")
             }
             .pumText(.hero).foregroundStyle(.white)
+            .padding(.top, PumTokens.Space.s4) // 원문 금액 위 4
             OwnerWorkplacesSummaryBar(record: record)
+                .padding(.top, PumTokens.Space.s14) // 원문 막대 위 14
             Rectangle().fill(OwnerWorkplacesLayout.inverseLine).frame(height: 1)
+                .padding(.top, PumTokens.Space.s16) // 원문 칸 위 16 · 구분선 아래 14
             statsRow
+                .padding(.top, PumTokens.Space.s14)
         }
-        .padding(PumTokens.Space.s20)
+        .padding(.vertical, PumTokens.Space.s18) // 원문 카드 padding 18 20
+        .padding(.horizontal, PumTokens.Space.s20)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(PumColor.surfaceInverse, in: RoundedRectangle(cornerRadius: PumTokens.Radius.lg, style: .continuous))
+        .background(PumColor.surfaceInverse, in: RoundedRectangle(cornerRadius: PumTokens.Radius.xl, style: .continuous)) // 원문 모서리 16
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(record.summaryAccessibilityText))
     }
@@ -125,11 +126,11 @@ struct OwnerWorkplacesView: View {
         return PumCard {
             VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
                 Button { onEntry(e) } label: {
-                    VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+                    VStack(alignment: .leading, spacing: 0) {
                         HStack(spacing: PumTokens.Space.s12) {
                             Text(e.initial).pumText(.body, weight: .bold).foregroundStyle(.white) // 15px 700
                                 .frame(width: tileSize, height: tileSize)
-                                .background(e.tileColor, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
+                                .background(e.tileColor, in: RoundedRectangle(cornerRadius: PumTokens.Radius.lg, style: .continuous)) // 원문 모서리 14
                             VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
                                 Text(e.name).pumText(.body, weight: .bold).foregroundStyle(PumColor.textPrimary) // 16px 700
                                 Text(e.staffText).pumText(.caption, weight: .regular).foregroundStyle(PumColor.textSecondary)
@@ -144,7 +145,9 @@ struct OwnerWorkplacesView: View {
                             Text("\(e.amountText)원").pumText(.title3).foregroundStyle(PumColor.textPrimary) // 20px 700
                                 .lineLimit(1).minimumScaleFactor(0.7)
                         }
+                        .padding(.top, PumTokens.Space.s14) // 원문 헤더~예상 인건비 14
                         OwnerWorkplacesCardBar(fraction: e.confirmedFraction)
+                            .padding(.top, PumTokens.Space.s8) // 원문 막대 위 8
                     }
                     .frame(maxWidth: .infinity, minHeight: PumTokens.Size.tapMin, alignment: .leading)
                     .contentShape(Rectangle())
@@ -155,7 +158,7 @@ struct OwnerWorkplacesView: View {
                 .accessibilityAddTraits(.isButton)
 
                 if !e.badges.isEmpty {
-                    OwnerWorkplacesFlow(hSpacing: PumTokens.Space.s6, vSpacing: PumTokens.Space.s6) {
+                    OwnerWorkplacesFlow(hSpacing: PumTokens.Space.s8, vSpacing: PumTokens.Space.s8) { // 원문 gap 8
                         // 원문: 배지는 요약 표시(촘촘한 한 줄) — 따로 누르지 않고 카드 위쪽 누름이 사업장으로 이동.
                         // 내용은 카드 VoiceOver 문장에 들어 있다
                         ForEach(e.badges) { b in
@@ -165,7 +168,8 @@ struct OwnerWorkplacesView: View {
                     .accessibilityHidden(true)
                 }
             }
-            .padding(PumTokens.Space.s16)
+            .padding(.vertical, PumTokens.Space.s16) // 원문 카드 padding 16 18
+            .padding(.horizontal, PumTokens.Space.s18)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
@@ -174,12 +178,13 @@ struct OwnerWorkplacesView: View {
 
     private var addButton: some View {
         Button(action: onAdd) {
-            HStack(spacing: PumTokens.Space.s6) {
+            HStack(spacing: PumTokens.Space.s8) { // 원문 gap 8
                 Image(systemName: "plus").font(.footnote.weight(.semibold))
-                Text("사업장 추가").pumText(.body, weight: .semibold) // 15px 600
+                Text("사업장 추가").pumText(.callout, weight: .semibold) // 원문 14px 600
             }
             .foregroundStyle(PumColor.textSecondary)
-            .frame(maxWidth: .infinity, minHeight: OwnerWorkplacesLayout.addButtonHeight)
+            .padding(.vertical, PumTokens.Space.s16) // 원문 padding 16
+            .frame(maxWidth: .infinity)
             .contentShape(Rectangle())
             .overlay {
                 RoundedRectangle(cornerRadius: PumTokens.Radius.lg, style: .continuous)
