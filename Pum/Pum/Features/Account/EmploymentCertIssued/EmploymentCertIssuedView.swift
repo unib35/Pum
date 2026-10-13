@@ -184,9 +184,10 @@ struct EmploymentCertIssuedView: View {
         Button(action: onCopy) {
             Text(EmploymentCertIssuedState.copyTitle).pumText(.caption, weight: .bold)
                 .foregroundStyle(PumColor.textPrimary)
-                .padding(.horizontal, PumTokens.Space.s16)
-                .frame(minWidth: PumTokens.Size.tapMin, minHeight: PumTokens.Size.tapMin)
+                .padding(.horizontal, PumTokens.Space.s12)
+                .padding(.vertical, PumTokens.Space.s6) // 원문 작은 칩(약 42 × 27)
                 .background(PumColor.surfaceFill, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
+                .frame(minWidth: PumTokens.Size.tapMin, minHeight: PumTokens.Size.tapMin) // 누름 영역만 44
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
