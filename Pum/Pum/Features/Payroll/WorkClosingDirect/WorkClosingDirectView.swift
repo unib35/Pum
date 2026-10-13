@@ -147,7 +147,7 @@ struct WorkClosingDirectView: View {
                 DirectChip(title: "고침", style: .outline, isLoading: false, action: nil) // 행 전체가 버튼
             }
             .padding(.horizontal, PumTokens.Size.rowPadX)
-            .padding(.vertical, PumTokens.Space.s10)
+            .padding(.vertical, PumTokens.Space.s12) // 원문 padding 12 16
             .frame(minHeight: PumTokens.Size.tapMin)
             .contentShape(Rectangle())
         }
@@ -165,7 +165,7 @@ struct WorkClosingDirectView: View {
                     .foregroundStyle(PumColor.textTertiary).accessibilityHidden(true)
             }
             .padding(.horizontal, PumTokens.Size.rowPadX)
-            .padding(.vertical, PumTokens.Space.s10)
+            .padding(.vertical, PumTokens.Space.s12) // 원문 padding 12 16
             .frame(minHeight: PumTokens.Size.tapMin)
             .contentShape(Rectangle())
         }
@@ -255,8 +255,12 @@ private struct DirectChip: View {
         if let action {
             Button(action: action) {
                 shape
-                    .frame(minWidth: PumTokens.Size.tapMin, minHeight: PumTokens.Size.tapMin)
+                    // 누름 영역만 44 이상으로 키우고, 배치에는 원문 칩 크기만 쓴다(카드 높이가 늘지 않게)
+                    .padding(.vertical, PumTokens.Space.s12)
+                    .padding(.horizontal, PumTokens.Space.s4)
                     .contentShape(Rectangle())
+                    .padding(.vertical, -PumTokens.Space.s12)
+                    .padding(.horizontal, -PumTokens.Space.s4)
             }
             .buttonStyle(.plain)
             .accessibilityLabel(Text(spoken ?? title))

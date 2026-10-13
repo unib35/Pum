@@ -146,8 +146,12 @@ struct PayslipSendDirectView: View {
                 .padding(.horizontal, PumTokens.Space.s10)
                 .padding(.vertical, PumTokens.Space.s6)
                 .background(PumColor.surfaceFill, in: RoundedRectangle(cornerRadius: PumTokens.Radius.sm, style: .continuous))
-                .frame(minWidth: PumTokens.Size.tapMin, minHeight: PumTokens.Size.tapMin)
+                // 누름 영역만 44 이상으로 키우고, 배치에는 원문 칩 크기만 쓴다(카드 높이가 늘지 않게)
+                .padding(.vertical, PumTokens.Space.s12)
+                .padding(.horizontal, PumTokens.Space.s4)
                 .contentShape(Rectangle())
+                .padding(.vertical, -PumTokens.Space.s12)
+                .padding(.horizontal, -PumTokens.Space.s4)
         }
         .buttonStyle(.plain)
         .accessibilityLabel(Text(person.pdfSpoken))
