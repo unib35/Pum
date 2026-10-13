@@ -1,0 +1,247 @@
+// UI-IOS-19f · REQ-062 — 직원 · 발급된 재직증명서 (하위 화면, 탭 바 없음)
+// 복사 · 공유 · PDF 저장은 클로저만 부른다(클립보드 · 시트 · 파일 처리는 호출하는 쪽 몫). 복사 뒤 안내는 원문 없음.
+import SwiftUI
+
+struct EmploymentCertIssuedView: View {
+    let state: EmploymentCertIssuedState
+    var onBack: () -> Void
+    var onCopy: () -> Void
+    var onShare: () -> Void
+    var onSavePDF: () -> Void
+
+    @Environment(\.dynamicTypeSize) private var typeSize
+
+    /// 표 이름 칸 폭(원문 약 88)
+    @ScaledMetric(relativeTo: .footnote) private var labelWidth: CGFloat = 88
+
+    init(state: EmploymentCertIssuedState,
+         onBack: @escaping () -> Void = {},
+         onCopy: @escaping () -> Void = {},
+         onShare: @escaping () -> Void = {},
+         onSavePDF: @escaping () -> Void = {}) {
+        self.state = state
+        self.onBack = onBack
+        self.onCopy = onCopy
+        self.onShare = onShare
+        self.onSavePDF = onSavePDF
+    }
+
+    var body: some View {
+        VStack(spacing: 0) {
+            backRow
+            ScrollView {
+                VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+                    header
+                    documentCard
+                    codeCard
+                }
+                .padding(.horizontal, PumTokens.Size.screenPad)
+                .padding(.vertical, PumTokens.Space.s12)
+            }
+        }
+        .background(PumColor.bgApp)
+        .safeAreaInset(edge: .bottom, spacing: 0) { footer }
+    }
+
+    // MARK: 머리
+
+    private var backRow: some View {
+        HStack {
+            Button(action: onBack) {
+                HStack(spacing: PumTokens.Space.s4) {
+                    Image(systemName: "chevron.left").pumText(.headline, weight: .semibold)
+                    Text(EmploymentCertIssuedState.backTitle).pumText(.headline, weight: .semibold)
+                }
+                .foregroundStyle(PumColor.textPrimary)
+                .frame(minWidth: PumTokens.Size.tapMin, minHeight: PumTokens.Size.tapMin, alignment: .leading)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(Text(EmploymentCertIssuedState.backTitle))
+            Spacer()
+        }
+        .padding(.horizontal, PumTokens.Size.screenPad)
+        .padding(.top, PumTokens.Space.s8)
+    }
+
+    private var header: some View {
+        ViewThatFits(in: .horizontal) {
+            HStack(spacing: PumTokens.Space.s8) { issuedBadge; issuedLine }
+            VStack(alignment: .leading, spacing: PumTokens.Space.s6) { issuedBadge; issuedLine }
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(Text(state.issuedSpoken))
+        .padding(.horizontal, PumTokens.Space.s4)
+    }
+
+    private var issuedBadge: some View {
+        PumBadge(text: EmploymentCertIssuedState.issuedTitle, kind: .done)
+    }
+
+    private var issuedLine: some View {
+        Text(state.issuedLineText).pumText(.footnote).foregroundStyle(PumColor.textSecondary)
+            .fixedSize(horizontal: false, vertical: true)
+    }
+
+    // MARK: 문서
+
+    private var documentCard: some View {
+        PumCard {
+            VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
+                Text(EmploymentCertIssuedState.documentTitle).tracking(PumTokens.Space.s4) // 원문 넓은 자간 — pumText보다 안쪽에
+                    .pumText(.headline, weight: .bold)
+                    .foregroundStyle(PumColor.textPrimary)
+                    .frame(maxWidth: .infinity)
+                    .accessibilityAddTraits(.isHeader)
+                table(state.personRows)
+                Rectangle().fill(PumColor.borderHairline).frame(height: 1)
+                table(state.shopRows)
+                Rectangle().fill(PumColor.borderHairline).frame(height: 1)
+                closing
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(Text(state.closingSpoken))
+            }
+            .padding(PumTokens.Size.rowPadX + PumTokens.Space.s4)
+        }
+    }
+
+    private func table(_ rows: [EmploymentCertIssuedRow]) -> some View {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s12) {
+            ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
+                docRow(label: row.label, value: row.value)
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(Text(row.spoken))
+            }
+        }
+    }
+
+    /// 넘치면 이름 아래로 값이 내려간다
+    private func docRow(label: String, value: String) -> some View {
+        let l = Text(label).pumText(.footnote).foregroundStyle(PumColor.textSecondary)
+        let v = Text(value).pumText(.footnote, weight: .semibold).foregroundStyle(PumColor.textPrimary)
+        return ViewThatFits(in: .horizontal) {
+            HStack(alignment: .firstTextBaseline, spacing: 0) {
+                l.frame(width: labelWidth, alignment: .leading)
+                v.frame(maxWidth: .infinity, alignment: .leading)
+            }
+            VStack(alignment: .leading, spacing: PumTokens.Space.s2) { l; v }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private var closing: some View {
+        VStack(spacing: PumTokens.Space.s8) {
+            Text(EmploymentCertIssuedState.attestation).pumText(.footnote).foregroundStyle(PumColor.textSecondary)
+            ViewThatFits(in: .horizontal) {
+                HStack(spacing: PumTokens.Space.s4) { signLine; signChip }
+                VStack(spacing: PumTokens.Space.s4) { signLine; signChip }
+            }
+        }
+        .multilineTextAlignment(.center)
+        .frame(maxWidth: .infinity)
+    }
+
+    private var signLine: some View {
+        Text(state.signLineText).pumText(.footnote).foregroundStyle(PumColor.textSecondary)
+            .fixedSize(horizontal: false, vertical: true)
+    }
+
+    private var signChip: some View {
+        Text(EmploymentCertIssuedState.signatureChip).pumText(.caption, weight: .semibold)
+            .foregroundStyle(PumTokens.ColorToken.gray700)
+            .padding(.horizontal, PumTokens.Space.s10)
+            .padding(.vertical, PumTokens.Space.s6)
+            .background(PumColor.surfaceFill, in: Capsule())
+    }
+
+    // MARK: 확인 번호
+
+    private var codeCard: some View {
+        PumCard {
+            ViewThatFits(in: .horizontal) {
+                HStack(alignment: .center, spacing: PumTokens.Space.s12) { codeTexts; copyButton }
+                VStack(alignment: .leading, spacing: PumTokens.Space.s8) { codeTexts; copyButton }
+            }
+            .padding(.vertical, PumTokens.Size.rowPadY)
+            .padding(.horizontal, PumTokens.Size.rowPadX)
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+    }
+
+    private var codeTexts: some View {
+        VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
+            Text(state.codeText).pumText(.callout, weight: .semibold).foregroundStyle(PumColor.textPrimary)
+            Text(EmploymentCertIssuedState.verifyHint).pumText(.caption).foregroundStyle(PumColor.textSecondary)
+        }
+        .fixedSize(horizontal: false, vertical: true)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(Text(state.codeCardSpoken))
+        .speechSpellsOutCharacters()
+    }
+
+    private var copyButton: some View {
+        Button(action: onCopy) {
+            Text(EmploymentCertIssuedState.copyTitle).pumText(.caption, weight: .bold)
+                .foregroundStyle(PumColor.textPrimary)
+                .padding(.horizontal, PumTokens.Space.s16)
+                .frame(minWidth: PumTokens.Size.tapMin, minHeight: PumTokens.Size.tapMin)
+                .background(PumColor.surfaceFill, in: RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous))
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(Text("\(EmploymentCertIssuedState.codeTitle) \(EmploymentCertIssuedState.copyTitle)"))
+    }
+
+    // MARK: 하단
+
+    private var footer: some View {
+        buttons
+            .padding(.horizontal, PumTokens.Size.screenPad)
+            .padding(.vertical, PumTokens.Space.s12)
+            .background(PumColor.bgApp)
+    }
+
+    @ViewBuilder private var buttons: some View {
+        let share = PumButton(title: EmploymentCertIssuedState.shareTitle, kind: .outline, action: onShare)
+        let save = PumButton(title: EmploymentCertIssuedState.savePDFTitle, action: onSavePDF)
+        if typeSize.isAccessibilitySize {
+            VStack(spacing: PumTokens.Space.s8) { save; share }
+        } else {
+            RatioPairLayout(ratio: 1.5, spacing: PumTokens.Space.s8) { share; save } // 원문 약 1 : 1.5
+        }
+    }
+}
+
+/// 받은 폭을 두 칸으로 1 : ratio 로 나눈다(앞 칸 : 뒤 칸). 19c · 19e와 같은 값 — 공통 후보.
+private struct RatioPairLayout: Layout {
+    var ratio: CGFloat
+    var spacing: CGFloat
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        let width = proposal.width ?? 0
+        let widths = columnWidths(total: width)
+        let height = zip(subviews, widths)
+            .map { $0.sizeThatFits(ProposedViewSize(width: $1, height: nil)).height }
+            .max() ?? 0
+        return CGSize(width: width, height: height)
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        let widths = columnWidths(total: bounds.width)
+        var x = bounds.minX
+        for (view, width) in zip(subviews, widths) {
+            view.place(at: CGPoint(x: x, y: bounds.minY), anchor: .topLeading,
+                       proposal: ProposedViewSize(width: width, height: bounds.height))
+            x += width + spacing
+        }
+    }
+
+    private func columnWidths(total: CGFloat) -> [CGFloat] {
+        let unit = max(0, total - spacing) / (1 + ratio)
+        return [unit, unit * ratio]
+    }
+}
+
+#Preview("19f 원문") { EmploymentCertIssuedView(state: .sample) }
+#Preview("19f XXXL") { EmploymentCertIssuedView(state: .sample).dynamicTypeSize(.accessibility3) }
