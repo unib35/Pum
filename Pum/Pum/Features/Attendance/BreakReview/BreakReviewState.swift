@@ -55,6 +55,7 @@ nonisolated struct BreakReviewState: Equatable, Sendable {
 
     /// 「4h 30m」 — 서버가 준 분의 표기만 바꾼다
     static func clock(_ minutes: Int) -> String {
+        let minutes = max(0, minutes)
         let m = minutes % 60
         return "\(minutes / 60)h \(m < 10 ? "0" : "")\(m)m"
     }

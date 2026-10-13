@@ -14,10 +14,6 @@ struct BreakReviewView: View {
     @Environment(\.dynamicTypeSize) private var typeSize
     @ScaledMetric(relativeTo: .body) private var statusCircle = PumLayout.avatar - PumTokens.Space.s12
 
-    private enum Local {
-        static let glyph: CGFloat = 14
-    }
-
     init(state: BreakReviewState,
          onBack: @escaping () -> Void = {},
          onOtherTime: @escaping () -> Void = {},
@@ -199,7 +195,7 @@ struct BreakReviewView: View {
     private func repeatCard(title: String, law: String) -> some View {
         PumCard {
             HStack(spacing: PumTokens.Space.s12) {
-                Text("!").font(.system(size: Local.glyph, weight: .heavy))
+                Text("!").pumText(.callout, weight: .heavy) // 원문 15px 800
                     .foregroundStyle(PumColor.statusAttention)
                     .frame(width: statusCircle, height: statusCircle)
                     .background(PumColor.statusAttentionSoft, in: Circle())
@@ -234,6 +230,7 @@ struct BreakReviewView: View {
 
     @ViewBuilder private var buttons: some View {
         let other = PumButton(title: BreakReviewState.otherTimeTitle, kind: .outline, action: onOtherTime)
+            .disabled(isApproving) // 처리 중에는 다른 길로 가지 않게 — 모양 변화는 이 버튼만
         let approve = PumButton(title: BreakReviewState.approveTitle, isLoading: isApproving, action: approveTapped)
         Group {
             if typeSize.isAccessibilitySize {

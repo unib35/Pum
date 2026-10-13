@@ -35,4 +35,8 @@ struct BreakReviewTests {
         #expect(s.repeatSpoken == "김하늘 · 이번 달 3번째, 4시간 이상 근무에는 휴게 30분 이상 · 근로기준법 54조")
         #expect(s.sentSpoken == "확인 필요, 김하늘 · 어제 22:10")
     }
+
+    @Test func 음수_분은_0으로() {
+        #expect(BreakReviewState.clock(-30) == "0h 00m")
+    }
 }
