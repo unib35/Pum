@@ -57,7 +57,7 @@ struct ScheduleDraftTests {
         #expect(d.staffID == 1 && d.repeatIndex == 0 && d.breakMinutes == 30)
         #expect(sheet.clock(d.startMinutes) == "17:00" && sheet.clock(d.endMinutes) == "22:00")
         #expect(sheet.breakText(30) == "30분" && sheet.breakText(60) == "1시간" && sheet.breakText(0) == "없음")
-        #expect(sheet.focusedField == .start)
+        #expect(sheet.focusedField == .end)
         #expect(!sheet.hasChanges(d))
     }
 

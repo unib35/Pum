@@ -188,7 +188,7 @@ nonisolated extension AddShiftSheetState {
         breakOptions: [0, 30, 60],
         repeatOptions: ["이번만", "매주 수"],
         initialDraft: .init(staffID: 1, startMinutes: 17 * 60, endMinutes: 22 * 60, breakMinutes: 30, repeatIndex: 0),
-        focusedField: .start,
+        focusedField: .end, // 원문: 퇴근 칸에 파란 테두리
         estimate: .init(title: "박서준 \u{00B7} 이 주 근무", hoursText: "23h \u{2192} 27h 30m",
                         costLabel: "예상 인건비",
                         basis: "기본 49,500 \u{00B7} 소정근로 25h 초과 2.5h 가산 13,750",

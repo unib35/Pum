@@ -12,6 +12,8 @@ struct AddShiftSheet: View {
     private let onDraftChange: (AddShiftDraft) -> Void
     private let onAddToDraft: (AddShiftDraft) -> Void
     @ScaledMetric(relativeTo: .callout) private var segmentHeight: CGFloat = 36
+    /// 원문 세그먼트 폭 약 180(카드 안 오른쪽 절반)
+    @ScaledMetric(relativeTo: .callout) private var segmentMaxWidth: CGFloat = 180
     @ScaledMetric(relativeTo: .footnote) private var chipAvatar: CGFloat = 22
 
     init(state: AddShiftSheetState,
@@ -170,16 +172,29 @@ struct AddShiftSheet: View {
                 .padding(.horizontal, PumTokens.Size.rowPadX)
                 .frame(minHeight: PumTokens.Size.tapMin)
                 Rectangle().fill(PumColor.borderHairline).frame(height: 1)
-                VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
-                    Text(AddShiftSheetState.repeatLabel).pumText(.callout, weight: .regular)
-                        .foregroundStyle(PumColor.textSecondary)
-                    segments
+                // 원문: 「반복」 라벨과 세그먼트가 한 줄(세그먼트는 오른쪽 절반). 넘치면 아래로
+                ViewThatFits(in: .horizontal) {
+                    HStack(spacing: PumTokens.Space.s12) {
+                        repeatLabel
+                        Spacer(minLength: PumTokens.Space.s8)
+                        segments.frame(maxWidth: segmentMaxWidth)
+                    }
+                    VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
+                        repeatLabel
+                        segments
+                    }
                 }
                 .padding(.horizontal, PumTokens.Size.rowPadX)
                 .padding(.vertical, PumTokens.Space.s12)
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
+    }
+
+    private var repeatLabel: some View {
+        Text(AddShiftSheetState.repeatLabel).pumText(.callout, weight: .regular)
+            .foregroundStyle(PumColor.textSecondary)
+            .fixedSize()
     }
 
     private var breakMenu: some View {
@@ -191,7 +206,6 @@ struct AddShiftSheet: View {
             HStack(spacing: PumTokens.Space.s4) {
                 Text(state.breakText(draft.breakMinutes)).pumText(.callout, weight: .bold) // 14px 700
                     .foregroundStyle(PumColor.textPrimary)
-                Image(systemName: "chevron.down").font(.caption.weight(.semibold)).foregroundStyle(PumColor.textSecondary)
             }
             .frame(minHeight: PumTokens.Size.tapMin)
             .contentShape(Rectangle())
