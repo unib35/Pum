@@ -36,31 +36,82 @@ enum WorkplaceRoute: String, CaseIterable, Hashable {
     func view(_ router: AppRouter) -> some View {
         switch self {
         case .ownerWorkplaces:
-            OwnerWorkplacesView()
+            OwnerWorkplacesView(onAdd: { router.navigate(.workplace(.workplaceCreate)) })
         case .attendancePolicy:
-            AttendancePolicyView()
+            AttendancePolicyView(onBack: router.back)
         case .workplaceCreate:
-            WorkplaceCreateView(state: .sample)
+            WorkplaceCreateView(
+                state: .sample,
+                onBack: router.back,
+                onNext: { _, done in
+                    done(true)
+                    router.navigate(.home(.ownerHomeUnverified))
+                }
+            )
         case .workplaceSettings:
-            WorkplaceSettingsView(state: .sample)
+            WorkplaceSettingsView(
+                state: .sample,
+                onBack: router.back,
+                onOpenCheckInMethod: { router.navigate(.workplace(.checkInMethod)) },
+                onOpenOvertimePolicy: { router.navigate(.workplace(.attendancePolicy)) },
+                onOpenStoreQR: { router.navigate(.workplace(.checkInQR)) },
+                onAddAdmin: { router.navigate(.staff(.managerInvite)) }
+            )
         case .verifyIntro:
-            VerifyIntroView(state: .sample)
+            VerifyIntroView(
+                state: .sample,
+                onBack: router.back,
+                onStart: { router.navigate(.workplace(.businessVerify)) },
+                onLater: router.back
+            )
         case .businessVerify:
-            BusinessVerifyView(state: .sample)
+            BusinessVerifyView(
+                state: .sample,
+                onBack: router.back,
+                onSubmit: { _, done in
+                    done(true)
+                    router.navigate(.workplace(.authorityVerify))
+                }
+            )
         case .authorityVerify:
-            AuthorityVerifyView(state: .sample)
+            AuthorityVerifyView(
+                state: .sample,
+                onBack: router.back,
+                onComplete: { _, done in
+                    done(true)
+                    router.navigate(.staff(.staffInvite))
+                }
+            )
         case .duplicateBusiness:
-            DuplicateBusinessView(state: .sample)
+            DuplicateBusinessView(state: .sample, onBack: router.back)
         case .checkInMethod:
-            CheckInMethodView(state: .sample)
+            CheckInMethodView(
+                state: .sample,
+                onBack: router.back,
+                onOpenQR: { router.navigate(.workplace(.checkInQR)) },
+                onSave: { _, done in
+                    done(true)
+                    router.back()
+                }
+            )
         case .checkInQR:
-            CheckInQRView(state: .sample)
+            CheckInQRView(state: .sample, onBack: router.back)
         case .leaveRetirement:
-            LeaveRetirementView(state: .sample)
+            LeaveRetirementView(
+                state: .sample,
+                onBack: router.back,
+                onSave: { _, done in
+                    done(true)
+                    router.back()
+                }
+            )
         case .activityLog:
-            ActivityLogView(state: .sample)
+            ActivityLogView(state: .sample, onBack: router.back)
         }
     }
 
-    static let connected: Set<Self> = []
+    static let connected: Set<Self> = [
+        .ownerWorkplaces, .attendancePolicy, .workplaceCreate, .workplaceSettings, .verifyIntro, .businessVerify,
+        .authorityVerify, .duplicateBusiness, .checkInMethod, .checkInQR, .leaveRetirement, .activityLog,
+    ]
 }
