@@ -10,9 +10,9 @@ enum WorkCalendarMetrics {
     /// 날짜 칸 높이(원문 1g: 높이 46 + 위 padding 6)와 칸 사이 세로 간격 4
     static let cellHeight = PumTokens.Space.s24 * 2 + PumTokens.Space.s4
     static let rowGap = PumTokens.Space.s4
-    /// 날짜 글자 줄 높이(원문 18) · 오늘 원 위로 당김 5
+    /// 날짜 글자 줄 높이(원문 18) · 오늘 원 위로 당김(원문 5 → 토큰 4)
     static let numberLine = PumTokens.Space.s18
-    static let todayPull: CGFloat = 5
+    static let todayPull = PumTokens.Space.s4
     /// 선택한 날 카드의 날짜 상자 폭(원문 44)
     static let dateBox: CGFloat = 44
     /// 빈 원 테두리

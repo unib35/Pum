@@ -20,8 +20,8 @@ struct PayslipView: View {
     private let dashPattern: [CGFloat] = [PumTokens.Space.s4, PumTokens.Space.s4]
     /// 라벨 색 #3A4150 = gray-800
     private let labelColor = PumTokens.ColorToken.gray800
-    /// 항목 행 위아래 여백 — 원문 9(토큰은 8 · 10 사이라 화면 전용 값)
-    private let lineVPad: CGFloat = 9
+    /// 항목 행 위아래 여백 — 원문 9 → 가까운 토큰 8
+    private let lineVPad = PumTokens.Space.s8
 
     var body: some View {
         VStack(spacing: 0) {
