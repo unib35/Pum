@@ -167,6 +167,7 @@ struct ContentView: View {
             case "19d": EmploymentCertRequestView(state: .sample)
             case "19e": EmploymentCertIssueView(state: .sample)
             case "19g": MyLeaveView(state: .sample)
+            case "19f": EmploymentCertIssuedView(state: .sample)
             case "gallery": ComponentGalleryView()
             default: DevMenu()
             }
@@ -331,6 +332,7 @@ private struct DevMenu: View {
                     NavigationLink("19d 재직증명서 요청") { EmploymentCertRequestView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("19e 재직증명서 발급") { EmploymentCertIssueView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                     NavigationLink("19g 내 연차") { MyLeaveView(state: .sample).toolbar(.hidden, for: .navigationBar) }
+                    NavigationLink("19f 발급된 재직증명서") { EmploymentCertIssuedView(state: .sample).toolbar(.hidden, for: .navigationBar) }
                 }
                 Section("디자인 시스템") {
                     NavigationLink("컴포넌트 갤러리") { ComponentGalleryView() }
