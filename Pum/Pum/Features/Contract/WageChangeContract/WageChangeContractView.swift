@@ -8,6 +8,8 @@ struct WageChangeContractView: View {
     var onOpenFull: () -> Void
     var onSign: () -> Void
 
+    @Environment(\.dynamicTypeSize) private var typeSize
+
     /// 회색 원 아바타 지름(원문 약 26)
     @ScaledMetric(relativeTo: .body) private var avatarSize: CGFloat = 26
 
@@ -228,13 +230,41 @@ struct WageChangeContractView: View {
     @ViewBuilder private var buttons: some View {
         let full = PumButton(title: WageChangeContractState.fullTitle, kind: .outline, action: onOpenFull)
         let sign = PumButton(title: WageChangeContractState.signTitle, action: onSign)
-        ViewThatFits(in: .horizontal) {
-            HStack(spacing: PumTokens.Space.s8) {
-                full.frame(maxWidth: .infinity)
-                sign.frame(maxWidth: .infinity).layoutPriority(1)
-            }
+        if typeSize.isAccessibilitySize {
             VStack(spacing: PumTokens.Space.s8) { sign; full }
+        } else {
+            RatioPairLayout(ratio: 1.5, spacing: PumTokens.Space.s8) { full; sign } // 원문 약 1 : 1.5
         }
+    }
+}
+
+/// 받은 폭을 두 칸으로 1 : ratio 로 나눈다(앞 칸 : 뒤 칸). 17g와 같은 값 — 공통 후보(충돌표 기타).
+private struct RatioPairLayout: Layout {
+    var ratio: CGFloat
+    var spacing: CGFloat
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        let width = proposal.width ?? 0
+        let widths = columnWidths(total: width)
+        let height = zip(subviews, widths)
+            .map { $0.sizeThatFits(ProposedViewSize(width: $1, height: nil)).height }
+            .max() ?? 0
+        return CGSize(width: width, height: height)
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        let widths = columnWidths(total: bounds.width)
+        var x = bounds.minX
+        for (view, width) in zip(subviews, widths) {
+            view.place(at: CGPoint(x: x, y: bounds.minY), anchor: .topLeading,
+                       proposal: ProposedViewSize(width: width, height: bounds.height))
+            x += width + spacing
+        }
+    }
+
+    private func columnWidths(total: CGFloat) -> [CGFloat] {
+        let unit = max(0, total - spacing) / (1 + ratio)
+        return [unit, unit * ratio]
     }
 }
 
