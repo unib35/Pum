@@ -15,7 +15,7 @@ enum StaffRoute: String, CaseIterable, Hashable {
     case ownerTransferReceived = "17k"
     case ownerTransfer = "17j"
     case employmentCertIssue = "19e"
-    case staffAddPreviewHost = "20a"
+    case staffAdd = "20a"
     case directRegisterBasic = "20b"
     case directRegisterContract = "20d"
     case directRegisterTerms = "20c"
@@ -38,7 +38,7 @@ enum StaffRoute: String, CaseIterable, Hashable {
         case .ownerTransferReceived: "대표 권한 이전 요청 받음"
         case .ownerTransfer: "대표 변경"
         case .employmentCertIssue: "재직증명서 발급"
-        case .staffAddPreviewHost: "직원 추가"
+        case .staffAdd: "직원 추가"
         case .directRegisterBasic: "직접 등록 · 기본 정보"
         case .directRegisterContract: "직접 등록 · 근로계약서"
         case .directRegisterTerms: "직접 등록 · 근로조건"
@@ -61,7 +61,7 @@ enum StaffRoute: String, CaseIterable, Hashable {
         case .staffList:
             StaffListView(
                 onMember: { _ in router.navigate(.staff(.staffDetail)) },
-                onAdd: { router.navigate(.staff(.staffAddPreviewHost)) }
+                onAdd: { router.navigate(.staff(.staffAdd)) }
             )
         case .staffDetail:
             StaffDetailView(
@@ -156,8 +156,10 @@ enum StaffRoute: String, CaseIterable, Hashable {
                     router.navigate(.account(.employmentCertIssued))
                 }
             )
-        case .staffAddPreviewHost:
-            StaffAddPreviewHost(state: .sample)
+        case .staffAdd:
+            StaffAddPreviewHost(state: .sample, onNext: { method in
+                router.replace(with: method == .direct ? .staff(.directRegisterBasic) : .staff(.staffInvite))
+            })
         case .directRegisterBasic:
             DirectRegisterBasicView(
                 state: .sample,
@@ -212,7 +214,7 @@ enum StaffRoute: String, CaseIterable, Hashable {
     }
 
     static let connected: Set<Self> = [
-        .staffInvite, .staffList, .staffDetail, .offboarding, .leaveBalance,
+        .staffAdd, .staffInvite, .staffList, .staffDetail, .offboarding, .leaveBalance,
         .offboardingNotEligible, .offboardingPension, .managerPermissions, .employmentStatus,
         .managerInvite, .managerInviteReceived, .ownerTransferReceived, .ownerTransfer,
         .employmentCertIssue, .directRegisterBasic, .directRegisterContract,
