@@ -22,17 +22,37 @@ enum CommsRoute: String, CaseIterable, Hashable {
     func view(_ router: AppRouter) -> some View {
         switch self {
         case .noticeDetail:
-            NoticeDetailView(state: .sample)
+            NoticeDetailView(state: .sample, onBack: router.back)
         case .newsFeed:
-            NewsFeedView(state: .sample)
+            newsFeed(.sample, router)
         case .noticeReadStatus:
-            NoticeReadStatusView(state: .sample)
+            NoticeReadStatusView(state: .sample, onBack: router.back)
         case .noticeCompose:
-            NoticeComposeView(state: .sample)
+            NoticeComposeView(
+                state: .sample,
+                onClose: router.back,
+                onSend: { _, done in
+                    done(true)
+                    router.replace(with: .comms(.newsFeed))
+                }
+            )
         case .newsFeedInvite:
-            NewsFeedView(state: .withInvite)
+            newsFeed(.withInvite, router)
         }
     }
 
-    static let connected: Set<Self> = []
+    static let connected: Set<Self> = [
+        .noticeDetail, .newsFeed, .noticeReadStatus, .noticeCompose, .newsFeedInvite,
+    ]
+
+    @MainActor
+    private func newsFeed(_ state: NewsFeedState, _ router: AppRouter) -> some View {
+        NewsFeedView(
+            state: state,
+            onOpenContract: { _ in router.navigate(.contract(.contractReview)) },
+            onOpenNotice: { _ in router.navigate(.comms(.noticeDetail)) },
+            onOpenWorkplaceSwitcher: { router.navigate(.home(.workplaceSwitcher)) },
+            onOpenInvite: { _ in router.navigate(.onboarding(.inviteCodeRetry)) }
+        )
+    }
 }
