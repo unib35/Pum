@@ -139,7 +139,7 @@ enum OnboardingRoute: String, CaseIterable, Hashable {
         case .onboardingChecklist:
             OnboardingChecklistView(
                 state: .sample,
-                onBack: router.back
+                onBack: router.backToRoot // J2: 입사 준비 다음은 홈(1at)
             )
         case .accessEnded:
             AccessEndedView(
