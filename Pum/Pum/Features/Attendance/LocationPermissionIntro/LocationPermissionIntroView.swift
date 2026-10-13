@@ -49,7 +49,6 @@ private struct LocationPermissionBackdrop: View {
                 Spacer()
                 PumIconButton(systemImage: "bell", label: "알림") {}
             }
-            .padding(.top, PumTokens.Space.s8)
             PumCard {
                 VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
                     VStack(alignment: .leading, spacing: PumTokens.Space.s4) {

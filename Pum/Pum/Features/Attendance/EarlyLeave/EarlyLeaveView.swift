@@ -38,7 +38,6 @@ struct EarlyLeaveView: View {
                 PumWorkplaceChip(name: state.workplaceName, initial: state.workplaceInitial) {}
                 Spacer()
             }
-            .padding(.top, PumTokens.Space.s8)
             workingCard
             Spacer(minLength: 0)
         }

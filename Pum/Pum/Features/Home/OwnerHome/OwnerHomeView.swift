@@ -71,7 +71,6 @@ struct OwnerHomeView: View {
             Spacer(minLength: PumTokens.Space.s8)
             PumIconButton(systemImage: "bell", label: "알림", showsDot: !isLoading && !isStale && state.hasUnreadNotification) {} // 로딩 · 불러오기 실패 중엔 안 읽음 여부를 모름(21j · 21k · 21n 원문 점 없음)
         }
-        .padding(.top, PumTokens.Space.s8)
     }
 
     private var titleBlock: some View {
