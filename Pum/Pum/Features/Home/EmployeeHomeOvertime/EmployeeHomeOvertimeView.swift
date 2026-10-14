@@ -3,6 +3,8 @@ import SwiftUI
 
 struct EmployeeHomeOvertimeView: View {
     var state: EmployeeHomeOvertimeState = .sample
+    var onSwitchWorkplace: () -> Void = {}
+    var onBell: () -> Void = {}
     /// true면 분이 바뀔 때마다 실제 시각으로 갱신(초 표시 없음). 미리보기 · 테스트는 false
     var liveClock = false
     var onClockOut: () -> Void = {}
@@ -39,9 +41,9 @@ struct EmployeeHomeOvertimeView: View {
 
     private func header(_ s: EmployeeHomeOvertimeState) -> some View {
         HStack {
-            PumWorkplaceChip(name: s.workplaceName, initial: s.workplaceInitial) {}
+            PumWorkplaceChip(name: s.workplaceName, initial: s.workplaceInitial, action: onSwitchWorkplace)
             Spacer()
-            PumIconButton(systemImage: "bell", label: "알림", showsDot: s.hasUnreadNotification) {}
+            PumIconButton(systemImage: "bell", label: "알림", showsDot: s.hasUnreadNotification, action: onBell)
         }
     }
 }

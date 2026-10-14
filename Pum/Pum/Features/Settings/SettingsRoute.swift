@@ -56,11 +56,28 @@ enum SettingsRoute: String, CaseIterable, Hashable {
         case .appPermissions:
             AppPermissionsView(state: .sample, onBack: router.back)
         case .ownerNotificationSettings:
-            OwnerNotificationSettingsView(state: .sample, onBack: router.back)
+            OwnerNotificationSettingsView(
+                state: .sample,
+                onBack: router.back,
+                onPickWorkplace: { router.navigate(.home(.workplaceSwitcher)) }
+            )
         case .helpCenter:
             HelpCenterView(state: .sample, onBack: router.back)
         case .privacyAppInfo:
-            PrivacyAppInfoView(state: .sample, onBack: router.back)
+            PrivacyAppInfoView(
+                state: .sample,
+                onBack: router.back,
+                onOpen: { id in
+                    switch id {
+                    case "my-info": router.navigate(.settings(.myInfo))
+                    case "consents": router.navigate(.settings(.consents))
+                    case "documents": router.navigate(.employee(.documentBox))
+                    case "delete-account": router.navigate(.auth(.withdraw))
+                    case "terms", "privacy-policy": router.navigate(.settings(.policies))
+                    default: break
+                    }
+                }
+            )
         case .forceUpdate:
             ForceUpdateView(
                 state: .sample,

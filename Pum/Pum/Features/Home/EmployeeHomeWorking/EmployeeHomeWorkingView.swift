@@ -4,6 +4,8 @@ import SwiftUI
 
 struct EmployeeHomeWorkingView: View {
     var state: EmployeeHomeWorkingState = .sample
+    var onSwitchWorkplace: () -> Void = {}
+    var onBell: () -> Void = {}
     /// true면 분이 바뀔 때마다 실제 시각으로 갱신(초 표시 없음). 미리보기 · 테스트는 false
     var liveClock = false
     var onClockOut: () -> Void = {}
@@ -76,9 +78,9 @@ struct EmployeeHomeWorkingView: View {
 
     private func header(_ b: EmployeeHomeState) -> some View {
         HStack {
-            PumWorkplaceChip(name: b.workplaceName, initial: b.workplaceInitial) {}
+            PumWorkplaceChip(name: b.workplaceName, initial: b.workplaceInitial, action: onSwitchWorkplace)
             Spacer()
-            PumIconButton(systemImage: "bell", label: "알림", showsDot: b.hasUnreadNotification) {}
+            PumIconButton(systemImage: "bell", label: "알림", showsDot: b.hasUnreadNotification, action: onBell)
         }
     }
 }

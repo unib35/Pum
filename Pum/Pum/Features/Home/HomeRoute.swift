@@ -38,25 +38,54 @@ enum HomeRoute: String, CaseIterable, Hashable {
     }
 
     /// 버튼을 다음 화면에 이은 화면. 아직 잇지 않은 화면은 예시 데이터로 열린다.
-    @MainActor @ViewBuilder
+    /// 직원 홈 카드(이번 달 · 그다음 근무)는 1at · 1au · 1av가 같이 써서 여기서 한 번에 잇는다.
+    @MainActor
     func view(_ router: AppRouter) -> some View {
+        screen(router)
+            .environment(\.homeOpenPayBasis) { router.navigate(.payroll(.expectedPay)) }
+            .environment(\.homeOpenSchedule) { router.navigate(.schedule(.mySchedule)) }
+    }
+
+    @MainActor @ViewBuilder
+    private func screen(_ router: AppRouter) -> some View {
         switch self {
         case .employeeHome:
-            EmployeeHomeView(onClockIn: { router.navigate(.attendance(.clockIn)) })
+            EmployeeHomeView(
+                onSwitchWorkplace: { router.navigate(.home(.workplaceSwitcher)) },
+                onBell: { router.navigate(.notice(.newsFeed)) },
+                onClockIn: { router.navigate(.attendance(.clockIn)) }
+            )
         case .employeeHomeNoShift:
-            EmployeeHomeNoShiftView(onUnplannedClockIn: { router.navigate(.attendance(.clockIn)) })
+            EmployeeHomeNoShiftView(
+                onSwitchWorkplace: { router.navigate(.home(.workplaceSwitcher)) },
+                onBell: { router.navigate(.notice(.newsFeed)) },
+                onUnplannedClockIn: { router.navigate(.attendance(.clockIn)) }
+            )
         case .employeeHomeWorking:
-            EmployeeHomeWorkingView(onClockOut: { router.navigate(.attendance(.clockOutDone)) })
+            EmployeeHomeWorkingView(
+                onSwitchWorkplace: { router.navigate(.home(.workplaceSwitcher)) },
+                onBell: { router.navigate(.notice(.newsFeed)) },
+                onClockOut: { router.navigate(.attendance(.clockOutDone)) }
+            )
         case .ownerHome:
             OwnerHomeView(
+                onSwitchWorkplace: { router.navigate(.home(.workplaceSwitcher)) },
+                onBell: { router.navigate(.notice(.newsFeed)) },
                 onDecide: { _ in router.navigate(.attendance(.ownerReview)) },
                 onClockOutCheck: { _ in router.navigate(.attendance(.ownerReview)) },
                 onOpenOthers: { router.navigate(.attendance(.ownerReview)) }
             )
         case .ownerHomeClear:
-            OwnerHomeClearView()
+            OwnerHomeClearView(
+                onSwitchWorkplace: { router.navigate(.home(.workplaceSwitcher)) },
+                onBell: { router.navigate(.notice(.newsFeed)) }
+            )
         case .employeeHomeOvertime:
-            EmployeeHomeOvertimeView(onClockOut: { router.navigate(.attendance(.clockOutDone)) })
+            EmployeeHomeOvertimeView(
+                onSwitchWorkplace: { router.navigate(.home(.workplaceSwitcher)) },
+                onBell: { router.navigate(.notice(.newsFeed)) },
+                onClockOut: { router.navigate(.attendance(.clockOutDone)) }
+            )
         case .workplaceSwitcher:
             WorkplaceSwitcherView(
                 onClose: router.back,
@@ -79,25 +108,31 @@ enum HomeRoute: String, CaseIterable, Hashable {
                 onSwitchWorkplace: { router.navigate(.home(.workplaceSwitcher)) },
                 onBell: { router.navigate(.notice(.newsFeed)) },
                 onOpenStep: { id in if id == "clockin" { router.navigate(.workplace(.checkInQR)) } },
-                onVerify: { router.navigate(.workplace(.verifyIntro)) }
+                onVerify: { router.navigate(.workplace(.verifyIntro)) },
+                onSaveQR: { router.navigate(.workplace(.checkInQR)) }
             )
         case .ownerHomeLoading:
             OwnerHomeView(isLoading: true)
         case .employeeHomeLoading:
             EmployeeHomeView(isLoading: true)
         case .ownerHomeLoadFailed:
-            OwnerHomeView(staleSince: OwnerHomeLoadFailed.sampleSince)
+            OwnerHomeView(
+                onSwitchWorkplace: { router.navigate(.home(.workplaceSwitcher)) },
+                onBell: { router.navigate(.notice(.newsFeed)) },
+                staleSince: OwnerHomeLoadFailed.sampleSince
+            )
         case .offline:
-            EmployeeHomeWorkingView(state: .offline, onClockOut: { router.navigate(.attendance(.clockOutDone)) })
+            EmployeeHomeWorkingView(state: .offline, onSwitchWorkplace: { router.navigate(.home(.workplaceSwitcher)) }, onBell: { router.navigate(.notice(.newsFeed)) }, onClockOut: { router.navigate(.attendance(.clockOutDone)) })
         case .updateRecommended:
-            EmployeeHomeNoShiftView(state: .updateAvailable, onUnplannedClockIn: { router.navigate(.attendance(.clockIn)) })
+            EmployeeHomeNoShiftView(state: .updateAvailable, onSwitchWorkplace: { router.navigate(.home(.workplaceSwitcher)) }, onBell: { router.navigate(.notice(.newsFeed)) }, onUnplannedClockIn: { router.navigate(.attendance(.clockIn)) })
         case .maintenanceNotice:
-            EmployeeHomeNoShiftView(state: .maintenanceNotice, onUnplannedClockIn: { router.navigate(.attendance(.clockIn)) })
+            EmployeeHomeNoShiftView(state: .maintenanceNotice, onSwitchWorkplace: { router.navigate(.home(.workplaceSwitcher)) }, onBell: { router.navigate(.notice(.newsFeed)) }, onUnplannedClockIn: { router.navigate(.attendance(.clockIn)) })
         }
     }
 
     static let connected: Set<Self> = [
-        .employeeHome, .employeeHomeNoShift, .employeeHomeWorking, .ownerHome, .employeeHomeOvertime,
+        .employeeHome, .employeeHomeNoShift, .employeeHomeWorking, .ownerHome, .ownerHomeClear, .employeeHomeOvertime,
+        .ownerHomeLoadFailed,
         .workplaceSwitcher, .personalHome, .ownerHomeUnverified, .offline, .updateRecommended, .maintenanceNotice,
     ]
 }

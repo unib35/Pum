@@ -3,6 +3,8 @@ import SwiftUI
 
 struct EmployeeHomeView: View {
     var state: EmployeeHomeState = .sample
+    var onSwitchWorkplace: () -> Void = {}
+    var onBell: () -> Void = {}
     var onClockIn: () -> Void = {}
     /// UI-IOS-21k · M32 — 서버 응답을 기다리는 중(0.5초 넘으면 본문만 스켈레톤, 출근 버튼은 회색 자리)
     var isLoading = false
@@ -53,9 +55,9 @@ struct EmployeeHomeView: View {
 
     private var header: some View {
         HStack {
-            PumWorkplaceChip(name: state.workplaceName, initial: state.workplaceInitial) {}
+            PumWorkplaceChip(name: state.workplaceName, initial: state.workplaceInitial, action: onSwitchWorkplace)
             Spacer()
-            PumIconButton(systemImage: "bell", label: "알림", showsDot: !isLoading && state.hasUnreadNotification) {} // 로딩 중엔 안 읽음 여부를 아직 모름(21j · 21k 원문 점 없음)
+            PumIconButton(systemImage: "bell", label: "알림", showsDot: !isLoading && state.hasUnreadNotification, action: onBell) // 로딩 중엔 안 읽음 여부를 아직 모름(21j · 21k 원문 점 없음)
         }
     }
 }
@@ -251,8 +253,15 @@ struct ShiftTimeline: View {
 
 // MARK: - 이번 달
 
+/// 홈 카드에서 다른 화면으로 가는 동작 — 홈 연결(HomeRoute)이 넣는다. 단독 화면에서는 아무 일도 안 한다.
+extension EnvironmentValues {
+    @Entry var homeOpenPayBasis: () -> Void = {}
+    @Entry var homeOpenSchedule: () -> Void = {}
+}
+
 struct MonthSummaryCard: View {
     let state: EmployeeHomeState
+    @Environment(\.homeOpenPayBasis) private var openPayBasis
 
     var body: some View {
         PumCard {
@@ -262,7 +271,7 @@ struct MonthSummaryCard: View {
                 }
                 Rectangle().fill(PumColor.borderHairline).frame(width: 1)
                 cell(label: "\(state.monthTitle) 예상 급여", value: PumFormat.amount(state.monthExpectedPay) + "원") {
-                    Button {} label: {
+                    Button(action: openPayBasis) {
                         Text("계산 근거 ›").pumText(.caption, weight: .semibold).foregroundStyle(PumColor.accent)
                     }
                     .buttonStyle(.plain)
@@ -289,13 +298,14 @@ struct MonthSummaryCard: View {
 
 struct UpcomingShiftsCard: View {
     let shifts: [UpcomingShift]
+    @Environment(\.homeOpenSchedule) private var openSchedule
 
     var body: some View {
         PumCard {
             HStack {
                 Text("그다음 근무").pumText(.body, weight: .bold).foregroundStyle(PumColor.textPrimary)
                 Spacer()
-                Button {} label: {
+                Button(action: openSchedule) {
                     Text("스케줄 전체").pumText(.caption, weight: .semibold).foregroundStyle(PumColor.accent)
                 }
                 .buttonStyle(.plain)
