@@ -52,6 +52,7 @@ enum ScheduleRoute: String, CaseIterable, Hashable {
         case .ownerSchedule:
             OwnerScheduleView(
                 state: { var s = OwnerScheduleState.sample; s.pendingReviewCount = 4; return s }(),
+                onAddShift: { _ in router.navigate(.schedule(.scheduleAddShift)) },
                 onChangeWorkplace: { router.navigate(.home(.workplaceSwitcher)) },
                 onOpenReview: { router.navigate(.attendance(.ownerReview)) }
             )
@@ -116,7 +117,11 @@ enum ScheduleRoute: String, CaseIterable, Hashable {
                 }
             )
         case .requestInbox:
-            RequestInboxView(state: .sample, onBack: router.back)
+            RequestInboxView(
+                state: .sample,
+                onBack: router.back,
+                onDecide: { _, _, done in done(true) }
+            )
         case .shiftChangeRequest:
             ShiftChangeRequestView(
                 state: .sample,
@@ -143,10 +148,14 @@ enum ScheduleRoute: String, CaseIterable, Hashable {
                 onPublish: { router.navigate(.schedule(.schedulePublishConfirm)) }
             )
         case .scheduleAddShift:
-            ScheduleDraftView(state: .addingShift)
+            ScheduleDraftView(
+                state: .addingShift,
+                onAddToDraft: { _ in router.back() }
+            )
         case .schedulePublishConfirm:
             ScheduleDraftView(
                 state: .confirmingPublish,
+                onCancelPublish: router.back,
                 onConfirmPublish: { router.replace(with: .schedule(.publishedSchedule)) }
             )
         case .scheduleChangeAfterPublish:

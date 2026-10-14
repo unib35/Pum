@@ -83,7 +83,8 @@ enum AttendanceRoute: String, CaseIterable, Hashable {
             ClockInView(
                 onBack: router.back,
                 onLocation: { router.navigate(.attendance(.locationCheckIn)) },
-                onClockInByLocation: { router.navigate(.attendance(.locationCheckIn)) }
+                onClockInByLocation: { router.navigate(.attendance(.locationCheckIn)) },
+                onRequestManual: { router.navigate(.attendance(.adminConfirmCheckIn)) }
             )
         case .editRequest:
             EditRequestView(
@@ -97,6 +98,7 @@ enum AttendanceRoute: String, CaseIterable, Hashable {
         case .recordReview:
             RecordReviewView(
                 onBack: router.back,
+                onRequestEdit: { router.navigate(.attendance(.editRequest)) },
                 onConfirm: { router.navigate(.payroll(.workClosing)) }
             )
         case .ownerReview:
@@ -144,11 +146,18 @@ enum AttendanceRoute: String, CaseIterable, Hashable {
         case .timePickerSheet:
             PumTimePickerDemo()
         case .checkInTooFar:
-            CheckInTooFarView(onClose: router.back)
+            CheckInTooFarView(
+                onClose: router.back,
+                onRequestOwner: { router.navigate(.attendance(.adminConfirmCheckIn)) }
+            )
         case .checkInPassed:
             CheckInPassedView(state: .sample, onDone: { router.path = [.home(.employeeHomeWorking)] })
         case .checkInLowAccuracy:
-            CheckInLowAccuracyView(onClose: router.back, onScanQR: router.back)
+            CheckInLowAccuracyView(
+                onClose: router.back,
+                onScanQR: router.back,
+                onRequestOwner: { router.navigate(.attendance(.adminConfirmCheckIn)) }
+            )
         case .locationCheckIn:
             LocationCheckInView(onCheckIn: { done in
                 done(true)
@@ -184,7 +193,11 @@ enum AttendanceRoute: String, CaseIterable, Hashable {
             LocationDeniedView(
                 state: .sample,
                 onBack: router.back,
-                onUseQR: router.back
+                onOpenSettings: {
+                    if let url = URL(string: UIApplication.openSettingsURLString) { UIApplication.shared.open(url) }
+                },
+                onUseQR: router.back,
+                onRequestManual: { router.navigate(.attendance(.adminConfirmCheckIn)) }
             )
         case .myLeave:
             MyLeaveView(
