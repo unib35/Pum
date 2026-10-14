@@ -237,7 +237,7 @@ struct BreakReviewView: View {
     }
 
     @ViewBuilder private var buttons: some View {
-        let other = PumButton(title: BreakReviewState.otherTimeTitle, kind: .outline, action: onOtherTime)
+        let other = PumButton(title: BreakReviewState.otherTimeTitle, kind: .outlineLight, action: onOtherTime)
             .disabled(isApproving) // 처리 중에는 다른 길로 가지 않게 — 모양 변화는 이 버튼만
         let approve = PumButton(title: BreakReviewState.approveTitle, isLoading: isApproving, action: approveTapped)
         Group {

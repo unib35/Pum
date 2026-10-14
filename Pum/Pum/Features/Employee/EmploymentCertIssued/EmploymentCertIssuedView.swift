@@ -214,7 +214,7 @@ struct EmploymentCertIssuedView: View {
     }
 
     @ViewBuilder private var buttons: some View {
-        let share = PumButton(title: EmploymentCertIssuedState.shareTitle, kind: .outline, action: onShare)
+        let share = PumButton(title: EmploymentCertIssuedState.shareTitle, kind: .outlineLight, action: onShare)
         let save = PumButton(title: EmploymentCertIssuedState.savePDFTitle, action: onSavePDF)
         if typeSize.isAccessibilitySize {
             VStack(spacing: PumTokens.Space.s8) { save; share }

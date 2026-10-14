@@ -104,7 +104,7 @@ struct ForceUpdateView: View {
             PumButton(title: ForceUpdateState.updateTitle, kind: .primary, action: onUpdate)
             if state.showsClockOut {
                 // 원문: 흰 바탕 · 옅은 테두리 → outline. 처리 중 표시(isLoading)를 넘기면 버튼이 잠기므로 넘기지 않는다
-                PumButton(title: ForceUpdateState.clockOutTitle, kind: .outline, action: onClockOutOnly)
+                PumButton(title: ForceUpdateState.clockOutTitle, kind: .outlineLight, action: onClockOutOnly)
             }
         }
         .padding(.horizontal, PumTokens.Size.screenPad)

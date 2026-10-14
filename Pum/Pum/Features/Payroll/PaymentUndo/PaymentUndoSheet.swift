@@ -57,7 +57,7 @@ struct PaymentUndoSheet: View {
     }
 
     private var cancelButton: some View {
-        PumButton(title: PaymentUndoState.cancelTitle, kind: .outline, action: onCancel)
+        PumButton(title: PaymentUndoState.cancelTitle, kind: .outlineLight, action: onCancel)
             .allowsHitTesting(!lock.isSending) // 보내는 중엔 모양은 그대로 두고 누르기만 막음
             .disabled(lock.isDone)
     }

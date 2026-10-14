@@ -222,7 +222,7 @@ struct CoverRequestReceivedView: View {
     }
 
     @ViewBuilder private var buttons: some View {
-        let decline = PumButton(title: CoverRequestReceivedState.declineTitle, kind: .outline,
+        let decline = PumButton(title: CoverRequestReceivedState.declineTitle, kind: .outlineLight,
                                 isLoading: state.isLoading(.decline)) { respond(.decline, onDecline) }
         let accept = PumButton(title: CoverRequestReceivedState.acceptTitle,
                                isLoading: state.isLoading(.accept)) { respond(.accept, onAccept) }

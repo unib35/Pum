@@ -224,7 +224,7 @@ struct EmploymentCertIssueView: View {
     }
 
     @ViewBuilder private var buttons: some View {
-        let decline = PumButton(title: EmploymentCertIssueState.declineTitle, kind: .outline, action: onDecline)
+        let decline = PumButton(title: EmploymentCertIssueState.declineTitle, kind: .outlineLight, action: onDecline)
             .disabled(locked)
         let issue = PumButton(title: EmploymentCertIssueState.issueTitle, isLoading: isIssuing, action: issueTapped)
             .disabled(isIssued || !EmploymentCertIssueState.canIssue(useRegisteredSignature: useSignature))

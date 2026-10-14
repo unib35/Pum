@@ -102,7 +102,7 @@ struct PaymentCheckRequestSheet: View {
     }
 
     private var revertButton: some View {
-        PumButton(title: state.revertTitle, kind: .outline, action: onRevertToPending)
+        PumButton(title: state.revertTitle, kind: .outlineLight, action: onRevertToPending)
             .disabled(isConfirming)
     }
 
