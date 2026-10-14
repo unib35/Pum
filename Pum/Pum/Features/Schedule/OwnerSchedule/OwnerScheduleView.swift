@@ -346,12 +346,12 @@ private struct SwapRequestCard: View {
         HStack(spacing: PumTokens.Space.s10) { // 원문 사람 · 화살표 gap 10
             HStack(spacing: PumTokens.Space.s8) {
                 PumAvatar(name: swap.fromName, colorIndex: swap.fromColorIndex, size: avatar)
-                Text(swap.fromName).pumText(.callout, weight: .regular).foregroundStyle(PumColor.textTertiary).strikethrough() // 흐린 회색 + 취소선
+                Text(swap.fromName).pumText(.callout, weight: .regular).foregroundStyle(PumColor.textTertiary).strikethrough().fixedSize() // 흐린 회색 + 취소선
             }
             Image(systemName: "arrow.right").font(.caption.weight(.semibold)).foregroundStyle(PumColor.textSecondary)
             HStack(spacing: PumTokens.Space.s8) {
                 PumAvatar(name: swap.toName, colorIndex: swap.toColorIndex, size: avatar)
-                Text(swap.toName).pumText(.callout).foregroundStyle(PumColor.textPrimary)
+                Text(swap.toName).pumText(.callout).foregroundStyle(PumColor.textPrimary).fixedSize() // 이름은 한 줄 — 모자라면 ViewThatFits가 세로 배치로
             }
         }
     }
