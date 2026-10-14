@@ -1,6 +1,6 @@
 // C1 Button — PRIMARY 화면당 하나 · DARK 완료·저장 · OUTLINE 보조 · DANGER OUTLINE 거절 · TEXT 취소·나중에
 // TONAL(회색 바탕 · 먹색 글자)은 C1 목록 밖 — 1ab 「공유」 원문에서 모았다
-// 높이 54(작게 44) · 모서리 12 · 누름 M1 · 처리 중 M26 · 비활성은 이유를 문구에
+// 높이 54(작게: 보이는 36 · 누름 44, DEC-011) · 모서리 12 · 누름 M1 · 처리 중 M26 · 비활성은 이유를 문구에
 import SwiftUI
 
 struct PumButton: View {
@@ -24,12 +24,13 @@ struct PumButton: View {
                     PumButtonProgressLabel(title: loadingTitle ?? title)
                 }
             }
-            .padding(.horizontal, PumTokens.Space.s16) // 작은 버튼을 내용 폭으로 쓸 때(.fixedSize) 여백
+            .padding(.horizontal, size == .regular ? PumTokens.Space.s16 : PumTokens.Space.s14) // 작은 버튼을 내용 폭으로 쓸 때(.fixedSize) 여백
             .frame(maxWidth: .infinity)
-            .frame(height: size == .regular ? PumTokens.Size.buttonH : PumTokens.Size.buttonHSm)
+            .frame(minHeight: size == .regular ? PumTokens.Size.buttonH : PumLayout.buttonSmVisible)
             .contentShape(Rectangle())
         }
         .buttonStyle(PumButtonStyle(kind: kind, size: size, enabled: isEnabled && !isLoading))
+        .padding(.vertical, size == .small ? -PumButtonStyle.smallTapOutset : 0) // 배치는 보이는 높이만
         .disabled(isLoading)
         .animation(PumMotion.fast, value: isLoading) // M26 라벨 교체 --dur-fast
         .accessibilityValue(isLoading ? Text(loadingTitle ?? "처리 중") : Text(""))
@@ -76,7 +77,12 @@ struct PumButtonStyle: ButtonStyle {
             .modifier(RingModifier(ring: ring, radius: radius))
             .scaleEffect(pressed && !reduceMotion ? 0.97 : 1) // M1 scale .97
             .animation(PumMotion.respecting(reduceMotion, PumMotion.press), value: pressed)
+            // 작은 버튼: 누름 영역을 위아래로 넓혀 44를 지킨다(보이는 모양은 그대로)
+            .padding(.vertical, size == .small ? Self.smallTapOutset : 0)
+            .contentShape(Rectangle())
     }
+
+    static let smallTapOutset = (PumTokens.Size.tapMin - PumLayout.buttonSmVisible) / 2
 
     private var foreground: Color {
         guard enabled else { return kind == .text ? PumColor.textDisabled : .white } // 디자인 C1 DISABLED: gray-300 바탕 · 흰 글자
@@ -137,6 +143,6 @@ struct PumButtonPair: View {
                 PumButton(title: positive, kind: .primary, size: size, action: onPositive).frame(width: unit * 1.5)
             }
         }
-        .frame(height: size == .regular ? PumTokens.Size.buttonH : PumTokens.Size.buttonHSm)
+        .frame(height: size == .regular ? PumTokens.Size.buttonH : PumLayout.buttonSmVisible)
     }
 }

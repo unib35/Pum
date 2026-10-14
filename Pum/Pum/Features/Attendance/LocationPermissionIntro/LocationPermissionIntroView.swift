@@ -100,7 +100,7 @@ private struct LocationPermissionSheetContent: View {
             PumButton(title: LocationPermissionIntroState.continueTitle, action: onContinue)
             // 원문 링크 높이 약 20(14px 글자) — 누름 영역 44는 유지, 배치 높이만 20
             PumButton(title: LocationPermissionIntroState.qrOnlyTitle, kind: .text, size: .small, action: onUseQROnly)
-                .padding(.vertical, -(PumTokens.Size.tapMin - PumTokens.Space.s20) / 2)
+                .padding(.vertical, -(PumLayout.buttonSmVisible - PumTokens.Space.s20) / 2) // 작은 버튼은 이미 배치 36(DEC-011)
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
         .padding(.bottom, PumTokens.Space.s12)

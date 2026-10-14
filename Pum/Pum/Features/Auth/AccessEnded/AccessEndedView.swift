@@ -100,7 +100,6 @@ struct AccessEndedView: View {
         VStack(spacing: PumTokens.Space.s10) { // 원문 gap 10
             PumButton(title: state.primaryTitle, kind: .primary, action: onPrimary)
             PumButton(title: state.secondaryTitle, kind: .text, size: .small, action: onSecondary)
-                .padding(.vertical, -PumTokens.Space.s2) // 원문 높이 40, 누름은 44 유지
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
         .padding(.top, PumTokens.Space.s12)

@@ -7,7 +7,7 @@ enum PumBottomSheetStyle {
     /// 뒤 막: 토큰에 scrim 색이 없다(충돌 #31) — 먹색(textPrimary) 35%, 1j 캡처 기준 추정
     static let scrimOpacity = 0.35
     /// 손잡이: 목업 약 36×5, gray300
-    static let handleWidth: CGFloat = 36
+    static let handleWidth: CGFloat = 40 // 원문 40(DEC-012)
     static let handleHeight: CGFloat = 5
     /// 시트가 차지할 수 있는 최대 높이 비율 — 위쪽은 뒤 화면이 보이게 남긴다
     static let maxHeightRatio: CGFloat = 0.9
@@ -74,8 +74,8 @@ struct PumBottomSheetPanel<Content: View>: View {
             Capsule()
                 .fill(PumTokens.ColorToken.gray300)
                 .frame(width: PumBottomSheetStyle.handleWidth, height: PumBottomSheetStyle.handleHeight)
-                .padding(.top, PumTokens.Space.s8)
-                .padding(.bottom, PumTokens.Space.s12)
+                .padding(.top, PumTokens.Space.s10) // 원문 위 10 · 아래 16~18(DEC-012)
+                .padding(.bottom, PumTokens.Space.s16)
                 .accessibilityHidden(true)
             // 높이 상한은 부모가 준다 — 시트 전체에 maxHeight 프레임을 걸면 짧은 내용도 늘어난다
             ViewThatFits(in: .vertical) {
