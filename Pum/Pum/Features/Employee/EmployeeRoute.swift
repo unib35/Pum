@@ -96,6 +96,16 @@ enum EmployeeRoute: String, CaseIterable, Hashable {
         case .documentBox:
             DocumentBoxView(
                 state: .sample,
+                onPickWorkplace: { router.navigate(.home(.workplaceSwitcher)) }, // 6k 사업장 필터 → 1y
+                onOpen: { id in
+                    // 이름이 확정 화면과 같은 문서만 연다: 변경 근로계약서 → 19c · 근로계약서 → 1ab · 급여명세서 → 1m
+                    switch id {
+                    case "change-contract": router.navigate(.employee(.wageChangeContract))
+                    case "contract-2026": router.navigate(.employee(.contractList))
+                    case "payslip-main", "payslip-c": router.navigate(.payroll(.payslip))
+                    default: break
+                    }
+                },
                 onIssue: { _ in router.navigate(.employee(.employmentCertRequest)) }
             )
         case .employmentCertRequest:
@@ -234,7 +244,8 @@ enum EmployeeRoute: String, CaseIterable, Hashable {
         case .invitePhoneMismatch:
             InvitePhoneMismatchView(
                 state: .sample,
-                onBack: router.back
+                onBack: router.back,
+                onLoginWithInvitedNumber: { router.navigate(.auth(.phoneVerify)) } // 「초대받은 번호로 로그인」 → 2b
             )
         case .onboardingChecklist:
             OnboardingChecklistView(
@@ -251,13 +262,17 @@ enum EmployeeRoute: String, CaseIterable, Hashable {
         case .staffList:
             StaffListView(
                 onMember: { _ in router.navigate(.employee(.staffDetail)) },
+                onSetCondition: { _ in router.navigate(.employee(.workTermsInput)) }, // 「조건 설정」 → 10a
                 onAdd: { router.navigate(.employee(.staffAdd)) }
             )
         case .staffDetail:
             StaffDetailView(
                 state: .sample,
                 onBack: router.back,
-                onEdit: { router.navigate(.employee(.employmentStatus)) }
+                onEdit: { router.navigate(.employee(.employmentStatus)) },
+                onOpenDocument: { id in
+                    if id == "contract" { router.navigate(.employee(.contractList)) } // 「근로계약서」 → 1ab
+                }
             )
         case .offboarding:
             OffboardingView(
@@ -382,6 +397,7 @@ enum EmployeeRoute: String, CaseIterable, Hashable {
                 state: .sample,
                 sheet: .sample,
                 onBack: router.back,
+                onContract: { router.navigate(.employee(.contractList)) }, // 「계약서」 → 1ab
                 onInvite: { router.navigate(.employee(.staffInvite)) },
                 onSave: { _, done in
                     done(true)
@@ -394,6 +410,7 @@ enum EmployeeRoute: String, CaseIterable, Hashable {
                 sheet: .sample,
                 startsWithSheetOpen: true,
                 onBack: router.back,
+                onContract: { router.navigate(.employee(.contractList)) }, // 「계약서」 → 1ab
                 onInvite: { router.navigate(.employee(.staffInvite)) },
                 onSave: { _, done in
                     done(true)
