@@ -55,6 +55,7 @@ enum WorkplaceRoute: String, CaseIterable, Hashable {
                 onOpenCheckInMethod: { router.navigate(.workplace(.checkInMethod)) },
                 onOpenOvertimePolicy: { router.navigate(.workplace(.attendancePolicy)) },
                 onOpenStoreQR: { router.navigate(.workplace(.checkInQR)) },
+                onOpenAdmin: { _ in router.navigate(.employee(.managerPermissions)) }, // 관리자 행 → 6h (J15 갈래)
                 onAddAdmin: { router.navigate(.employee(.managerInvite)) }
             )
         case .verifyIntro:
