@@ -207,11 +207,11 @@ private struct UpdateNoticeSheetContent: View {
             if typeSize.isAccessibilitySize {
                 VStack(spacing: PumTokens.Space.s8) {
                     PumButton(title: AppUpdateNotice.updateTitle, action: onUpdate)
-                    PumButton(title: AppUpdateNotice.laterTitle, kind: .outline, action: onLater)
+                    PumButton(title: AppUpdateNotice.laterTitle, kind: .outlineLight, action: onLater)
                 }
             } else {
                 RatioPairLayout(ratio: 1.5, spacing: PumTokens.Space.s8) {
-                    PumButton(title: AppUpdateNotice.laterTitle, kind: .outline, action: onLater)
+                    PumButton(title: AppUpdateNotice.laterTitle, kind: .outlineLight, action: onLater)
                     PumButton(title: AppUpdateNotice.updateTitle, action: onUpdate)
                 }
             }

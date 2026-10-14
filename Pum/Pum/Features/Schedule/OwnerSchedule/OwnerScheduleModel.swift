@@ -93,6 +93,8 @@ struct OwnerScheduleState: Equatable, Sendable {
     var swap: ScheduleSwapRequest?
     /// 탭 바 근무 배지 — 원문 탭 바에는 배지가 없다
     var workTabBadge = 0
+    /// 확인할 근무기록 수(서버) — 0보다 크면 위쪽에 1r로 가는 줄을 보인다(DEC-019)
+    var pendingReviewCount = 0
 
     var selectedDay: ScheduleDay? { days.first { $0.id == selectedID } }
 

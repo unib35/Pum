@@ -51,7 +51,9 @@ enum ScheduleRoute: String, CaseIterable, Hashable {
             MyScheduleView()
         case .ownerSchedule:
             OwnerScheduleView(
-                onChangeWorkplace: { router.navigate(.home(.workplaceSwitcher)) }
+                state: { var s = OwnerScheduleState.sample; s.pendingReviewCount = 4; return s }(),
+                onChangeWorkplace: { router.navigate(.home(.workplaceSwitcher)) },
+                onOpenReview: { router.navigate(.attendance(.ownerReview)) }
             )
         case .extraShiftRequest:
             ExtraShiftRequestView(

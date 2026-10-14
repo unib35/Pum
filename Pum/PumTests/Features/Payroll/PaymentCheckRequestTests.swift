@@ -29,10 +29,11 @@ struct PaymentCheckRequestTests {
         #expect(x.amountText == "880,000원")
     }
 
-    @Test func 계좌는_서버_문자열_그대로() {
+    @Test func 계좌는_뒤_4자리만_보인다() { // DEC-017
+        #expect(s.displayAccount == "국민은행 \u{2022}\u{2022}\u{2022}\u{2022}\u{2022}\u{2022}-\u{2022}\u{2022}-\u{2022}\u{2022}1234")
         var x = s
-        x.sentAccount = "국민은행 \u{2022}\u{2022}\u{2022}\u{2022}1234"
-        #expect(x.sentAccount == "국민은행 \u{2022}\u{2022}\u{2022}\u{2022}1234")
+        x.sentAccount = "국민은행 \u{2022}\u{2022}\u{2022}\u{2022}1234" // 서버가 가려 보내도 그대로
+        #expect(x.displayAccount == "국민은행 \u{2022}\u{2022}\u{2022}\u{2022}1234")
     }
 
     @Test func 시각_표기와_읽기() {
@@ -46,7 +47,8 @@ struct PaymentCheckRequestTests {
 
     @Test func 계좌는_숫자를_하나씩_읽는다() {
         #expect(PaymentCheckRequestState.digitsSpoken("국민은행 12-3") == "국민은행 1 2, 3")
-        #expect(s.accountSpoken.hasPrefix("보낸 계좌, 국민은행 1 2 3 4 5 6"))
+        #expect(s.accountSpoken.hasPrefix("보낸 계좌, 국민은행 가림"))
+        #expect(s.accountSpoken.hasSuffix("1 2 3 4"))
         #expect(PaymentCheckRequestState.digitsSpoken("국민 \u{2022}\u{2022}12").contains("가림"))
     }
 

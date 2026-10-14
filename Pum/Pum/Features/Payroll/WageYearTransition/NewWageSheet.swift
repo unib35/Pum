@@ -174,7 +174,7 @@ struct NewWageSheet: View {
     // MARK: 버튼
 
     private var buttons: some View {
-        let cancel = PumButton(title: NewWageSheetState.cancelTitle, kind: .outline, action: onCancel)
+        let cancel = PumButton(title: NewWageSheetState.cancelTitle, kind: .outlineLight, action: onCancel)
             .disabled(isSending)
         let send = PumButton(title: state.sendTitle, isLoading: isSending, loadingTitle: NewWageSheetState.sendingTitle, action: onSend)
             .disabled(!state.canSend(draft) || isSent)

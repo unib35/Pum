@@ -1,5 +1,5 @@
 // UI-IOS-21d · REQ-076 · DEC-003 — 입금 확인 요청(사장님) 시트 데이터
-// 모든 값은 서버가 준 값 그대로. 금액은 정수 원. 보낸 계좌는 서버가 준 문자열 그대로(가려 오면 가린 값, 충돌 #38).
+// 모든 값은 서버가 준 값 그대로. 금액은 정수 원. 보낸 계좌는 화면에서 뒤 4자리만 보인다(DEC-017, 21e와 같은 모양).
 // 계좌 · 메모는 로그에 남기지 않는다.
 import Foundation
 
@@ -34,6 +34,8 @@ nonisolated struct PaymentCheckRequestState: Equatable, Sendable {
     var amountLabel: String { "\(payMonth)월분 실지급액" }
     var amountText: String { PumFormat.amount(netPay) + "원" }
     var accountLabel: String { "보낸 계좌" }
+    /// 화면 표시용 계좌 — 숫자는 뒤 4자리만 남기고 가린다(은행 이름 · 하이픈은 그대로). 서버가 이미 가려 보내도 같은 결과
+    var displayAccount: String { Self.maskAccount(sentAccount) }
     var paidLabel: String { "지급 완료 처리" }
     var paidSubtitle: String { "\(paidAt.text)\(Self.dotSeparator)\(paidBy)" }
     var revertTitle: String { "지급 대기로" }
@@ -48,7 +50,17 @@ nonisolated struct PaymentCheckRequestState: Equatable, Sendable {
     var paidSpoken: String { "\(paidLabel), \(paidAt.spoken), \(paidBy)" }
 
     /// 계좌는 숫자를 하나씩 읽게 — 숫자 사이 공백, 하이픈은 쉼, 가림 기호는 「가림」
-    var accountSpoken: String { "\(accountLabel), " + Self.digitsSpoken(sentAccount) }
+    var accountSpoken: String { "\(accountLabel), " + Self.digitsSpoken(displayAccount) }
+
+    static func maskAccount(_ s: String) -> String {
+        let total = s.filter(\.isNumber).count
+        var seen = 0
+        return String(s.map { c -> Character in
+            guard c.isNumber else { return c }
+            seen += 1
+            return seen > total - 4 ? c : "\u{2022}"
+        })
+    }
 
     static func digitsSpoken(_ s: String) -> String {
         var out = ""

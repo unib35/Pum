@@ -239,7 +239,7 @@ struct WageChangeContractView: View {
     }
 
     @ViewBuilder private var buttons: some View {
-        let full = PumButton(title: WageChangeContractState.fullTitle, kind: .outline, action: onOpenFull)
+        let full = PumButton(title: WageChangeContractState.fullTitle, kind: .outlineLight, action: onOpenFull)
         let sign = PumButton(title: WageChangeContractState.signTitle, isLoading: isSigning, action: onSign)
         if typeSize.isAccessibilitySize {
             VStack(spacing: PumTokens.Space.s8) { sign; full }

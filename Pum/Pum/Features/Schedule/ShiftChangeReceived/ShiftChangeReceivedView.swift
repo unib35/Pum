@@ -195,7 +195,7 @@ struct ShiftChangeReceivedView: View {
     }
 
     @ViewBuilder private var buttons: some View {
-        let decline = PumButton(title: ShiftChangeReceivedState.declineTitle, kind: .outline,
+        let decline = PumButton(title: ShiftChangeReceivedState.declineTitle, kind: .outlineLight,
                                 isLoading: state.isLoading(.decline)) { respond(.decline, onDecline) }
         let accept = PumButton(title: ShiftChangeReceivedState.acceptTitle,
                                isLoading: state.isLoading(.accept)) { respond(.accept, onAccept) }

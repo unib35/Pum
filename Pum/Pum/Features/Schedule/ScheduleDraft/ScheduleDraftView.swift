@@ -205,7 +205,7 @@ struct ScheduleDraftView: View {
     }
 
     private var copyButton: some View {
-        PumButton(title: ScheduleDraftState.copyLastWeekTitle, kind: .outline, action: onCopyLastWeek)
+        PumButton(title: ScheduleDraftState.copyLastWeekTitle, kind: .outlineLight, action: onCopyLastWeek)
     }
 
     private var publishButton: some View {

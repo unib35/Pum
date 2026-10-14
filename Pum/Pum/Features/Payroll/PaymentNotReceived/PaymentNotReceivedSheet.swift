@@ -87,7 +87,7 @@ struct PaymentNotReceivedSheet: View {
     }
 
     private var cancelButton: some View {
-        PumButton(title: "취소", kind: .outline, action: onCancel).disabled(isSending)
+        PumButton(title: "취소", kind: .outlineLight, action: onCancel).disabled(isSending)
     }
 
     private var sendButton: some View {

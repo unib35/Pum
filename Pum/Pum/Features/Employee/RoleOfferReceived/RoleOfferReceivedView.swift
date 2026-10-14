@@ -192,7 +192,7 @@ struct RoleOfferReceivedView: View {
     }
 
     @ViewBuilder private var buttons: some View {
-        let decline = PumButton(title: RoleOfferReceivedState.declineTitle, kind: .outline,
+        let decline = PumButton(title: RoleOfferReceivedState.declineTitle, kind: .outlineLight,
                                 isLoading: state.isLoading(.decline)) { respond(.decline, onDecline) }
         let accept = PumButton(title: RoleOfferReceivedState.acceptTitle,
                                isLoading: state.isLoading(.accept)) { respond(.accept, onAcceptWithVerification) }

@@ -232,7 +232,7 @@ struct DayFixSheet: View {
     // MARK: 버튼
 
     @ViewBuilder private var buttons: some View {
-        let cancel = PumButton(title: DayFixState.cancelTitle, kind: .outline, action: onCancel)
+        let cancel = PumButton(title: DayFixState.cancelTitle, kind: .outlineLight, action: onCancel)
             .disabled(isSaving) // 처리 중에는 닫지 않게 — 모양 변화는 저장 버튼만
         let save = PumButton(title: DayFixState.saveTitle, isLoading: isSaving, loadingTitle: DayFixState.savingTitle, action: onSave)
         Group {
