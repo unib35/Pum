@@ -31,19 +31,34 @@ enum AuthRoute: String, CaseIterable, Hashable {
             AfterLeavingView(
                 state: .sample,
                 onBack: router.back,
+                onOpenDocument: { kind in
+                    switch kind {
+                    case .contract: router.navigate(.employee(.contractList)) // 「근로계약서」 → 1ab
+                    case .payslip: router.navigate(.payroll(.payslip)) // 「급여명세서」 → 1m
+                    case .workRecord: break // 근거 없음
+                    }
+                },
                 onRequestCertificate: { router.navigate(.employee(.employmentCertRequest)) }
             )
         case .accountSecurity:
             AccountSecurityView(
                 state: .sample,
                 onBack: router.back,
+                onLogout: { // 로그아웃 → 2a 시작(처음부터)
+                    router.backToRoot()
+                    router.replace(with: .auth(.welcome))
+                },
                 onWithdraw: { router.navigate(.auth(.withdraw)) }
             )
         case .withdraw:
             WithdrawView(
                 state: .sample,
                 onBack: router.back,
-                onTransferOwnership: { _ in router.navigate(.employee(.ownerTransfer)) }
+                onTransferOwnership: { _ in router.navigate(.employee(.ownerTransfer)) },
+                onWithdraw: { // 탈퇴 끝 → 2a
+                    router.backToRoot()
+                    router.replace(with: .auth(.welcome))
+                }
             )
         case .phoneVerify:
             PhoneVerifyView(
