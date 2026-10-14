@@ -1,6 +1,6 @@
 // UI-IOS-5a · REQ-010 · REQ-105 · DEC-007(1az 색) — 미인증 사업장 홈: 1aq와 같은 순서 · 같은 카드
 // 할 일 자리에 「시작 준비」, 직원 초대만 사업장 인증 후. 체크 완료 = 회색 원 + 먹색 체크(초록 채움 금지)
-// 원문과 다른 점: 사업장 칩은 먹색이 아니라 1aq와 같은 흰 칩(DEC-007). 「미인증」 배지는 칩 바로 옆에 둔다.
+// 원문과 다른 점: 사업장 칩은 먹색이 아니라 1aq와 같은 흰 칩(DEC-007). 「미인증」 배지는 원문처럼 칩 안(DEC-023).
 import SwiftUI
 
 /// 이 화면 전용 크기 — 토큰에 없는 것만
@@ -43,11 +43,7 @@ struct OwnerHomeUnverifiedView: View {
 
     private var header: some View {
         HStack(alignment: .center) {
-            // 1aq와 같은 흰 칩(DEC-007). 공통 칩이 배지를 지원하지 않아 옆에 따로 둔다.
-            ViewThatFits(in: .horizontal) {
-                HStack(spacing: PumTokens.Space.s8) { chip; unverifiedBadge }
-                VStack(alignment: .leading, spacing: PumTokens.Space.s4) { chip; unverifiedBadge }
-            }
+            chip
             Spacer(minLength: PumTokens.Space.s8)
             PumIconButton(systemImage: "bell", label: "알림", showsDot: state.hasUnreadNotification, action: onBell)
         }
@@ -55,18 +51,7 @@ struct OwnerHomeUnverifiedView: View {
 
     private var chip: some View {
         PumWorkplaceChip(name: state.workplaceName, initial: state.workplaceInitial,
-                         tileColor: PumColor.surfaceInverse, role: "사장님", action: onSwitchWorkplace)
-    }
-
-    /// 원문: 10px 700 주황 글자 + 연주황 바탕
-    private var unverifiedBadge: some View {
-        Text("미인증")
-            .pumText(.caption2, weight: .bold)
-            .foregroundStyle(PumColor.statusAttention)
-            .padding(.horizontal, PumTokens.Space.s6)
-            .padding(.vertical, PumTokens.Space.s2)
-            .background(PumColor.statusAttentionSoft, in: RoundedRectangle(cornerRadius: PumTokens.Radius.xs, style: .continuous))
-            .accessibilityLabel(Text("사업장 미인증"))
+                         tileColor: PumColor.surfaceInverse, role: "사장님", attention: "미인증", action: onSwitchWorkplace)
     }
 
     private var titleBlock: some View {
