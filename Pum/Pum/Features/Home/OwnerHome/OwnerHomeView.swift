@@ -13,6 +13,8 @@ private enum OwnerHomeLayout {
 
 struct OwnerHomeView: View {
     var state: OwnerHomeState = .sample
+    var onSwitchWorkplace: () -> Void = {}
+    var onBell: () -> Void = {}
     var onDecide: (OwnerHomeState.Decision) -> Void = { _ in }
     var onClockOutCheck: (OwnerHomeState.OnDuty) -> Void = { _ in }
     var onOpenOthers: () -> Void = {}
@@ -67,9 +69,9 @@ struct OwnerHomeView: View {
     private var header: some View {
         HStack {
             PumWorkplaceChip(name: state.workplaceName, initial: state.workplaceInitial,
-                             tileColor: PumColor.surfaceInverse, role: "사장님") {}
+                             tileColor: PumColor.surfaceInverse, role: "사장님") { onSwitchWorkplace() }
             Spacer(minLength: PumTokens.Space.s8)
-            PumIconButton(systemImage: "bell", label: "알림", showsDot: !isLoading && !isStale && state.hasUnreadNotification) {} // 로딩 · 불러오기 실패 중엔 안 읽음 여부를 모름(21j · 21k · 21n 원문 점 없음)
+            PumIconButton(systemImage: "bell", label: "알림", showsDot: !isLoading && !isStale && state.hasUnreadNotification, action: onBell) // 로딩 · 불러오기 실패 중엔 안 읽음 여부를 모름(21j · 21k · 21n 원문 점 없음)
         }
     }
 

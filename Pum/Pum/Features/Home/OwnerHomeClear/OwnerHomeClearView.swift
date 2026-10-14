@@ -15,6 +15,8 @@ private enum OwnerHomeClearLayout {
 
 struct OwnerHomeClearView: View {
     var state: OwnerHomeClearState = .sample
+    var onSwitchWorkplace: () -> Void = {}
+    var onBell: () -> Void = {}
     var onOpenHistory: () -> Void = {}
     @State private var tab = "home"
 
@@ -41,9 +43,9 @@ struct OwnerHomeClearView: View {
     private var header: some View {
         HStack {
             PumWorkplaceChip(name: state.workplaceName, initial: state.workplaceInitial,
-                             tileColor: PumColor.surfaceInverse, role: "사장님") {}
+                             tileColor: PumColor.surfaceInverse, role: "사장님") { onSwitchWorkplace() }
             Spacer(minLength: PumTokens.Space.s8)
-            PumIconButton(systemImage: "bell", label: "알림", showsDot: false) {}
+            PumIconButton(systemImage: "bell", label: "알림", showsDot: false, action: onBell)
         }
     }
 

@@ -3,6 +3,8 @@ import SwiftUI
 
 struct EmployeeHomeView: View {
     var state: EmployeeHomeState = .sample
+    var onSwitchWorkplace: () -> Void = {}
+    var onBell: () -> Void = {}
     var onClockIn: () -> Void = {}
     /// UI-IOS-21k · M32 — 서버 응답을 기다리는 중(0.5초 넘으면 본문만 스켈레톤, 출근 버튼은 회색 자리)
     var isLoading = false
@@ -53,9 +55,9 @@ struct EmployeeHomeView: View {
 
     private var header: some View {
         HStack {
-            PumWorkplaceChip(name: state.workplaceName, initial: state.workplaceInitial) {}
+            PumWorkplaceChip(name: state.workplaceName, initial: state.workplaceInitial, action: onSwitchWorkplace)
             Spacer()
-            PumIconButton(systemImage: "bell", label: "알림", showsDot: !isLoading && state.hasUnreadNotification) {} // 로딩 중엔 안 읽음 여부를 아직 모름(21j · 21k 원문 점 없음)
+            PumIconButton(systemImage: "bell", label: "알림", showsDot: !isLoading && state.hasUnreadNotification, action: onBell) // 로딩 중엔 안 읽음 여부를 아직 모름(21j · 21k 원문 점 없음)
         }
     }
 }

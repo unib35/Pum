@@ -5,6 +5,8 @@ import SwiftUI
 
 struct EmployeeHomeNoShiftView: View {
     var state: NoShiftHomeState = .sample
+    var onSwitchWorkplace: () -> Void = {}
+    var onBell: () -> Void = {}
     var onUnplannedClockIn: () -> Void = {}
     var onLater: () -> Void = {}
     var onUpdate: () -> Void = {}
@@ -55,9 +57,9 @@ struct EmployeeHomeNoShiftView: View {
 
     private var header: some View {
         HStack {
-            PumWorkplaceChip(name: state.workplaceName, initial: state.workplaceInitial) {}
+            PumWorkplaceChip(name: state.workplaceName, initial: state.workplaceInitial, action: onSwitchWorkplace)
             Spacer()
-            PumIconButton(systemImage: "bell", label: "알림", showsDot: state.hasUnreadNotification) {}
+            PumIconButton(systemImage: "bell", label: "알림", showsDot: state.hasUnreadNotification, action: onBell)
         }
     }
 }
