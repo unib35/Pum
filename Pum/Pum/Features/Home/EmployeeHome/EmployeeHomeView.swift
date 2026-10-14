@@ -253,8 +253,15 @@ struct ShiftTimeline: View {
 
 // MARK: - 이번 달
 
+/// 홈 카드에서 다른 화면으로 가는 동작 — 홈 연결(HomeRoute)이 넣는다. 단독 화면에서는 아무 일도 안 한다.
+extension EnvironmentValues {
+    @Entry var homeOpenPayBasis: () -> Void = {}
+    @Entry var homeOpenSchedule: () -> Void = {}
+}
+
 struct MonthSummaryCard: View {
     let state: EmployeeHomeState
+    @Environment(\.homeOpenPayBasis) private var openPayBasis
 
     var body: some View {
         PumCard {
@@ -264,7 +271,7 @@ struct MonthSummaryCard: View {
                 }
                 Rectangle().fill(PumColor.borderHairline).frame(width: 1)
                 cell(label: "\(state.monthTitle) 예상 급여", value: PumFormat.amount(state.monthExpectedPay) + "원") {
-                    Button {} label: {
+                    Button(action: openPayBasis) {
                         Text("계산 근거 ›").pumText(.caption, weight: .semibold).foregroundStyle(PumColor.accent)
                     }
                     .buttonStyle(.plain)
@@ -291,13 +298,14 @@ struct MonthSummaryCard: View {
 
 struct UpcomingShiftsCard: View {
     let shifts: [UpcomingShift]
+    @Environment(\.homeOpenSchedule) private var openSchedule
 
     var body: some View {
         PumCard {
             HStack {
                 Text("그다음 근무").pumText(.body, weight: .bold).foregroundStyle(PumColor.textPrimary)
                 Spacer()
-                Button {} label: {
+                Button(action: openSchedule) {
                     Text("스케줄 전체").pumText(.caption, weight: .semibold).foregroundStyle(PumColor.accent)
                 }
                 .buttonStyle(.plain)

@@ -38,8 +38,16 @@ enum HomeRoute: String, CaseIterable, Hashable {
     }
 
     /// 버튼을 다음 화면에 이은 화면. 아직 잇지 않은 화면은 예시 데이터로 열린다.
-    @MainActor @ViewBuilder
+    /// 직원 홈 카드(이번 달 · 그다음 근무)는 1at · 1au · 1av가 같이 써서 여기서 한 번에 잇는다.
+    @MainActor
     func view(_ router: AppRouter) -> some View {
+        screen(router)
+            .environment(\.homeOpenPayBasis) { router.navigate(.payroll(.expectedPay)) }
+            .environment(\.homeOpenSchedule) { router.navigate(.schedule(.mySchedule)) }
+    }
+
+    @MainActor @ViewBuilder
+    private func screen(_ router: AppRouter) -> some View {
         switch self {
         case .employeeHome:
             EmployeeHomeView(

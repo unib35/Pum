@@ -74,6 +74,7 @@ enum AttendanceRoute: String, CaseIterable, Hashable {
             )
         case .workCalendar:
             WorkCalendarView(
+                onWorkplace: { router.navigate(.home(.workplaceSwitcher)) },
                 onOpenDetail: { router.navigate(.attendance(.workDetail)) },
                 onOpenSchedule: { router.navigate(.schedule(.mySchedule)) }
             )
