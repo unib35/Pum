@@ -39,7 +39,7 @@ struct VerifyIntroView: View {
     private var background: some View {
         VStack(spacing: PumTokens.Space.s14) {
             PumNavHeader(title: VerifyIntroState.screenTitle, onBack: onBack)
-            PumCard {
+            PumCard(radius: PumTokens.Radius.xl) {
                 VStack(spacing: PumTokens.Space.s12) {
                     RoundedRectangle(cornerRadius: PumTokens.Radius.md, style: .continuous)
                         .fill(PumColor.surfaceFill)

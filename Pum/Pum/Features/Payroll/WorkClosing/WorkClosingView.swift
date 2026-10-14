@@ -55,7 +55,7 @@ struct WorkClosingView: View {
     // MARK: 요약 카드
 
     private var summaryCard: some View {
-        PumCard {
+        PumCard(radius: PumTokens.Radius.xl) {
             VStack(alignment: .leading, spacing: 0) {
                 ViewThatFits(in: .horizontal) {
                     HStack(alignment: .top, spacing: PumTokens.Space.s8) { // 원문 칸 사이 8
@@ -127,7 +127,7 @@ struct WorkClosingView: View {
     // MARK: 유형 카드
 
     private var categoryCard: some View {
-        PumCard {
+        PumCard(radius: PumTokens.Radius.xl) {
             normalRow
             ForEach(WorkClosingCategory.allCases, id: \.self) { kind in
                 divider
@@ -187,7 +187,7 @@ struct WorkClosingView: View {
     // MARK: 직원 확인 요청
 
     private var confirmRequestCard: some View {
-        PumCard {
+        PumCard(radius: PumTokens.Radius.xl) {
             Button(action: onOpenEmployeeConfirm) {
                 HStack(spacing: PumTokens.Space.s12) {
                     VStack(alignment: .leading, spacing: PumTokens.Space.s2) {

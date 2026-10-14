@@ -174,7 +174,7 @@ struct NoticeReadStatusView: View {
     // 6. 연결된 근무 모집
     private func recruitmentCard(_ r: NoticeLinkedRecruitment) -> some View {
         Button(action: onOpenRecruitment) {
-            PumCard {
+            PumCard(radius: PumTokens.Radius.md) {
                 HStack(spacing: PumTokens.Space.s12) { // 원문 gap 12
                     VStack(alignment: .leading, spacing: PumTokens.Space.s2) { // 원문 제목–내용 2
                         Text("연결된 근무 모집").pumText(.footnote, weight: .bold).foregroundStyle(PumColor.textSecondary)

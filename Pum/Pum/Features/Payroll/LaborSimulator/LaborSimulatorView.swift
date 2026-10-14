@@ -132,7 +132,7 @@ struct LaborSimulatorView: View {
     // MARK: 입력 카드
 
     private var inputCard: some View {
-        PumCard {
+        PumCard(radius: PumTokens.Radius.xl) {
             row("시급") { valuePill(state.wageText, tint: .blue, label: "시급 \(state.wageText)", action: onEditWage) }
             divider
             weekdayRow
@@ -235,7 +235,7 @@ struct LaborSimulatorView: View {
     // MARK: 결과 카드
 
     private var resultCard: some View {
-        PumCard {
+        PumCard(radius: PumTokens.Radius.xl) {
             VStack(alignment: .leading, spacing: 0) {
                 HStack(spacing: PumTokens.Space.s4) { // 원문 배지 왼쪽 4
                     Text(LaborSimulatorState.resultHeading).pumText(.footnote, weight: .medium)

@@ -71,7 +71,7 @@ struct RecordReviewView: View {
 
     // 3. 사장님 메시지 카드(인용)
     private var messageCard: some View {
-        PumCard {
+        PumCard(radius: PumTokens.Radius.md) {
             // 원문: 안쪽 위아래 12 · 왼쪽 20 · 오른쪽 16, 인용 막대는 왼쪽 끝에서 위아래 12 띄움
             Text(state.ownerMessage).pumText(.footnote, weight: .regular) // 13px
                 .foregroundStyle(PumTokens.ColorToken.gray800) // #3A4150

@@ -82,8 +82,8 @@ struct ExpectedPayView: View {
             ? AnyLayout(VStackLayout(spacing: PumTokens.Space.s12))
             : AnyLayout(HStackLayout(alignment: .top, spacing: PumTokens.Space.s12))
         return layout {
-            PumCard { confirmedCell.padding(.vertical, PumTokens.Space.s14).padding(.horizontal, PumTokens.Space.s16) }
-            PumCard { remainingCell.padding(.vertical, PumTokens.Space.s14).padding(.horizontal, PumTokens.Space.s16) }
+            PumCard(radius: PumTokens.Radius.md) { confirmedCell.padding(.vertical, PumTokens.Space.s14).padding(.horizontal, PumTokens.Space.s16) }
+            PumCard(radius: PumTokens.Radius.md) { remainingCell.padding(.vertical, PumTokens.Space.s14).padding(.horizontal, PumTokens.Space.s16) }
         }
     }
 

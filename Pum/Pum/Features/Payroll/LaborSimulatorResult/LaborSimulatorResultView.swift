@@ -38,7 +38,7 @@ struct LaborSimulatorResultView: View {
     // MARK: 비교 카드
 
     private var compareCard: some View {
-        PumCard {
+        PumCard(radius: PumTokens.Radius.xl) {
             VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
                 Text(state.compareTitle).pumText(.footnote, weight: .medium).foregroundStyle(PumColor.textSecondary)
                 ViewThatFits(in: .horizontal) {
@@ -90,7 +90,7 @@ struct LaborSimulatorResultView: View {
     // MARK: 요일별 인원
 
     private var weekdayCard: some View {
-        PumCard {
+        PumCard(radius: PumTokens.Radius.xl) {
             ViewThatFits(in: .horizontal) {
                 HStack(alignment: .top, spacing: PumTokens.Space.s4) { // 원문 칸 사이 4
                     ForEach(state.weekdays) { weekdayColumn($0) }

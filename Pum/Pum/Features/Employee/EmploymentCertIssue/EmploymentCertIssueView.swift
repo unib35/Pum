@@ -102,7 +102,7 @@ struct EmploymentCertIssueView: View {
     // MARK: 문서
 
     private var documentCard: some View {
-        PumCard {
+        PumCard(radius: PumTokens.Radius.md) {
             VStack(alignment: .leading, spacing: PumTokens.Space.s10) { // 원문 gap 9 → 가까운 10
                 Text(EmploymentCertIssueState.documentTitle).tracking(PumTokens.Space.s4) // 원문 넓은 자간 — pumText보다 안쪽에
                     .pumText(.headline, weight: .bold)

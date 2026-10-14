@@ -24,7 +24,7 @@ struct AppPermissionsView: View {
                     }
                     VStack(alignment: .leading, spacing: PumTokens.Space.s8) { // 제목–카드 8(원문 14 − 6)
                     PumSectionHeader(title: AppPermissionsState.unrequestedHeader)
-                    PumCard {
+                    PumCard(radius: PumTokens.Radius.md) {
                         Text(AppPermissionsState.unrequestedBody)
                             .pumText(.footnote)
                             .foregroundStyle(PumTokens.ColorToken.gray800)

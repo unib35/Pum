@@ -41,7 +41,7 @@ struct ConsentsView: View {
     // MARK: 변경 예정
 
     private func changeCard(_ change: ConsentPendingChange) -> some View {
-        PumCard(attention: true) {
+        PumCard(attention: true, radius: PumTokens.Radius.md) {
             Button(action: onOpenChange) {
                 ViewThatFits(in: .horizontal) {
                     HStack(spacing: PumTokens.Space.s10) {

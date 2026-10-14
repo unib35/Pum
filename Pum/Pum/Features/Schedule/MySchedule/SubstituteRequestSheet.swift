@@ -71,7 +71,7 @@ struct SubstituteRequestSheet: View {
     }
 
     private var applicantsCard: some View {
-        PumCard {
+        PumCard(radius: PumTokens.Radius.md) {
             VStack(alignment: .leading, spacing: PumTokens.Space.s10) { // 원문: 제목 아래 10
                 // 목업 13px 700 → footnote bold
                 Text(request.applicantsHeader).pumText(.footnote, weight: .bold)

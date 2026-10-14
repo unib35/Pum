@@ -50,6 +50,8 @@ nonisolated enum PumLayout {
     static let avatar: CGFloat = 36
     /// C6 머리 줄 · 원형 아이콘 버튼 높이 — 원문 40(DEC-010). 누름 영역은 tapMin 44로 따로 지킨다.
     static let navRow: CGFloat = 40
+    /// C1 작은 버튼의 보이는 높이 — 원문 32~42(DEC-011). 누름 영역은 tapMin 44로 따로 지킨다.
+    static let buttonSmVisible: CGFloat = 36
     /// 탭 숫자 배지 최소 지름
     static let tabBadge: CGFloat = 18
 }

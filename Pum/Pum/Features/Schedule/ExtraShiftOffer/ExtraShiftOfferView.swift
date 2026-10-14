@@ -135,7 +135,7 @@ struct ExtraShiftOfferView: View {
 
     // 공통 후보: 홈 1at WeekStripCard와 모양이 달라(시간 표시 · 파랑 칸) 화면 전용으로 둔다.
     private var weekCard: some View {
-        PumCard {
+        PumCard(radius: PumTokens.Radius.md) {
             VStack(alignment: .leading, spacing: PumTokens.Space.s10) {
                 Text(ExtraShiftOfferState.weekCardTitle).pumText(.footnote, weight: .bold)
                     .foregroundStyle(PumColor.textSecondary)

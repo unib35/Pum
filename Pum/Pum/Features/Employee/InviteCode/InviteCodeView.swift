@@ -91,7 +91,7 @@ struct InviteCodeView: View {
 
     // 4. 매칭된 사업장 카드
     private func matchCard(_ m: InviteMatch) -> some View {
-        PumCard {
+        PumCard(radius: PumTokens.Radius.md) {
             HStack(spacing: PumTokens.Space.s12) {
                 Text(m.initial).pumText(.callout, weight: .bold).foregroundStyle(.white) // 14px 700
                     .frame(width: workplaceTile, height: workplaceTile)

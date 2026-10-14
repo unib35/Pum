@@ -4,10 +4,12 @@ import SwiftUI
 struct PumCard<Content: View>: View {
     /// 확인 필요 카드: 주황 외곽선(attention)
     var attention = false
+    /// 모서리 — 기본 14. 원문이 다른 카드만 토큰 값(md 12 · xl 16)을 준다(DEC-013)
+    var radius: CGFloat = PumTokens.Radius.lg
     @ViewBuilder let content: Content
 
     var body: some View {
-        let r = PumTokens.Radius.lg
+        let r = radius
         VStack(spacing: 0) { content }
             .background(PumColor.surfaceCard, in: RoundedRectangle(cornerRadius: r, style: .continuous))
             .clipShape(RoundedRectangle(cornerRadius: r, style: .continuous))
