@@ -68,7 +68,7 @@ struct WorkClosingProblemsView: View {
     private var remainingSection: some View {
         VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
             PumSectionHeader(title: state.remainingHeader, attention: true).padding(.top, PumTokens.Space.s2) // 원문 padding 2 4 0
-            PumCard {
+            PumCard(radius: PumTokens.Radius.xl) {
                 ForEach(Array(state.remaining.enumerated()), id: \.element.id) { i, item in
                     if i > 0 { divider }
                     problemRow(item)
@@ -166,7 +166,7 @@ struct WorkClosingProblemsView: View {
     private var resolvedSection: some View {
         VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
             PumSectionHeader(title: state.resolvedHeader).padding(.top, PumTokens.Space.s2)
-            PumCard {
+            PumCard(radius: PumTokens.Radius.xl) {
                 ForEach(Array(state.resolved.enumerated()), id: \.element.id) { i, item in
                     if i > 0 { divider }
                     resolvedRow(item)

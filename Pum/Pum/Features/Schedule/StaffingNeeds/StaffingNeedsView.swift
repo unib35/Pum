@@ -167,7 +167,7 @@ struct StaffingNeedsView: View {
     // MARK: 시간대 카드
 
     private var slotCard: some View {
-        PumCard {
+        PumCard(radius: PumTokens.Radius.xl) {
             ForEach(state.selectedSlots) { slot in
                 slotRow(slot)
                 divider

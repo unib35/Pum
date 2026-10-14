@@ -249,7 +249,7 @@ struct PersonalRecordDetailView: View {
     // MARK: 4. 메모
 
     private var memoCard: some View {
-        PumCard {
+        PumCard(radius: PumTokens.Radius.md) {
             VStack(alignment: .leading, spacing: PumTokens.Space.s4) {
                 Text("메모").pumText(.footnote, weight: .bold).foregroundStyle(PumColor.textSecondary)
                     .accessibilityHidden(true)

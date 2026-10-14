@@ -44,7 +44,7 @@ struct ScheduleOptionDetailView: View {
     // MARK: 요약
 
     private var summaryCard: some View {
-        PumCard {
+        PumCard(radius: PumTokens.Radius.xl) {
             VStack(alignment: .leading, spacing: 0) {
                 VStack(alignment: .leading, spacing: 0) {
                     Text(state.summaryTitle).pumText(.caption, weight: .regular).foregroundStyle(PumColor.textSecondary)
@@ -100,7 +100,7 @@ struct ScheduleOptionDetailView: View {
     // MARK: 줄어든 이유
 
     private var reasonsCard: some View {
-        PumCard {
+        PumCard(radius: PumTokens.Radius.xl) {
             ForEach(Array(state.reasons.enumerated()), id: \.element.id) { index, reason in
                 if index > 0 { divider }
                 reasonRow(reason)
@@ -141,7 +141,7 @@ struct ScheduleOptionDetailView: View {
     // MARK: 변경 목록
 
     private var changesCard: some View {
-        PumCard {
+        PumCard(radius: PumTokens.Radius.xl) {
             ForEach(Array(state.changes.enumerated()), id: \.element.id) { index, change in
                 if index > 0 { divider }
                 changeRow(change)

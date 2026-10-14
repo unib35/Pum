@@ -249,7 +249,7 @@ struct WorkCalendarView: View {
 
     private var selectedCard: some View {
         let s = state.selected
-        return PumCard {
+        return PumCard(radius: PumTokens.Radius.md) {
             Button(action: onOpenDetail) {
                 HStack(spacing: PumTokens.Space.s12) {
                     VStack(spacing: PumTokens.Space.s2) {

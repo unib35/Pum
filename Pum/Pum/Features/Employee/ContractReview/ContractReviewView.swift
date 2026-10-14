@@ -147,7 +147,7 @@ struct ContractReviewView: View {
     // 4. 계약서 전문 보기(이동 행)
     private var fullTextRow: some View {
         Button(action: onViewFull) {
-            PumCard {
+            PumCard(radius: PumTokens.Radius.md) {
                 HStack(spacing: PumTokens.Space.s12) {
                     VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
                         Text(record.fullTextTitle).pumText(.callout).foregroundStyle(PumColor.textPrimary) // 14px 600

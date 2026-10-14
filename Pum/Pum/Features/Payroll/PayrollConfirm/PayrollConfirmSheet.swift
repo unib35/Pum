@@ -95,7 +95,7 @@ struct PayrollConfirmSheet: View {
     // MARK: 토글
 
     private var toggles: some View {
-        PumCard {
+        PumCard(radius: PumTokens.Radius.md) {
             VStack(spacing: 0) {
                 toggleRow(PayrollConfirmState.payslipTitle, PayrollConfirmState.payslipSubtitle,
                           label: state.payslipAccessibilityLabel, isOn: $state.sendsPayslip)

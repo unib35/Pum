@@ -142,7 +142,7 @@ struct ScheduleManualEditView: View {
     // MARK: 타임라인 카드
 
     private var timelineCard: some View {
-        PumCard {
+        PumCard(radius: PumTokens.Radius.xl) {
             VStack(spacing: 0) {
                 tickRow // 원문: 눈금과 첫 행 사이에 선 없음
                 ForEach(Array(state.shifts.enumerated()), id: \.element.id) { i, shift in

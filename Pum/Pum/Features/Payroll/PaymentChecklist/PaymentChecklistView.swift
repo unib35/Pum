@@ -36,7 +36,7 @@ struct PaymentChecklistView: View {
 
     // 2. 요약 카드
     private var summaryCard: some View {
-        PumCard {
+        PumCard(radius: PumTokens.Radius.xl) {
             VStack(alignment: .leading, spacing: 0) {
                 ViewThatFits(in: .horizontal) {
                     HStack(alignment: .center, spacing: PumTokens.Space.s8) {
@@ -117,7 +117,7 @@ struct PaymentChecklistView: View {
     private var pendingSection: some View {
         VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
             PumSectionHeader(title: state.pendingHeaderText).padding(.top, PumTokens.Space.s2) // 원문 padding 2 4 0
-            PumCard {
+            PumCard(radius: PumTokens.Radius.xl) {
                 ForEach(Array(state.pending.enumerated()), id: \.element.id) { i, p in
                     if i > 0 { divider }
                     row(p)
@@ -130,7 +130,7 @@ struct PaymentChecklistView: View {
     private var paidSection: some View {
         VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
             PumSectionHeader(title: state.paidHeaderText).padding(.top, PumTokens.Space.s2)
-            PumCard {
+            PumCard(radius: PumTokens.Radius.xl) {
                 ForEach(Array(state.paid.enumerated()), id: \.element.id) { i, p in
                     if i > 0 { divider }
                     row(p)

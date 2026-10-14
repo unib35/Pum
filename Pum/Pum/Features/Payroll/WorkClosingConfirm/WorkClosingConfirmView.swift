@@ -100,7 +100,7 @@ struct WorkClosingConfirmView: View {
     }
 
     private var summaryCard: some View {
-        PumCard {
+        PumCard(radius: PumTokens.Radius.xl) {
             termRow("직원", state.employeeText, weight: .semibold, isLast: false)
             termRow("근무기록", state.recordText, weight: .semibold, isLast: false)
             termRow("총 근무", state.totalWorkText, weight: .semibold, isLast: false)

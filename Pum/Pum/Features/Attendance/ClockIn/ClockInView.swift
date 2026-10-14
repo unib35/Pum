@@ -133,7 +133,7 @@ struct ClockInView: View {
     }
 
     private var locationCard: some View {
-        PumCard {
+        PumCard(radius: PumTokens.Radius.md) {
             HStack(spacing: PumTokens.Space.s12) {
                 Image(systemName: "checkmark")
                     .font(.system(size: Local.checkGlyph, weight: .bold))
