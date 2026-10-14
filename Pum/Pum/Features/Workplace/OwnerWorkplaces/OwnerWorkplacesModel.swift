@@ -63,7 +63,7 @@ nonisolated struct OwnerWorkplaceEntry: Equatable, Sendable, Identifiable {
 
 /// 사업장 색 네모: 원문 1w는 파랑(#2F5BEA)과 연파랑(#6B8AF0). 연파랑은 토큰에 없어 가장 가까운 blue-300(충돌 #20)
 nonisolated enum OwnerWorkplaceTileColor {
-    static let colors: [Color] = [PumColor.accent, PumTokens.ColorToken.blue300]
+    static let colors: [Color] = [PumTokens.ColorToken.store1, PumTokens.ColorToken.store4] // 원문 1w 둘째 사업장 #6B8AF0(DEC-024)
     static func color(at index: Int) -> Color {
         colors[((index % colors.count) + colors.count) % colors.count]
     }

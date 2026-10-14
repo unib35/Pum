@@ -28,8 +28,8 @@ struct StaffDetailView: View {
     @ScaledMetric(relativeTo: .body) private var contactH = StaffDetailLayout.contactH
     @ScaledMetric(relativeTo: .body) private var contactIcon = StaffDetailLayout.contactIcon
 
-    /// 화면 전용: 디자인 1m 값 #FAE100(카카오 공식 #FEE500과 다름 — 충돌 #23). 공통 후보(1m · 2l 공유)
-    private let kakaoYellow = Color(.sRGB, red: 250.0 / 255, green: 225.0 / 255, blue: 0, opacity: 1)
+    /// 카카오 공식 노랑 #FEE500(DEC-025)
+    private let kakaoYellow = PumTokens.ColorToken.kakaoYellow
 
     private var stacked: Bool { typeSize.isAccessibilitySize }
 

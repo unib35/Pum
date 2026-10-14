@@ -205,8 +205,8 @@ private struct WelcomeProviderButton: View {
     let style: Style
     let action: () -> Void
 
-    /// 카카오 노랑 #FAE100 — 화면 전용(충돌 #23 · PayslipView 선례와 같은 값). 공통 후보.
-    private static let kakaoYellow = Color(.sRGB, red: 250.0 / 255, green: 225.0 / 255, blue: 0, opacity: 1)
+    /// 카카오 공식 노랑 #FEE500(DEC-025)
+    private static let kakaoYellow = PumTokens.ColorToken.kakaoYellow
     /// 검은 원 로고 자리(에셋 없음, 충돌 #23) — space-20
     private let logoDot = PumTokens.Space.s20
 

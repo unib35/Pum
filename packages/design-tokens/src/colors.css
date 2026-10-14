@@ -54,4 +54,28 @@
   --status-attention-dot: var(--amber-400);
   --status-danger: var(--red-500);
   --status-danger-soft: var(--red-50);
+
+  /* 이 저장소에서 더한 값 — 디자인 시스템 C7 카드 · 화면 원문에서 옮김(DEC-024 · DEC-025 · DEC-026) */
+  /* 사람 아바타 6색 순환: 블루 · 자두 · 호박 · 남색 · 초록 · 먹색 */
+  --avatar-1-bg: var(--blue-100);
+  --avatar-1-fg: var(--blue-500);
+  --avatar-2-bg: #EAD9E5;
+  --avatar-2-fg: #6B3A5B;
+  --avatar-3-bg: #F3E3CF;
+  --avatar-3-fg: #7A4A12;
+  --avatar-4-bg: #E2E4F0;
+  --avatar-4-fg: #3B4270;
+  --avatar-5-bg: #D8E8DF;
+  --avatar-5-fg: var(--green-700);
+  --avatar-6-bg: var(--gray-900);
+  --avatar-6-fg: var(--gray-0);
+  /* 사업장 고유색: 블루 · 갈색 · 남색 · 연파랑(1w 둘째 사업장) */
+  --store-1: var(--blue-500);
+  --store-2: #8A5A2B;
+  --store-3: #3B4270;
+  --store-4: #6B8AF0;
+  /* 먹색 바탕 위 위험 글자(1l 공제) */
+  --text-danger-on-inverse: #F3A99F;
+  /* 카카오 공식 노랑 */
+  --kakao-yellow: #FEE500;
 }

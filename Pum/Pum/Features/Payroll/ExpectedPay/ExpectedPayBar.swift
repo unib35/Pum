@@ -35,8 +35,8 @@ struct ExpectedPayLegend: View {
     private let swatch: CGFloat = PumTokens.Space.s10
     /// 공제 네모 테두리 두께
     private let outlineWidth: CGFloat = 1.5
-    /// 먹색 위 공제 글자 — statusDangerSoft(red-50). 원문은 더 진한 연빨강이나 먹색 위 빨강 토큰이 없음(충돌 #28)
-    static let deductionTint = PumColor.statusDangerSoft
+    /// 먹색 위 공제 글자 — 원문 연빨강 #F3A99F(DEC-026)
+    static let deductionTint = PumTokens.ColorToken.textDangerOnInverse
     /// 범례 네모 모서리(목업 약 2)
     private let swatchRadius: CGFloat = PumTokens.Space.s2
 
