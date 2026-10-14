@@ -4,6 +4,9 @@
 import SwiftUI
 
 struct ScheduleOptionDetailView: View {
+
+    /// 원문 아바타 30
+    private let avatarSize: CGFloat = 30
     var state: ScheduleOptionDetailState = .sample
     var onBack: () -> Void = {}
     /// 변경 요청 보내기. 결과를 done(성공 여부)로 알린다. 연결 전 기본값은 실패(done(false)).
@@ -152,12 +155,12 @@ struct ScheduleOptionDetailView: View {
     private func changeRow(_ c: ScheduleStaffChange) -> some View {
         ViewThatFits(in: .horizontal) {
             HStack(alignment: .center, spacing: PumTokens.Space.s10) { // 원문 칸 사이 10
-                PumAvatar(name: c.name, colorIndex: c.colorIndex)
+                PumAvatar(name: c.name, colorIndex: c.colorIndex, size: avatarSize)
                 changeText(c).frame(maxWidth: .infinity, alignment: .leading)
                 changeTag(c)
             }
             HStack(alignment: .top, spacing: PumTokens.Space.s10) { // 넘치면 증감은 이름 아래로
-                PumAvatar(name: c.name, colorIndex: c.colorIndex)
+                PumAvatar(name: c.name, colorIndex: c.colorIndex, size: avatarSize)
                 VStack(alignment: .leading, spacing: PumTokens.Space.s4) {
                     changeText(c)
                     changeTag(c)

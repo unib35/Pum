@@ -124,7 +124,7 @@ private struct RingModifier: ViewModifier {
     }
 }
 
-/// C1 PAIR — 부정이 왼쪽, 비율 1 : 1.5
+/// C1 PAIR — 부정이 왼쪽, 비율 1 : 1.5, 간격 10(원문 · DEC-015)
 struct PumButtonPair: View {
     let negative: String
     let positive: String
@@ -136,7 +136,7 @@ struct PumButtonPair: View {
 
     var body: some View {
         GeometryReader { geo in
-            let gap = PumTokens.Space.s8
+            let gap = PumTokens.Space.s10
             let unit = (geo.size.width - gap) / 2.5
             HStack(spacing: gap) {
                 PumButton(title: negative, kind: negativeKind, size: size, action: onNegative).frame(width: unit)

@@ -4,6 +4,9 @@
 import SwiftUI
 
 struct RequestInboxView: View {
+
+    /// 원문 아바타 30
+    private let avatarSize: CGFloat = 30
     var state: RequestInboxState = .sample
     var onBack: () -> Void = {}
     /// 「승인」 · 「거절」. 결과를 done(성공 여부)로 알린다. 연결 전 기본값은 실패(done(false)).
@@ -54,7 +57,7 @@ struct RequestInboxView: View {
 
     private func head(_ item: RequestItem) -> some View {
         HStack(alignment: .center, spacing: PumTokens.Space.s10) {
-            PumAvatar(name: item.name, colorIndex: item.colorIndex)
+            PumAvatar(name: item.name, colorIndex: item.colorIndex, size: avatarSize)
             ViewThatFits(in: .horizontal) {
                 HStack(spacing: PumTokens.Space.s10) { who(item); Spacer(minLength: PumTokens.Space.s8); time(item) }
                 VStack(alignment: .leading, spacing: PumTokens.Space.s4) {

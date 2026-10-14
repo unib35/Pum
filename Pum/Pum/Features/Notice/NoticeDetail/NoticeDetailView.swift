@@ -3,6 +3,9 @@
 import SwiftUI
 
 struct NoticeDetailView: View {
+
+    /// 원문 아바타 32
+    private let avatarSize: CGFloat = 32
     var state: NoticeDetailState = .sample
     var onBack: () -> Void = {}
     var onApply: () -> Void = {}
@@ -85,7 +88,7 @@ struct NoticeDetailView: View {
     private var author: some View {
         HStack(spacing: PumTokens.Space.s10) { // 원문 아바타–이름 10
             // 먹색 원 + 흰 글자(팔레트 먹색 항목 = index 5). 원문 지름 32pt → 공통 아바타 36pt 근사
-            PumAvatar(name: state.authorName, colorIndex: 5)
+            PumAvatar(name: state.authorName, colorIndex: 5, size: avatarSize)
             VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
                 Text(state.authorName).pumText(.footnote, weight: .semibold).foregroundStyle(PumColor.textPrimary)
                 Text(state.postedAtText).pumText(.caption).foregroundStyle(PumColor.textSecondary)

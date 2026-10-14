@@ -3,6 +3,9 @@
 import SwiftUI
 
 struct PayslipIssueConfirmSheet: View {
+
+    /// 원문 아바타 32
+    private let avatarSize: CGFloat = 32
     let state: PayslipIssueConfirmState
     @Binding var lock: WorkClosingLock
     var onCancel: () -> Void
@@ -34,7 +37,7 @@ struct PayslipIssueConfirmSheet: View {
 
     private func personRow(_ r: PayslipIssueConfirmRow, isLast: Bool) -> some View {
         HStack(spacing: PumTokens.Space.s12) {
-            PumAvatar(name: r.name, colorIndex: r.colorIndex).accessibilityHidden(true)
+            PumAvatar(name: r.name, colorIndex: r.colorIndex, size: avatarSize).accessibilityHidden(true)
             Text(r.name).pumText(.body).foregroundStyle(PumColor.textPrimary)
                 .frame(maxWidth: .infinity, alignment: .leading)
             Text(r.amountText).pumText(.body, weight: .bold).foregroundStyle(PumColor.textPrimary)
