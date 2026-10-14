@@ -2,6 +2,9 @@
 import SwiftUI
 
 struct SubstituteRequestSheet: View {
+
+    /// 원문 아바타 40
+    private let avatarSize: CGFloat = 40
     let request: SubstituteRequest
     var onCancelRequest: () -> Void = {}
 
@@ -79,7 +82,7 @@ struct SubstituteRequestSheet: View {
                     .accessibilityAddTraits(.isHeader)
                 ForEach(Array(request.applicants.enumerated()), id: \.offset) { _, who in
                     HStack(spacing: PumTokens.Space.s12) {
-                        PumAvatar(name: who.name, colorIndex: who.colorIndex)
+                        PumAvatar(name: who.name, colorIndex: who.colorIndex, size: avatarSize)
                         VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
                             // 목업 15px 600 → body(16) semibold
                             Text(who.name).pumText(.body, weight: .semibold).foregroundStyle(PumColor.textPrimary)

@@ -142,7 +142,7 @@ struct OwnerHomeView: View {
                 OwnerPersonRow(name: p.name, colorIndex: p.colorIndex, title: p.name,
                                detail: p.detail(now: state.nowMinute),
                                overdueText: overdue ? OwnerHomeFormat.overdue(minutes: p.overdueMinutes(now: state.nowMinute)) : nil,
-                               rowPadY: PumTokens.Space.s10) {
+                               rowPadY: PumTokens.Space.s10, avatarSize: 38) {
                     if overdue {
                         PumChipButton(title: "퇴근 확인", kind: .attention) { onClockOutCheck(p) }
                             .accessibilityLabel(Text("\(p.name) 퇴근 확인"))
@@ -231,6 +231,8 @@ private struct OwnerPersonRow<Trailing: View>: View {
     var overdueText: String?
     /// 원문 결정 행 11 → rowPadY(12), 근무 중 행 10
     var rowPadY: CGFloat = PumTokens.Size.rowPadY
+    /// 원문 아바타 — 결정 행 34, 근무 중 행 38
+    var avatarSize: CGFloat = 34
     @ViewBuilder var trailing: Trailing
 
     var body: some View {
@@ -256,7 +258,7 @@ private struct OwnerPersonRow<Trailing: View>: View {
     // 이름 · 상황이 한 덩어리로 읽힌다(버튼은 따로)
     private var info: some View {
         HStack(spacing: PumTokens.Space.s12) {
-            PumAvatar(name: name, colorIndex: colorIndex)
+            PumAvatar(name: name, colorIndex: colorIndex, size: avatarSize)
             VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
                 Text(title).pumText(.callout).foregroundStyle(PumColor.textPrimary)
                 secondLine.pumText(.caption)

@@ -175,6 +175,9 @@ struct OwnerHomeClearView: View {
 
 /// 아바타 · 이름 · 둘째 줄 · 오른쪽 막대(근무 중만). 예정 행은 이름 · 시간 모두 흐린 글자.
 private struct ClearPersonRow<Trailing: View>: View {
+
+    /// 원문 아바타 38
+    private let avatarSize: CGFloat = 38
     let name: String
     let colorIndex: Int
     let detail: String
@@ -212,7 +215,7 @@ private struct ClearPersonRow<Trailing: View>: View {
 
     private var info: some View {
         HStack(spacing: PumTokens.Space.s12) {
-            PumAvatar(name: name, colorIndex: colorIndex)
+            PumAvatar(name: name, colorIndex: colorIndex, size: avatarSize)
             VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
                 Text(name).pumText(.callout)
                     .foregroundStyle(isDimmed ? PumColor.textSecondary : PumColor.textPrimary)
