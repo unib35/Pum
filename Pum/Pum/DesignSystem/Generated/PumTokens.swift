@@ -100,6 +100,42 @@ nonisolated enum PumTokens {
         static let statusDanger = Color(.sRGB, red: 0.7569, green: 0.1529, blue: 0.1765, opacity: 1)
         /// --status-danger-soft #F9E3E1
         static let statusDangerSoft = Color(.sRGB, red: 0.9765, green: 0.8902, blue: 0.8824, opacity: 1)
+        /// --avatar-1-bg #D6DFFB
+        static let avatar1Bg = Color(.sRGB, red: 0.8392, green: 0.8745, blue: 0.9843, opacity: 1)
+        /// --avatar-1-fg #2F5BEA
+        static let avatar1Fg = Color(.sRGB, red: 0.1843, green: 0.3569, blue: 0.9176, opacity: 1)
+        /// --avatar-2-bg #EAD9E5
+        static let avatar2Bg = Color(.sRGB, red: 0.9176, green: 0.851, blue: 0.898, opacity: 1)
+        /// --avatar-2-fg #6B3A5B
+        static let avatar2Fg = Color(.sRGB, red: 0.4196, green: 0.2275, blue: 0.3569, opacity: 1)
+        /// --avatar-3-bg #F3E3CF
+        static let avatar3Bg = Color(.sRGB, red: 0.9529, green: 0.8902, blue: 0.8118, opacity: 1)
+        /// --avatar-3-fg #7A4A12
+        static let avatar3Fg = Color(.sRGB, red: 0.4784, green: 0.2902, blue: 0.0706, opacity: 1)
+        /// --avatar-4-bg #E2E4F0
+        static let avatar4Bg = Color(.sRGB, red: 0.8863, green: 0.8941, blue: 0.9412, opacity: 1)
+        /// --avatar-4-fg #3B4270
+        static let avatar4Fg = Color(.sRGB, red: 0.2314, green: 0.2588, blue: 0.4392, opacity: 1)
+        /// --avatar-5-bg #D8E8DF
+        static let avatar5Bg = Color(.sRGB, red: 0.8471, green: 0.9098, blue: 0.8745, opacity: 1)
+        /// --avatar-5-fg #1F5A40
+        static let avatar5Fg = Color(.sRGB, red: 0.1216, green: 0.3529, blue: 0.251, opacity: 1)
+        /// --avatar-6-bg #171B26
+        static let avatar6Bg = Color(.sRGB, red: 0.0902, green: 0.1059, blue: 0.149, opacity: 1)
+        /// --avatar-6-fg #FFFFFF
+        static let avatar6Fg = Color(.sRGB, red: 1.0, green: 1.0, blue: 1.0, opacity: 1)
+        /// --store-1 #2F5BEA
+        static let store1 = Color(.sRGB, red: 0.1843, green: 0.3569, blue: 0.9176, opacity: 1)
+        /// --store-2 #8A5A2B
+        static let store2 = Color(.sRGB, red: 0.5412, green: 0.3529, blue: 0.1686, opacity: 1)
+        /// --store-3 #3B4270
+        static let store3 = Color(.sRGB, red: 0.2314, green: 0.2588, blue: 0.4392, opacity: 1)
+        /// --store-4 #6B8AF0
+        static let store4 = Color(.sRGB, red: 0.4196, green: 0.5412, blue: 0.9412, opacity: 1)
+        /// --text-danger-on-inverse #F3A99F
+        static let textDangerOnInverse = Color(.sRGB, red: 0.9529, green: 0.6627, blue: 0.6235, opacity: 1)
+        /// --kakao-yellow #FEE500
+        static let kakaoYellow = Color(.sRGB, red: 0.9961, green: 0.898, blue: 0.0, opacity: 1)
     }
 
     nonisolated enum Space {

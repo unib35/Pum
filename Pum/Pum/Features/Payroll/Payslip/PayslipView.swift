@@ -254,8 +254,8 @@ private struct PayslipActions: View {
     let onKakao: () -> Void
     let stacked: Bool
 
-    // 디자인 1m 값 #FAE100(카카오 공식 노랑 #FEE500과 다름 — 디자인 결정 필요). 바탕만 이 값, 글자는 먹색.
-    private let kakaoYellow = Color(.sRGB, red: 250.0 / 255, green: 225.0 / 255, blue: 0, opacity: 1)
+    // 카카오 공식 노랑 #FEE500(DEC-025). 바탕만 이 값, 글자는 먹색.
+    private let kakaoYellow = PumTokens.ColorToken.kakaoYellow
     /// 카카오 로고 자리의 검은 원 지름(로고 에셋 없음 — 원으로 대체)
     private let logoDot: CGFloat = PumTokens.Space.s16
 
