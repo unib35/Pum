@@ -6,7 +6,7 @@ enum AppRole: Hashable {
 }
 
 enum AppTab: String, Hashable {
-    case home, work, pay, me, store
+    case home, work, news, pay, me, store
 }
 
 /// 화면 이동을 맡는다. 화면은 목적지만 요청하고(navigate) 쌓는 방법은 여기서 정한다.
@@ -29,6 +29,7 @@ final class AppRouter {
     var root: AppRoute {
         switch (role, tab) {
         case (.employee, .work): .attendance(.workCalendar)
+        case (.employee, .news): .notice(.newsFeed) // DEC-020
         case (.employee, .pay): .payroll(.expectedPay)
         case (.employee, .me): .settings(.myInfo)
         case (.owner, .work): .schedule(.ownerSchedule) // DEC-019: 평소 1t, 확인할 기록은 1t 위쪽 줄에서 1r로

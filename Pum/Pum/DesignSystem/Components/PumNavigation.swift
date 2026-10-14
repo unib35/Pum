@@ -48,6 +48,8 @@ struct PumWorkplaceChip: View {
     var tileColor: Color = PumColor.accent
     /// 역할 배지(예: 「사장님」). 사장님 사업장은 타일도 무채색(DEC-007 · 1az)
     var role: String? = nil
+    /// 주의 배지(예: 「미인증」) — 역할 배지 옆, 주황(DEC-023 · 5a)
+    var attention: String? = nil
     let action: () -> Void
 
     var body: some View {
@@ -67,6 +69,14 @@ struct PumWorkplaceChip: View {
                         .padding(.vertical, PumTokens.Space.s2)
                         .background(PumColor.surfaceFill, in: RoundedRectangle(cornerRadius: PumTokens.Radius.xs, style: .continuous))
                 }
+                if let attention {
+                    Text(attention)
+                        .pumText(.caption2, weight: .bold)
+                        .foregroundStyle(PumColor.statusAttention)
+                        .padding(.horizontal, PumTokens.Space.s6)
+                        .padding(.vertical, PumTokens.Space.s2)
+                        .background(PumColor.statusAttentionSoft, in: RoundedRectangle(cornerRadius: PumTokens.Radius.xs, style: .continuous))
+                }
                 Image(systemName: "chevron.down")
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(PumColor.textSecondary)
@@ -82,7 +92,7 @@ struct PumWorkplaceChip: View {
             .padding(.vertical, -PumTokens.Space.s2)
         }
         .buttonStyle(.plain)
-        .accessibilityLabel(Text("사업장: \(name)\(role.map { ", \($0)" } ?? "")"))
+        .accessibilityLabel(Text("사업장: \(name)\(role.map { ", \($0)" } ?? "")\(attention.map { ", \($0)" } ?? "")"))
         .accessibilityHint(Text("사업장을 바꿔요"))
     }
 }
@@ -213,12 +223,18 @@ struct PumTabBar: View {
 }
 
 extension PumTabItem {
-    static let employeeTabs: [PumTabItem] = [
-        .init(id: "home", title: "홈", systemImage: "house"),
-        .init(id: "work", title: "근무", systemImage: "calendar"),
-        .init(id: "pay", title: "급여", systemImage: "wonsign.circle"),
-        .init(id: "me", title: "내 정보", systemImage: "person"),
-    ]
+    /// 직원 탭 5개 — 홈 · 근무 · 소식 · 급여 · 내 정보(DEC-020, C6 「직원 5」)
+    static let employeeTabs: [PumTabItem] = employeeTabs(newsBadge: 0)
+
+    static func employeeTabs(newsBadge: Int) -> [PumTabItem] {
+        [
+            .init(id: "home", title: "홈", systemImage: "house"),
+            .init(id: "work", title: "근무", systemImage: "calendar"),
+            .init(id: "news", title: "소식", systemImage: "bell", badge: newsBadge),
+            .init(id: "pay", title: "급여", systemImage: "wonsign.circle"),
+            .init(id: "me", title: "내 정보", systemImage: "person"),
+        ]
+    }
 
     /// 사장님 탭 4개(디자인 1az · C6 「사장님 4」)
     static func ownerTabs(workBadge: Int = 0) -> [PumTabItem] {

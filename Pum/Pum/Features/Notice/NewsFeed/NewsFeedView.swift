@@ -22,16 +22,7 @@ struct NewsFeedView: View {
     @State private var tab = "news"
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-    /// README 충돌 #9 — 확정 홈은 4개, 3a 원문은 5개. 공통 PumTabBar는 고치지 않고 여기서 5개를 만든다.
-    private var tabs: [PumTabItem] {
-        [
-            .init(id: "home", title: "홈", systemImage: "house"),
-            .init(id: "work", title: "근무", systemImage: "calendar"),
-            .init(id: "news", title: "소식", systemImage: "bell", badge: state.tabBadge), // 원문 아이콘에 가까운 SF Symbol
-            .init(id: "pay", title: "급여", systemImage: "wonsign.circle"),
-            .init(id: "me", title: "내 정보", systemImage: "person"),
-        ]
-    }
+    private var tabs: [PumTabItem] { PumTabItem.employeeTabs(newsBadge: state.tabBadge) }
 
     var body: some View {
         ScrollView {
