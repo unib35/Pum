@@ -72,11 +72,14 @@ enum PayrollRoute: String, CaseIterable, Hashable {
         case .payslip:
             PayslipView(onBack: router.back)
         case .expectedPay:
-            ExpectedPayView()
+            ExpectedPayView(onWorkplace: { router.navigate(.home(.workplaceSwitcher)) })
         case .multiWorkplacePay:
             MultiWorkplacePayView()
         case .ownerPayroll:
-            OwnerPayrollView(onConfirm: { router.navigate(.payroll(.payrollCalculating)) })
+            OwnerPayrollView(
+                onProcess: { router.navigate(.payroll(.workClosingProblems)) },
+                onConfirm: { router.navigate(.payroll(.payrollCalculating)) }
+            )
         case .payrollConfirm:
             PayrollConfirmView(
                 onConfirm: { _ in router.replace(with: .payroll(.payslipIssue)) },
@@ -97,6 +100,8 @@ enum PayrollRoute: String, CaseIterable, Hashable {
             WorkClosingView(
                 state: .sample,
                 onBack: router.back,
+                onOpenCategory: { _ in router.navigate(.payroll(.workClosingProblems)) },
+                onOpenEmployeeConfirm: { router.navigate(.payroll(.recordReviewRequest)) },
                 onReviewProblems: { router.navigate(.payroll(.workClosingProblems)) },
                 onClose: { done in
                     done(true)
@@ -139,7 +144,12 @@ enum PayrollRoute: String, CaseIterable, Hashable {
                 onClose: router.back
             )
         case .laborSimulatorResult:
-            LaborSimulatorResultView(state: .sample, onBack: router.back)
+            LaborSimulatorResultView(
+                state: .sample,
+                onBack: router.back,
+                onOpenRecommend: { router.navigate(.schedule(.staffingNeeds)) },
+                onSaveOnly: router.back
+            )
         case .laborSimulator:
             LaborSimulatorView(
                 state: .sample,
@@ -224,6 +234,7 @@ enum PayrollRoute: String, CaseIterable, Hashable {
             WorkClosingDirectView(
                 state: .sample,
                 onBack: router.back,
+                onOpenDay: { _, _ in router.navigate(.employee(.dayFix)) },
                 onClose: { done in
                     done(true)
                     router.navigate(.payroll(.payslipSendDirect))
@@ -251,7 +262,7 @@ enum PayrollRoute: String, CaseIterable, Hashable {
     }
 
     static let connected: Set<Self> = [
-        .payslip, .ownerPayroll, .payrollConfirm, .recordReviewRequest, .paymentChecklist,
+        .payslip, .expectedPay, .ownerPayroll, .payrollConfirm, .recordReviewRequest, .paymentChecklist,
         .workClosing, .workClosingProblems, .workClosingConfirm, .paymentDoneConfirm, .paymentSend,
         .paymentSendMasked, .laborSimulatorResult, .laborSimulator, .paymentNotReceived, .paymentCheckRequest,
         .payslipIssue, .payslipIssueConfirm, .correctionRecalc, .correctedPayslip, .payrollCalculating,

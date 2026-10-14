@@ -39,18 +39,32 @@ struct DevLauncher: View {
     }
 }
 
+/// 화면 목록 — 누르면 그 화면이 쌓인 실제 앱(AppShell)이 열려 버튼이 다음 화면으로 이어진다. 위 × 로 목록에 돌아온다.
 struct ScreenListView: View {
     let routes: [AppRoute]
-    @State private var router = AppRouter(role: .employee)
+    @State private var opened: AppRoute?
 
     var body: some View {
         List(routes) { route in
-            NavigationLink("\(route.screenID) \(route.title)") {
-                route.view(router).toolbar(.hidden, for: .navigationBar)
-            }
+            Button("\(route.screenID) \(route.title)") { opened = route }
         }
         .navigationTitle("화면 목록")
+        .fullScreenCover(item: $opened) { route in
+            AppShell(role: Self.role(for: route), start: [route]) { opened = nil }
+        }
     }
+
+    /// 흐름 지도에서 사장님이 쓰는 화면(개발용 대략 구분 — 탭 바 모양만 달라진다)
+    static let ownerScreens: Set<String> = [
+        "1aq", "1ar", "5a", "1r", "1s", "1t", "1u", "1v", "1w", "1x", "1ac", "1ad", "1af", "1ah", "1an",
+        "2i", "2l", "3c", "3d", "4c", "5b", "5c", "5d", "5e", "6g", "6h", "6j", "6l",
+        "7a", "7b", "7c", "8a", "8b", "8c", "8d", "8e", "9a", "9b", "9c", "9d",
+        "10a", "10b", "10c", "10d", "10e", "10f", "10g", "10h", "10k", "10l", "10m", "10n", "10p", "10q", "10r", "10s",
+        "17a", "17b", "17c", "17d", "17h", "17j", "19a", "19b", "19e", "19i",
+        "20a", "20b", "20c", "20d", "20e", "20f", "20g", "20h", "20l", "21a", "21b", "21d", "21e", "21j", "21l", "21n",
+    ]
+
+    static func role(for route: AppRoute) -> AppRole { ownerScreens.contains(route.screenID) ? .owner : .employee }
 }
 
 struct ConnectionStatusView: View {
