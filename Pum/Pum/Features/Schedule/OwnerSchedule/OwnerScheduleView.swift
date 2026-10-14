@@ -22,6 +22,7 @@ struct OwnerScheduleView: View {
     private let onReject: () -> Void
     private let onApprove: () -> Void
     private let onChangeWorkplace: () -> Void
+    private let onOpenReview: () -> Void
     @State private var tab = "work"
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -29,7 +30,8 @@ struct OwnerScheduleView: View {
          onPreviousWeek: @escaping () -> Void = {}, onNextWeek: @escaping () -> Void = {},
          onAddShift: @escaping (ScheduleDay) -> Void = { _ in },
          onReject: @escaping () -> Void = {}, onApprove: @escaping () -> Void = {},
-         onChangeWorkplace: @escaping () -> Void = {}) {
+         onChangeWorkplace: @escaping () -> Void = {},
+         onOpenReview: @escaping () -> Void = {}) {
         _state = State(initialValue: state)
         self.onPreviousWeek = onPreviousWeek
         self.onNextWeek = onNextWeek
@@ -37,12 +39,14 @@ struct OwnerScheduleView: View {
         self.onReject = onReject
         self.onApprove = onApprove
         self.onChangeWorkplace = onChangeWorkplace
+        self.onOpenReview = onOpenReview
     }
 
     var body: some View {
         ScrollView {
             VStack(spacing: PumTokens.Space.s14) { // 원문 블록 사이 14
                 header
+                if state.pendingReviewCount > 0 { reviewRow }
                 weekCard
                 if let day = state.selectedDay {
                     dayLine(day)
@@ -57,6 +61,20 @@ struct OwnerScheduleView: View {
         .safeAreaInset(edge: .bottom, spacing: 0) {
             PumTabBar(items: PumTabItem.ownerTabs(workBadge: state.workTabBadge), selection: $tab)
         }
+    }
+
+    // MARK: 확인할 근무기록 — 근무 탭 첫 화면이 1t일 때 1r로 가는 길(DEC-019)
+
+    private var reviewRow: some View {
+        Button(action: onOpenReview) {
+            PumCard(attention: true) {
+                PumRow(title: "확인 필요 근무기록", showsChevron: true, isLast: true) {
+                    PumRowValue(text: "\(state.pendingReviewCount)건")
+                }
+            }
+        }
+        .buttonStyle(.plain)
+        .accessibilityHint(Text("근무기록 확인 화면으로 가요"))
     }
 
     // MARK: 머리

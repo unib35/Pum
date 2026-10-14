@@ -31,7 +31,7 @@ final class AppRouter {
         case (.employee, .work): .attendance(.workCalendar)
         case (.employee, .pay): .payroll(.expectedPay)
         case (.employee, .me): .settings(.myInfo)
-        case (.owner, .work): .attendance(.ownerReview)
+        case (.owner, .work): .schedule(.ownerSchedule) // DEC-019: 평소 1t, 확인할 기록은 1t 위쪽 줄에서 1r로
         case (.owner, .pay): .payroll(.ownerPayroll)
         case (.owner, .store): .employee(.staffList)
         case (.employee, _): .home(.employeeHome)

@@ -42,7 +42,7 @@ struct PaymentCheckRequestSheet: View {
     private var infoCard: some View {
         PumCard {
             amountRow
-            stackedRow(title: state.accountLabel, detail: state.sentAccount, spoken: state.accountSpoken, isLast: false)
+            stackedRow(title: state.accountLabel, detail: state.displayAccount, spoken: state.accountSpoken, isLast: false)
             stackedRow(title: state.paidLabel, detail: state.paidSubtitle, spoken: state.paidSpoken, isLast: true)
         }
     }
