@@ -148,6 +148,7 @@ enum PayrollRoute: String, CaseIterable, Hashable {
                 state: .sample,
                 onBack: router.back,
                 onOpenRecommend: { router.navigate(.schedule(.staffingNeeds)) },
+                onAddToSchedule: { router.navigate(.schedule(.scheduleAddShift)) }, // → 17b(사용자 확인)
                 onSaveOnly: router.back
             )
         case .laborSimulator:

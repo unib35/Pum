@@ -149,6 +149,7 @@ enum AttendanceRoute: String, CaseIterable, Hashable {
         case .checkInTooFar:
             CheckInTooFarView(
                 onClose: router.back,
+                onRetry: { _ in router.replace(with: .attendance(.checkInJudging)) }, // 다시 확인 → 21m(사용자 확인)
                 onRequestOwner: { router.navigate(.attendance(.adminConfirmCheckIn)) }
             )
         case .checkInPassed:
@@ -156,6 +157,7 @@ enum AttendanceRoute: String, CaseIterable, Hashable {
         case .checkInLowAccuracy:
             CheckInLowAccuracyView(
                 onClose: router.back,
+                onRetry: { _ in router.replace(with: .attendance(.checkInJudging)) }, // 다시 시도 → 21m(사용자 확인)
                 onScanQR: router.back,
                 onRequestOwner: { router.navigate(.attendance(.adminConfirmCheckIn)) }
             )

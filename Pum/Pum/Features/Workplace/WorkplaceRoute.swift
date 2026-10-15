@@ -36,7 +36,10 @@ enum WorkplaceRoute: String, CaseIterable, Hashable {
     func view(_ router: AppRouter) -> some View {
         switch self {
         case .ownerWorkplaces:
-            OwnerWorkplacesView(onAdd: { router.navigate(.workplace(.workplaceCreate)) })
+            OwnerWorkplacesView(
+                onEntry: { _ in router.navigate(.home(.ownerHome)) }, // 사업장 카드 → 그 사업장 홈(사용자 확인 2026-10-15)
+                onAdd: { router.navigate(.workplace(.workplaceCreate)) }
+            )
         case .attendancePolicy:
             AttendancePolicyView(onBack: router.back)
         case .workplaceCreate:
@@ -55,6 +58,7 @@ enum WorkplaceRoute: String, CaseIterable, Hashable {
                 onOpenCheckInMethod: { router.navigate(.workplace(.checkInMethod)) },
                 onOpenOvertimePolicy: { router.navigate(.workplace(.attendancePolicy)) },
                 onOpenStoreQR: { router.navigate(.workplace(.checkInQR)) },
+                onOpenContractTemplate: { router.navigate(.employee(.contractList)) }, // 기본 양식 → 1ab(사용자 확인)
                 onOpenAdmin: { _ in router.navigate(.employee(.managerPermissions)) }, // 관리자 행 → 6h (J15 갈래)
                 onAddAdmin: { router.navigate(.employee(.managerInvite)) }
             )

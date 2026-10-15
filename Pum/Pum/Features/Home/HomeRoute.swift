@@ -78,7 +78,8 @@ enum HomeRoute: String, CaseIterable, Hashable {
         case .ownerHomeClear:
             OwnerHomeClearView(
                 onSwitchWorkplace: { router.navigate(.home(.workplaceSwitcher)) },
-                onBell: { router.navigate(.notice(.newsFeed)) }
+                onBell: { router.navigate(.notice(.newsFeed)) },
+                onOpenHistory: { router.navigate(.workplace(.activityLog)) } // 「기록」 → 6l(사용자 확인)
             )
         case .employeeHomeOvertime:
             EmployeeHomeOvertimeView(
@@ -99,6 +100,7 @@ enum HomeRoute: String, CaseIterable, Hashable {
                 onSwitchWorkplace: { router.navigate(.home(.workplaceSwitcher)) },
                 onBell: { router.navigate(.notice(.newsFeed)) },
                 onClockIn: { router.navigate(.attendance(.clockIn)) },
+                onManualEntry: { router.navigate(.attendance(.personalRecordDetail)) }, // → 2g(사용자 확인)
                 onOpenCalendar: { router.navigate(.attendance(.workCalendar)) },
                 onOpenPayBasis: { router.navigate(.payroll(.expectedPay)) }
             )
@@ -108,6 +110,7 @@ enum HomeRoute: String, CaseIterable, Hashable {
                 onSwitchWorkplace: { router.navigate(.home(.workplaceSwitcher)) },
                 onBell: { router.navigate(.notice(.newsFeed)) },
                 onOpenStep: { id in if id == "clockin" { router.navigate(.workplace(.checkInQR)) } },
+                onCreateShifts: { router.navigate(.schedule(.staffingNeeds)) }, // 근무 시간대 만들기 → 9a(사용자 확인)
                 onVerify: { router.navigate(.workplace(.verifyIntro)) },
                 onSaveQR: { router.navigate(.workplace(.checkInQR)) }
             )
