@@ -397,6 +397,7 @@ enum EmployeeRoute: String, CaseIterable, Hashable {
                 state: .sample,
                 sheet: .sample,
                 onBack: router.back,
+                onFixOtherDay: { router.navigate(.employee(.dayFix)) }, // 다른 날 고치기 → 20f(사용자 확인)
                 onContract: { router.navigate(.employee(.contractList)) }, // 「계약서」 → 1ab
                 onInvite: { router.navigate(.employee(.staffInvite)) },
                 onSave: { _, done in
@@ -410,6 +411,7 @@ enum EmployeeRoute: String, CaseIterable, Hashable {
                 sheet: .sample,
                 startsWithSheetOpen: true,
                 onBack: router.back,
+                onFixOtherDay: { router.navigate(.employee(.dayFix)) }, // 다른 날 고치기 → 20f(사용자 확인)
                 onContract: { router.navigate(.employee(.contractList)) }, // 「계약서」 → 1ab
                 onInvite: { router.navigate(.employee(.staffInvite)) },
                 onSave: { _, done in

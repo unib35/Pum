@@ -35,7 +35,7 @@ enum AuthRoute: String, CaseIterable, Hashable {
                     switch kind {
                     case .contract: router.navigate(.employee(.contractList)) // 「근로계약서」 → 1ab
                     case .payslip: router.navigate(.payroll(.payslip)) // 「급여명세서」 → 1m
-                    case .workRecord: break // 근거 없음
+                    case .workRecord: router.navigate(.attendance(.workCalendar)) // → 1g(사용자 확인)
                     }
                 },
                 onRequestCertificate: { router.navigate(.employee(.employmentCertRequest)) }
