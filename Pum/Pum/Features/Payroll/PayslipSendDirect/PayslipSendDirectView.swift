@@ -27,7 +27,7 @@ struct PayslipSendDirectView: View {
                 .padding(.bottom, PumTokens.Space.s12)
             }
             .scrollBounceBehavior(.basedOnSize)
-            bottomBar
+            if !state.isSolo { bottomBar }
         }
         .background(PumColor.bgApp)
     }

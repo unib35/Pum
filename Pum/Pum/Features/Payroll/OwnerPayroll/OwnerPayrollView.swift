@@ -20,6 +20,7 @@ struct OwnerPayrollView: View {
     var onProcess: () -> Void = {}
     var onEmployee: (OwnerPayrollEmployee) -> Void = { _ in }
     var onConfirm: () -> Void = {}
+    var onSendPayslips: () -> Void = {}
     @Environment(\.dynamicTypeSize) private var typeSize
     @ScaledMetric(relativeTo: .caption2) private var circle = OwnerPayrollLayout.stepCircle
     @ScaledMetric(relativeTo: .callout) private var warnCircle = OwnerPayrollLayout.warnCircle
@@ -46,6 +47,12 @@ struct OwnerPayrollView: View {
                         .accessibilityHint(Text(record.confirmAccessibilityHint))
                         .padding(.horizontal, PumTokens.Size.screenPad)
                         .padding(.top, PumTokens.Space.s12) // 원문 아래 44 − 안전 영역 34
+                        .padding(.bottom, PumTokens.Space.s10)
+                }
+                if record.showsSendButton {
+                    PumButton(title: "명세서 보내기", kind: .primary, action: onSendPayslips)
+                        .padding(.horizontal, PumTokens.Size.screenPad)
+                        .padding(.top, PumTokens.Space.s12)
                         .padding(.bottom, PumTokens.Space.s10)
                 }
                 // 원문 1u는 탭 바 없이 확정 버튼만 하단 고정

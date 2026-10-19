@@ -22,6 +22,8 @@ nonisolated struct PayslipSendDirectState: Equatable, Sendable {
     let monthText: String      // 서버 값 예 「2026년 9월분 · 지급일 10월 10일」
     let recipients: [Recipient]
     let sendCount: Int         // 서버가 준 보낼 건수
+    /// MVP(DEC-033): 서버 보내기가 없어 「보내기」 버튼을 숨기고 PDF 공유만
+    var isSolo = false
 
     var title: String { "명세서 보내기" }
     var countText: String { "\(recipients.count)명" }

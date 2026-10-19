@@ -44,7 +44,8 @@ struct SoloPayrollScreen: View {
             record: record,
             onPickMonth: { pickingMonth = true },
             onEmployee: { e in router.navigate(.solo(.payslip(e.id))) },
-            onConfirm: { router.navigate(.solo(.workClosing)) })
+            onConfirm: { router.navigate(.solo(.workClosing)) },
+            onSendPayslips: { router.navigate(.solo(.payslipSend)) })
         .task(id: "\(selected.year)-\(selected.month)") {
             guard let workplace = workplaces.first else { return }
             try? SoloPayroll.useCase(context).prepare(workplace, year: selected.year, month: selected.month)
@@ -96,6 +97,7 @@ struct SoloWorkClosingScreen: View {
 struct SoloPayslipScreen: View {
     let router: AppRouter
     let employeeID: String
+    @State private var sharing: SharedFile?
     @Environment(SoloPayrollMonth.self) private var selected
     @Environment(\.modelContext) private var context
     @Query(sort: \Workplace.createdAt) private var workplaces: [Workplace]
@@ -103,7 +105,31 @@ struct SoloPayslipScreen: View {
     var body: some View {
         if let workplace = workplaces.first,
            let record = SoloPayroll.payslip(workplace, employeeID: employeeID, year: selected.year, month: selected.month, context: context) {
-            PayslipView(record: record, onBack: router.back)
+            PayslipView(record: record, onBack: router.back, onShare: {
+                sharing = SoloPayroll.pdfFile(workplace, employeeID: employeeID, year: selected.year, month: selected.month, context: context)
+            })
+            .sheet(item: $sharing) { SoloShareSheet(items: [$0.url]) }
+        }
+    }
+}
+
+/// 20h — 확정 명세서를 PDF로 공유(서버 보내기 없음)
+struct SoloPayslipSendScreen: View {
+    let router: AppRouter
+    @Environment(SoloPayrollMonth.self) private var selected
+    @Environment(\.modelContext) private var context
+    @Query(sort: \Workplace.createdAt) private var workplaces: [Workplace]
+    @State private var sharing: SharedFile?
+
+    var body: some View {
+        if let workplace = workplaces.first {
+            PayslipSendDirectView(
+                state: SoloPayroll.sendState(workplace, year: selected.year, month: selected.month, context: context),
+                onBack: router.back,
+                onSharePDF: { id in
+                    sharing = SoloPayroll.pdfFile(workplace, employeeID: id, year: selected.year, month: selected.month, context: context)
+                })
+            .sheet(item: $sharing) { SoloShareSheet(items: [$0.url]) }
         }
     }
 }
@@ -207,6 +233,12 @@ enum SoloPayroll {
 
     /// 1m — 마감했으면 확정 명세서, 아니면 지금 계산
     static func payslip(_ workplace: Workplace, employeeID: String, year: Int, month: Int, context: ModelContext) -> PayslipRecord? {
+        payslipWithTrace(workplace, employeeID: employeeID, year: year, month: month, context: context)?.record
+    }
+
+    /// 명세서 + 계산 근거(PDF용)
+    static func payslipWithTrace(_ workplace: Workplace, employeeID: String, year: Int, month: Int,
+                                 context: ModelContext) -> (record: PayslipRecord, trace: [String])? {
         let draft: (name: String, draft: PayslipDraft)?
         let closed = closedMonth(workplace, year: year, month: month, context: context)
         if let closed {
@@ -227,14 +259,36 @@ enum SoloPayroll {
         let next = month == 12 ? (year + 1, 1) : (year, month + 1)
         let payday = min(workplace.payday, SeoulDayKey.daysInMonth(year: next.0, month: next.1))
         let d = draft.draft
-        return PayslipRecord(
+        return (PayslipRecord(
             monthTitle: "\(year)년 \(month)월", workplaceName: workplace.name, employeeName: draft.name,
             payDateText: String(format: "%d.%02d.%02d", next.0, next.1, payday),
             workSummary: "\(d.workDays)일 \u{00B7} \(hoursText(d.workedMinutes))",
             statusText: closed == nil ? "마감 전" : "확정",
             earnings: d.payItems.enumerated().map { PayslipLine(id: "p\($0.offset)", label: $0.element.name, amount: $0.element.amount) },
             deductions: d.deductionItems.enumerated().map { PayslipLine(id: "d\($0.offset)", label: $0.element.name, amount: $0.element.amount) },
-            grossTotal: d.grossPay, deductionTotal: d.totalDeduction, netPay: d.netPay, isSolo: true)
+            grossTotal: d.grossPay, deductionTotal: d.totalDeduction, netPay: d.netPay, isSolo: true), d.traceLines)
+    }
+
+    /// PDF 파일을 만든다(실패하면 nil)
+    @MainActor
+    static func pdfFile(_ workplace: Workplace, employeeID: String, year: Int, month: Int, context: ModelContext) -> SharedFile? {
+        guard let slip = payslipWithTrace(workplace, employeeID: employeeID, year: year, month: month, context: context),
+              let url = try? PayslipDocument.makeFile(slip.record, traceLines: slip.trace) else { return nil }
+        return SharedFile(url: url)
+    }
+
+    /// 20h — 확정한 달의 받는 사람 · PDF
+    static func sendState(_ workplace: Workplace, year: Int, month: Int, context: ModelContext) -> PayslipSendDirectState {
+        let (rows, _) = Self.rows(workplace, year: year, month: month, context: context)
+        let next = month == 12 ? 1 : month + 1
+        let payday = min(workplace.payday, SeoulDayKey.daysInMonth(year: month == 12 ? year + 1 : year, month: next))
+        return PayslipSendDirectState(
+            monthText: "\(year)년 \(month)월분 \u{00B7} 지급일 \(next)월 \(payday)일",
+            recipients: rows.map {
+                .init(id: $0.id, name: $0.name, initial: PumAvatar.initial(for: $0.name), methodText: "PDF",
+                      netPay: $0.netPay, hasApp: false)
+            },
+            sendCount: rows.count, isSolo: true)
     }
 
     /// 4950 → 「82h 30m」(원문 표기)
