@@ -13,7 +13,7 @@ struct AppRouterTests {
     @Test func MVP_탭별_첫_화면() {
         let router = AppRouter(role: .soloOwner)
         router.select(.pay)
-        #expect(router.root == .payroll(.ownerPayroll))
+        #expect(router.root == .solo(.payroll))
         router.select(.settings)
         #expect(router.root == .workplace(.workplaceSettings))
     }

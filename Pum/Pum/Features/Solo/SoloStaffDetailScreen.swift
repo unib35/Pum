@@ -6,6 +6,8 @@ import UIKit
 struct SoloStaffDetailScreen: View {
     let router: AppRouter
     let employeeID: PersistentIdentifier
+    /// 있으면 그날이 있는 달을 보이고 그날 시트를 연다
+    var focusDayKey: Int? = nil
     @Environment(\.modelContext) private var context
     @State private var sheet: DayFixState?
     @State private var requestedDayID: String?
@@ -14,11 +16,12 @@ struct SoloStaffDetailScreen: View {
     @State private var showingPhotos = false
 
     private var today: Int { SeoulDayKey.from(.now) }
+    private var shownMonth: Int { focusDayKey ?? today }
 
     var body: some View {
         if let employee = context.model(for: employeeID) as? Employee, employee.modelContext != nil {
             AppLessStaffView(
-                state: SoloWorkMonth.staffState(employee, year: SeoulDayKey.year(today), month: SeoulDayKey.month(today), today: today),
+                state: SoloWorkMonth.staffState(employee, year: SeoulDayKey.year(shownMonth), month: SeoulDayKey.month(shownMonth), today: today),
                 sheet: sheet,
                 requestedDayID: requestedDayID,
                 onBack: router.back,
@@ -37,7 +40,10 @@ struct SoloStaffDetailScreen: View {
                     done(ok)
                     if ok { sheet = nil; requestedDayID = nil }
                 })
-            .task { fillThisMonth(employee) }
+            .task {
+                fillShownMonth(employee)
+                if let focusDayKey { requestedDayID = SoloWorkMonth.dayID(focusDayKey) }
+            }
             .soloDaySheet(isPresented: $pickingOtherDay, title: AppLessStaffState.fixOtherTitle, dayKey: $otherDayKey)
             .onChange(of: pickingOtherDay) { _, open in
                 if !open { requestedDayID = SoloWorkMonth.dayID(otherDayKey) }
@@ -48,9 +54,9 @@ struct SoloStaffDetailScreen: View {
         }
     }
 
-    private func fillThisMonth(_ employee: Employee) {
+    private func fillShownMonth(_ employee: Employee) {
         let repository = SwiftDataWorkDayRepository(context: context)
-        _ = try? repository.fillScheduled(for: employee, year: SeoulDayKey.year(today), month: SeoulDayKey.month(today))
+        _ = try? repository.fillScheduled(for: employee, year: SeoulDayKey.year(shownMonth), month: SeoulDayKey.month(shownMonth))
     }
 
     private func save(_ input: DayFixInput, employee: Employee) -> Bool {

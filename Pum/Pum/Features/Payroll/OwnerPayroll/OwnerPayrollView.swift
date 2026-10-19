@@ -28,7 +28,7 @@ struct OwnerPayrollView: View {
         ScrollView {
             VStack(spacing: PumTokens.Space.s14) { // 원문 블록 사이 14
                 header
-                stepper
+                if !record.isSolo { stepper }
                 if record.showsWarning { warning }
                 summaryCard
                 employeeCard
@@ -213,8 +213,10 @@ struct OwnerPayrollView: View {
     @ViewBuilder private var facts: some View {
         Text(record.headcountText).pumText(.caption, weight: .regular).foregroundStyle(PumColor.textSecondary)
         Text(record.totalWorkText).pumText(.caption, weight: .regular).foregroundStyle(PumColor.textSecondary)
-        Text("\(Text("전월 대비 ").foregroundColor(PumColor.textSecondary))\(Text(record.deltaText).fontWeight(.bold).foregroundColor(deltaColor))")
-            .pumText(.caption, weight: .regular)
+        if record.showsDelta {
+            Text("\(Text("전월 대비 ").foregroundColor(PumColor.textSecondary))\(Text(record.deltaText).fontWeight(.bold).foregroundColor(deltaColor))")
+                .pumText(.caption, weight: .regular)
+        }
     }
 
     /// 인건비 증가 = 빨강(원문). 감소 · 같음은 디자인 없음 → 보조색

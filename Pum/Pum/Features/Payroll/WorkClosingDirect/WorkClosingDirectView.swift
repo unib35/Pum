@@ -23,7 +23,7 @@ struct WorkClosingDirectView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: PumTokens.Space.s14) { // 원문 블록 사이 14
                     titleBlock
-                    summaryCard
+                    if !state.isSolo || !state.people.isEmpty { summaryCard }
                     ForEach(state.people) { person in
                         editedCard(person)
                     }
@@ -75,9 +75,9 @@ struct WorkClosingDirectView: View {
 
     private var summaryCard: some View {
         PumCard {
-            appRecordRow
-            ForEach(state.people) { person in
-                divider
+            if !state.isSolo { appRecordRow }
+            ForEach(Array(state.people.enumerated()), id: \.element.id) { i, person in
+                if !state.isSolo || i > 0 { divider }
                 confirmRow(person)
             }
         }

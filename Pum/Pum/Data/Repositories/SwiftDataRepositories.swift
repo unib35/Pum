@@ -227,6 +227,8 @@ final class SwiftDataPayrollRepository: PayrollRepository {
                               payItems: draft.payItems, deductionItems: draft.deductionItems,
                               grossPay: draft.grossPay, totalDeduction: draft.totalDeduction,
                               netPay: draft.netPay, traceLines: draft.traceLines, createdAt: date)
+        payslip.workDays = draft.workDays
+        payslip.workedMinutes = draft.workedMinutes
         context.insert(payslip)
         payslip.employee = employee
         payslip.payrollMonth = payrollMonth

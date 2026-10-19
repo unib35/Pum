@@ -33,12 +33,14 @@ nonisolated struct OwnerPayrollEmployee: Equatable, Sendable, Identifiable {
     let wageKindText: String
     let amount: Int             // 서버가 준 원
     let pendingCount: Int       // 미처리 근무기록(건)
+    /// MVP: 「마감 전」 · 「확정」
+    var statusTextOverride: String? = nil
 
     var amountText: String { PumFormat.amount(amount) }
     var durationText: String { OwnerPayrollRecord.durationText(minutes: workMinutes) }
     var detailText: String { "\(durationText) \u{00B7} \(workDays)일 \u{00B7} \(wageKindText)" }
     var hasPending: Bool { pendingCount > 0 }
-    var statusText: String { hasPending ? "미처리 \(pendingCount)건" : "기록 모두 확정" }
+    var statusText: String { statusTextOverride ?? (hasPending ? "미처리 \(pendingCount)건" : "기록 모두 확정") }
 
     /// 「이종민, 82시간 30분, 17일, 1,188,000원, 기록 모두 확정」
     var accessibilityText: String { "\(name), \(durationText), \(workDays)일, \(amountText)원, \(statusText)" }
@@ -55,6 +57,9 @@ nonisolated struct OwnerPayrollRecord: Equatable, Sendable {
     var totalMinutes: Int
     var deltaAmount: Int            // 전월 대비 증감(원)
     var employees: [OwnerPayrollEmployee]
+    /// MVP(DEC-033): 진행 단계 · 미처리 경고를 숨기고, 앞 달 기록이 없으면 전월 대비를 숨긴다
+    var isSolo = false
+    var showsDelta = true
 
     /// 딱 떨어지면 「74시간」(분 생략 — 원문), 아니면 「82시간 30분」
     static func durationText(minutes: Int) -> String {
@@ -67,7 +72,7 @@ nonisolated struct OwnerPayrollRecord: Equatable, Sendable {
     var stageAccessibilityText: String { "급여 진행, \(OwnerPayrollStage.allCases.count)단계 중 \(stageNumber)단계, \(stage.title)" }
 
     // 경고
-    var showsWarning: Bool { pendingCount > 0 }
+    var showsWarning: Bool { !isSolo && pendingCount > 0 }
     var warningTitle: String { "미처리 근무기록 \(pendingCount)건" }
     var warningBody: String { "급여를 확정하려면 먼저 처리해야 해요" }
     var warningActionText: String { "처리" }
@@ -89,7 +94,8 @@ nonisolated struct OwnerPayrollRecord: Equatable, Sendable {
     var summaryAccessibilityText: String {
         let word = deltaAmount > 0 ? "증가" : deltaAmount < 0 ? "감소" : "변동 없음"
         let delta = deltaAmount == 0 ? word : "\(PumFormat.amount(abs(deltaAmount)))원 \(word)"
-        return "\(summaryTitle) \(totalText)원, \(payDayLabel), \(headcountText), \(totalWorkText), 전월 대비 \(delta)"
+        let base = "\(summaryTitle) \(totalText)원, \(payDayLabel), \(headcountText), \(totalWorkText)"
+        return showsDelta ? "\(base), 전월 대비 \(delta)" : base
     }
 
     // 확정 버튼: 미처리가 남으면 확정 불가(REQ-107)
