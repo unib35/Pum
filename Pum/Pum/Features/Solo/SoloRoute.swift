@@ -14,6 +14,7 @@ enum SoloRoute: Hashable {
     case payroll
     case workClosing
     case payslip(String)
+    case payslipSend
     case settings
 
     var screenID: String {
@@ -27,6 +28,7 @@ enum SoloRoute: Hashable {
         case .payroll: "solo-1u"
         case .workClosing: "solo-20g"
         case .payslip: "solo-1m"
+        case .payslipSend: "solo-20h"
         case .settings: "solo-4c"
         }
     }
@@ -42,6 +44,7 @@ enum SoloRoute: Hashable {
         case .payroll: "급여"
         case .workClosing: "근무 마감"
         case .payslip: "급여명세서"
+        case .payslipSend: "명세서 보내기"
         case .settings: "설정"
         }
     }
@@ -58,6 +61,7 @@ enum SoloRoute: Hashable {
         case .payroll: SoloPayrollScreen(router: router)
         case .workClosing: SoloWorkClosingScreen(router: router)
         case .payslip(let id): SoloPayslipScreen(router: router, employeeID: id)
+        case .payslipSend: SoloPayslipSendScreen(router: router)
         case .settings: SoloSettingsScreen(router: router)
         }
     }

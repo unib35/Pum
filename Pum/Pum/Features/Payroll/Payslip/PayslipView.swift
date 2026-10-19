@@ -69,9 +69,7 @@ struct PayslipView: View {
             HStack {
                 PumIconButton(systemImage: "chevron.left", label: "뒤로", action: onBack)
                 Spacer()
-                if !record.isSolo {
-                    PumIconButton(systemImage: "square.and.arrow.up", label: "공유", action: onShare)
-                }
+                PumIconButton(systemImage: "square.and.arrow.up", label: record.isSolo ? "PDF 공유" : "공유", action: onShare)
             }
         }
         // 원문 머리 줄은 40 — 가운데 누름 영역 44는 넘쳐도 유지한다

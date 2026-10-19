@@ -103,6 +103,8 @@ nonisolated struct OwnerPayrollRecord: Equatable, Sendable {
     var canConfirm: Bool { stage == .needsReview && pendingCount == 0 }
     /// 확정 이후 단계 — 하단 확정 버튼 자리를 무엇으로 채울지는 디자인 없음(지금은 버튼 숨김)
     var showsConfirmButton: Bool { stage.rawValue <= OwnerPayrollStage.needsReview.rawValue }
+    /// MVP: 확정한 달은 같은 자리에 「명세서 보내기」(20h)
+    var showsSendButton: Bool { isSolo && stage == .confirmed && !employees.isEmpty }
     var confirmTitle: String { canConfirm ? "급여 확정하기" : "급여 확정하기 \u{00B7} 미처리 \(pendingCount)건 남음" }
     /// VoiceOver 라벨은 「급여 확정하기」만 — 이유는 힌트로 한 번(보이는 문구 · 힌트가 겹쳐 두 번 읽히지 않게)
     var confirmAccessibilityLabel: String { "급여 확정하기" }
