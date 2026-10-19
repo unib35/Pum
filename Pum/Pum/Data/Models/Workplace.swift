@@ -19,6 +19,8 @@ final class Workplace {
     var deductionRaw: String = Deduction.none.rawValue
     /// 급여일(1–31). 그 달에 없는 날이면 말일로 본다.
     var payday: Int = 10
+    /// 대표 색 번호(사업장 색 토큰 팔레트 인덱스).
+    var colorIndex: Int = 0
     var createdAt: Date = Date.now
 
     @Relationship(deleteRule: .cascade, inverse: \Employee.workplace)

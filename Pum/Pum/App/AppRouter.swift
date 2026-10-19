@@ -3,10 +3,13 @@ import Observation
 
 enum AppRole: Hashable {
     case employee, owner
+    /// MVP: 사장님 혼자 쓰는 월급 계산(DEC-028)
+    case soloOwner
 }
 
 enum AppTab: String, Hashable {
     case home, work, news, pay, me, store
+    case staff, settings // MVP(DEC-032)
 }
 
 /// 화면 이동을 맡는다. 화면은 목적지만 요청하고(navigate) 쌓는 방법은 여기서 정한다.
@@ -16,10 +19,13 @@ final class AppRouter {
     var tab: AppTab = .home
     private var stacks: [AppTab: [AppRoute]] = [:]
 
-    init(role: AppRole, start: [AppRoute] = []) {
+    init(role: AppRole, tab: AppTab? = nil, start: [AppRoute] = []) {
         self.role = role
-        stacks[.home] = start
+        self.tab = tab ?? Self.firstTab(of: role)
+        stacks[self.tab] = start
     }
+
+    static func firstTab(of role: AppRole) -> AppTab { role == .soloOwner ? .staff : .home }
 
     var path: [AppRoute] {
         get { stacks[tab] ?? [] }
@@ -35,6 +41,9 @@ final class AppRouter {
         case (.owner, .work): .schedule(.ownerSchedule) // DEC-019: 평소 1t, 확인할 기록은 1t 위쪽 줄에서 1r로
         case (.owner, .pay): .payroll(.ownerPayroll)
         case (.owner, .store): .employee(.staffList)
+        case (.soloOwner, .pay): .payroll(.ownerPayroll)
+        case (.soloOwner, .settings): .workplace(.workplaceSettings)
+        case (.soloOwner, _): .employee(.staffList)
         case (.employee, _): .home(.employeeHome)
         case (.owner, _): .home(.ownerHome)
         }
@@ -42,6 +51,8 @@ final class AppRouter {
 
     func navigate(_ route: AppRoute) { path.append(route) }
     func back() { if !path.isEmpty { path.removeLast() } }
+    /// 탭 첫 화면이면 nil(뒤로 버튼을 숨긴다)
+    var backIfPushed: (() -> Void)? { path.isEmpty ? nil : { [weak self] in self?.back() } }
     func backToRoot() { path.removeAll() }
     /// 뒤로 돌아오지 않는 이동(완료 화면 등)
     func replace(with route: AppRoute) {

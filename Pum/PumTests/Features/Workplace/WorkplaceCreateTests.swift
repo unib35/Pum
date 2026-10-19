@@ -52,4 +52,17 @@ struct WorkplaceCreateTests {
         s.failSubmit()
         #expect(s.canProceed)
     }
+
+    // DEC-033 — MVP: 이름만 있으면 만든다
+    @Test func MVP는_이름만_있으면_다음() {
+        var s = WorkplaceCreateState.soloEntry
+        #expect(s.isSolo)
+        #expect(!s.canProceed)
+        s.name = " 품카페 "
+        #expect(s.canProceed)
+        #expect(s.trimmedName == "품카페")
+        let began = s.beginSubmit()
+        #expect(began)
+        #expect(!s.canProceed)
+    }
 }
