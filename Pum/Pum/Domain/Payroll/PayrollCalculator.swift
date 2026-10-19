@@ -1,4 +1,4 @@
-// DEC-029 · DEC-031 · REQ-071 — MVP 월급 계산(순수 함수). 규칙 설명 · 노무 검토 가정: 같은 폴더 README.md
+// DEC-029 · DEC-031 · REQ-071 — MVP 월급 계산(순수 함수). 규칙 설명 · 노무 검토 가정: docs/mvp/payroll-rules.md
 import Foundation
 
 nonisolated enum PayrollCalculator {

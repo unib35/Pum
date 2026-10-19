@@ -1,4 +1,4 @@
-// DEC-031 — 금액 반올림 · 절사 규칙은 이 파일 한 곳에만 둔다(README · PayrollRoundingTests로 고정).
+// DEC-031 — 금액 반올림 · 절사 규칙은 이 파일 한 곳에만 둔다(docs/mvp/payroll-rules.md · PayrollRoundingTests로 고정).
 import Foundation
 
 nonisolated enum PayrollRounding {
