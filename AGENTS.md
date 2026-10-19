@@ -48,4 +48,4 @@ GitHub Flow. 브랜치 `feat/<issue>-<slug>` · `fix/<issue>-<slug>`, Convention
 
 ## 미결정 (정해지기 전에 임의로 정하지 않는다)
 
-웹 프레임워크 · 최소 OS 버전(현재 Xcode 값 iOS 26.5) · 번들 ID(현재 `kr.co.lee.Pum`) · iOS 폴더를 `apps/ios/`로 옮길지 · 노무 검토 항목(개발 명세서 부록 B) · Android 사장님 기능(Q9) · README 충돌 표의 미결정 항목.
+웹 프레임워크 · 번들 ID(현재 `kr.co.lee.Pum`) · iOS 폴더를 `apps/ios/`로 옮길지 · 노무 검토 항목(개발 명세서 부록 B) · Android 사장님 기능(Q9) · README 충돌 표의 미결정 항목.
