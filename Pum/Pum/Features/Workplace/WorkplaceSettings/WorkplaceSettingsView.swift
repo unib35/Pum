@@ -18,6 +18,7 @@ struct WorkplaceSettingsView: View {
     var onOpenAdmin: (String) -> Void
     var onAddAdmin: () -> Void
     var onCloseWorkplace: () -> Void
+    var onOpenDeduction: () -> Void
 
     init(state: WorkplaceSettingsState = .sample,
          onBack: (() -> Void)? = {},
@@ -32,7 +33,8 @@ struct WorkplaceSettingsView: View {
          onOpenContractTemplate: @escaping () -> Void = {},
          onOpenAdmin: @escaping (String) -> Void = { _ in },
          onAddAdmin: @escaping () -> Void = {},
-         onCloseWorkplace: @escaping () -> Void = {}) {
+         onCloseWorkplace: @escaping () -> Void = {},
+         onOpenDeduction: @escaping () -> Void = {}) {
         _state = State(initialValue: state)
         self.onBack = onBack
         self.onOpenInfo = onOpenInfo
@@ -47,6 +49,7 @@ struct WorkplaceSettingsView: View {
         self.onOpenAdmin = onOpenAdmin
         self.onAddAdmin = onAddAdmin
         self.onCloseWorkplace = onCloseWorkplace
+        self.onOpenDeduction = onOpenDeduction
     }
 
     var body: some View {
@@ -56,6 +59,25 @@ struct WorkplaceSettingsView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: PumTokens.Space.s10) { // 원문: 카드 사이 약 10 (4a와 같은 방식)
                     infoCard
+                    if state.isSolo {
+                        section(WorkplaceSettingsState.paySection) {
+                            SettingsRow(title: "기본 급여일", value: state.payday, action: onOpenPayday)
+                            SettingsRow(title: "상시 5인 이상", value: state.fiveOrMoreText, action: onOpenPremiumRules)
+                            SettingsRow(title: "공제", value: state.deductionText, isLast: true, action: onOpenDeduction)
+                        }
+                    } else {
+                        fullSections
+                    }
+                }
+                .padding(.horizontal, PumTokens.Size.screenPad)
+                .padding(.top, PumTokens.Space.s4) // 원문 머리 줄(40) 아래 10 — 공통 머리 줄이 44라 4만
+                .padding(.bottom, PumTokens.Space.s24)
+            }
+        }
+        .background(PumColor.bgApp)
+    }
+
+    @ViewBuilder private var fullSections: some View {
                     section(WorkplaceSettingsState.attendanceSection) {
                         SettingsRow(title: "출퇴근 방식", value: state.checkInMethod, action: onOpenCheckInMethod)
                         SettingsRow(title: "연장·조기퇴근 정책", value: state.overtimePolicy, action: onOpenOvertimePolicy)
@@ -77,13 +99,6 @@ struct WorkplaceSettingsView: View {
                                     isLast: true, action: onAddAdmin)
                     }
                     if state.isMeRepresentative { closeButton } // 대표만(REQ-093)
-                }
-                .padding(.horizontal, PumTokens.Size.screenPad)
-                .padding(.top, PumTokens.Space.s4) // 원문 머리 줄(40) 아래 10 — 공통 머리 줄이 44라 4만
-                .padding(.bottom, PumTokens.Space.s24)
-            }
-        }
-        .background(PumColor.bgApp)
     }
 
     // MARK: 틀

@@ -17,7 +17,7 @@ struct WorkplaceAdmin: Identifiable, Hashable {
     var accessibilityText: String { "\(name)\(isMe ? ", 나" : ""), \(roleLabel)" }
 }
 
-struct WorkplaceSettingsState: Equatable {
+struct WorkplaceSettingsState: Hashable {
     static let screenTitle = "사업장 설정"
     static let attendanceSection = "근태"
     static let paySection = "급여"
@@ -47,11 +47,15 @@ struct WorkplaceSettingsState: Equatable {
     var reviewRequestOn: Bool
     var contractTemplate: String
     var admins: [WorkplaceAdmin]
+    /// MVP(DEC-033): 사업장 정보 · 급여일 · 5인 이상 · 공제 방식만
+    var isSolo = false
+    var fiveOrMoreText = ""
+    var deductionText = ""
 
     /// 폐업 · 데이터 내보내기는 대표만(REQ-093) — 본인 역할은 「나」 표시된 관리자의 대표 여부(서버 값)
     var isMeRepresentative: Bool { admins.contains { $0.isMe && $0.roleLabel == "대표" } }
 
-    var infoLine: String { "\(category) · 직원 \(staffCount)명 · \(address)" }
+    var infoLine: String { isSolo ? "직원 \(staffCount)명" : "\(category) · 직원 \(staffCount)명 · \(address)" }
     var infoAccessibilityText: String { "\(workplaceName), \(infoLine)" }
 
     /// 원문 4c 값

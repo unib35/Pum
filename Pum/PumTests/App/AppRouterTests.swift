@@ -15,7 +15,7 @@ struct AppRouterTests {
         router.select(.pay)
         #expect(router.root == .solo(.payroll))
         router.select(.settings)
-        #expect(router.root == .workplace(.workplaceSettings))
+        #expect(router.root == .solo(.settings))
     }
 
     @Test func MVP_탭_바_항목은_라우터_탭과_같다() {
