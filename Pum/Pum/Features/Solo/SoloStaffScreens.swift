@@ -12,7 +12,11 @@ struct SoloStaffListScreen: View {
     @Query(sort: \Employee.createdAt) private var employees: [Employee]
 
     var body: some View {
-        StaffListView(roster: roster, onMember: { _ in }, onAdd: {
+        StaffListView(roster: roster, onMember: { member in
+            if let employee = employees.first(where: { "\($0.persistentModelID)" == member.id }) {
+                router.navigate(.solo(.staffDetail(employee.persistentModelID)))
+            }
+        }, onAdd: {
             flow.reset()
             router.navigate(.solo(.registerBasic))
         })
