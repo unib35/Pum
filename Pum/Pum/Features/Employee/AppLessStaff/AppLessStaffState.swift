@@ -66,6 +66,8 @@ nonisolated struct AppLessStaffState: Equatable, Sendable {
     let days: [AppLessWorkDay]
     /// 「종이 계약서 · 사진 2장」
     let contractText: String
+    /// MVP(DEC-033): 「앱 없음」 배지 · 「앱으로 초대」 줄을 숨긴다
+    var isSolo = false
 
     func day(_ id: String) -> AppLessWorkDay? { days.first { $0.id == id } }
 

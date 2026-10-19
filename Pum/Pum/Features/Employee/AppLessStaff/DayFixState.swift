@@ -84,6 +84,7 @@ nonisolated struct DayFixState: Equatable, Sendable {
     let initialReason: String
     /// 서버 미리보기 — 현재 입력과 같은 입력에 대한 것일 때만 보인다
     let preview: DayFixPreview?
+    var isSolo = false
 
     var initialDraft: DayFixDraft {
         DayFixDraft(kind: initialKind,

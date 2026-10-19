@@ -23,6 +23,8 @@ struct AppLessStaffView: View {
     /// 시간 고르기 시트가 열린 칸
     @State private var picking: DayFixField?
     @State private var pickerValue = PumTimeRangeValue()
+    /// 바깥에서 고른 날(「다른 날 고치기」) — 바뀌면 그날 시트를 연다
+    var requestedDayID: String?
 
     var onBack: () -> Void
     /// 행 탭 — 날짜 id. 시트 값(DayFixState)을 불러오는 것은 호출자 몫
@@ -42,6 +44,7 @@ struct AppLessStaffView: View {
     init(state: AppLessStaffState,
          sheet: DayFixState? = nil,
          startsWithSheetOpen: Bool = false,
+         requestedDayID: String? = nil,
          onBack: @escaping () -> Void = {},
          onEditDay: @escaping (String) -> Void = { _ in },
          onFixOtherDay: @escaping () -> Void = {},
@@ -52,6 +55,7 @@ struct AppLessStaffView: View {
          onSave: @escaping (DayFixInput, @escaping (Bool) -> Void) -> Void = { _, done in done(false) }) {
         self.state = state
         self.sheet = sheet
+        self.requestedDayID = requestedDayID
         _sheetOpen = State(initialValue: startsWithSheetOpen && sheet != nil)
         _draft = State(initialValue: sheet?.initialDraft ?? DayFixDraft(kind: .worked, startMinutes: 0, endMinutes: 0, breakMinutes: 0, reason: ""))
         _focusedField = State(initialValue: startsWithSheetOpen ? .start : nil) // 원문 캡처: 출근 칸이 입력 중 모양
@@ -115,6 +119,9 @@ struct AppLessStaffView: View {
         .onChange(of: draft) { old, new in
             guard touched, let sheet, sheet.input(old).calcKey != sheet.input(new).calcKey else { return }
             onInputsChanged(sheet.input(new)) // 사유만 바뀐 것은 알리지 않는다
+        }
+        .onChange(of: requestedDayID) { _, id in
+            if let id { open(day: id) }
         }
         .onChange(of: sheet) { old, new in
             if old?.dayID != new?.dayID { // 다른 날이면 새로 시작(보내던 응답은 버린다)
@@ -221,10 +228,10 @@ struct AppLessStaffView: View {
             HStack(spacing: PumTokens.Space.s12) {
                 avatar
                 nameBlock.frame(maxWidth: .infinity, alignment: .leading)
-                badge
+                if !state.isSolo { badge }
             }
             VStack(alignment: .leading, spacing: PumTokens.Space.s8) {
-                HStack(spacing: PumTokens.Space.s12) { avatar; badge }
+                HStack(spacing: PumTokens.Space.s12) { avatar; if !state.isSolo { badge } }
                 nameBlock
             }
         }
@@ -336,9 +343,11 @@ struct AppLessStaffView: View {
             Divider().overlay(PumColor.borderHairline)
             navRow(title: AppLessStaffState.contractTitle, detail: state.contractText,
                    readout: state.contractReadout, action: onContract)
-            Divider().overlay(PumColor.borderHairline)
-            navRow(title: AppLessStaffState.inviteTitle, detail: AppLessStaffState.inviteDetail,
-                   readout: state.inviteReadout, action: onInvite)
+            if !state.isSolo {
+                Divider().overlay(PumColor.borderHairline)
+                navRow(title: AppLessStaffState.inviteTitle, detail: AppLessStaffState.inviteDetail,
+                       readout: state.inviteReadout, action: onInvite)
+            }
         }
     }
 

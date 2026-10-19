@@ -37,11 +37,13 @@ struct DayFixSheet: View {
                 reasonField
             }
             buttons
-            Text(DayFixState.footerNotice)
-                .pumText(.caption).foregroundStyle(PumColor.textSecondary)
-                .multilineTextAlignment(.center)
-                .fixedSize(horizontal: false, vertical: true)
-                .frame(maxWidth: .infinity)
+            if !state.isSolo { // MVP: 초대가 없어 안내 숨김(DEC-033)
+                Text(DayFixState.footerNotice)
+                    .pumText(.caption).foregroundStyle(PumColor.textSecondary)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: .infinity)
+            }
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
         .padding(.bottom, PumTokens.Space.s16)
