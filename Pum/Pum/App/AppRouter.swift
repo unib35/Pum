@@ -43,7 +43,7 @@ final class AppRouter {
         case (.owner, .store): .employee(.staffList)
         case (.soloOwner, .pay): .payroll(.ownerPayroll)
         case (.soloOwner, .settings): .workplace(.workplaceSettings)
-        case (.soloOwner, _): .employee(.staffList)
+        case (.soloOwner, _): .solo(.staffList)
         case (.employee, _): .home(.employeeHome)
         case (.owner, _): .home(.ownerHome)
         }

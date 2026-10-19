@@ -3,6 +3,7 @@ import SwiftUI
 /// 직원 · 사장님 · MVP 앱. 탭 바는 여기서 탭 첫 화면 아래에 한 번만 그린다(화면 안 탭 바는 숨김). 하위 화면에는 탭 바가 없다.
 struct AppShell: View {
     @State private var router: AppRouter
+    @State private var registerFlow = SoloRegisterFlow()
     /// 개발용 시작 화면으로 돌아가기. 없으면(출시 앱) × 버튼도 없다.
     let onExit: (() -> Void)?
 
@@ -25,6 +26,7 @@ struct AppShell: View {
             if let tab = AppTab(rawValue: id) { router.select(tab) }
         }
         .environment(\.pumHidesScreenTabBar, true)
+        .environment(registerFlow)
         .overlay(alignment: .top) {
             if let onExit { exitButton(onExit) }
         }

@@ -55,6 +55,7 @@ struct DirectRegisterTermsView: View {
                         .padding(.horizontal, PumTokens.Space.s4)
                         .padding(.top, PumTokens.Space.s6) // 원문 padding-top 2 + margin-top 4
                         .accessibilityAddTraits(.isHeader)
+                    if state.isSolo { wageTypeRow }
                     wageField
                     VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
                         fieldLabel(DirectRegisterTermsState.workTitle)
@@ -62,7 +63,7 @@ struct DirectRegisterTermsView: View {
                         weekdayChips
                         hoursCard
                     }
-                    optionsCard
+                    if !state.isSolo { optionsCard }
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
                 .padding(.bottom, PumTokens.Space.s12)
@@ -76,6 +77,7 @@ struct DirectRegisterTermsView: View {
             guard !isSending else { return }
             if !touchedWage { draft.hourlyWage = new.hourlyWage }
             if !touchedDays { draft.weekdays = new.weekdays }
+            if !touchedWage { draft.isMonthly = new.isMonthly }
         }
     }
 
@@ -121,12 +123,12 @@ struct DirectRegisterTermsView: View {
         VStack(alignment: .leading, spacing: PumTokens.Space.s6) {
             ViewThatFits(in: .horizontal) {
                 HStack(alignment: .firstTextBaseline) {
-                    fieldLabel(DirectRegisterTermsState.wageTitle)
+                    fieldLabel(DirectRegisterTermsState.wageTitle(draft))
                     Spacer(minLength: PumTokens.Space.s8)
                     minimumNote.multilineTextAlignment(.trailing)
                 }
                 VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
-                    fieldLabel(DirectRegisterTermsState.wageTitle)
+                    fieldLabel(DirectRegisterTermsState.wageTitle(draft))
                     minimumNote
                 }
             }
@@ -142,7 +144,7 @@ struct DirectRegisterTermsView: View {
                     .fixedSize() // 원문 「10,320원」 — 「원」이 숫자 바로 뒤에
                     .focused($wageFocused)
                     .tint(PumColor.accent)
-                    .accessibilityLabel(Text(state.wageReadout()))
+                    .accessibilityLabel(Text(state.wageReadout(draft)))
                     .accessibilityValue(Text(DirectRegisterTermsState.won(draft.hourlyWage)))
                     .accessibilityHint(Text(below ? DirectRegisterTermsState.belowMinimumHint : ""))
                     .toolbar { // 숫자 키패드에는 return 키가 없어 「완료」로 내린다
@@ -177,8 +179,26 @@ struct DirectRegisterTermsView: View {
         }
     }
 
+    /// MVP: 시급 · 월급(2i 「5인 이상」과 같은 알약 줄)
+    private var wageTypeRow: some View {
+        HStack(spacing: PumTokens.Space.s8) {
+            fieldLabel(DirectRegisterTermsState.wageTypeTitle)
+            Spacer(minLength: PumTokens.Space.s8)
+            ForEach(Array([false, true].enumerated()), id: \.offset) { i, monthly in
+                PumChoicePill(title: monthly ? DirectRegisterTermsState.monthlyWageTitle : DirectRegisterTermsState.wageTitle,
+                              isOn: draft.isMonthly == monthly, offStyle: .filled, position: (i, 2)) {
+                    touchedWage = true
+                    draft.isMonthly = monthly
+                }
+            }
+        }
+        .padding(.horizontal, PumTokens.Space.s2)
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel(Text(DirectRegisterTermsState.wageTypeTitle))
+    }
+
     private var minimumNote: some View {
-        Text(state.minimumWageText).pumText(.caption, weight: .regular).foregroundStyle(PumColor.textSecondary)
+        Text(state.minimumText(draft)).pumText(.caption, weight: .regular).foregroundStyle(PumColor.textSecondary)
             .fixedSize(horizontal: false, vertical: true)
             .accessibilityHidden(true) // 시급 입력 라벨이 같이 읽는다
     }
@@ -323,4 +343,5 @@ struct DirectRegisterTermsView: View {
 }
 
 #Preview("20c 근로조건") { DirectRegisterTermsView(state: .sample) }
+#Preview("20c · MVP") { DirectRegisterTermsView(state: .soloSample) }
 #Preview("20c · 큰 글자") { DirectRegisterTermsView(state: .sample).dynamicTypeSize(.xxxLarge) }

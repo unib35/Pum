@@ -87,7 +87,9 @@ struct StaffListView: View {
         // 13px: 「5명」 700 먹색 + 「 재직」 보조색
         Text("\(Text(roster.headcountText).font(run(.footnote, .bold)).foregroundColor(PumColor.textPrimary))\(Text(roster.headcountSuffix).font(run(.footnote, .regular)).foregroundColor(PumColor.textSecondary))")
             .pumText(.footnote, weight: .regular)
-        Text(roster.breakdownText).pumText(.footnote, weight: .regular).foregroundStyle(PumColor.textSecondary)
+        if !roster.isSolo {
+            Text(roster.breakdownText).pumText(.footnote, weight: .regular).foregroundStyle(PumColor.textSecondary)
+        }
     }
 
     // MARK: 직원 카드
@@ -179,12 +181,14 @@ struct StaffListView: View {
         VStack(alignment: alignment, spacing: PumTokens.Space.s2) {
             if let wage = m.wageText {
                 // 17px 700 「12,000」 + 12px 500 「원/h」
-                Text("\(Text(wage).font(run(.headline, .bold)).foregroundColor(PumColor.textPrimary))\(Text("원/h").font(run(.caption, .medium)).foregroundColor(PumColor.textSecondary))")
+                Text("\(Text(wage).font(run(.headline, .bold)).foregroundColor(PumColor.textPrimary))\(Text(m.wageUnit).font(run(.caption, .medium)).foregroundColor(PumColor.textSecondary))")
                     .pumText(.headline, weight: .bold)
                     .fixedSize(horizontal: false, vertical: true) // 시급은 핵심 값 — 큰 글자에서 줄이지 않는다(좁으면 행이 세로로 바뀜)
             }
-            Text(m.status.title).pumText(.caption2, weight: .semibold) // 11px 600
-                .foregroundStyle(color(m.status.tone))
+            if m.showsStatus {
+                Text(m.status.title).pumText(.caption2, weight: .semibold) // 11px 600
+                    .foregroundStyle(color(m.status.tone))
+            }
         }
         .accessibilityHidden(true)
     }

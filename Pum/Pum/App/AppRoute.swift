@@ -11,6 +11,8 @@ enum AppRoute: Hashable, Identifiable {
     case schedule(ScheduleRoute)
     case settings(SettingsRoute)
     case workplace(WorkplaceRoute)
+    /// MVP 앱(저장소 값). 디자인 화면 목록 · 실행 인자에는 넣지 않는다.
+    case solo(SoloRoute)
 
     static let all: [AppRoute] =
         AttendanceRoute.allCases.map { .attendance($0) }
@@ -50,6 +52,7 @@ enum AppRoute: Hashable, Identifiable {
         case .schedule(let r): r.rawValue
         case .settings(let r): r.rawValue
         case .workplace(let r): r.rawValue
+        case .solo(let r): r.screenID
         }
     }
 
@@ -64,6 +67,7 @@ enum AppRoute: Hashable, Identifiable {
         case .schedule(let r): r.title
         case .settings(let r): r.title
         case .workplace(let r): r.title
+        case .solo(let r): r.title
         }
     }
 
@@ -78,6 +82,7 @@ enum AppRoute: Hashable, Identifiable {
         case .schedule(let r): ScheduleRoute.connected.contains(r)
         case .settings(let r): SettingsRoute.connected.contains(r)
         case .workplace(let r): WorkplaceRoute.connected.contains(r)
+        case .solo: true
         }
     }
 
@@ -93,6 +98,7 @@ enum AppRoute: Hashable, Identifiable {
         case .schedule(let r): r.view(router)
         case .settings(let r): r.view(router)
         case .workplace(let r): r.view(router)
+        case .solo(let r): r.view(router)
         }
     }
 }
