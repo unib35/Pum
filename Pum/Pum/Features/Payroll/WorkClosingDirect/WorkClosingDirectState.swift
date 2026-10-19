@@ -20,9 +20,14 @@ nonisolated struct WorkClosingDirectState: Equatable, Sendable {
         let scheduledPattern: String   // 예 「월 · 수 · 금 17–22」
         let editedDayCount: Int
         let editedDays: [EditedDay]
+        /// MVP: 모두 앱 없는 직원이라 「앱 없음」을 빼고 쓴다
+        var isSolo = false
 
         func confirmTitle(month: Int) -> String { "\(name) \u{00B7} \(month)월 기록 확인" }
-        var confirmSubtitle: String { "앱 없음 \u{00B7} 예정대로 \(scheduledDayCount)일 \u{00B7} 고친 날 \(editedDayCount)일" }
+        var confirmSubtitle: String {
+            let counts = "예정대로 \(scheduledDayCount)일 \u{00B7} 고친 날 \(editedDayCount)일"
+            return isSolo ? counts : "앱 없음 \u{00B7} \(counts)"
+        }
         var editedTitle: String { "\(name) \u{00B7} 고친 날 \(editedDayCount)일" }
         var scheduledTitle: String { "예정대로 \(scheduledDayCount)일" }
     }
@@ -34,6 +39,8 @@ nonisolated struct WorkClosingDirectState: Equatable, Sendable {
     let people: [Person]            // 확인할 앱 없는 직원(0명이면 빈 목록)
     let remainingCount: Int         // 서버가 준 남은 건수
     let canClose: Bool              // 서버가 준 마감 가능 여부
+    /// MVP(DEC-033): 「앱 출퇴근 기록」 줄을 숨긴다
+    var isSolo = false
 
     var title: String { "\(month)월 근무 마감" }
     var appRecordSubtitle: String { "직원 \(appStaffCount)명 \u{00B7} 확인할 것 \(appPendingCount)건" }

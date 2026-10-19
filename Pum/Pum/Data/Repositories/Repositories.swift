@@ -71,6 +71,8 @@ struct PayslipDraft: Equatable {
     var totalDeduction: Int
     var netPay: Int
     var traceLines: [String]
+    var workDays: Int = 0
+    var workedMinutes: Int = 0
 }
 
 protocol PayrollRepository {

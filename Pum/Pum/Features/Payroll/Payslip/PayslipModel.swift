@@ -26,6 +26,8 @@ nonisolated struct PayslipRecord: Equatable, Sendable {
     var grossTotal: Int
     var deductionTotal: Int
     var netPay: Int
+    /// MVP(DEC-033): 월 고르기 · 공유 · 카카오 · 직원용 안내를 숨긴다(PDF는 단계 5)
+    var isSolo = false
 
     var headerCaption: String { "급여명세서 · \(monthTitle)분" }
     var grossText: String { PumFormat.amount(grossTotal) }

@@ -26,6 +26,9 @@ final class Payslip {
     var netPay: Int = 0
     /// 계산 근거 줄 목록(Trace).
     var traceLines: [String] = []
+    /// 근무일 수 · 인정 근무(분) — 명세서 근무 요약용
+    var workDays: Int = 0
+    var workedMinutes: Int = 0
     var createdAt: Date = Date.now
 
     var employee: Employee?

@@ -4,6 +4,7 @@ import SwiftUI
 struct AppShell: View {
     @State private var router: AppRouter
     @State private var registerFlow = SoloRegisterFlow()
+    @State private var payrollMonth = SoloPayrollMonth()
     /// 개발용 시작 화면으로 돌아가기. 없으면(출시 앱) × 버튼도 없다.
     let onExit: (() -> Void)?
 
@@ -27,6 +28,7 @@ struct AppShell: View {
         }
         .environment(\.pumHidesScreenTabBar, true)
         .environment(registerFlow)
+        .environment(payrollMonth)
         .overlay(alignment: .top) {
             if let onExit { exitButton(onExit) }
         }

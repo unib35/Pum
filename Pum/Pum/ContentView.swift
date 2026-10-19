@@ -37,6 +37,8 @@ private struct DevEntry: View {
                 ComponentGalleryView()
             } else if let id = screenID, let route = AppRoute(screenID: id) {
                 route.view(AppRouter(role: .employee))
+            } else if appRole == "solo" && appPath.isEmpty {
+                SoloAppRoot()
             } else if let appRole {
                 AppShell(role: Self.role(appRole), tab: appTab, start: appPath) {}
             } else {

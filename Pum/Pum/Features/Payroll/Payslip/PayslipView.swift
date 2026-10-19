@@ -29,12 +29,14 @@ struct PayslipView: View {
             ScrollView {
                 VStack(spacing: PumTokens.Space.s14) {
                     slip
-                    PayslipActions(onSavePDF: onSavePDF, onKakao: onKakao, stacked: typeSize.isAccessibilitySize)
-                    Text("명세서는 앱에서 계속 보관돼요 · 문의는 사장님께 직접 또는 앱 메시지로")
-                        .pumText(.caption, weight: .regular)
-                        .foregroundStyle(PumColor.textSecondary)
-                        .multilineTextAlignment(.center)
-                        .frame(maxWidth: .infinity)
+                    if !record.isSolo {
+                        PayslipActions(onSavePDF: onSavePDF, onKakao: onKakao, stacked: typeSize.isAccessibilitySize)
+                        Text("명세서는 앱에서 계속 보관돼요 · 문의는 사장님께 직접 또는 앱 메시지로")
+                            .pumText(.caption, weight: .regular)
+                            .foregroundStyle(PumColor.textSecondary)
+                            .multilineTextAlignment(.center)
+                            .frame(maxWidth: .infinity)
+                    }
                 }
                 .padding(.horizontal, PumTokens.Size.screenPad)
                 .padding(.bottom, PumTokens.Space.s12) // 위 여백 없음 — 머리 줄은 안전 영역 바로 아래(원문)
@@ -50,7 +52,9 @@ struct PayslipView: View {
             Button(action: onPickMonth) {
                 HStack(spacing: PumTokens.Space.s4) {
                     Text(record.monthTitle).pumText(.headline).lineLimit(1)
-                    Image(systemName: "chevron.down").font(.caption.weight(.semibold)).accessibilityHidden(true)
+                    if !record.isSolo {
+                        Image(systemName: "chevron.down").font(.caption.weight(.semibold)).accessibilityHidden(true)
+                    }
                 }
                 .foregroundStyle(PumColor.textPrimary)
                 .frame(minHeight: PumTokens.Size.tapMin)
@@ -59,12 +63,15 @@ struct PayslipView: View {
             }
             .buttonStyle(.plain)
             .accessibilityLabel(Text(record.monthTitle))
-            .accessibilityHint(Text("월을 바꿔요"))
+            .accessibilityHint(Text(record.isSolo ? "" : "월을 바꿔요"))
             .accessibilityAddTraits(.isHeader)
+            .allowsHitTesting(!record.isSolo)
             HStack {
                 PumIconButton(systemImage: "chevron.left", label: "뒤로", action: onBack)
                 Spacer()
-                PumIconButton(systemImage: "square.and.arrow.up", label: "공유", action: onShare)
+                if !record.isSolo {
+                    PumIconButton(systemImage: "square.and.arrow.up", label: "공유", action: onShare)
+                }
             }
         }
         // 원문 머리 줄은 40 — 가운데 누름 영역 44는 넘쳐도 유지한다
