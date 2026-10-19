@@ -243,6 +243,13 @@ extension PumTabItem {
         ]
     }
 
+    /// MVP 탭 3개(DEC-032) — 디자인에 없는 조합이라 아이콘은 사장님 탭과 같은 SF Symbols 계열
+    static let soloOwnerTabs: [PumTabItem] = [
+        .init(id: "staff", title: "직원", systemImage: "person.2"),
+        .init(id: "pay", title: "급여", systemImage: "wonsign.circle"),
+        .init(id: "settings", title: "설정", systemImage: "gearshape"),
+    ]
+
     /// 사장님 탭 4개(디자인 1az · C6 「사장님 4」)
     static func ownerTabs(workBadge: Int = 0) -> [PumTabItem] {
         [

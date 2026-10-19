@@ -1,6 +1,7 @@
 // UI-IOS-2i · REQ-010 — 사업장 만들기: 사장님 첫 설정(1 / 3). 탭 바 없음.
 // 대표 글자·색 · 업종 · 주소(반경) · 사업자등록번호 · 급여일을 고르는 시트는 디자인 없음 — 누름 클로저만(만들지 않음).
 // 비활성 「다음」의 이유 문구는 디자인 없음(충돌 #30과 같은 처리: 회색 비활성만).
+// MVP(DEC-033, state.isSolo): 단계 · 초대 안내 · 업종 · 주소 · 사업자번호 · 출퇴근 방식을 숨기고 5인 이상 · 공제 줄을 더한다.
 import SwiftUI
 
 struct WorkplaceCreateView: View {
@@ -39,20 +40,25 @@ struct WorkplaceCreateView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: PumTokens.Space.s16) {
-                HStack {
-                    PumIconButton(systemImage: "chevron.left", label: "뒤로", action: onBack)
-                    Spacer()
-                    Text("1 / 3").pumText(.footnote).foregroundStyle(PumColor.textSecondary) // 13px 400
-                        .accessibilityLabel(Text("3단계 중 1단계"))
+                if !state.isSolo {
+                    HStack {
+                        PumIconButton(systemImage: "chevron.left", label: "뒤로", action: onBack)
+                        Spacer()
+                        Text("1 / 3").pumText(.footnote).foregroundStyle(PumColor.textSecondary) // 13px 400
+                            .accessibilityLabel(Text("3단계 중 1단계"))
+                    }
                 }
                 heading
                 markRow
                 infoCard
                 settingCard
-                Text("다음 단계: 근태 정책(연장·조기퇴근 기준) → 직원 초대")
-                    .pumText(.caption).foregroundStyle(PumColor.textSecondary) // 12px 400
-                    .padding(.horizontal, PumTokens.Space.s4)
+                if !state.isSolo {
+                    Text("다음 단계: 근태 정책(연장·조기퇴근 기준) → 직원 초대")
+                        .pumText(.caption).foregroundStyle(PumColor.textSecondary) // 12px 400
+                        .padding(.horizontal, PumTokens.Space.s4)
+                }
             }
+            .padding(.top, state.isSolo ? PumTokens.Space.s16 : 0)
             .padding(.horizontal, PumTokens.Size.screenPad)
             .padding(.bottom, PumTokens.Space.s16)
         }
@@ -67,15 +73,17 @@ struct WorkplaceCreateView: View {
                 .pumText(.title1) // 목업 26px 700 → 가까운 단계 title1 28 (DEC-005)
                 .foregroundStyle(PumColor.textPrimary)
                 .accessibilityAddTraits(.isHeader)
-            Text("직원은 여기서 만든 초대로만 들어올 수 있어요")
-                .pumText(.callout, weight: .regular) // 14px 400
-                .foregroundStyle(PumColor.textSecondary)
+            if !state.isSolo {
+                Text("직원은 여기서 만든 초대로만 들어올 수 있어요")
+                    .pumText(.callout, weight: .regular) // 14px 400
+                    .foregroundStyle(PumColor.textSecondary)
+            }
         }
     }
 
     // 대표 글자 · 색
     private var markRow: some View {
-        Button(action: onPickMark) {
+        Button(action: pickMark) {
             HStack(spacing: PumTokens.Space.s14) { // 원문 gap 14
                 Text(state.markText).pumText(.title2).foregroundStyle(.white) // 24px 700
                     .frame(width: markSize, height: markSize)
@@ -83,7 +91,9 @@ struct WorkplaceCreateView: View {
                                 in: RoundedRectangle(cornerRadius: PumTokens.Radius.xl, style: .continuous))
                 VStack(alignment: .leading, spacing: PumTokens.Space.s2) {
                     Text("대표 글자·색").pumText(.callout).foregroundStyle(PumColor.textPrimary) // 14px 600
-                    Text("직원 앱에서 사업장을 구분하는 표시예요").pumText(.caption).foregroundStyle(PumColor.textSecondary) // 12px 400
+                    if !state.isSolo {
+                        Text("직원 앱에서 사업장을 구분하는 표시예요").pumText(.caption).foregroundStyle(PumColor.textSecondary) // 12px 400
+                    }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
@@ -92,7 +102,7 @@ struct WorkplaceCreateView: View {
         }
         .buttonStyle(.plain)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(Text("대표 글자·색, 직원 앱에서 사업장을 구분하는 표시예요"))
+        .accessibilityLabel(Text(state.isSolo ? "대표 글자·색" : "대표 글자·색, 직원 앱에서 사업장을 구분하는 표시예요"))
         .accessibilityValue(Text(state.markText.isEmpty ? "입력 안 됨" : state.markText)) // 지금 대표 글자
         .accessibilityAddTraits(.isButton)
     }
@@ -101,21 +111,61 @@ struct WorkplaceCreateView: View {
     private var infoCard: some View {
         PumCard {
             row { nameRow }
-            divider
-            valueRow("업종", state.category, action: onPickCategory)
-            divider
-            addressRow
-            divider
-            businessNumberRow
+            if !state.isSolo {
+                divider
+                valueRow("업종", state.category, action: onPickCategory)
+                divider
+                addressRow
+                divider
+                businessNumberRow
+            }
         }
     }
 
     // 급여일 · 출퇴근 방식 카드
     private var settingCard: some View {
         PumCard {
-            valueRow("기본 급여일", state.paydayText, action: onPickPayday)
-            divider
-            row { methodRow }
+            if state.isSolo {
+                paydayMenuRow
+                divider
+                row { choiceRow("5인 이상 사업장", options: ["아니요", "예"], selected: state.isFiveOrMore ? 1 : 0) { state.isFiveOrMore = $0 == 1 } }
+                divider
+                row { choiceRow("공제", options: ["없음", "3.3%"], selected: state.withholds3_3 ? 1 : 0) { state.withholds3_3 = $0 == 1 } }
+            } else {
+                valueRow("기본 급여일", state.paydayText, action: onPickPayday)
+                divider
+                row { methodRow }
+            }
+        }
+    }
+
+    /// 급여일 고르기 시트는 디자인 없음 — 20f 휴게처럼 시스템 메뉴
+    private var paydayMenuRow: some View {
+        Menu {
+            Picker("기본 급여일", selection: Binding(get: { state.payday }, set: { state.payday = $0 })) {
+                ForEach(1...31, id: \.self) { Text("매월 \($0)일").tag($0) }
+            }
+        } label: {
+            row {
+                keyValue { keyText("기본 급여일") } value: { valueText(state.paydayText) }
+            }
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(Text("기본 급여일, \(state.paydayText)"))
+    }
+
+    private func choiceRow(_ key: String, options: [String], selected: Int, onSelect: @escaping (Int) -> Void) -> some View {
+        keyValue {
+            keyText(key)
+        } value: {
+            HStack(spacing: PumTokens.Space.s6) {
+                ForEach(Array(options.enumerated()), id: \.offset) { i, title in
+                    PumChoicePill(title: title, isOn: selected == i, offStyle: .filled, position: (i, options.count)) {
+                        onSelect(i)
+                    }
+                }
+            }
         }
     }
 
@@ -248,6 +298,15 @@ struct WorkplaceCreateView: View {
             .background(PumColor.bgApp)
     }
 
+    /// MVP는 고르기 시트(디자인 없음) 대신 누를 때마다 다음 사업장 색
+    private func pickMark() {
+        if state.isSolo {
+            state.markColorIndex = (state.markColorIndex + 1) % PumAvatarPalette.stores.count
+        } else {
+            onPickMark()
+        }
+    }
+
     /// 연속으로 눌러도 한 번만 보낸다
     private func next() {
         guard state.beginSubmit() else { return }
@@ -258,5 +317,6 @@ struct WorkplaceCreateView: View {
 }
 
 #Preview("2i") { WorkplaceCreateView(state: .sample) }
+#Preview("2i · MVP") { WorkplaceCreateView(state: .soloEntry) }
 #Preview("2i · 처음") { WorkplaceCreateView() }
 #Preview("2i · 큰 글자") { WorkplaceCreateView(state: .sample).dynamicTypeSize(.xxxLarge) }

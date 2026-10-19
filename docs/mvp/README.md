@@ -49,8 +49,8 @@
 | 0 | 최소 iOS 18로 내리고 빌드 · 테스트 통과 | verify |
 | 1 | 계산 모듈(Domain/Payroll) + 단위 테스트(사례표) | 단위 테스트 |
 | 2 | 데이터: SwiftData 모델 · Repository · iCloud 설정 | 단위 테스트 · 기기 저장 확인 |
-| 3 | MVP 앱 진입 · 탭(직원 · 급여 · 설정, DEC-032), 개발용 시작 화면은 개발 빌드만 | 앱 실행 |
-| 4 | 화면별 ViewModel 연결(2i · 1ac · 20a–20h · 1u · 1m · 4c) | 흐름 끝까지 |
+| 3 | MVP 앱 진입 · 탭(직원 · 급여 · 설정, DEC-032), 개발용 시작 화면은 개발 빌드만 — `AppRole.soloOwner` · `ContentView` | 앱 실행 |
+| 4 | 화면별 ViewModel 연결(2i · 1ac · 20a–20h · 1u · 1m · 4c). MVP에서 안 쓰는 칸은 숨김(DEC-033) — 2i 완료 | 흐름 끝까지 |
 | 5 | 명세서 PDF · 출시 준비(번들 ID · 아이콘 · 개인정보 처리방침 · App Store 정보) | TestFlight |
 
 ## 사용자 할 일

@@ -4,7 +4,8 @@ import SwiftUI
 
 struct WorkplaceSettingsView: View {
     @State private var state: WorkplaceSettingsState
-    var onBack: () -> Void
+    /// 없으면 뒤로 버튼을 숨긴다(MVP 설정 탭 첫 화면)
+    var onBack: (() -> Void)?
     var onOpenInfo: () -> Void
     var onOpenCheckInMethod: () -> Void
     var onOpenOvertimePolicy: () -> Void
@@ -19,7 +20,7 @@ struct WorkplaceSettingsView: View {
     var onCloseWorkplace: () -> Void
 
     init(state: WorkplaceSettingsState = .sample,
-         onBack: @escaping () -> Void = {},
+         onBack: (() -> Void)? = {},
          onOpenInfo: @escaping () -> Void = {},
          onOpenCheckInMethod: @escaping () -> Void = {},
          onOpenOvertimePolicy: @escaping () -> Void = {},

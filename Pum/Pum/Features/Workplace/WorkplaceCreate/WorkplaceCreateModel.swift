@@ -23,6 +23,11 @@ struct WorkplaceCreateState: Equatable {
     /// 「다음」을 보낸 뒤 결과를 기다리는 중 — 두 번 보내지 않는다
     var isSubmitting = false
 
+    /// MVP(DEC-033): 이름 · 대표 색 · 급여일 · 5인 이상 · 공제만 보이고 이름만 있으면 만든다
+    var isSolo = false
+    var isFiveOrMore = false
+    var withholds3_3 = false
+
     /// 디자인 원문: 종민김밥 본점 · 음식점 · 부산 김해시 장유로 12 · 반경 100m · 사업자번호 나중에 · 매월 10일 · QR + 위치
     static let sample = WorkplaceCreateState(
         name: "종민김밥 본점", category: "음식점", address: "부산 김해시 장유로 12",
@@ -30,13 +35,17 @@ struct WorkplaceCreateState: Equatable {
 
     /// 실제 진입: 이름 · 업종 · 주소는 비어 있음
     static let entry = WorkplaceCreateState()
+    static let soloEntry = WorkplaceCreateState(isSolo: true)
 
     private static func trimmed(_ s: String) -> String { s.trimmingCharacters(in: .whitespacesAndNewlines) }
 
     /// 「다음」 활성 조건: 이름 · 업종 · 주소. 사업자등록번호는 선택이라 넣지 않는다(비활성 이유 문구 없음 — 충돌 #30)
     var canProceed: Bool {
-        !Self.trimmed(name).isEmpty && !Self.trimmed(category).isEmpty && !Self.trimmed(address).isEmpty && !isSubmitting
+        guard !isSubmitting, !trimmedName.isEmpty else { return false }
+        return isSolo || (!Self.trimmed(category).isEmpty && !Self.trimmed(address).isEmpty)
     }
+
+    var trimmedName: String { Self.trimmed(name) }
 
     /// 대표 글자 = 이름 첫 글자(비면 빈 네모)
     var markText: String { Self.trimmed(name).first.map(String.init) ?? "" }

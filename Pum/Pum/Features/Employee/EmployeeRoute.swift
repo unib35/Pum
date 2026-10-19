@@ -179,7 +179,7 @@ enum EmployeeRoute: String, CaseIterable, Hashable {
             )
         case .contractPDFViewer:
             ContractPDFViewerView(
-                state: .sample,
+                state: .routeSample,
                 onBack: router.back
             )
         case .inviteAccept:

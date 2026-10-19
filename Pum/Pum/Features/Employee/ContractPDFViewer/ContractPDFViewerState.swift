@@ -2,6 +2,15 @@
 import Foundation
 
 nonisolated struct ContractPDFViewerState: Equatable, Sendable {
+    /// 연결 확인용 예시. 예시 PDF는 개발 빌드에만 있어 출시 빌드는 「못 읽음」으로 열린다.
+    static var routeSample: Self {
+        #if DEBUG
+        .sample
+        #else
+        Self(fileName: "", signedText: "", pdfData: nil)
+        #endif
+    }
+
     /// 서버 값 — 예: 「표준근로계약서.pdf」
     var fileName: String
     /// 서버 값 — 예: 「체결 2026.10.03」

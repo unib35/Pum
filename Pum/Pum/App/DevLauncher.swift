@@ -1,14 +1,16 @@
+#if DEBUG
 import SwiftUI
 
-/// 개발용 시작 화면(디자인 화면 아님)
+/// 개발용 시작 화면(디자인 화면 아님). 출시 빌드에는 없다.
 struct DevLauncher: View {
     private enum Mode {
-        case employee, owner, fromStart
+        case solo, employee, owner, fromStart
     }
     @State private var mode: Mode?
 
     var body: some View {
         switch mode {
+        case .solo: SoloAppRoot().overlay(alignment: .topTrailing) { Button("닫기") { mode = nil }.font(.caption) }
         case .employee: AppShell(role: .employee) { mode = nil }
         case .owner: AppShell(role: .owner) { mode = nil }
         case .fromStart: AppShell(role: .owner, start: [.auth(.welcome)]) { mode = nil }
@@ -19,6 +21,11 @@ struct DevLauncher: View {
     private var menu: some View {
         NavigationStack {
             List {
+                Section {
+                    Button("MVP 앱 (사장님 혼자 · 출시판)") { mode = .solo }
+                } footer: {
+                    Text("출시 빌드는 이 화면 없이 바로 이 앱으로 열려요.")
+                }
                 Section {
                     Button("직원 앱으로 보기") { mode = .employee }
                     Button("사장님 앱으로 보기") { mode = .owner }
@@ -82,3 +89,4 @@ struct ConnectionStatusView: View {
         .navigationTitle("연결 현황")
     }
 }
+#endif

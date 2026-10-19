@@ -54,7 +54,7 @@ enum WorkplaceRoute: String, CaseIterable, Hashable {
         case .workplaceSettings:
             WorkplaceSettingsView(
                 state: .sample,
-                onBack: router.back,
+                onBack: router.backIfPushed,
                 onOpenCheckInMethod: { router.navigate(.workplace(.checkInMethod)) },
                 onOpenOvertimePolicy: { router.navigate(.workplace(.attendancePolicy)) },
                 onOpenStoreQR: { router.navigate(.workplace(.checkInQR)) },
