@@ -4,7 +4,7 @@
 
 ## 폴더 구조
 
-현재 iOS 프로젝트: `Pum/Pum.xcodeproj` · 번들 ID `kr.co.lee.Pum` · 최소 iOS 26.5 · iPhone · iPad · Swift 언어 모드 5.0 (Xcode 26.5, Swift 6.3 컴파일러). 확정값이 아니라 프로젝트 생성 시 기본값이다.
+현재 iOS 프로젝트: `Pum/Pum.xcodeproj` · 번들 ID `kr.co.lee.Pum` · 최소 iOS 18(DEC-031) · iPhone · iPad · Swift 언어 모드 5.0 (Xcode 26.5, Swift 6.3 컴파일러). 최소 iOS는 DEC-031로 확정, 번들 ID는 미결정(생성 시 기본값).
 
 ```
 apps/
