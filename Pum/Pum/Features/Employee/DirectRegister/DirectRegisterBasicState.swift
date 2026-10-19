@@ -41,6 +41,8 @@ nonisolated struct DirectRegisterBasicState: Equatable, Sendable {
     var startDate: String
     /// 파랑 테두리로 표시할 칸(원문 캡처는 생년월일). 시각 표시만.
     var highlighted: DirectRegisterBasicField?
+    /// MVP(DEC-033): 명세서를 보내지 않아 휴대폰은 선택
+    var isSolo = false
 
     var initialDraft: DirectRegisterBasicDraft { .init(name: name, phone: phone) }
 
@@ -49,10 +51,12 @@ nonisolated struct DirectRegisterBasicState: Equatable, Sendable {
         s.filter { $0.isASCII && ($0.isNumber || $0 == "-") }
     }
 
-    static func canProceed(_ draft: DirectRegisterBasicDraft) -> Bool {
+    static func canProceed(_ draft: DirectRegisterBasicDraft, phoneRequired: Bool = true) -> Bool {
         let name = draft.name.trimmingCharacters(in: .whitespacesAndNewlines)
-        return !name.isEmpty && filterPhone(draft.phone).contains { $0.isNumber }
+        return !name.isEmpty && (!phoneRequired || filterPhone(draft.phone).contains { $0.isNumber })
     }
+
+    func canProceed(_ draft: DirectRegisterBasicDraft) -> Bool { Self.canProceed(draft, phoneRequired: !isSolo) }
 
     func value(_ draft: DirectRegisterBasicDraft) -> DirectRegisterBasicValue {
         .init(name: draft.name.trimmingCharacters(in: .whitespacesAndNewlines),

@@ -44,11 +44,15 @@ nonisolated struct StaffMember: Equatable, Sendable, Identifiable {
     let hourlyWage: Int?
     /// 전화 버튼 표시 — 원문은 이종민 행만. 기준(오늘 근무자 등)은 디자인 없음 → 서버 지정
     let showsCallButton: Bool
+    /// MVP: 분까지 있는 시간(「09:30–18」)과 월급 단위(「원/월」), 계약 상태 숨김
+    var hoursTextOverride: String? = nil
+    var wageUnit = "원/h"
+    var showsStatus = true
 
     var isInvited: Bool { status == .invited }
 
     /// 「17–22」(en dash)
-    var hoursText: String { String(format: "%02d\u{2013}%02d", startHour, endHour) }
+    var hoursText: String { hoursTextOverride ?? String(format: "%02d\u{2013}%02d", startHour, endHour) }
     /// 「월·수·금 17–22」 / 초대 중은 「초대 중 · 조건 미설정」
     var scheduleText: String {
         guard let daysText else { return "\(status.title) \u{00B7} 조건 미설정" }
@@ -70,8 +74,8 @@ nonisolated struct StaffMember: Equatable, Sendable, Identifiable {
         if let daysText { parts.append("\(daysText) \(startHour)시부터 \(endHour)시") }
         if let note { parts.append(note) }
         if let healthCertText { parts.append(healthCertWarning ? "\(healthCertText), 확인 필요" : healthCertText) } // 주황 경고를 말로도
-        if let wageText { parts.append("시급 \(wageText)원") }
-        parts.append(status.title)
+        if let wageText { parts.append(wageUnit == "원/월" ? "월급 \(wageText)원" : "시급 \(wageText)원") }
+        if showsStatus { parts.append(status.title) }
         return parts.joined(separator: ", ")
     }
 
@@ -88,13 +92,15 @@ nonisolated struct StaffRoster: Equatable, Sendable {
     var awaitingCount: Int
     var invitedCount: Int
     var members: [StaffMember]
+    /// MVP(DEC-033): 계약 · 초대 상태 줄을 숨긴다
+    var isSolo = false
 
     var headcountText: String { "\(headcount)명" }
     var headcountSuffix: String { " 재직" }
     var breakdownText: String {
         "계약 완료 \(contractedCount) \u{00B7} 서명 대기 \(awaitingCount) \u{00B7} 초대 중 \(invitedCount)"
     }
-    var summaryAccessibilityText: String { "\(headcountText) 재직, \(breakdownText)" }
+    var summaryAccessibilityText: String { isSolo ? "\(headcountText) 재직" : "\(headcountText) 재직, \(breakdownText)" }
 
     static let sample = StaffRoster(
         workplaceName: "종민김밥 본점", workplaceInitial: "종",

@@ -7,7 +7,7 @@ struct AppRouterTests {
     @Test func MVP는_직원_탭에서_시작() {
         let router = AppRouter(role: .soloOwner)
         #expect(router.tab == .staff)
-        #expect(router.root == .employee(.staffList))
+        #expect(router.root == .solo(.staffList))
     }
 
     @Test func MVP_탭별_첫_화면() {

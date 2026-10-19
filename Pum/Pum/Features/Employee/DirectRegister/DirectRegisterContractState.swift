@@ -44,12 +44,14 @@ nonisolated struct DirectRegisterContractState: Equatable, Sendable {
     let photos: [DirectRegisterContractPhoto]
     let method: DirectRegisterContractMethod
     let copyGiven: Bool
+    /// MVP(DEC-033): 초대가 없어 「나중에」 줄 · 초대 안내를 숨기고, 사진 없이도 등록한다
+    var isSolo = false
 
     var initialDraft: DirectRegisterContractDraft { .init(method: method, copyGiven: copyGiven) }
 
     /// 사진 방식인데 사진이 없으면 등록할 수 없다(원문 없음 — 임시)
     func canRegister(_ draft: DirectRegisterContractDraft) -> Bool {
-        draft.method == .later || !photos.isEmpty
+        isSolo || draft.method == .later || !photos.isEmpty
     }
 
     func value(_ draft: DirectRegisterContractDraft) -> DirectRegisterContractValue {

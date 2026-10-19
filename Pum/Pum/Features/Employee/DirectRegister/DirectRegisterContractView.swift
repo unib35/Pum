@@ -117,9 +117,11 @@ struct DirectRegisterContractView: View {
                 }
                 .padding(.horizontal, PumTokens.Size.rowPadX - PumTokens.Space.s4)
             }
-            divider
-            methodRow(title: DirectRegisterContractState.laterTitle, hint: DirectRegisterContractState.laterHint,
-                      readout: DirectRegisterContractState.laterReadout, isOn: !isPhoto) { choose(.later) }
+            if !state.isSolo {
+                divider
+                methodRow(title: DirectRegisterContractState.laterTitle, hint: DirectRegisterContractState.laterHint,
+                          readout: DirectRegisterContractState.laterReadout, isOn: !isPhoto) { choose(.later) }
+            }
         }
         .background(PumColor.surfaceCard, in: RoundedRectangle(cornerRadius: PumTokens.Radius.xl, style: .continuous))
         .overlay {
@@ -204,9 +206,11 @@ struct DirectRegisterContractView: View {
         VStack(spacing: PumTokens.Space.s8) {
             PumButton(title: DirectRegisterContractState.registerTitle, isLoading: isSending, action: register)
                 .disabled(!canRegister || isSending)
-            Text(DirectRegisterContractState.footnote).pumText(.caption).foregroundStyle(PumColor.textSecondary)
-                .multilineTextAlignment(.center)
-                .fixedSize(horizontal: false, vertical: true)
+            if !state.isSolo {
+                Text(DirectRegisterContractState.footnote).pumText(.caption).foregroundStyle(PumColor.textSecondary)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
         }
         .padding(.horizontal, PumTokens.Size.screenPad)
         .padding(.vertical, PumTokens.Space.s12)

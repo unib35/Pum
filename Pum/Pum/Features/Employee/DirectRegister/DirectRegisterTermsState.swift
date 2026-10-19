@@ -4,15 +4,19 @@ import Foundation
 
 /// 시급 · 근무 요일 화면 초안
 nonisolated struct DirectRegisterTermsDraft: Equatable, Sendable {
+    /// 시급(월급제면 월급) 원
     var hourlyWage: Int
     /// 1=월 … 7=일
     var weekdays: Set<Int>
+    /// MVP 월급제(DEC-031)
+    var isMonthly = false
 }
 
 /// 다음 단계로 넘길 값
 nonisolated struct DirectRegisterTermsValue: Equatable, Sendable {
     let hourlyWage: Int
     let weekdays: [Int]
+    var isMonthly = false
 }
 
 nonisolated struct DirectRegisterTermsState: Equatable, Sendable {
@@ -20,6 +24,10 @@ nonisolated struct DirectRegisterTermsState: Equatable, Sendable {
     static let title = "근로조건"
     static let currentStep = 2
     static let wageTitle = "시급"
+    static let monthlyWageTitle = "월급"
+    static let wageTypeTitle = "급여 형태"
+    /// 월급제 최저 비교 시간(주 40시간 + 주휴, payroll-rules 「209시간 고정」 가정)
+    static let monthlyStandardHours = 209
     static let workTitle = "근무일 · 시간"
     static let paydayTitle = "급여일"
     static let deductionTitle = "공제"
@@ -47,8 +55,11 @@ nonisolated struct DirectRegisterTermsState: Equatable, Sendable {
     let deductionText: String
     /// 원문 「추가」(계좌가 있으면 호출자가 마스킹 문자열을 넣는다)
     let accountValueText: String
+    /// MVP(DEC-033): 시급 · 월급 고르기를 보이고, 사업장 설정에 있는 급여일 · 공제와 계좌 줄을 숨긴다
+    var isSolo = false
+    var isMonthly = false
 
-    var initialDraft: DirectRegisterTermsDraft { .init(hourlyWage: hourlyWage, weekdays: weekdays) }
+    var initialDraft: DirectRegisterTermsDraft { .init(hourlyWage: hourlyWage, weekdays: weekdays, isMonthly: isMonthly) }
 
     static func won(_ amount: Int) -> String { PumFormat.amount(amount) + "원" }
 
@@ -59,14 +70,25 @@ nonisolated struct DirectRegisterTermsState: Equatable, Sendable {
         return Int(digits) ?? 0
     }
 
-    func isBelowMinimum(_ draft: DirectRegisterTermsDraft) -> Bool { draft.hourlyWage < minimumWage }
+    func minimumAmount(_ draft: DirectRegisterTermsDraft) -> Int {
+        draft.isMonthly ? minimumWage * Self.monthlyStandardHours : minimumWage
+    }
+
+    func isBelowMinimum(_ draft: DirectRegisterTermsDraft) -> Bool { draft.hourlyWage < minimumAmount(draft) }
+
+    static func wageTitle(_ draft: DirectRegisterTermsDraft) -> String { draft.isMonthly ? monthlyWageTitle : wageTitle }
+
+    /// 월급제는 「최저 월 2,156,880원」(최저시급 × 209)
+    func minimumText(_ draft: DirectRegisterTermsDraft) -> String {
+        draft.isMonthly ? "최저 월 \(Self.won(minimumAmount(draft)))" : minimumWageText
+    }
 
     func canProceed(_ draft: DirectRegisterTermsDraft) -> Bool {
         minimumWage > 0 && draft.hourlyWage > 0 && !isBelowMinimum(draft) && !draft.weekdays.isEmpty // 최저를 못 받았으면 넘기지 않음
     }
 
     func value(_ draft: DirectRegisterTermsDraft) -> DirectRegisterTermsValue {
-        .init(hourlyWage: draft.hourlyWage, weekdays: draft.weekdays.sorted())
+        .init(hourlyWage: draft.hourlyWage, weekdays: draft.weekdays.sorted(), isMonthly: draft.isMonthly)
     }
 
     // MARK: 읽기 문구
@@ -76,7 +98,7 @@ nonisolated struct DirectRegisterTermsState: Equatable, Sendable {
     func accountReadout() -> String { "\(Self.accountTitle), \(Self.accountHint), \(accountValueText)" }
     func paydayReadout() -> String { "\(Self.paydayTitle), \(paydayText)" }
     func deductionReadout() -> String { "\(Self.deductionTitle), \(deductionText)" }
-    func wageReadout() -> String { "\(Self.wageTitle), \(minimumWageText)" }
+    func wageReadout(_ draft: DirectRegisterTermsDraft) -> String { "\(Self.wageTitle(draft)), \(minimumText(draft))" }
 
     // MARK: 예시
 
@@ -86,4 +108,6 @@ nonisolated struct DirectRegisterTermsState: Equatable, Sendable {
         timeRangeText: PumFormat.timeRange("17:00", "22:00"),
         breakAndDurationText: "휴게 30분 · 하루 4시간 30분",
         paydayText: "매월 10일", deductionText: "3.3%", accountValueText: "추가")
+
+    static var soloSample: Self { var s = sample; s.isSolo = true; s.isMonthly = true; s.hourlyWage = 2_200_000; return s }
 }

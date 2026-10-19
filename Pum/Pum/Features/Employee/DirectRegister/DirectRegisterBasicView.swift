@@ -50,9 +50,11 @@ struct DirectRegisterBasicView: View {
                         .accessibilityAddTraits(.isHeader)
                     nameField
                     phoneField
-                    dateRow(.birthDate, title: DirectRegisterBasicState.birthDateTitle,
-                            hint: DirectRegisterBasicState.birthDateHint,
-                            value: state.birthDate, action: onPickBirthDate)
+                    if !state.isSolo { // MVP: 명세서 열람 확인이 없어 숨김(DEC-033)
+                        dateRow(.birthDate, title: DirectRegisterBasicState.birthDateTitle,
+                                hint: DirectRegisterBasicState.birthDateHint,
+                                value: state.birthDate, action: onPickBirthDate)
+                    }
                     dateRow(.startDate, title: DirectRegisterBasicState.startDateTitle,
                             hint: nil, value: state.startDate, action: onPickStartDate)
                 }
@@ -71,7 +73,7 @@ struct DirectRegisterBasicView: View {
         }
     }
 
-    private var canProceed: Bool { DirectRegisterBasicState.canProceed(draft) }
+    private var canProceed: Bool { state.canProceed(draft) }
 
     private func next() {
         guard canProceed, !isSending else { return }
@@ -171,11 +173,11 @@ struct DirectRegisterBasicView: View {
                     }
                 }
                 .focused($focus, equals: .phone)
-                .accessibilityLabel(Text(DirectRegisterBasicState.phoneLabel))
+                .accessibilityLabel(Text(state.isSolo ? DirectRegisterBasicState.phoneTitle : DirectRegisterBasicState.phoneLabel))
             }
             .contentShape(Rectangle())
             .onTapGesture { focus = .phone }
-            hintText(DirectRegisterBasicState.phoneHint)
+            if !state.isSolo { hintText(DirectRegisterBasicState.phoneHint) }
         }
     }
 
