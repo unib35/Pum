@@ -52,6 +52,7 @@ struct SoloPayrollTests {
         #expect(none.canClose)
         #expect(none.people.isEmpty)
         #expect(none.periodText == "9월 1일 – 30일")
+        #expect(none.checked.map(\.subtitle) == ["예정대로 22일"])
 
         try WorkDayFixUseCase(workDays: store.workDays).execute(.absent, reason: "", for: employee, on: 20260915)
         let one = SoloPayroll.closingState(workplace, year: 2026, month: 9, confirmed: [])
@@ -61,8 +62,10 @@ struct SoloPayrollTests {
         #expect(person.scheduledDayCount == 21)
         #expect(person.confirmSubtitle == "예정대로 21일 · 고친 날 1일")
         #expect(person.editedDays.first?.detailText == "결근")
+        #expect(one.checked.isEmpty)
 
         let done = SoloPayroll.closingState(workplace, year: 2026, month: 9, confirmed: [person.id])
         #expect(done.canClose)
+        #expect(done.checked.map(\.subtitle) == ["예정대로 21일 · 고친 날 1일"])
     }
 }

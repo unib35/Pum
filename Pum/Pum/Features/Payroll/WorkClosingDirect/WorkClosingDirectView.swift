@@ -23,7 +23,7 @@ struct WorkClosingDirectView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: PumTokens.Space.s14) { // 원문 블록 사이 14
                     titleBlock
-                    if !state.isSolo || !state.people.isEmpty { summaryCard }
+                    if !state.isSolo || !state.people.isEmpty || !state.checked.isEmpty { summaryCard }
                     ForEach(state.people) { person in
                         editedCard(person)
                     }
@@ -75,26 +75,30 @@ struct WorkClosingDirectView: View {
 
     private var summaryCard: some View {
         PumCard {
-            if !state.isSolo { appRecordRow }
+            if !state.isSolo { checkRow(title: "앱 출퇴근 기록", subtitle: state.appRecordSubtitle) }
+            ForEach(Array(state.checked.enumerated()), id: \.element.id) { i, person in
+                if i > 0 { divider }
+                checkRow(title: person.name, subtitle: person.subtitle)
+            }
             ForEach(Array(state.people.enumerated()), id: \.element.id) { i, person in
-                if !state.isSolo || i > 0 { divider }
+                if !state.isSolo || !state.checked.isEmpty || i > 0 { divider }
                 confirmRow(person)
             }
         }
     }
 
-    private var appRecordRow: some View {
+    private func checkRow(title: String, subtitle: String) -> some View {
         HStack(spacing: PumTokens.Space.s12) {
             Circle().fill(PumColor.surfaceFill).frame(width: badgeSize, height: badgeSize)
                 .overlay { Image(systemName: "checkmark").font(.footnote.weight(.bold)).foregroundStyle(PumColor.textPrimary) }
                 .accessibilityHidden(true)
-            rowTexts(title: "앱 출퇴근 기록", subtitle: state.appRecordSubtitle)
+            rowTexts(title: title, subtitle: subtitle)
         }
         .padding(.horizontal, PumTokens.Size.rowPadX)
         .padding(.vertical, PumTokens.Size.rowPadY) // 원문 padding 12 16
         .frame(minHeight: PumTokens.Size.tapMin)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(Text("앱 출퇴근 기록, \(state.appRecordSubtitle)"))
+        .accessibilityLabel(Text("\(title), \(subtitle)"))
     }
 
     private func confirmRow(_ person: WorkClosingDirectState.Person) -> some View {
