@@ -6,6 +6,7 @@ struct SoloAppRoot: View {
     @Environment(\.modelContext) private var context
     @Query(sort: \Workplace.createdAt) private var workplaces: [Workplace]
     var tab: AppTab?
+    var start: [AppRoute] = []
 
     var body: some View {
         if workplaces.isEmpty {
@@ -13,7 +14,7 @@ struct SoloAppRoot: View {
                 done(createWorkplace(state))
             })
         } else {
-            AppShell(role: .soloOwner, tab: tab)
+            AppShell(role: .soloOwner, tab: tab, start: start)
         }
     }
 

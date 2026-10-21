@@ -41,6 +41,14 @@ nonisolated struct WorkClosingDirectState: Equatable, Sendable {
     let canClose: Bool              // 서버가 준 마감 가능 여부
     /// MVP(DEC-033): 「앱 출퇴근 기록」 줄을 숨긴다
     var isSolo = false
+    /// MVP(DEC-033): 확인할 것이 없는 직원 — 「앱 출퇴근 기록」과 같은 ✓ 줄로 보인다
+    var checked: [CheckedPerson] = []
+
+    nonisolated struct CheckedPerson: Equatable, Sendable, Identifiable {
+        let id: String
+        let name: String
+        let subtitle: String    // 예 「예정대로 22일」
+    }
 
     var title: String { "\(month)월 근무 마감" }
     var appRecordSubtitle: String { "직원 \(appStaffCount)명 \u{00B7} 확인할 것 \(appPendingCount)건" }

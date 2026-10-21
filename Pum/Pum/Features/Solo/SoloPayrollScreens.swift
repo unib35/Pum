@@ -206,13 +206,20 @@ enum SoloPayroll {
     /// 20g — 고친 날이 있는 직원만 한 번 확인한다
     static func closingState(_ workplace: Workplace, year: Int, month: Int, confirmed: Set<String>) -> WorkClosingDirectState {
         let range = SeoulDayKey.monthRange(year: year, month: month)
+        var checked: [WorkClosingDirectState.CheckedPerson] = []
         let people: [WorkClosingDirectState.Person] = (workplace.employees ?? [])
             .sorted { $0.createdAt < $1.createdAt }
             .compactMap { employee in
                 let id = "\(employee.persistentModelID)"
                 let days = (employee.workDays ?? []).filter { range.contains($0.dayKey) }.sorted { $0.dayKey > $1.dayKey }
                 let edited = days.filter { $0.status != .scheduled }
-                guard !edited.isEmpty, !confirmed.contains(id) else { return nil }
+                guard !edited.isEmpty, !confirmed.contains(id) else {
+                    if !days.isEmpty {
+                        let counts = edited.isEmpty ? "예정대로 \(days.count)일" : "예정대로 \(days.count - edited.count)일 \u{00B7} 고친 날 \(edited.count)일"
+                        checked.append(.init(id: id, name: employee.name, subtitle: counts))
+                    }
+                    return nil
+                }
                 let terms = employee.terms(on: range.upperBound) ?? employee.terms(on: .max)
                 return .init(
                     id: id, name: employee.name, scheduledDayCount: days.count - edited.count,
@@ -228,7 +235,7 @@ enum SoloPayroll {
         let last = SeoulDayKey.daysInMonth(year: year, month: month)
         return WorkClosingDirectState(
             month: month, periodText: "\(month)월 1일 \u{2013} \(last)일", appStaffCount: 0, appPendingCount: 0,
-            people: people, remainingCount: people.count, canClose: people.isEmpty, isSolo: true)
+            people: people, remainingCount: people.count, canClose: people.isEmpty, isSolo: true, checked: checked)
     }
 
     /// 1m — 마감했으면 확정 명세서, 아니면 지금 계산
