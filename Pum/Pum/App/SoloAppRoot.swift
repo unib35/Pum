@@ -5,6 +5,7 @@ import SwiftUI
 struct SoloAppRoot: View {
     @Environment(\.modelContext) private var context
     @Query(sort: \Workplace.createdAt) private var workplaces: [Workplace]
+    var tab: AppTab?
 
     var body: some View {
         if workplaces.isEmpty {
@@ -12,7 +13,7 @@ struct SoloAppRoot: View {
                 done(createWorkplace(state))
             })
         } else {
-            AppShell(role: .soloOwner)
+            AppShell(role: .soloOwner, tab: tab)
         }
     }
 

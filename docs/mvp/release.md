@@ -12,6 +12,7 @@
 | 암호화 신고 | 표준 암호화 외 없음(`ITSAppUsesNonExemptEncryption = NO`) | Xcode 설정 |
 | 개인정보 매니페스트 | 추적 없음 · 수집 없음 · UserDefaults(CA92.1, 앱 자체 설정 읽기) | `Pum/Pum/Resources/PrivacyInfo.xcprivacy` |
 | 개발용 화면 | 출시 빌드에 없음(`#if DEBUG`) | `ContentView` · `DevLauncher` |
+| 흐름 캡처용 예시 데이터 | 개발 빌드만. `-PumApp solo -PumSeed demo -PumTab pay`(빈 저장소에 사업장 1 · 직원 2명) | `App/DevSeed.swift` |
 
 ## App Store 「앱 개인정보」 답(초안)
 
